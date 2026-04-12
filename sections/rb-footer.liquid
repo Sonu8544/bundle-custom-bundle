@@ -1,0 +1,730 @@
+{% liquid
+  assign sid = 'rb-footer-' | append: section.id
+%}
+
+<section id="{{ sid }}" class="rb-footer rb-footer--animated">
+  <div class="rb-footer__inner page-width">
+    {% if section.settings.top_ornament != blank %}
+      <div class="rb-footer__ornament rb-reveal rb-reveal--left" data-rb-parallax data-rb-speed="0.18">
+        {{
+          section.settings.top_ornament
+          | image_url: width: 1400
+          | image_tag:
+            loading: 'lazy',
+            widths: '400, 600, 800, 1000, 1200, 1400',
+            class: 'rb-footer__ornament-img',
+            alt: section.settings.ornament_alt
+        }}
+      </div>
+    {% endif %}
+
+    <nav class="rb-footer__nav" aria-label="Footer Navigation">
+      {% for block in section.blocks %}
+        {% if block.type == 'link' %}
+          <a
+            href="{{ block.settings.link | default: '#' }}"
+            class="rb-footer__nav-link rb-reveal rb-reveal--blink"
+            style="--rb-delay: {{ forloop.index0 | times: 0.12 }}s;"
+            {{ block.shopify_attributes }}
+          >
+            {{ block.settings.label }}
+          </a>
+        {% endif %}
+      {% endfor %}
+    </nav>
+
+    {% if section.settings.logo_image != blank %}
+      <div class="rb-footer__logo-wrap rb-reveal rb-reveal--up" data-rb-parallax data-rb-speed="-0.12">
+        {{
+          section.settings.logo_image
+          | image_url: width: 1600
+          | image_tag:
+            loading: 'lazy',
+            widths: '400, 600, 800, 1000, 1200, 1400, 1600',
+            class: 'rb-footer__logo-img',
+            alt: section.settings.logo_alt
+        }}
+      </div>
+    {% endif %}
+  </div>
+
+  <style>
+    #{{ sid }}{
+      position: relative;
+      overflow: hidden;
+      background: {{ section.settings.bg_color }};
+      color: {{ section.settings.text_color }};
+      padding-top: {{ section.settings.padding_top_desktop }}px;
+      padding-bottom: {{ section.settings.padding_bottom_desktop }}px;
+      isolation: isolate;
+    }
+
+    #{{ sid }} .page-width{
+      max-width: {{ section.settings.content_width }}px;
+      margin: 0 auto;
+      padding-left: 20px;
+      padding-right: 20px;
+    }
+
+    #{{ sid }} .rb-footer__inner{
+      position: relative;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    #{{ sid }}::after{
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      width: 100%;
+      height: {{ section.settings.bottom_gradient_height_desktop }}px;
+      pointer-events: none;
+      z-index: 1;
+      opacity: {{ section.settings.bottom_gradient_opacity | divided_by: 100.0 }};
+      background: linear-gradient(360deg, #4D3C04 0%, rgba(7, 6, 5, 0) 116.43%);
+    }
+
+    #{{ sid }} .rb-footer__ornament{
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      margin-bottom: {{ section.settings.ornament_bottom_spacing_desktop }}px;
+      position: relative;
+      z-index: 2;
+      will-change: transform;
+    }
+
+    #{{ sid }} .rb-footer__ornament-img{
+      display: block;
+      width: min(100%, {{ section.settings.ornament_width_desktop }}px);
+      max-width: 100%;
+      height: auto;
+    }
+
+    #{{ sid }} .rb-footer__nav{
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-items: center;
+      gap: {{ section.settings.nav_gap_desktop }}px;
+      margin-bottom: {{ section.settings.nav_bottom_spacing_desktop }}px;
+      position: relative;
+      z-index: 2;
+    }
+
+    #{{ sid }} .rb-footer__nav-link{
+      color: {{ section.settings.text_color }};
+      text-decoration: none;
+      font-size: {{ section.settings.menu_font_size_desktop }}px;
+      line-height: 1;
+      font-weight: 400;
+      letter-spacing: 0;
+      font-family: {{ section.settings.font_family }};
+      transition: opacity .3s ease, color .3s ease, transform .3s ease, text-shadow .3s ease;
+      will-change: transform, opacity;
+    }
+
+    #{{ sid }} .rb-footer__nav-link:hover{
+      opacity: 0.82;
+      transform: translateY(-2px);
+      text-shadow: 0 0 10px rgba(244, 241, 234, 0.25);
+    }
+
+    #{{ sid }} .rb-footer__logo-wrap{
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;
+      position: relative;
+      z-index: 2;
+      will-change: transform;
+    }
+
+    #{{ sid }} .rb-footer__logo-img{
+      display: block;
+      width: min(100%, {{ section.settings.logo_width_desktop }}px);
+      max-width: 100%;
+      height: auto;
+    }
+
+    #{{ sid }} .rb-reveal{
+      opacity: 0;
+      animation-duration: .95s;
+      animation-timing-function: cubic-bezier(.22,1,.36,1);
+      animation-fill-mode: forwards;
+      animation-delay: var(--rb-delay, 0s);
+      animation-play-state: paused;
+      will-change: transform, opacity, filter;
+    }
+
+    #{{ sid }}.is-visible .rb-reveal{
+      animation-play-state: running;
+    }
+
+    #{{ sid }} .rb-reveal--left{
+      animation-name: rbFooterRevealLeft-{{ section.id }};
+    }
+
+    #{{ sid }} .rb-reveal--up{
+      animation-name: rbFooterRevealUp-{{ section.id }};
+      animation-duration: 1.15s;
+      animation-delay: .18s;
+    }
+
+    #{{ sid }} .rb-reveal--blink{
+      animation-name: rbFooterBlinkIn-{{ section.id }};
+    }
+
+    @keyframes rbFooterRevealLeft-{{ section.id }}{
+      0%{
+        opacity: 0;
+        transform: translateX(-50px);
+        filter: blur(8px);
+      }
+      100%{
+        opacity: 1;
+        transform: translateX(0);
+        filter: blur(0);
+      }
+    }
+
+    @keyframes rbFooterRevealUp-{{ section.id }}{
+      0%{
+        opacity: 0;
+        transform: translateY(90px) scale(.96);
+        filter: blur(10px);
+      }
+      60%{
+        opacity: 1;
+        transform: translateY(-6px) scale(1.01);
+        filter: blur(0);
+      }
+      100%{
+        opacity: 1;
+        transform: translateY(0) scale(1);
+        filter: blur(0);
+      }
+    }
+
+    @keyframes rbFooterBlinkIn-{{ section.id }}{
+      0%{
+        opacity: 0;
+        transform: translateY(10px);
+        text-shadow: 0 0 0 rgba(255,255,255,0);
+      }
+      45%{
+        opacity: .45;
+      }
+      65%{
+        opacity: 1;
+        text-shadow: 0 0 10px rgba(255,255,255,0.18);
+      }
+      100%{
+        opacity: 1;
+        transform: translateY(0);
+        text-shadow: 0 0 0 rgba(255,255,255,0);
+      }
+    }
+
+    @media screen and (prefers-reduced-motion: reduce){
+      #{{ sid }} .rb-reveal{
+        animation: none !important;
+        opacity: 1 !important;
+        transform: none !important;
+        filter: none !important;
+      }
+
+      #{{ sid }} [data-rb-parallax]{
+        transform: none !important;
+      }
+    }
+
+    @media screen and (max-width: 989px){
+      #{{ sid }}{
+        padding-top: {{ section.settings.padding_top_tablet }}px;
+        padding-bottom: {{ section.settings.padding_bottom_tablet }}px;
+      }
+
+      #{{ sid }}::after{
+        height: {{ section.settings.bottom_gradient_height_tablet }}px;
+      }
+
+      #{{ sid }} .rb-footer__ornament{
+        margin-bottom: {{ section.settings.ornament_bottom_spacing_tablet }}px;
+      }
+
+      #{{ sid }} .rb-footer__ornament-img{
+        width: min(100%, {{ section.settings.ornament_width_tablet }}px);
+      }
+
+      #{{ sid }} .rb-footer__nav{
+        gap: {{ section.settings.nav_gap_tablet }}px;
+        margin-bottom: {{ section.settings.nav_bottom_spacing_tablet }}px;
+      }
+
+      #{{ sid }} .rb-footer__nav-link{
+        font-size: {{ section.settings.menu_font_size_tablet }}px;
+      }
+
+      #{{ sid }} .rb-footer__logo-img{
+        width: min(100%, {{ section.settings.logo_width_tablet }}px);
+      }
+    }
+
+    @media screen and (max-width: 749px){
+      #{{ sid }}{
+        padding-top: {{ section.settings.padding_top_mobile }}px;
+        padding-bottom: {{ section.settings.padding_bottom_mobile }}px;
+      }
+
+      #{{ sid }} .page-width{
+        padding-left: 16px;
+        padding-right: 16px;
+      }
+
+      #{{ sid }}::after{
+        height: {{ section.settings.bottom_gradient_height_mobile }}px;
+      }
+
+      #{{ sid }} .rb-footer__ornament{
+        margin-bottom: {{ section.settings.ornament_bottom_spacing_mobile }}px;
+      }
+
+      #{{ sid }} .rb-footer__ornament-img{
+        width: min(100%, {{ section.settings.ornament_width_mobile }}px);
+      }
+
+      #{{ sid }} .rb-footer__nav{
+        flex-direction: column;
+        gap: {{ section.settings.nav_gap_mobile }}px;
+        margin-bottom: {{ section.settings.nav_bottom_spacing_mobile }}px;
+      }
+
+      #{{ sid }} .rb-footer__nav-link{
+        font-size: {{ section.settings.menu_font_size_mobile }}px;
+      }
+
+      #{{ sid }} .rb-footer__logo-img{
+        width: min(100%, {{ section.settings.logo_width_mobile }}px);
+      }
+    }
+  </style>
+
+  <script>
+    (function() {
+      const section = document.getElementById('{{ sid }}');
+      if (!section) return;
+
+      const revealItems = section.querySelectorAll('.rb-reveal');
+      const parallaxItems = section.querySelectorAll('[data-rb-parallax]');
+      const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      const revealObserver = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            section.classList.add('is-visible');
+            revealObserver.unobserve(section);
+          }
+        });
+      }, {
+        threshold: 0.18
+      });
+
+      revealObserver.observe(section);
+
+      if (reduceMotion || !parallaxItems.length) return;
+
+      let ticking = false;
+
+      function updateParallax() {
+        const rect = section.getBoundingClientRect();
+        const viewportHeight = window.innerHeight || document.documentElement.clientHeight;
+        const progress = (viewportHeight - rect.top) / (viewportHeight + rect.height);
+
+        parallaxItems.forEach((item) => {
+          const speed = parseFloat(item.getAttribute('data-rb-speed')) || 0;
+          const move = (progress - 0.5) * 90 * speed;
+          item.style.transform = 'translate3d(0,' + move.toFixed(2) + 'px,0)';
+        });
+
+        ticking = false;
+      }
+
+      function requestUpdate() {
+        if (!ticking) {
+          window.requestAnimationFrame(updateParallax);
+          ticking = true;
+        }
+      }
+
+      requestUpdate();
+      window.addEventListener('scroll', requestUpdate, { passive: true });
+      window.addEventListener('resize', requestUpdate);
+    })();
+  </script>
+</section>
+
+{% schema %}
+{
+  "name": "RB Footer",
+  "tag": "section",
+  "class": "section section-rb-footer",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "top_ornament",
+      "label": "Top ornament image"
+    },
+    {
+      "type": "text",
+      "id": "ornament_alt",
+      "label": "Top ornament alt text",
+      "default": "Footer ornament"
+    },
+    {
+      "type": "image_picker",
+      "id": "logo_image",
+      "label": "RB logo image"
+    },
+    {
+      "type": "text",
+      "id": "logo_alt",
+      "label": "Logo alt text",
+      "default": "RB logo"
+    },
+    {
+      "type": "text",
+      "id": "font_family",
+      "label": "Font family",
+      "default": "Satoshi, sans-serif"
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Background color",
+      "default": "#070605"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Menu text color",
+      "default": "#F4F1EA"
+    },
+    {
+      "type": "range",
+      "id": "content_width",
+      "label": "Content width",
+      "min": 900,
+      "max": 1600,
+      "step": 20,
+      "default": 1200
+    },
+
+    {
+      "type": "header",
+      "content": "Bottom gradient"
+    },
+    {
+      "type": "range",
+      "id": "bottom_gradient_opacity",
+      "label": "Bottom gradient opacity",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "default": 100
+    },
+    {
+      "type": "range",
+      "id": "bottom_gradient_height_desktop",
+      "label": "Bottom gradient height desktop",
+      "min": 80,
+      "max": 400,
+      "step": 10,
+      "default": 180
+    },
+    {
+      "type": "range",
+      "id": "bottom_gradient_height_tablet",
+      "label": "Bottom gradient height tablet",
+      "min": 60,
+      "max": 300,
+      "step": 10,
+      "default": 140
+    },
+    {
+      "type": "range",
+      "id": "bottom_gradient_height_mobile",
+      "label": "Bottom gradient height mobile",
+      "min": 40,
+      "max": 220,
+      "step": 10,
+      "default": 100
+    },
+
+    {
+      "type": "header",
+      "content": "Desktop"
+    },
+    {
+      "type": "range",
+      "id": "padding_top_desktop",
+      "label": "Top padding desktop",
+      "min": 40,
+      "max": 240,
+      "step": 4,
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_desktop",
+      "label": "Bottom padding desktop",
+      "min": 40,
+      "max": 240,
+      "step": 4,
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "ornament_width_desktop",
+      "label": "Top ornament width desktop",
+      "min": 200,
+      "max": 900,
+      "step": 10,
+      "default": 520
+    },
+    {
+      "type": "range",
+      "id": "ornament_bottom_spacing_desktop",
+      "label": "Space below ornament desktop",
+      "min": 10,
+      "max": 100,
+      "step": 2,
+      "default": 34
+    },
+    {
+      "type": "range",
+      "id": "menu_font_size_desktop",
+      "label": "Menu font size desktop",
+      "min": 12,
+      "max": 32,
+      "step": 1,
+      "default": 18
+    },
+    {
+      "type": "range",
+      "id": "nav_gap_desktop",
+      "label": "Menu gap desktop",
+      "min": 10,
+      "max": 60,
+      "step": 2,
+      "default": 28
+    },
+    {
+      "type": "range",
+      "id": "nav_bottom_spacing_desktop",
+      "label": "Space below menu desktop",
+      "min": 10,
+      "max": 120,
+      "step": 2,
+      "default": 26
+    },
+    {
+      "type": "range",
+      "id": "logo_width_desktop",
+      "label": "Logo width desktop",
+      "min": 180,
+      "max": 1180,
+      "step": 10,
+      "default": 620
+    },
+
+    {
+      "type": "header",
+      "content": "Tablet"
+    },
+    {
+      "type": "range",
+      "id": "padding_top_tablet",
+      "label": "Top padding tablet",
+      "min": 30,
+      "max": 178,
+      "step": 4,
+      "default": 46
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_tablet",
+      "label": "Bottom padding tablet",
+      "min": 20,
+      "max": 180,
+      "step": 4,
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "ornament_width_tablet",
+      "label": "Top ornament width tablet",
+      "min": 180,
+      "max": 700,
+      "step": 10,
+      "default": 420
+    },
+    {
+      "type": "range",
+      "id": "ornament_bottom_spacing_tablet",
+      "label": "Space below ornament tablet",
+      "min": 10,
+      "max": 80,
+      "step": 2,
+      "default": 28
+    },
+    {
+      "type": "range",
+      "id": "menu_font_size_tablet",
+      "label": "Menu font size tablet",
+      "min": 12,
+      "max": 28,
+      "step": 1,
+      "default": 18
+    },
+    {
+      "type": "range",
+      "id": "nav_gap_tablet",
+      "label": "Menu gap tablet",
+      "min": 10,
+      "max": 40,
+      "step": 2,
+      "default": 22
+    },
+    {
+      "type": "range",
+      "id": "nav_bottom_spacing_tablet",
+      "label": "Space below menu tablet",
+      "min": 10,
+      "max": 80,
+      "step": 2,
+      "default": 22
+    },
+    {
+      "type": "range",
+      "id": "logo_width_tablet",
+      "label": "Logo width tablet",
+      "min": 180,
+      "max": 900,
+      "step": 10,
+      "default": 480
+    },
+
+    {
+      "type": "header",
+      "content": "Mobile"
+    },
+    {
+      "type": "range",
+      "id": "padding_top_mobile",
+      "label": "Top padding mobile",
+      "min": 20,
+      "max": 120,
+      "step": 4,
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_mobile",
+      "label": "Bottom padding mobile",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "ornament_width_mobile",
+      "label": "Top ornament width mobile",
+      "min": 140,
+      "max": 400,
+      "step": 10,
+      "default": 250
+    },
+    {
+      "type": "range",
+      "id": "ornament_bottom_spacing_mobile",
+      "label": "Space below ornament mobile",
+      "min": 8,
+      "max": 60,
+      "step": 2,
+      "default": 26
+    },
+    {
+      "type": "range",
+      "id": "menu_font_size_mobile",
+      "label": "Menu font size mobile",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "default": 18
+    },
+    {
+      "type": "range",
+      "id": "nav_gap_mobile",
+      "label": "Menu gap mobile",
+      "min": 8,
+      "max": 40,
+      "step": 2,
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "nav_bottom_spacing_mobile",
+      "label": "Space below menu mobile",
+      "min": 10,
+      "max": 80,
+      "step": 2,
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "logo_width_mobile",
+      "label": "Logo width mobile",
+      "min": 140,
+      "max": 500,
+      "step": 10,
+      "default": 300
+    }
+  ],
+  "blocks": [
+    {
+      "type": "link",
+      "name": "Menu link",
+      "settings": [
+        {
+          "type": "text",
+          "id": "label",
+          "label": "Link label",
+          "default": "Home"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Link URL"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "RB Footer",
+      "blocks": [
+        { "type": "link", "settings": { "label": "Home" } },
+        { "type": "link", "settings": { "label": "Rare biblio" } },
+        { "type": "link", "settings": { "label": "Explore Books" } },
+        { "type": "link", "settings": { "label": "About Us" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

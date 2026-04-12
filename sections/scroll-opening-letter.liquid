@@ -1,0 +1,983 @@
+{% liquid
+  assign sid = 'opening-letter-' | append: section.id
+%}
+
+<section
+  id="{{ sid }}"
+  class="ol-section"
+  style="
+    --ol-section-bg: {{ section.settings.section_bg }};
+    --ol-text-color: {{ section.settings.text_color }};
+    --ol-accent-color: {{ section.settings.accent_color }};
+    --ol-overlay-opacity: {{ section.settings.overlay_opacity | divided_by: 100.0 }};
+    --ol-letter-max-width-desktop: {{ section.settings.letter_max_width_desktop }}px;
+    --ol-letter-max-width-mobile: {{ section.settings.letter_max_width_mobile }}px;
+    --ol-closed-gap-desktop: {{ section.settings.closed_gap_desktop }}px;
+    --ol-closed-gap-mobile: {{ section.settings.closed_gap_mobile }}px;
+    --ol-open-body-height-desktop: {{ section.settings.open_body_height_desktop }}px;
+    --ol-open-body-height-mobile: {{ section.settings.open_body_height_mobile }}px;
+    --ol-top-shift-desktop: {{ section.settings.top_shift_desktop }}px;
+    --ol-bottom-shift-desktop: {{ section.settings.bottom_shift_desktop }}px;
+    --ol-top-shift-mobile: {{ section.settings.top_shift_mobile }}px;
+    --ol-bottom-shift-mobile: {{ section.settings.bottom_shift_mobile }}px;
+    --ol-title-size-desktop: {{ section.settings.title_size_desktop }}px;
+    --ol-title-size-mobile: {{ section.settings.title_size_mobile }}px;
+    --ol-body-size-desktop: {{ section.settings.body_size_desktop }}px;
+    --ol-body-size-mobile: {{ section.settings.body_size_mobile }}px;
+    --ol-content-width-desktop: {{ section.settings.content_width_desktop }}px;
+    --ol-content-width-mobile: {{ section.settings.content_width_mobile }}px;
+    --ol-inner-padding-desktop: {{ section.settings.inner_padding_desktop }}px;
+    --ol-inner-padding-mobile: {{ section.settings.inner_padding_mobile }}px;
+    --ol-sticky-top-desktop: {{ section.settings.sticky_top_desktop }}px;
+    --ol-sticky-top-mobile: {{ section.settings.sticky_top_mobile }}px;
+    --ol-scroll-height-desktop: {{ section.settings.scroll_height_desktop }}vh;
+    --ol-scroll-height-mobile: {{ section.settings.scroll_height_mobile }}vh;
+    --ol-shadow-opacity: {{ section.settings.shadow_opacity | divided_by: 100.0 }};
+    --ol-paper-shadow-opacity: {{ section.settings.paper_shadow_opacity | divided_by: 100.0 }};
+    --ol-corner-radius: {{ section.settings.paper_corner_radius }}px;
+    --ol-title-line-height: {{ section.settings.title_line_height | divided_by: 100.0 }};
+    --ol-body-line-height: {{ section.settings.body_line_height | divided_by: 100.0 }};
+    --ol-title-letter-spacing: {{ section.settings.title_letter_spacing }}px;
+    --ol-body-letter-spacing: {{ section.settings.body_letter_spacing }}px;
+    --ol-reveal-start: {{ section.settings.reveal_start | divided_by: 100.0 }};
+    --ol-reveal-end: {{ section.settings.reveal_end | divided_by: 100.0 }};
+    --ol-text-start: {{ section.settings.text_reveal_start | divided_by: 100.0 }};
+    --ol-text-end: {{ section.settings.text_reveal_end | divided_by: 100.0 }};
+    --ol-divider-width-desktop: {{ section.settings.divider_width_desktop }}px;
+    --ol-divider-width-mobile: {{ section.settings.divider_width_mobile }}px;
+    --ol-bg-image-desktop: url('{% if section.settings.bg_image_desktop != blank %}{{ section.settings.bg_image_desktop | image_url: width: 2200 }}{% endif %}');
+    --ol-bg-image-mobile: url('{% if section.settings.bg_image_mobile != blank %}{{ section.settings.bg_image_mobile | image_url: width: 1200 }}{% endif %}');
+    --ol-body-image-desktop: url('{% if section.settings.body_texture_desktop != blank %}{{ section.settings.body_texture_desktop | image_url: width: 1600 }}{% endif %}');
+    --ol-body-image-mobile: url('{% if section.settings.body_texture_mobile != blank %}{{ section.settings.body_texture_mobile | image_url: width: 1000 }}{% endif %}');
+  "
+  data-ol-section
+>
+  <div class="ol-section__bg"></div>
+  <div class="ol-section__overlay"></div>
+
+  <div class="ol-scroll-stage">
+    <div class="ol-sticky" data-ol-sticky>
+      <div class="ol-letter-wrap">
+        <div class="ol-letter" data-ol-letter>
+          <div class="ol-roll ol-roll--top" data-ol-top>
+            {% if section.settings.top_roll_desktop != blank %}
+              {{
+                section.settings.top_roll_desktop
+                | image_url: width: 2200
+                | image_tag:
+                  loading: 'lazy',
+                  widths: '600, 900, 1200, 1600, 2200',
+                  class: 'ol-roll__img ol-roll__img--desktop',
+                  alt: 'Top roll desktop'
+              }}
+            {% endif %}
+            {% if section.settings.top_roll_mobile != blank %}
+              {{
+                section.settings.top_roll_mobile
+                | image_url: width: 1200
+                | image_tag:
+                  loading: 'lazy',
+                  widths: '400, 600, 800, 1000, 1200',
+                  class: 'ol-roll__img ol-roll__img--mobile',
+                  alt: 'Top roll mobile'
+              }}
+            {% endif %}
+          </div>
+
+          <div class="ol-paper-shell" data-ol-paper-shell>
+            <div class="ol-paper-body" data-ol-paper-body>
+              <div class="ol-paper-body__shade ol-paper-body__shade--top"></div>
+              <div class="ol-paper-body__shade ol-paper-body__shade--bottom"></div>
+
+              <div class="ol-content" data-ol-content>
+                {% if section.settings.heading_line_1 != blank or section.settings.heading_accent != blank %}
+                  <h2 class="ol-title">
+                    <span class="ol-title__main">{{ section.settings.heading_line_1 }}</span>
+                    {% if section.settings.heading_accent != blank %}
+                      <span class="ol-title__accent">{{ section.settings.heading_accent }}</span>
+                    {% endif %}
+                  </h2>
+                {% endif %}
+
+                {% if section.settings.divider_desktop != blank or section.settings.divider_mobile != blank %}
+                  <div class="ol-divider">
+                    {% if section.settings.divider_desktop != blank %}
+                      {{
+                        section.settings.divider_desktop
+                        | image_url: width: 700
+                        | image_tag:
+                          loading: 'lazy',
+                          widths: '200, 350, 500, 700',
+                          class: 'ol-divider__img ol-divider__img--desktop',
+                          alt: 'Divider desktop'
+                      }}
+                    {% endif %}
+                    {% if section.settings.divider_mobile != blank %}
+                      {{
+                        section.settings.divider_mobile
+                        | image_url: width: 500
+                        | image_tag:
+                          loading: 'lazy',
+                          widths: '150, 250, 350, 500',
+                          class: 'ol-divider__img ol-divider__img--mobile',
+                          alt: 'Divider mobile'
+                      }}
+                    {% endif %}
+                  </div>
+                {% endif %}
+
+                {% if section.settings.body_text != blank %}
+                  <div class="ol-body rte">
+                    {{ section.settings.body_text | newline_to_br }}
+                  </div>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+
+          <div class="ol-roll ol-roll--bottom" data-ol-bottom>
+            {% if section.settings.bottom_roll_desktop != blank %}
+              {{
+                section.settings.bottom_roll_desktop
+                | image_url: width: 2200
+                | image_tag:
+                  loading: 'lazy',
+                  widths: '600, 900, 1200, 1600, 2200',
+                  class: 'ol-roll__img ol-roll__img--desktop',
+                  alt: 'Bottom roll desktop'
+              }}
+            {% endif %}
+            {% if section.settings.bottom_roll_mobile != blank %}
+              {{
+                section.settings.bottom_roll_mobile
+                | image_url: width: 1200
+                | image_tag:
+                  loading: 'lazy',
+                  widths: '400, 600, 800, 1000, 1200',
+                  class: 'ol-roll__img ol-roll__img--mobile',
+                  alt: 'Bottom roll mobile'
+              }}
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  #{{ sid }} {
+    position: relative;
+    overflow: clip;
+    background: var(--ol-section-bg);
+    color: var(--ol-text-color);
+    isolation: isolate;
+  }
+
+  #{{ sid }} .ol-section__bg,
+  #{{ sid }} .ol-section__overlay {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+
+  #{{ sid }} .ol-section__bg {
+    z-index: 0;
+    background-color: var(--ol-section-bg);
+    background-image: var(--ol-bg-image-desktop);
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
+  }
+
+  #{{ sid }} .ol-section__overlay {
+    z-index: 1;
+    background: rgba(0, 0, 0, var(--ol-overlay-opacity));
+  }
+
+  #{{ sid }} .ol-scroll-stage {
+    position: relative;
+    z-index: 2;
+    height: var(--ol-scroll-height-desktop);
+  }
+
+  #{{ sid }} .ol-sticky {
+    position: sticky;
+    top: var(--ol-sticky-top-desktop);
+    min-height: calc(100vh - (var(--ol-sticky-top-desktop) * 2));
+    display: grid;
+    place-items: center;
+    padding: 40px 20px;
+  }
+
+  #{{ sid }} .ol-letter-wrap {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    pointer-events: none;
+  }
+
+  #{{ sid }} .ol-letter {
+    width: min(100%, var(--ol-letter-max-width-desktop));
+    position: relative;
+    filter: drop-shadow(0 35px 50px rgba(0, 0, 0, var(--ol-shadow-opacity)));
+    will-change: transform;
+  }
+
+  #{{ sid }} .ol-roll {
+    position: relative;
+    z-index: 4;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    will-change: transform;
+  }
+
+  #{{ sid }} .ol-roll__img {
+    display: block;
+    width: 100%;
+    height: auto;
+    user-select: none;
+    -webkit-user-drag: none;
+    pointer-events: none;
+  }
+
+  #{{ sid }} .ol-roll__img--mobile {
+    display: none;
+  }
+
+  #{{ sid }} .ol-paper-shell {
+    position: relative;
+    z-index: 2;
+    margin-top: calc(var(--ol-closed-gap-desktop) * -1);
+    margin-bottom: calc(var(--ol-closed-gap-desktop) * -1);
+  }
+
+  #{{ sid }} .ol-paper-body {
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+    height: 0;
+    border-radius: var(--ol-corner-radius);
+    background-color: #d9bf92;
+    background-image: var(--ol-body-image-desktop);
+    background-size: 100% auto;
+    background-position: center top;
+    background-repeat: repeat-y;
+    box-shadow:
+      inset 0 16px 30px rgba(120, 78, 31, calc(var(--ol-paper-shadow-opacity) * 0.45)),
+      inset 0 -18px 30px rgba(120, 78, 31, calc(var(--ol-paper-shadow-opacity) * 0.45)),
+      inset 0 0 45px rgba(88, 48, 14, calc(var(--ol-paper-shadow-opacity) * 0.28));
+    will-change: height;
+  }
+
+  #{{ sid }} .ol-paper-body__shade {
+    position: absolute;
+    left: 0;
+    width: 100%;
+    height: 60px;
+    z-index: 1;
+    pointer-events: none;
+  }
+
+  #{{ sid }} .ol-paper-body__shade--top {
+    top: 0;
+    background: linear-gradient(to bottom, rgba(73, 43, 12, 0.18), transparent);
+  }
+
+  #{{ sid }} .ol-paper-body__shade--bottom {
+    bottom: 0;
+    background: linear-gradient(to top, rgba(73, 43, 12, 0.18), transparent);
+  }
+
+  #{{ sid }} .ol-content {
+    position: relative;
+    z-index: 2;
+    width: min(100%, var(--ol-content-width-desktop));
+    margin: 0 auto;
+    padding: var(--ol-inner-padding-desktop) 28px;
+    text-align: center;
+    opacity: 0;
+    transform: translateY(32px) scale(0.985);
+    will-change: transform, opacity;
+  }
+
+  #{{ sid }} .ol-title {
+    margin: 0;
+    font-size: var(--ol-title-size-desktop);
+    line-height: var(--ol-title-line-height);
+    letter-spacing: var(--ol-title-letter-spacing);
+    font-weight: 400;
+    color: var(--ol-text-color);
+    word-break: break-word;
+  }
+
+  #{{ sid }} .ol-title__main,
+  #{{ sid }} .ol-title__accent {
+    display: inline;
+  }
+
+  #{{ sid }} .ol-title__accent {
+    color: var(--ol-accent-color);
+  }
+
+  #{{ sid }} .ol-divider {
+    margin: 22px auto 26px;
+    width: min(100%, var(--ol-divider-width-desktop));
+  }
+
+  #{{ sid }} .ol-divider__img {
+    display: block;
+    width: 100%;
+    height: auto;
+    margin: 0 auto;
+  }
+
+  #{{ sid }} .ol-divider__img--mobile {
+    display: none;
+  }
+
+  #{{ sid }} .ol-body {
+    margin: 0;
+    font-size: var(--ol-body-size-desktop);
+    line-height: var(--ol-body-line-height);
+    letter-spacing: var(--ol-body-letter-spacing);
+    color: var(--ol-text-color);
+  }
+
+  #{{ sid }} .ol-body p {
+    margin: 0;
+  }
+
+  #{{ sid }} .ol-body br + br {
+    display: block;
+    content: "";
+    margin-top: 10px;
+  }
+
+  #{{ sid }}[data-ready="true"] .ol-paper-body {
+    transition: none;
+  }
+
+  @media screen and (max-width: 989px) {
+    #{{ sid }} .ol-section__bg {
+      background-image: var(--ol-bg-image-mobile);
+      background-position: center center;
+    }
+
+    #{{ sid }} .ol-scroll-stage {
+      height: var(--ol-scroll-height-mobile);
+    }
+
+    #{{ sid }} .ol-sticky {
+      top: var(--ol-sticky-top-mobile);
+      min-height: calc(100vh - (var(--ol-sticky-top-mobile) * 2));
+      padding: 20px 14px;
+    }
+
+    #{{ sid }} .ol-letter {
+      width: min(100%, var(--ol-letter-max-width-mobile));
+    }
+
+    #{{ sid }} .ol-roll__img--desktop,
+    #{{ sid }} .ol-divider__img--desktop {
+      display: none;
+    }
+
+    #{{ sid }} .ol-roll__img--mobile,
+    #{{ sid }} .ol-divider__img--mobile {
+      display: block;
+    }
+
+    #{{ sid }} .ol-paper-shell {
+      margin-top: calc(var(--ol-closed-gap-mobile) * -1);
+      margin-bottom: calc(var(--ol-closed-gap-mobile) * -1);
+    }
+
+    #{{ sid }} .ol-paper-body {
+      background-image: var(--ol-body-image-mobile);
+      background-size: 100% auto;
+    }
+
+    #{{ sid }} .ol-content {
+      width: min(100%, var(--ol-content-width-mobile));
+      padding: var(--ol-inner-padding-mobile) 18px;
+      transform: translateY(22px) scale(0.99);
+    }
+
+    #{{ sid }} .ol-title {
+      font-size: var(--ol-title-size-mobile);
+    }
+
+    #{{ sid }} .ol-divider {
+      margin: 16px auto 18px;
+      width: min(100%, var(--ol-divider-width-mobile));
+    }
+
+    #{{ sid }} .ol-body {
+      font-size: var(--ol-body-size-mobile);
+    }
+
+    #{{ sid }} .ol-paper-body__shade {
+      height: 36px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    #{{ sid }} .ol-roll,
+    #{{ sid }} .ol-paper-body,
+    #{{ sid }} .ol-content {
+      transition: none !important;
+    }
+  }
+</style>
+
+<script>
+  (() => {
+    const section = document.getElementById('{{ sid }}');
+    if (!section) return;
+
+    const topRoll = section.querySelector('[data-ol-top]');
+    const bottomRoll = section.querySelector('[data-ol-bottom]');
+    const paperBody = section.querySelector('[data-ol-paper-body]');
+    const content = section.querySelector('[data-ol-content]');
+
+    const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+
+    const getCssNumber = (name) => {
+      const value = getComputedStyle(section).getPropertyValue(name).trim().replace('px', '').replace('vh', '');
+      return parseFloat(value) || 0;
+    };
+
+    const easeInOutCubic = (t) => {
+      return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+    };
+
+    const mapRange = (value, inMin, inMax, outMin, outMax) => {
+      if (inMax - inMin === 0) return outMin;
+      const t = clamp((value - inMin) / (inMax - inMin), 0, 1);
+      return outMin + (outMax - outMin) * t;
+    };
+
+    let ticking = false;
+
+    function update() {
+      ticking = false;
+
+      const rect = section.getBoundingClientRect();
+      const viewportH = window.innerHeight || document.documentElement.clientHeight;
+
+      const total = Math.max(section.offsetHeight - viewportH, 1);
+      const rawProgress = clamp((-rect.top) / total, 0, 1);
+
+      const revealStart = parseFloat(getComputedStyle(section).getPropertyValue('--ol-reveal-start')) || 0.05;
+      const revealEnd = parseFloat(getComputedStyle(section).getPropertyValue('--ol-reveal-end')) || 0.7;
+      const textStart = parseFloat(getComputedStyle(section).getPropertyValue('--ol-text-start')) || 0.35;
+      const textEnd = parseFloat(getComputedStyle(section).getPropertyValue('--ol-text-end')) || 0.78;
+
+      const paperProgress = easeInOutCubic(clamp(mapRange(rawProgress, revealStart, revealEnd, 0, 1), 0, 1));
+      const textProgress = easeInOutCubic(clamp(mapRange(rawProgress, textStart, textEnd, 0, 1), 0, 1));
+
+      const isMobile = window.matchMedia('(max-width: 989px)').matches;
+
+      const openBodyHeight = isMobile
+        ? getCssNumber('--ol-open-body-height-mobile')
+        : getCssNumber('--ol-open-body-height-desktop');
+
+      const topShift = isMobile
+        ? getCssNumber('--ol-top-shift-mobile')
+        : getCssNumber('--ol-top-shift-desktop');
+
+      const bottomShift = isMobile
+        ? getCssNumber('--ol-bottom-shift-mobile')
+        : getCssNumber('--ol-bottom-shift-desktop');
+
+      const bodyHeight = openBodyHeight * paperProgress;
+      const currentTopShift = topShift * paperProgress;
+      const currentBottomShift = bottomShift * paperProgress;
+
+      paperBody.style.height = `${bodyHeight}px`;
+      topRoll.style.transform = `translate3d(0, ${-currentTopShift}px, 0)`;
+      bottomRoll.style.transform = `translate3d(0, ${currentBottomShift}px, 0)`;
+
+      const contentY = 32 - (32 * textProgress);
+      const contentScale = 0.985 + (0.015 * textProgress);
+      content.style.opacity = textProgress.toFixed(3);
+      content.style.transform = `translate3d(0, ${contentY}px, 0) scale(${contentScale.toFixed(3)})`;
+
+      section.setAttribute('data-ready', 'true');
+    }
+
+    function requestTick() {
+      if (!ticking) {
+        window.requestAnimationFrame(update);
+        ticking = true;
+      }
+    }
+
+    window.addEventListener('scroll', requestTick, { passive: true });
+    window.addEventListener('resize', requestTick);
+    window.addEventListener('load', requestTick);
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', requestTick);
+    } else {
+      requestTick();
+    }
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Scroll Opening Letter",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Desktop assets"
+    },
+    {
+      "type": "image_picker",
+      "id": "top_roll_desktop",
+      "label": "Top roll image - desktop"
+    },
+    {
+      "type": "image_picker",
+      "id": "body_texture_desktop",
+      "label": "Body parchment texture - desktop"
+    },
+    {
+      "type": "image_picker",
+      "id": "bottom_roll_desktop",
+      "label": "Bottom roll image - desktop"
+    },
+    {
+      "type": "image_picker",
+      "id": "divider_desktop",
+      "label": "Divider ornament - desktop"
+    },
+    {
+      "type": "image_picker",
+      "id": "bg_image_desktop",
+      "label": "Background image - desktop"
+    },
+    {
+      "type": "header",
+      "content": "Mobile assets"
+    },
+    {
+      "type": "image_picker",
+      "id": "top_roll_mobile",
+      "label": "Top roll image - mobile"
+    },
+    {
+      "type": "image_picker",
+      "id": "body_texture_mobile",
+      "label": "Body parchment texture - mobile"
+    },
+    {
+      "type": "image_picker",
+      "id": "bottom_roll_mobile",
+      "label": "Bottom roll image - mobile"
+    },
+    {
+      "type": "image_picker",
+      "id": "divider_mobile",
+      "label": "Divider ornament - mobile"
+    },
+    {
+      "type": "image_picker",
+      "id": "bg_image_mobile",
+      "label": "Background image - mobile"
+    },
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "text",
+      "id": "heading_line_1",
+      "label": "Heading main text",
+      "default": "About Rare"
+    },
+    {
+      "type": "text",
+      "id": "heading_accent",
+      "label": "Heading accent text",
+      "default": "Biblio"
+    },
+    {
+      "type": "textarea",
+      "id": "body_text",
+      "label": "Body text",
+      "default": "Welcome to Rare Biblio, the premier destination for bibliophiles and book lovers who appreciate the art of bookmaking. As a rare books store, we specialize in handcrafted leather-bound books, personalization & customization services, and restoration of valuable old books, antiquarian books, and manuscripts."
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "section_bg",
+      "label": "Section background color",
+      "default": "#020202"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#19140f"
+    },
+    {
+      "type": "color",
+      "id": "accent_color",
+      "label": "Accent text color",
+      "default": "#a8852c"
+    },
+    {
+      "type": "range",
+      "id": "overlay_opacity",
+      "label": "Background overlay opacity",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "default": 8
+    },
+    {
+      "type": "header",
+      "content": "Desktop layout"
+    },
+    {
+      "type": "range",
+      "id": "letter_max_width_desktop",
+      "label": "Letter max width - desktop",
+      "min": 600,
+      "max": 1200,
+      "step": 10,
+      "default": 780
+    },
+    {
+      "type": "range",
+      "id": "open_body_height_desktop",
+      "label": "Open body height - desktop",
+      "min": 240,
+      "max": 900,
+      "step": 10,
+      "default": 470
+    },
+    {
+      "type": "range",
+      "id": "closed_gap_desktop",
+      "label": "Closed overlap gap - desktop",
+      "min": 0,
+      "max": 120,
+      "step": 2,
+      "default": 42
+    },
+{
+  "type": "range",
+  "id": "top_shift_desktop",
+  "label": "Top roll travel - desktop",
+  "min": 0,
+  "max": 220,
+  "step": 4,
+  "default": 64
+},
+{
+  "type": "range",
+  "id": "bottom_shift_desktop",
+  "label": "Bottom roll travel - desktop",
+  "min": 0,
+  "max": 220,
+  "step": 4,
+  "default": 64
+},
+    {
+      "type": "range",
+      "id": "content_width_desktop",
+      "label": "Content width - desktop",
+      "min": 320,
+      "max": 760,
+      "step": 10,
+      "default": 470
+    },
+    {
+      "type": "range",
+      "id": "inner_padding_desktop",
+      "label": "Inner vertical padding - desktop",
+      "min": 20,
+      "max": 160,
+      "step": 4,
+      "default": 60
+    },
+{
+  "type": "range",
+  "id": "divider_width_desktop",
+  "label": "Divider width - desktop",
+  "min": 80,
+  "max": 360,
+  "step": 4,
+  "default": 192
+},
+    {
+      "type": "range",
+      "id": "sticky_top_desktop",
+      "label": "Sticky top offset - desktop",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "scroll_height_desktop",
+      "label": "Section scroll height - desktop",
+      "min": 120,
+      "max": 280,
+      "step": 10,
+      "default": 180
+    },
+    {
+      "type": "header",
+      "content": "Mobile layout"
+    },
+    {
+      "type": "range",
+      "id": "letter_max_width_mobile",
+      "label": "Letter max width - mobile",
+      "min": 240,
+      "max": 520,
+      "step": 4,
+      "default": 340
+    },
+{
+  "type": "range",
+  "id": "open_body_height_mobile",
+  "label": "Open body height - mobile",
+  "min": 180,
+  "max": 640,
+  "step": 10,
+  "default": 340
+},
+    {
+      "type": "range",
+      "id": "closed_gap_mobile",
+      "label": "Closed overlap gap - mobile",
+      "min": 0,
+      "max": 80,
+      "step": 2,
+      "default": 26
+    },
+    {
+      "type": "range",
+      "id": "top_shift_mobile",
+      "label": "Top roll travel - mobile",
+      "min": 0,
+      "max": 160,
+      "step": 2,
+      "default": 44
+    },
+    {
+      "type": "range",
+      "id": "bottom_shift_mobile",
+      "label": "Bottom roll travel - mobile",
+      "min": 0,
+      "max": 160,
+      "step": 2,
+      "default": 44
+    },
+{
+  "type": "range",
+  "id": "content_width_mobile",
+  "label": "Content width - mobile",
+  "min": 180,
+  "max": 360,
+  "step": 4,
+  "default": 252
+},
+{
+  "type": "range",
+  "id": "inner_padding_mobile",
+  "label": "Inner vertical padding - mobile",
+  "min": 16,
+  "max": 120,
+  "step": 4,
+  "default": 48
+},
+    {
+      "type": "range",
+      "id": "divider_width_mobile",
+      "label": "Divider width - mobile",
+      "min": 60,
+      "max": 220,
+      "step": 4,
+      "default": 120
+    },
+    {
+      "type": "range",
+      "id": "sticky_top_mobile",
+      "label": "Sticky top offset - mobile",
+      "min": 0,
+      "max": 100,
+      "step": 2,
+      "default": 10
+    },
+    {
+      "type": "range",
+      "id": "scroll_height_mobile",
+      "label": "Section scroll height - mobile",
+      "min": 120,
+      "max": 240,
+      "step": 10,
+      "default": 150
+    },
+    {
+      "type": "header",
+      "content": "Typography"
+    },
+    {
+      "type": "range",
+      "id": "title_size_desktop",
+      "label": "Title size - desktop",
+      "min": 28,
+      "max": 90,
+      "step": 2,
+      "default": 46
+    },
+    {
+      "type": "range",
+      "id": "title_size_mobile",
+      "label": "Title size - mobile",
+      "min": 22,
+      "max": 56,
+      "step": 2,
+      "default": 30
+    },
+    {
+      "type": "range",
+      "id": "body_size_desktop",
+      "label": "Body size - desktop",
+      "min": 14,
+      "max": 32,
+      "step": 1,
+      "default": 19
+    },
+    {
+      "type": "range",
+      "id": "body_size_mobile",
+      "label": "Body size - mobile",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "title_line_height",
+      "label": "Title line height %",
+      "min": 80,
+      "max": 160,
+      "step": 2,
+      "default": 100
+    },
+    {
+      "type": "range",
+      "id": "body_line_height",
+      "label": "Body line height %",
+      "min": 100,
+      "max": 220,
+      "step": 2,
+      "default": 160
+    },
+    {
+      "type": "range",
+      "id": "title_letter_spacing",
+      "label": "Title letter spacing",
+      "min": -2,
+      "max": 10,
+      "step": 1,
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "body_letter_spacing",
+      "label": "Body letter spacing",
+      "min": -1,
+      "max": 4,
+      "step": 1,
+      "default": 0
+    },
+    {
+      "type": "header",
+      "content": "Animation"
+    },
+    {
+      "type": "range",
+      "id": "reveal_start",
+      "label": "Letter opening starts at %",
+      "min": 0,
+      "max": 60,
+      "step": 1,
+      "default": 8
+    },
+    {
+      "type": "range",
+      "id": "reveal_end",
+      "label": "Letter opening ends at %",
+      "min": 30,
+      "max": 100,
+      "step": 1,
+      "default": 68
+    },
+    {
+      "type": "range",
+      "id": "text_reveal_start",
+      "label": "Text reveal starts at %",
+      "min": 0,
+      "max": 80,
+      "step": 1,
+      "default": 34
+    },
+    {
+      "type": "range",
+      "id": "text_reveal_end",
+      "label": "Text reveal ends at %",
+      "min": 20,
+      "max": 100,
+      "step": 1,
+      "default": 76
+    },
+    {
+      "type": "range",
+      "id": "shadow_opacity",
+      "label": "Outer shadow opacity",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "default": 34
+    },
+    {
+      "type": "range",
+      "id": "paper_shadow_opacity",
+      "label": "Paper inner shadow opacity",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "paper_corner_radius",
+      "label": "Paper corner radius",
+      "min": 0,
+      "max": 40,
+      "step": 1,
+      "default": 4
+    }
+  ],
+  "presets": [
+    {
+      "name": "Scroll Opening Letter"
+    }
+  ]
+}
+{% endschema %}

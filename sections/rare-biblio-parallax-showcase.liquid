@@ -1,0 +1,3115 @@
+{% comment %} {% liquid
+  assign section_id = 'rb-parallax-slider-' | append: section.id
+%}
+
+<section
+  id="{{ section_id }}"
+  class="rbps"
+  style="
+    --rbps-bg-start: {{ section.settings.bg_start }};
+    --rbps-bg-end: {{ section.settings.bg_end }};
+    {% comment %} --rbps-border-color: {{ section.settings.border_color }}; {% endcomment %}
+    --rbps-heading-color: {{ section.settings.heading_color }};
+    --rbps-text-color: {{ section.settings.text_color }};
+    --rbps-overlay-opacity: {{ section.settings.image_overlay_opacity | divided_by: 100.0 }};
+    --rbps-heading-size-desktop: {{ section.settings.heading_size_desktop }}px;
+    --rbps-heading-size-mobile: {{ section.settings.heading_size_mobile }}px;
+    --rbps-text-size-desktop: {{ section.settings.text_size_desktop }}px;
+    --rbps-text-size-mobile: {{ section.settings.text_size_mobile }}px;
+    --rbps-slide-min-height-desktop: {{ section.settings.slide_height_desktop }}px;
+    --rbps-slide-min-height-mobile: {{ section.settings.slide_height_mobile }}px;
+    --rbps-image-size-desktop: {{ section.settings.image_size_desktop }}px;
+    --rbps-image-size-mobile: {{ section.settings.image_size_mobile }}px;
+    --rbps-image-radius: {{ section.settings.image_radius }}px;
+    --rbps-content-width: {{ section.settings.content_width }}px;
+    --rbps-section-max-width: {{ section.settings.section_max_width }}px;
+    --rbps-gap-desktop: {{ section.settings.desktop_gap }}px;
+    --rbps-gap-mobile: {{ section.settings.mobile_gap }}px;
+    --rbps-padding-top: {{ section.settings.padding_top }}px;
+    --rbps-padding-bottom: {{ section.settings.padding_bottom }}px;
+  "
+  data-rbps-section
+>
+  <div class="rbps__inner">
+    {% for block in section.blocks %}
+      {% liquid
+        assign image_left = false
+        if block.settings.layout == 'image_left'
+          assign image_left = true
+        endif
+      %}
+
+      <article
+        class="rbps__slide {% if image_left %}rbps__slide--image-left{% else %}rbps__slide--image-right{% endif %}"
+        data-rbps-slide
+        {{ block.shopify_attributes }}
+      >
+        <div class="rbps__slide-bg"></div>
+
+        <div
+          class="rbps__slide-grid"
+          style="background: radial-gradient(73.61% 539.32% at 127.29% 73.12%, #271D0E 0%, #050504 100%);"
+        >
+          <div class="rbps__media-wrap">
+            <div class="rbps__media rbps__animate rbps__animate--media" data-rbps-anim="media">
+              {% if block.settings.image != blank %}
+                {{
+                  block.settings.image
+                  | image_url: width: 1600
+                  | image_tag:
+                    loading: 'lazy',
+                    widths: '400, 600, 800, 1000, 1200, 1400, 1600',
+                    sizes: '(max-width: 749px) 78vw, 532px',
+                    class: 'rbps__image',
+                    alt: block.settings.heading | escape
+                }}
+              {% else %}
+                {{ 'image' | placeholder_svg_tag: 'rbps__image rbps__image--placeholder' }}
+              {% endif %}
+              <div class="rbps__image-overlay"></div>
+            </div>
+          </div>
+
+          <div class="rbps__content-wrap">
+            <div class="rbps__content">
+              {% if block.settings.heading != blank %}
+                <h2 class="rbps__heading rbps__animate rbps__animate--heading" data-rbps-anim="heading">
+                  {{ block.settings.heading }}
+                </h2>
+              {% endif %}
+
+              {% if block.settings.text != blank %}
+                <div class="rbps__text rte rbps__animate rbps__animate--text" data-rbps-anim="text">
+                  {{ block.settings.text }}
+                </div>
+              {% endif %}
+
+              {% if block.settings.button_label != blank and block.settings.button_link != blank %}
+                <div class="rbps__button-wrap rbps__animate rbps__animate--button" data-rbps-anim="button">
+                  <a href="{{ block.settings.button_link }}" class="rbps__button">
+                    {{ block.settings.button_label }}
+                  </a>
+                </div>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </article>
+    {% endfor %}
+  </div>
+</section>
+
+<style>
+  #{{ section_id }} {
+    position: relative;
+    overflow: hidden;
+    padding-top: var(--rbps-padding-top);
+    padding-bottom: var(--rbps-padding-bottom);
+    background: #050504;
+  }
+
+  #{{ section_id }} .rbps__inner {
+    width: min(100%, var(--rbps-section-max-width));
+    margin: 0 auto;
+  }
+
+  #{{ section_id }} .rbps__slide {
+    position: relative;
+    overflow: hidden;
+    min-height: var(--rbps-slide-min-height-desktop);
+    border-top: 1px solid var(--rbps-border-color);
+    --rbps-progress: 0;
+    --rbps-eased: 0;
+  }
+
+  #{{ section_id }} .rbps__slide:last-child {
+    border-bottom: 1px solid var(--rbps-border-color);
+  }
+
+  #{{ section_id }} .rbps__slide-bg {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    background:
+      radial-gradient(77.47% 561.61% at 127.29% 73.12%, rgba(39, 29, 14, 0) 0%, #050504 100%),
+      linear-gradient(180deg, var(--rbps-bg-start) 0%, var(--rbps-bg-end) 100%);
+    opacity: calc(0.65 + (var(--rbps-eased) * 0.35));
+    transform: scale(calc(1.06 - (var(--rbps-eased) * 0.06)));
+    transition: opacity 0.18s linear, transform 0.18s linear;
+    will-change: opacity, transform;
+  }
+
+  #{{ section_id }} .rbps__slide-grid {
+    position: relative;
+    z-index: 1;
+    min-height: var(--rbps-slide-min-height-desktop);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+    gap: var(--rbps-gap-desktop);
+    padding: 48px 32px;
+  }
+
+  #{{ section_id }} .rbps__slide--image-left .rbps__media-wrap { order: 1; }
+  #{{ section_id }} .rbps__slide--image-left .rbps__content-wrap { order: 2; }
+  #{{ section_id }} .rbps__slide--image-right .rbps__media-wrap { order: 2; }
+  #{{ section_id }} .rbps__slide--image-right .rbps__content-wrap { order: 1; }
+
+  #{{ section_id }} .rbps__media-wrap {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    perspective: 1200px;
+  }
+
+  #{{ section_id }} .rbps__media {
+    position: relative;
+    width: var(--rbps-image-size-desktop);
+    height: var(--rbps-image-size-desktop);
+    max-width: 100%;
+    border-radius: var(--rbps-image-radius);
+    overflow: hidden;
+    background: #0a0907;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.35);
+    will-change: transform, opacity;
+    transition: transform 0.18s linear, opacity 0.18s linear, box-shadow 0.18s linear;
+  }
+
+  #{{ section_id }} .rbps__image {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: cover;
+    transform: scale(calc(1.12 - (var(--rbps-eased) * 0.12)));
+    transition: transform 0.18s linear;
+    will-change: transform;
+  }
+
+  #{{ section_id }} .rbps__image-overlay {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 1;
+    border-radius: inherit;
+    background: radial-gradient(
+      52.48% 50% at 50% 50%,
+      rgba(0, 0, 0, 0) 0%,
+      rgba(0, 0, 0, var(--rbps-overlay-opacity)) 100%
+    );
+    opacity: calc(1 - (var(--rbps-eased) * 0.18));
+    transition: opacity 0.18s linear;
+  }
+
+  #{{ section_id }} .rbps__content-wrap {
+    display: flex;
+    align-items: center;
+  }
+
+  #{{ section_id }} .rbps__slide--image-left .rbps__content-wrap,
+  #{{ section_id }} .rbps__slide--image-right .rbps__content-wrap {
+    justify-content: space-around;
+    text-align: left;
+  }
+
+  #{{ section_id }} .rbps__content {
+    max-width: var(--rbps-content-width);
+  }
+
+  #{{ section_id }} .rbps__animate {
+    will-change: transform, opacity, filter;
+    transition: transform 0.18s linear, opacity 0.18s linear, filter 0.18s linear;
+  }
+
+  /* Base opacity reveal */
+  #{{ section_id }} .rbps__animate--media,
+  #{{ section_id }} .rbps__animate--heading,
+  #{{ section_id }} .rbps__animate--text,
+  #{{ section_id }} .rbps__animate--button {
+    opacity: calc(0.06 + (var(--rbps-eased) * 0.94));
+  }
+
+  /* Image-left desktop animation */
+  #{{ section_id }} .rbps__slide--image-left .rbps__animate--media {
+    transform:
+      translate3d(calc((1 - var(--rbps-eased)) * -90px), 0, 0)
+      scale(calc(0.78 + (var(--rbps-eased) * 0.22)))
+      rotate(calc((1 - var(--rbps-eased)) * -5deg));
+    box-shadow: 0 22px 70px rgba(0,0,0,calc(0.18 + (var(--rbps-eased) * 0.24)));
+  }
+
+  #{{ section_id }} .rbps__slide--image-left .rbps__animate--heading {
+    transform:
+      translate3d(calc((1 - var(--rbps-eased)) * 90px), 0, 0)
+      scale(calc(0.92 + (var(--rbps-eased) * 0.08)));
+    filter: blur(calc((1 - var(--rbps-eased)) * 2px));
+  }
+
+  #{{ section_id }} .rbps__slide--image-left .rbps__animate--text {
+    transform: translate3d(calc((1 - var(--rbps-eased)) * 70px), 0, 0);
+    filter: blur(calc((1 - var(--rbps-eased)) * 1.5px));
+  }
+
+  #{{ section_id }} .rbps__slide--image-left .rbps__animate--button {
+    transform: translate3d(calc((1 - var(--rbps-eased)) * 55px), 0, 0);
+  }
+
+  /* Image-right desktop animation */
+  #{{ section_id }} .rbps__slide--image-right .rbps__animate--media {
+    transform:
+      translate3d(calc((1 - var(--rbps-eased)) * 90px), 0, 0)
+      scale(calc(0.78 + (var(--rbps-eased) * 0.22)))
+      rotate(calc((1 - var(--rbps-eased)) * 5deg));
+    box-shadow: 0 22px 70px rgba(0,0,0,calc(0.18 + (var(--rbps-eased) * 0.24)));
+  }
+
+  #{{ section_id }} .rbps__slide--image-right .rbps__animate--heading {
+    transform:
+      translate3d(calc((1 - var(--rbps-eased)) * -90px), 0, 0)
+      scale(calc(0.92 + (var(--rbps-eased) * 0.08)));
+    filter: blur(calc((1 - var(--rbps-eased)) * 2px));
+  }
+
+  #{{ section_id }} .rbps__slide--image-right .rbps__animate--text {
+    transform: translate3d(calc((1 - var(--rbps-eased)) * -70px), 0, 0);
+    filter: blur(calc((1 - var(--rbps-eased)) * 1.5px));
+  }
+
+  #{{ section_id }} .rbps__slide--image-right .rbps__animate--button {
+    transform: translate3d(calc((1 - var(--rbps-eased)) * -55px), 0, 0);
+  }
+
+  #{{ section_id }} .rbps__heading {
+    margin: 0 0 18px;
+    color: var(--rbps-heading-color);
+    font-family: "Bethany Elingston", serif;
+    font-weight: 400;
+    font-style: normal;
+    font-size: var(--rbps-heading-size-desktop);
+    line-height: 1;
+    letter-spacing: 0;
+  }
+
+  #{{ section_id }} .rbps__text,
+  #{{ section_id }} .rbps__text p {
+    margin: 0;
+    color: var(--rbps-text-color);
+    font-family: "Satoshi", sans-serif;
+    font-weight: 400;
+    font-size: var(--rbps-text-size-desktop);
+    line-height: 1.35;
+    letter-spacing: 0;
+  }
+
+  #{{ section_id }} .rbps__text p + p {
+    margin-top: 10px;
+  }
+
+  #{{ section_id }} .rbps__button-wrap {
+    margin-top: 24px;
+  }
+
+  #{{ section_id }} .rbps__button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 46px;
+    padding: 12px 22px;
+    border-radius: 999px;
+    text-decoration: none;
+    color: #fff;
+    border: 1px solid rgba(255,255,255,0.16);
+    background: rgba(255,255,255,0.06);
+    transition: transform .3s ease, background .3s ease, border-color .3s ease;
+  }
+
+  #{{ section_id }} .rbps__button:hover {
+    transform: translateY(-2px);
+    background: rgba(255,255,255,0.12);
+    border-color: rgba(255,255,255,0.24);
+  }
+
+  @media screen and (max-width: 749px) {
+    #{{ section_id }} .rbps__slide,
+    #{{ section_id }} .rbps__slide-grid {
+      min-height: var(--rbps-slide-min-height-mobile);
+    }
+
+    #{{ section_id }} .rbps__slide-grid {
+      grid-template-columns: 1fr;
+      gap: var(--rbps-gap-mobile);
+      padding: 32px 18px;
+    }
+
+    #{{ section_id }} .rbps__slide--image-left .rbps__media-wrap,
+    #{{ section_id }} .rbps__slide--image-right .rbps__media-wrap {
+      order: 1;
+    }
+
+    #{{ section_id }} .rbps__slide--image-left .rbps__content-wrap,
+    #{{ section_id }} .rbps__slide--image-right .rbps__content-wrap {
+      order: 2;
+      justify-content: center;
+      text-align: center;
+    }
+
+    #{{ section_id }} .rbps__media {
+      width: min(100%, var(--rbps-image-size-mobile));
+      height: min(100vw - 40px, var(--rbps-image-size-mobile));
+    }
+
+    #{{ section_id }} .rbps__content {
+      max-width: 100%;
+    }
+
+    #{{ section_id }} .rbps__heading {
+      font-size: var(--rbps-heading-size-mobile);
+      margin-bottom: 14px;
+    }
+
+    #{{ section_id }} .rbps__text,
+    #{{ section_id }} .rbps__text p {
+      font-size: var(--rbps-text-size-mobile);
+      line-height: 1.45;
+    }
+
+    #{{ section_id }} .rbps__slide--image-left .rbps__animate--media,
+    #{{ section_id }} .rbps__slide--image-right .rbps__animate--media {
+      transform:
+        translate3d(0, calc((1 - var(--rbps-eased)) * 56px), 0)
+        scale(calc(0.82 + (var(--rbps-eased) * 0.18)));
+    }
+
+    #{{ section_id }} .rbps__slide--image-left .rbps__animate--heading,
+    #{{ section_id }} .rbps__slide--image-right .rbps__animate--heading {
+      transform:
+        translate3d(0, calc((1 - var(--rbps-eased)) * 46px), 0)
+        scale(calc(0.94 + (var(--rbps-eased) * 0.06)));
+      filter: blur(calc((1 - var(--rbps-eased)) * 1.5px));
+    }
+
+    #{{ section_id }} .rbps__slide--image-left .rbps__animate--text,
+    #{{ section_id }} .rbps__slide--image-right .rbps__animate--text {
+      transform: translate3d(0, calc((1 - var(--rbps-eased)) * 34px), 0);
+      filter: blur(calc((1 - var(--rbps-eased)) * 1px));
+    }
+
+    #{{ section_id }} .rbps__slide--image-left .rbps__animate--button,
+    #{{ section_id }} .rbps__slide--image-right .rbps__animate--button {
+      transform: translate3d(0, calc((1 - var(--rbps-eased)) * 28px), 0);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    #{{ section_id }} .rbps__slide {
+      --rbps-progress: 1 !important;
+      --rbps-eased: 1 !important;
+    }
+
+    #{{ section_id }} .rbps__slide-bg,
+    #{{ section_id }} .rbps__animate,
+    #{{ section_id }} .rbps__image,
+    #{{ section_id }} .rbps__image-overlay {
+      transition: none !important;
+      transform: none !important;
+      opacity: 1 !important;
+      filter: none !important;
+    }
+  }
+</style>
+
+<script>
+(function () {
+  var SECTION_ID = '{{ section_id }}';
+
+  function clamp(value, min, max) {
+    return Math.min(Math.max(value, min), max);
+  }
+
+  function easeOutCubic(x) {
+    return 1 - Math.pow(1 - x, 3);
+  }
+
+  function init() {
+    var section = document.getElementById(SECTION_ID);
+    if (!section) return;
+
+    var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var slides = Array.prototype.slice.call(section.querySelectorAll('[data-rbps-slide]'));
+    if (!slides.length) return;
+
+    if (reduceMotion) {
+      slides.forEach(function (slide) {
+        slide.style.setProperty('--rbps-progress', '1');
+        slide.style.setProperty('--rbps-eased', '1');
+      });
+      return;
+    }
+
+    var ticking = false;
+
+    function updateSlide(slide) {
+      var rect = slide.getBoundingClientRect();
+      var vh = window.innerHeight || document.documentElement.clientHeight;
+
+      /* Progress starts before the slide fully enters,
+         peaks while centered, then completes as it leaves */
+      var start = vh * 0.92;
+      var end = -rect.height * 0.2;
+      var raw = (start - rect.top) / (start - end);
+      var progress = clamp(raw, 0, 1);
+      var eased = easeOutCubic(progress);
+
+      slide.style.setProperty('--rbps-progress', progress.toFixed(4));
+      slide.style.setProperty('--rbps-eased', eased.toFixed(4));
+    }
+
+    function updateAll() {
+      slides.forEach(updateSlide);
+      ticking = false;
+    }
+
+    function requestTick() {
+      if (ticking) return;
+      ticking = true;
+      window.requestAnimationFrame(updateAll);
+    }
+
+    updateAll();
+
+    window.addEventListener('scroll', requestTick, { passive: true });
+    window.addEventListener('resize', requestTick);
+    window.addEventListener('orientationchange', requestTick);
+
+    if ('IntersectionObserver' in window) {
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting) requestTick();
+        });
+      }, {
+        threshold: [0, 0.15, 0.35, 0.6, 0.85, 1]
+      });
+
+      slides.forEach(function (slide) {
+        io.observe(slide);
+      });
+    }
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+})();
+</script>
+
+{% schema %}
+{
+  "name": "Rare biblio slider",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Section width and spacing"
+    },
+    {
+      "type": "range",
+      "id": "section_max_width",
+      "label": "Section max width",
+      "min": 1000,
+      "max": 1600,
+      "step": 20,
+      "default": 1440,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Top padding",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "default": 0,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Bottom padding",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "default": 0,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "desktop_gap",
+      "label": "Desktop gap",
+      "min": 20,
+      "max": 120,
+      "step": 4,
+      "default": 48,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "mobile_gap",
+      "label": "Mobile gap",
+      "min": 12,
+      "max": 60,
+      "step": 4,
+      "default": 24,
+      "unit": "px"
+    },
+    {
+      "type": "header",
+      "content": "Slide sizing"
+    },
+    {
+      "type": "range",
+      "id": "slide_height_desktop",
+      "label": "Desktop slide height",
+      "min": 320,
+      "max": 700,
+      "step": 10,
+      "default": 340,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "slide_height_mobile",
+      "label": "Mobile slide height",
+      "min": 420,
+      "max": 900,
+      "step": 10,
+      "default": 520,
+      "unit": "px"
+    },
+    {
+      "type": "header",
+      "content": "Image"
+    },
+    {
+      "type": "range",
+      "id": "image_size_desktop",
+      "label": "Desktop image size",
+      "min": 280,
+      "max": 640,
+      "step": 4,
+      "default": 532,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "image_size_mobile",
+      "label": "Mobile image size",
+      "min": 180,
+      "max": 320,
+      "step": 4,
+      "default": 240,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "image_radius",
+      "label": "Image radius",
+      "min": 500,
+      "max": 1500,
+      "step": 10,
+      "default": 1370,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "image_overlay_opacity",
+      "label": "Image overlay darkness",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "default": 100,
+      "unit": "%"
+    },
+    {
+      "type": "header",
+      "content": "Text"
+    },
+    {
+      "type": "range",
+      "id": "content_width",
+      "label": "Text width",
+      "min": 260,
+      "max": 600,
+      "step": 10,
+      "default": 380,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "heading_size_desktop",
+      "label": "Desktop heading size",
+      "min": 28,
+      "max": 72,
+      "step": 2,
+      "default": 50,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "heading_size_mobile",
+      "label": "Mobile heading size",
+      "min": 24,
+      "max": 48,
+      "step": 2,
+      "default": 34,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "text_size_desktop",
+      "label": "Desktop text size",
+      "min": 14,
+      "max": 28,
+      "step": 1,
+      "default": 24,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "text_size_mobile",
+      "label": "Mobile text size",
+      "min": 13,
+      "max": 20,
+      "step": 1,
+      "default": 16,
+      "unit": "px"
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "bg_start",
+      "label": "Background start",
+      "default": "#271D0E"
+    },
+    {
+      "type": "color",
+      "id": "bg_end",
+      "label": "Background end",
+      "default": "#050504"
+    },
+    {
+      "type": "color",
+      "id": "border_color",
+      "label": "Border color",
+      "default": "#3A6EA5"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading color",
+      "default": "#F5EFE6"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#D7D0C6"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "slide",
+      "name": "Slide",
+      "settings": [
+        {
+          "type": "select",
+          "id": "layout",
+          "label": "Layout",
+          "default": "image_left",
+          "options": [
+            { "value": "image_left", "label": "Image left" },
+            { "value": "image_right", "label": "Image right" }
+          ]
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image"
+        },
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Heading",
+          "default": "Leather Selection"
+        },
+        {
+          "type": "richtext",
+          "id": "text",
+          "label": "Text",
+          "default": "<p>Welcome to Rare Biblio, the premier destination for bibliophiles and book lovers who appreciate timeless craftsmanship.</p>"
+        },
+        {
+          "type": "text",
+          "id": "button_label",
+          "label": "Button label"
+        },
+        {
+          "type": "url",
+          "id": "button_link",
+          "label": "Button link"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Rare biblio parallax slider",
+      "blocks": [
+        { "type": "slide" },
+        { "type": "slide" },
+        { "type": "slide" },
+        { "type": "slide" }
+      ]
+    }
+  ]
+}
+{% endschema %} {% endcomment %}
+{% comment %} 
+{% liquid
+  assign section_id = 'rb-parallax-slider-' | append: section.id
+%}
+
+<section
+  id="{{ section_id }}"
+  class="rbps"
+  style="
+    --rbps-bg-start: {{ section.settings.bg_start }};
+    --rbps-bg-end: {{ section.settings.bg_end }};
+    --rbps-border-color: {{ section.settings.border_color }};
+    --rbps-heading-color: {{ section.settings.heading_color }};
+    --rbps-text-color: {{ section.settings.text_color }};
+    --rbps-overlay-opacity: {{ section.settings.image_overlay_opacity | divided_by: 100.0 }};
+    --rbps-heading-size-desktop: {{ section.settings.heading_size_desktop }}px;
+    --rbps-heading-size-mobile: {{ section.settings.heading_size_mobile }}px;
+    --rbps-text-size-desktop: {{ section.settings.text_size_desktop }}px;
+    --rbps-text-size-mobile: {{ section.settings.text_size_mobile }}px;
+    --rbps-slide-min-height-desktop: {{ section.settings.slide_height_desktop }}px;
+    --rbps-slide-min-height-mobile: {{ section.settings.slide_height_mobile }}px;
+    --rbps-image-size-desktop: {{ section.settings.image_size_desktop }}px;
+    --rbps-image-size-mobile: {{ section.settings.image_size_mobile }}px;
+    --rbps-image-radius: {{ section.settings.image_radius }}px;
+    --rbps-content-width: {{ section.settings.content_width }}px;
+    --rbps-section-max-width: {{ section.settings.section_max_width }}px;
+    --rbps-gap-desktop: {{ section.settings.desktop_gap }}px;
+    --rbps-gap-mobile: {{ section.settings.mobile_gap }}px;
+    --rbps-padding-top: {{ section.settings.padding_top }}px;
+    --rbps-padding-bottom: {{ section.settings.padding_bottom }}px;
+  "
+  data-rbps-section
+>
+  <div class="rbps__inner">
+    {% for block in section.blocks %}
+      {% liquid
+        assign image_left = false
+        if block.settings.layout == 'image_left'
+          assign image_left = true
+        endif
+      %}
+
+      <article
+        class="rbps__slide {% if image_left %}rbps__slide--image-left{% else %}rbps__slide--image-right{% endif %}"
+        data-rbps-slide
+        {{ block.shopify_attributes }}
+      >
+        <div class="rbps__slide-bg"></div>
+
+        {%- comment -%}
+          FIX 1: Removed hardcoded inline background gradient from .rbps__slide-grid.
+          The gradient is now driven by CSS classes (.rbps__slide--image-left / --image-right),
+          matching the Figma spec where odd slides use #271D0E→#050504 and even use transparent→#050504.
+        {%- endcomment -%}
+        <div class="rbps__slide-grid">
+          <div class="rbps__media-wrap">
+            <div class="rbps__media rbps__animate rbps__animate--media" data-rbps-anim="media">
+              {% if block.settings.image != blank %}
+                {{
+                  block.settings.image
+                  | image_url: width: 1600
+                  | image_tag:
+                    loading: 'lazy',
+                    widths: '400, 600, 800, 1000, 1200, 1400, 1600',
+                    sizes: '(max-width: 749px) 78vw, 532px',
+                    class: 'rbps__image',
+                    alt: block.settings.heading | escape
+                }}
+              {% else %}
+                {{ 'image' | placeholder_svg_tag: 'rbps__image rbps__image--placeholder' }}
+              {% endif %}
+              <div class="rbps__image-overlay"></div>
+            </div>
+          </div>
+
+          <div class="rbps__content-wrap">
+            <div class="rbps__content">
+              {% if block.settings.heading != blank %}
+                <h2 class="rbps__heading rbps__animate rbps__animate--heading" data-rbps-anim="heading">
+                  {{ block.settings.heading }}
+                </h2>
+              {% endif %}
+
+              {% if block.settings.text != blank %}
+                <div class="rbps__text rte rbps__animate rbps__animate--text" data-rbps-anim="text">
+                  {{ block.settings.text }}
+                </div>
+              {% endif %}
+
+              {% if block.settings.button_label != blank and block.settings.button_link != blank %}
+                <div class="rbps__button-wrap rbps__animate rbps__animate--button" data-rbps-anim="button">
+                  <a href="{{ block.settings.button_link }}" class="rbps__button">
+                    {{ block.settings.button_label }}
+                  </a>
+                </div>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </article>
+    {% endfor %}
+  </div>
+</section>
+
+<style>
+  #{{ section_id }} {
+    position: relative;
+    overflow: hidden;
+    padding-top: var(--rbps-padding-top);
+    padding-bottom: var(--rbps-padding-bottom);
+    background: #050504;
+  }
+
+  #{{ section_id }} .rbps__inner {
+    width: min(100%, var(--rbps-section-max-width));
+    margin: 0 auto;
+  }
+
+  #{{ section_id }} .rbps__slide {
+    position: relative;
+    overflow: hidden;
+    min-height: var(--rbps-slide-min-height-desktop);
+    /* FIX 2: --rbps-border-color is now uncommented above, so borders render correctly */
+    border-top: 1px solid var(--rbps-border-color);
+    --rbps-progress: 0;
+    --rbps-eased: 0;
+  }
+
+  #{{ section_id }} .rbps__slide:last-child {
+    border-bottom: 1px solid var(--rbps-border-color);
+  }
+
+  #{{ section_id }} .rbps__slide-bg {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    background:
+      radial-gradient(77.47% 561.61% at 127.29% 73.12%, rgba(39, 29, 14, 0) 0%, #050504 100%),
+      linear-gradient(180deg, var(--rbps-bg-start) 0%, var(--rbps-bg-end) 100%);
+    opacity: calc(0.65 + (var(--rbps-eased) * 0.35));
+    transform: scale(calc(1.06 - (var(--rbps-eased) * 0.06)));
+    transition: opacity 0.18s linear, transform 0.18s linear;
+    will-change: opacity, transform;
+  }
+
+  /* ─────────────────────────────────────────────────────────────
+     FIX 1: Layout-conditional background gradients on the grid.
+     image-left  → warm dark vignette  (#271D0E → #050504)  per Figma "Frame 1618873533/1618873539"
+     image-right → cool transparent    (transparent → #050504) per Figma "Frame 1618870024/1618873538"
+     ───────────────────────────────────────────────────────────── */
+  #{{ section_id }} .rbps__slide--image-left .rbps__slide-grid {
+    background: radial-gradient(73.61% 539.32% at 127.29% 73.12%, #271D0E 0%, #050504 100%);
+  }
+
+  #{{ section_id }} .rbps__slide--image-right .rbps__slide-grid {
+    background: radial-gradient(77.47% 561.61% at 127.29% 73.12%, rgba(39, 29, 14, 0) 0%, #050504 100%);
+  }
+
+  #{{ section_id }} .rbps__slide-grid {
+    position: relative;
+    z-index: 1;
+    min-height: var(--rbps-slide-min-height-desktop);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+    gap: var(--rbps-gap-desktop);
+    padding: 48px 32px;
+  }
+
+  #{{ section_id }} .rbps__slide--image-left .rbps__media-wrap { order: 1; }
+  #{{ section_id }} .rbps__slide--image-left .rbps__content-wrap { order: 2; }
+  #{{ section_id }} .rbps__slide--image-right .rbps__media-wrap { order: 2; }
+  #{{ section_id }} .rbps__slide--image-right .rbps__content-wrap { order: 1; }
+
+  #{{ section_id }} .rbps__media-wrap {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    perspective: 1200px;
+  }
+
+  #{{ section_id }} .rbps__media {
+    position: relative;
+    /* FIX 3: Explicit square dimensions ensure the border-radius produces a true circle.
+       Previously relying on both width+height CSS vars was correct but ensure the image
+       inside is also constrained — object-fit: cover handles that below. */
+    width: var(--rbps-image-size-desktop);
+    height: var(--rbps-image-size-desktop);
+    max-width: 100%;
+    border-radius: var(--rbps-image-radius);
+    overflow: hidden;
+    background: #0a0907;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.35);
+    will-change: transform, opacity;
+    transition: transform 0.18s linear, opacity 0.18s linear, box-shadow 0.18s linear;
+  }
+
+  #{{ section_id }} .rbps__image {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: cover;
+    /* Ensure image fills the circle container regardless of source aspect ratio */
+    object-position: center center;
+    transform: scale(calc(1.12 - (var(--rbps-eased) * 0.12)));
+    transition: transform 0.18s linear;
+    will-change: transform;
+  }
+
+  #{{ section_id }} .rbps__image-overlay {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 1;
+    border-radius: inherit;
+    background: radial-gradient(
+      52.48% 50% at 50% 50%,
+      rgba(0, 0, 0, 0) 0%,
+      rgba(0, 0, 0, var(--rbps-overlay-opacity)) 100%
+    );
+    opacity: calc(1 - (var(--rbps-eased) * 0.18));
+    transition: opacity 0.18s linear;
+  }
+
+  #{{ section_id }} .rbps__content-wrap {
+    display: flex;
+    align-items: center;
+  }
+
+  /* FIX 5: Match Figma content offset — image-right text starts at ~209px from left (~14.5%),
+     image-left text starts at ~755px (~52%). Using padding to push content inward. */
+  #{{ section_id }} .rbps__slide--image-left .rbps__content-wrap {
+    justify-content: flex-start;
+    text-align: left;
+    padding-left: 40px;
+  }
+
+  #{{ section_id }} .rbps__slide--image-right .rbps__content-wrap {
+    justify-content: flex-start;
+    text-align: left;
+    padding-left: 80px;
+  }
+
+  #{{ section_id }} .rbps__content {
+    max-width: var(--rbps-content-width);
+  }
+
+  #{{ section_id }} .rbps__animate {
+    will-change: transform, opacity, filter;
+    transition: transform 0.18s linear, opacity 0.18s linear, filter 0.18s linear;
+  }
+
+  /* Base opacity reveal */
+  #{{ section_id }} .rbps__animate--media,
+  #{{ section_id }} .rbps__animate--heading,
+  #{{ section_id }} .rbps__animate--text,
+  #{{ section_id }} .rbps__animate--button {
+    opacity: calc(0.06 + (var(--rbps-eased) * 0.94));
+  }
+
+  /* Image-left desktop animation */
+  #{{ section_id }} .rbps__slide--image-left .rbps__animate--media {
+    transform:
+      translate3d(calc((1 - var(--rbps-eased)) * -90px), 0, 0)
+      scale(calc(0.78 + (var(--rbps-eased) * 0.22)))
+      rotate(calc((1 - var(--rbps-eased)) * -5deg));
+    box-shadow: 0 22px 70px rgba(0,0,0,calc(0.18 + (var(--rbps-eased) * 0.24)));
+  }
+
+  #{{ section_id }} .rbps__slide--image-left .rbps__animate--heading {
+    transform:
+      translate3d(calc((1 - var(--rbps-eased)) * 90px), 0, 0)
+      scale(calc(0.92 + (var(--rbps-eased) * 0.08)));
+    filter: blur(calc((1 - var(--rbps-eased)) * 2px));
+  }
+
+  #{{ section_id }} .rbps__slide--image-left .rbps__animate--text {
+    transform: translate3d(calc((1 - var(--rbps-eased)) * 70px), 0, 0);
+    filter: blur(calc((1 - var(--rbps-eased)) * 1.5px));
+  }
+
+  #{{ section_id }} .rbps__slide--image-left .rbps__animate--button {
+    transform: translate3d(calc((1 - var(--rbps-eased)) * 55px), 0, 0);
+  }
+
+  /* Image-right desktop animation */
+  #{{ section_id }} .rbps__slide--image-right .rbps__animate--media {
+    transform:
+      translate3d(calc((1 - var(--rbps-eased)) * 90px), 0, 0)
+      scale(calc(0.78 + (var(--rbps-eased) * 0.22)))
+      rotate(calc((1 - var(--rbps-eased)) * 5deg));
+    box-shadow: 0 22px 70px rgba(0,0,0,calc(0.18 + (var(--rbps-eased) * 0.24)));
+  }
+
+  #{{ section_id }} .rbps__slide--image-right .rbps__animate--heading {
+    transform:
+      translate3d(calc((1 - var(--rbps-eased)) * -90px), 0, 0)
+      scale(calc(0.92 + (var(--rbps-eased) * 0.08)));
+    filter: blur(calc((1 - var(--rbps-eased)) * 2px));
+  }
+
+  #{{ section_id }} .rbps__slide--image-right .rbps__animate--text {
+    transform: translate3d(calc((1 - var(--rbps-eased)) * -70px), 0, 0);
+    filter: blur(calc((1 - var(--rbps-eased)) * 1.5px));
+  }
+
+  #{{ section_id }} .rbps__slide--image-right .rbps__animate--button {
+    transform: translate3d(calc((1 - var(--rbps-eased)) * -55px), 0, 0);
+  }
+
+  #{{ section_id }} .rbps__heading {
+    margin: 0 0 18px;
+    color: var(--rbps-heading-color);
+    font-family: "Bethany Elingston", serif;
+    font-weight: 400;
+    font-style: normal;
+    font-size: var(--rbps-heading-size-desktop);
+    line-height: 1;
+    letter-spacing: 0;
+  }
+
+  #{{ section_id }} .rbps__text,
+  #{{ section_id }} .rbps__text p {
+    margin: 0;
+    color: var(--rbps-text-color);
+    /* FIX 4: Added opacity: 0.7 to match Figma spec on body text */
+    opacity: 0.7;
+    font-family: "Satoshi", sans-serif;
+    font-weight: 400;
+    font-size: var(--rbps-text-size-desktop);
+    line-height: 1.35;
+    letter-spacing: 0;
+  }
+
+  #{{ section_id }} .rbps__text p + p {
+    margin-top: 10px;
+  }
+
+  #{{ section_id }} .rbps__button-wrap {
+    margin-top: 24px;
+  }
+
+  #{{ section_id }} .rbps__button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 46px;
+    padding: 12px 22px;
+    border-radius: 999px;
+    text-decoration: none;
+    color: #fff;
+    border: 1px solid rgba(255,255,255,0.16);
+    background: rgba(255,255,255,0.06);
+    transition: transform .3s ease, background .3s ease, border-color .3s ease;
+  }
+
+  #{{ section_id }} .rbps__button:hover {
+    transform: translateY(-2px);
+    background: rgba(255,255,255,0.12);
+    border-color: rgba(255,255,255,0.24);
+  }
+
+  @media screen and (max-width: 749px) {
+    #{{ section_id }} .rbps__slide,
+    #{{ section_id }} .rbps__slide-grid {
+      min-height: var(--rbps-slide-min-height-mobile);
+    }
+
+    #{{ section_id }} .rbps__slide-grid {
+      grid-template-columns: 1fr;
+      gap: var(--rbps-gap-mobile);
+      padding: 32px 18px;
+    }
+
+    #{{ section_id }} .rbps__slide--image-left .rbps__media-wrap,
+    #{{ section_id }} .rbps__slide--image-right .rbps__media-wrap {
+      order: 1;
+    }
+
+    #{{ section_id }} .rbps__slide--image-left .rbps__content-wrap,
+    #{{ section_id }} .rbps__slide--image-right .rbps__content-wrap {
+      order: 2;
+      justify-content: center;
+      text-align: center;
+      /* FIX 5: Reset desktop padding offsets on mobile */
+      padding-left: 0;
+    }
+
+    /* FIX 6: Mobile image height fix — use a smaller subtracted value so the
+       constraint actually kicks in on narrow viewports (was 40px, now 36px),
+       and drop the default mobile image size to 220px in the schema below. */
+    #{{ section_id }} .rbps__media {
+      width: min(100%, var(--rbps-image-size-mobile));
+      height: min(calc(100vw - 36px), var(--rbps-image-size-mobile));
+    }
+
+    #{{ section_id }} .rbps__content {
+      max-width: 100%;
+    }
+
+    #{{ section_id }} .rbps__heading {
+      font-size: var(--rbps-heading-size-mobile);
+      margin-bottom: 14px;
+    }
+
+    #{{ section_id }} .rbps__text,
+    #{{ section_id }} .rbps__text p {
+      font-size: var(--rbps-text-size-mobile);
+      line-height: 1.45;
+    }
+
+    #{{ section_id }} .rbps__slide--image-left .rbps__animate--media,
+    #{{ section_id }} .rbps__slide--image-right .rbps__animate--media {
+      transform:
+        translate3d(0, calc((1 - var(--rbps-eased)) * 56px), 0)
+        scale(calc(0.82 + (var(--rbps-eased) * 0.18)));
+    }
+
+    #{{ section_id }} .rbps__slide--image-left .rbps__animate--heading,
+    #{{ section_id }} .rbps__slide--image-right .rbps__animate--heading {
+      transform:
+        translate3d(0, calc((1 - var(--rbps-eased)) * 46px), 0)
+        scale(calc(0.94 + (var(--rbps-eased) * 0.06)));
+      filter: blur(calc((1 - var(--rbps-eased)) * 1.5px));
+    }
+
+    #{{ section_id }} .rbps__slide--image-left .rbps__animate--text,
+    #{{ section_id }} .rbps__slide--image-right .rbps__animate--text {
+      transform: translate3d(0, calc((1 - var(--rbps-eased)) * 34px), 0);
+      filter: blur(calc((1 - var(--rbps-eased)) * 1px));
+    }
+
+    #{{ section_id }} .rbps__slide--image-left .rbps__animate--button,
+    #{{ section_id }} .rbps__slide--image-right .rbps__animate--button {
+      transform: translate3d(0, calc((1 - var(--rbps-eased)) * 28px), 0);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    #{{ section_id }} .rbps__slide {
+      --rbps-progress: 1 !important;
+      --rbps-eased: 1 !important;
+    }
+
+    #{{ section_id }} .rbps__slide-bg,
+    #{{ section_id }} .rbps__animate,
+    #{{ section_id }} .rbps__image,
+    #{{ section_id }} .rbps__image-overlay {
+      transition: none !important;
+      transform: none !important;
+      opacity: 1 !important;
+      filter: none !important;
+    }
+  }
+</style>
+
+<script>
+(function () {
+  var SECTION_ID = '{{ section_id }}';
+
+  function clamp(value, min, max) {
+    return Math.min(Math.max(value, min), max);
+  }
+
+  function easeOutCubic(x) {
+    return 1 - Math.pow(1 - x, 3);
+  }
+
+  function init() {
+    var section = document.getElementById(SECTION_ID);
+    if (!section) return;
+
+    var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var slides = Array.prototype.slice.call(section.querySelectorAll('[data-rbps-slide]'));
+    if (!slides.length) return;
+
+    if (reduceMotion) {
+      slides.forEach(function (slide) {
+        slide.style.setProperty('--rbps-progress', '1');
+        slide.style.setProperty('--rbps-eased', '1');
+      });
+      return;
+    }
+
+    var ticking = false;
+
+    function updateSlide(slide) {
+      var rect = slide.getBoundingClientRect();
+      var vh = window.innerHeight || document.documentElement.clientHeight;
+
+      /* Progress starts before the slide fully enters,
+         peaks while centered, then completes as it leaves */
+      var start = vh * 0.92;
+      var end = -rect.height * 0.2;
+      var raw = (start - rect.top) / (start - end);
+      var progress = clamp(raw, 0, 1);
+      var eased = easeOutCubic(progress);
+
+      slide.style.setProperty('--rbps-progress', progress.toFixed(4));
+      slide.style.setProperty('--rbps-eased', eased.toFixed(4));
+    }
+
+    function updateAll() {
+      slides.forEach(updateSlide);
+      ticking = false;
+    }
+
+    function requestTick() {
+      if (ticking) return;
+      ticking = true;
+      window.requestAnimationFrame(updateAll);
+    }
+
+    updateAll();
+
+    window.addEventListener('scroll', requestTick, { passive: true });
+    window.addEventListener('resize', requestTick);
+    window.addEventListener('orientationchange', requestTick);
+
+    if ('IntersectionObserver' in window) {
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting) requestTick();
+        });
+      }, {
+        threshold: [0, 0.15, 0.35, 0.6, 0.85, 1]
+      });
+
+      slides.forEach(function (slide) {
+        io.observe(slide);
+      });
+    }
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+})();
+</script>
+
+{% schema %}
+{
+  "name": "Rare biblio slider",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Section width and spacing"
+    },
+    {
+      "type": "range",
+      "id": "section_max_width",
+      "label": "Section max width",
+      "min": 1000,
+      "max": 1600,
+      "step": 20,
+      "default": 1440,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Top padding",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "default": 0,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Bottom padding",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "default": 0,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "desktop_gap",
+      "label": "Desktop gap",
+      "min": 20,
+      "max": 120,
+      "step": 4,
+      "default": 48,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "mobile_gap",
+      "label": "Mobile gap",
+      "min": 12,
+      "max": 60,
+      "step": 4,
+      "default": 24,
+      "unit": "px"
+    },
+    {
+      "type": "header",
+      "content": "Slide sizing"
+    },
+    {
+      "type": "range",
+      "id": "slide_height_desktop",
+      "label": "Desktop slide height",
+      "min": 320,
+      "max": 700,
+      "step": 10,
+      "default": 340,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "slide_height_mobile",
+      "label": "Mobile slide height",
+      "min": 420,
+      "max": 900,
+      "step": 10,
+      "default": 520,
+      "unit": "px"
+    },
+    {
+      "type": "header",
+      "content": "Image"
+    },
+    {
+      "type": "range",
+      "id": "image_size_desktop",
+      "label": "Desktop image size",
+      "min": 280,
+      "max": 640,
+      "step": 4,
+      "default": 532,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "image_size_mobile",
+      "label": "Mobile image size",
+      "min": 180,
+      "max": 320,
+      "step": 4,
+      "default": 220,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "image_radius",
+      "label": "Image radius",
+      "min": 500,
+      "max": 1500,
+      "step": 10,
+      "default": 1370,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "image_overlay_opacity",
+      "label": "Image overlay darkness",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "default": 100,
+      "unit": "%"
+    },
+    {
+      "type": "header",
+      "content": "Text"
+    },
+    {
+      "type": "range",
+      "id": "content_width",
+      "label": "Text width",
+      "min": 260,
+      "max": 600,
+      "step": 10,
+      "default": 380,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "heading_size_desktop",
+      "label": "Desktop heading size",
+      "min": 28,
+      "max": 72,
+      "step": 2,
+      "default": 50,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "heading_size_mobile",
+      "label": "Mobile heading size",
+      "min": 24,
+      "max": 48,
+      "step": 2,
+      "default": 34,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "text_size_desktop",
+      "label": "Desktop text size",
+      "min": 14,
+      "max": 28,
+      "step": 1,
+      "default": 24,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "text_size_mobile",
+      "label": "Mobile text size",
+      "min": 13,
+      "max": 20,
+      "step": 1,
+      "default": 16,
+      "unit": "px"
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "bg_start",
+      "label": "Background start",
+      "default": "#271D0E"
+    },
+    {
+      "type": "color",
+      "id": "bg_end",
+      "label": "Background end",
+      "default": "#050504"
+    },
+    {
+      "type": "color",
+      "id": "border_color",
+      "label": "Border color",
+      "default": "#3A6EA5"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading color",
+      "default": "#F5EFE6"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#D7D0C6"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "slide",
+      "name": "Slide",
+      "settings": [
+        {
+          "type": "select",
+          "id": "layout",
+          "label": "Layout",
+          "default": "image_left",
+          "options": [
+            { "value": "image_left", "label": "Image left" },
+            { "value": "image_right", "label": "Image right" }
+          ]
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image"
+        },
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Heading",
+          "default": "Leather Selection"
+        },
+        {
+          "type": "richtext",
+          "id": "text",
+          "label": "Text",
+          "default": "<p>Welcome to Rare Biblio, the premier destination for bibliophiles and book lovers who appreciate timeless craftsmanship.</p>"
+        },
+        {
+          "type": "text",
+          "id": "button_label",
+          "label": "Button label"
+        },
+        {
+          "type": "url",
+          "id": "button_link",
+          "label": "Button link"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Rare biblio parallax slider",
+      "blocks": [
+        { "type": "slide" },
+        { "type": "slide" },
+        { "type": "slide" },
+        { "type": "slide" }
+      ]
+    }
+  ]
+}
+{% endschema %} {% endcomment %}
+
+{% comment %} 
+{% liquid
+  assign section_id = 'rb-parallax-slider-' | append: section.id
+%}
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+
+<section
+  id="{{ section_id }}"
+  class="rbps"
+  style="
+    --rbps-bg-start: {{ section.settings.bg_start }};
+    --rbps-bg-end: {{ section.settings.bg_end }};
+    --rbps-border-color: {{ section.settings.border_color }};
+    --rbps-heading-color: {{ section.settings.heading_color }};
+    --rbps-text-color: {{ section.settings.text_color }};
+    --rbps-overlay-opacity: {{ section.settings.image_overlay_opacity | divided_by: 100.0 }};
+    --rbps-heading-size-desktop: {{ section.settings.heading_size_desktop }}px;
+    --rbps-heading-size-mobile: {{ section.settings.heading_size_mobile }}px;
+    --rbps-text-size-desktop: {{ section.settings.text_size_desktop }}px;
+    --rbps-text-size-mobile: {{ section.settings.text_size_mobile }}px;
+    --rbps-slide-min-height-desktop: {{ section.settings.slide_height_desktop }}px;
+    --rbps-slide-min-height-mobile: {{ section.settings.slide_height_mobile }}px;
+    --rbps-image-size-desktop: {{ section.settings.image_size_desktop }}px;
+    --rbps-image-size-mobile: {{ section.settings.image_size_mobile }}px;
+    --rbps-image-radius: {{ section.settings.image_radius }}px;
+    --rbps-content-width: {{ section.settings.content_width }}px;
+    --rbps-section-max-width: {{ section.settings.section_max_width }}px;
+    --rbps-gap-desktop: {{ section.settings.desktop_gap }}px;
+    --rbps-gap-mobile: {{ section.settings.mobile_gap }}px;
+    --rbps-padding-top: {{ section.settings.padding_top }}px;
+    --rbps-padding-bottom: {{ section.settings.padding_bottom }}px;
+  "
+  data-rbps-section
+>
+  <div class="rbps__container" data-rbps-container>
+    <div class="rbps__inner">
+      {% for block in section.blocks %}
+        {% liquid
+          assign image_left = false
+          if block.settings.layout == 'image_left'
+            assign image_left = true
+          endif
+        %}
+
+        <article
+          class="rbps__slide {% if image_left %}rbps__slide--image-left{% else %}rbps__slide--image-right{% endif %}"
+          data-rbps-slide
+          style="z-index: {{ forloop.index }};"
+          {{ block.shopify_attributes }}
+        >
+          {%- comment -%} 
+            Counter-motion reveal structure:
+            Outer moves from 100% to 0.
+            Reveal (Inner) moves from -100% to 0.
+          {%- endcomment -%}
+          <div class="rbps__outer" data-rbps-outer>
+            <div class="rbps__inner-reveal" data-rbps-reveal>
+              
+              <div class="rbps__slide-bg"></div>
+
+              <div class="rbps__slide-grid">
+                <div class="rbps__media-wrap">
+                  <div class="rbps__media rbps__animate rbps__animate--media" data-rbps-anim="media">
+                    {% if block.settings.image != blank %}
+                      {{
+                        block.settings.image
+                        | image_url: width: 1600
+                        | image_tag:
+                          loading: 'lazy',
+                          widths: '400, 600, 800, 1000, 1200, 1400, 1600',
+                          sizes: '(max-width: 749px) 78vw, 532px',
+                          class: 'rbps__image',
+                          alt: block.settings.heading | escape
+                      }}
+                    {% else %}
+                      {{ 'image' | placeholder_svg_tag: 'rbps__image rbps__image--placeholder' }}
+                    {% endif %}
+                    <div class="rbps__image-overlay"></div>
+                  </div>
+                </div>
+
+                <div class="rbps__content-wrap">
+                  <div class="rbps__content">
+                    {% if block.settings.heading != blank %}
+                      <h2 class="rbps__heading rbps__animate rbps__animate--heading" data-rbps-anim="heading">
+                        {{ block.settings.heading }}
+                      </h2>
+                    {% endif %}
+
+                    {% if block.settings.text != blank %}
+                      <div class="rbps__text rte rbps__animate rbps__animate--text" data-rbps-anim="text">
+                        {{ block.settings.text }}
+                      </div>
+                    {% endif %}
+
+                    {% if block.settings.button_label != blank and block.settings.button_link != blank %}
+                      <div class="rbps__button-wrap rbps__animate rbps__animate--button" data-rbps-anim="button">
+                        <a href="{{ block.settings.button_link }}" class="rbps__button">
+                          {{ block.settings.button_label }}
+                        </a>
+                      </div>
+                    {% endif %}
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </article>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<style>
+  #{{ section_id }} {
+    position: relative;
+    background: #050504;
+    overflow: hidden;
+  }
+
+  #{{ section_id }} .rbps__container {
+    position: relative;
+    height: 100vh;
+    width: 100%;
+  }
+
+  #{{ section_id }} .rbps__inner {
+    width: min(100%, var(--rbps-section-max-width));
+    margin: 0 auto;
+    height: 100%;
+    position: relative;
+  }
+
+  #{{ section_id }} .rbps__slide {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    /* Controlled by GSAP */
+    --rbps-progress: 0;
+    --rbps-eased: 0;
+  }
+
+  /* Counter-motion Wrappers */
+  #{{ section_id }} .rbps__outer {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    position: absolute;
+    top: 0;
+    left: 0;
+    will-change: transform;
+  }
+
+  #{{ section_id }} .rbps__inner-reveal {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    position: absolute;
+    top: 0;
+    left: 0;
+    will-change: transform;
+  }
+
+  /* Background and Content */
+  #{{ section_id }} .rbps__slide-bg {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    background:
+      radial-gradient(77.47% 561.61% at 127.29% 73.12%, rgba(39, 29, 14, 0) 0%, #050504 100%),
+      linear-gradient(180deg, var(--rbps-bg-start) 0%, var(--rbps-bg-end) 100%);
+    opacity: calc(0.45 + (var(--rbps-eased) * 0.55));
+    transform: scale(calc(1.15 - (var(--rbps-eased) * 0.15)));
+    will-change: opacity, transform;
+  }
+
+  #{{ section_id }} .rbps__slide--image-left .rbps__slide-grid {
+    background: radial-gradient(73.61% 539.32% at 127.29% 73.12%, #271D0E 0%, #050504 100%);
+  }
+
+  #{{ section_id }} .rbps__slide--image-right .rbps__slide-grid {
+    background: radial-gradient(77.47% 561.61% at 127.29% 73.12%, rgba(39, 29, 14, 0) 0%, #050504 100%);
+  }
+
+  #{{ section_id }} .rbps__slide-grid {
+    position: relative;
+    z-index: 1;
+    height: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+    gap: var(--rbps-gap-desktop);
+    padding: 48px 32px;
+  }
+
+  #{{ section_id }} .rbps__slide--image-left .rbps__media-wrap { order: 1; }
+  #{{ section_id }} .rbps__slide--image-left .rbps__content-wrap { order: 2; }
+  #{{ section_id }} .rbps__slide--image-right .rbps__media-wrap { order: 2; }
+  #{{ section_id }} .rbps__slide--image-right .rbps__content-wrap { order: 1; }
+
+  #{{ section_id }} .rbps__media-wrap {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    perspective: 1200px;
+  }
+
+  #{{ section_id }} .rbps__media {
+    position: relative;
+    width: var(--rbps-image-size-desktop);
+    height: var(--rbps-image-size-desktop);
+    max-width: 100%;
+    border-radius: var(--rbps-image-radius);
+    overflow: hidden;
+    background: #0a0907;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.35);
+    will-change: transform, opacity;
+  }
+
+  #{{ section_id }} .rbps__image {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: cover;
+    object-position: center center;
+    transform: scale(calc(1.2 - (var(--rbps-eased) * 0.2)));
+    will-change: transform;
+  }
+
+  #{{ section_id }} .rbps__image-overlay {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 1;
+    border-radius: inherit;
+    background: radial-gradient(
+      52.48% 50% at 50% 50%,
+      rgba(0, 0, 0, 0) 0%,
+      rgba(0, 0, 0, var(--rbps-overlay-opacity)) 100%
+    );
+    opacity: calc(1 - (var(--rbps-eased) * 0.3));
+  }
+
+  #{{ section_id }} .rbps__content-wrap {
+    display: flex;
+    align-items: center;
+  }
+
+  #{{ section_id }} .rbps__slide--image-left .rbps__content-wrap {
+    justify-content: flex-start;
+    text-align: left;
+    padding-left: 40px;
+  }
+
+  #{{ section_id }} .rbps__slide--image-right .rbps__content-wrap {
+    justify-content: flex-start;
+    text-align: left;
+    padding-left: 80px;
+  }
+
+  #{{ section_id }} .rbps__content {
+    max-width: var(--rbps-content-width);
+  }
+
+  #{{ section_id }} .rbps__animate {
+    will-change: transform, opacity, filter;
+  }
+
+  #{{ section_id }} .rbps__animate--media,
+  #{{ section_id }} .rbps__animate--heading,
+  #{{ section_id }} .rbps__animate--text,
+  #{{ section_id }} .rbps__animate--button {
+    opacity: calc(0.1 + (var(--rbps-eased) * 0.9));
+  }
+
+  /* Internal Parallax Animations */
+  #{{ section_id }} .rbps__slide--image-left .rbps__animate--media {
+    transform:
+      translate3d(calc((1 - var(--rbps-eased)) * -120px), 0, 0)
+      scale(calc(0.7 + (var(--rbps-eased) * 0.3)))
+      rotate(calc((1 - var(--rbps-eased)) * -8deg));
+  }
+
+  #{{ section_id }} .rbps__slide--image-left .rbps__animate--heading {
+    transform:
+      translate3d(calc((1 - var(--rbps-eased)) * 120px), 0, 0)
+      scale(calc(0.85 + (var(--rbps-eased) * 0.15)));
+    filter: blur(calc((1 - var(--rbps-eased)) * 4px));
+  }
+
+  #{{ section_id }} .rbps__slide--image-left .rbps__animate--text {
+    transform: translate3d(calc((1 - var(--rbps-eased)) * 90px), 0, 0);
+  }
+
+  #{{ section_id }} .rbps__slide--image-right .rbps__animate--media {
+    transform:
+      translate3d(calc((1 - var(--rbps-eased)) * 120px), 0, 0)
+      scale(calc(0.7 + (var(--rbps-eased) * 0.3)))
+      rotate(calc((1 - var(--rbps-eased)) * 8deg));
+  }
+
+  #{{ section_id }} .rbps__slide--image-right .rbps__animate--heading {
+    transform:
+      translate3d(calc((1 - var(--rbps-eased)) * -120px), 0, 0)
+      scale(calc(0.85 + (var(--rbps-eased) * 0.15)));
+    filter: blur(calc((1 - var(--rbps-eased)) * 4px));
+  }
+
+  #{{ section_id }} .rbps__heading {
+    margin: 0 0 18px;
+    color: var(--rbps-heading-color);
+    font-family: "Bethany Elingston", serif;
+    font-weight: 400;
+    font-size: var(--rbps-heading-size-desktop);
+    line-height: 1;
+  }
+
+  #{{ section_id }} .rbps__text,
+  #{{ section_id }} .rbps__text p {
+    margin: 0;
+    color: var(--rbps-text-color);
+    opacity: 0.7;
+    font-family: "Satoshi", sans-serif;
+    font-weight: 400;
+    font-size: var(--rbps-text-size-desktop);
+    line-height: 1.35;
+  }
+
+  #{{ section_id }} .rbps__text p + p { margin-top: 10px; }
+  #{{ section_id }} .rbps__button-wrap { margin-top: 24px; }
+
+  #{{ section_id }} .rbps__button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 46px;
+    padding: 12px 22px;
+    border-radius: 999px;
+    text-decoration: none;
+    color: #fff;
+    border: 1px solid rgba(255,255,255,0.16);
+    background: rgba(255,255,255,0.06);
+    transition: transform .3s ease, background .3s ease, border-color .3s ease;
+  }
+
+  #{{ section_id }} .rbps__button:hover {
+    transform: translateY(-2px);
+    background: rgba(255,255,255,0.12);
+    border-color: rgba(255,255,255,0.24);
+  }
+
+  @media screen and (max-width: 749px) {
+    #{{ section_id }} .rbps__slide-grid {
+      grid-template-columns: 1fr;
+      gap: var(--rbps-gap-mobile);
+      padding: 32px 18px;
+    }
+
+    #{{ section_id }} .rbps__slide--image-left .rbps__content-wrap,
+    #{{ section_id }} .rbps__slide--image-right .rbps__content-wrap {
+      order: 2;
+      justify-content: center;
+      text-align: center;
+      padding-left: 0;
+    }
+
+    #{{ section_id }} .rbps__media {
+      width: min(100%, var(--rbps-image-size-mobile));
+      height: min(calc(100vw - 36px), var(--rbps-image-size-mobile));
+    }
+
+    #{{ section_id }} .rbps__heading { font-size: var(--rbps-heading-size-mobile); }
+    #{{ section_id }} .rbps__text, #{{ section_id }} .rbps__text p { font-size: var(--rbps-text-size-mobile); }
+
+    #{{ section_id }} .rbps__slide--image-left .rbps__animate--media,
+    #{{ section_id }} .rbps__slide--image-right .rbps__animate--media {
+      transform:
+        translate3d(0, calc((1 - var(--rbps-eased)) * 80px), 0)
+        scale(calc(0.8 + (var(--rbps-eased) * 0.2)));
+    }
+  }
+</style>
+
+<script>
+(function () {
+  const SECTION_ID = '{{ section_id }}';
+
+  function init() {
+    const section = document.getElementById(SECTION_ID);
+    if (!section) return;
+
+    gsap.registerPlugin(ScrollTrigger);
+
+    const container = section.querySelector('[data-rbps-container]');
+    const outers = gsap.utils.toArray(section.querySelectorAll('[data-rbps-outer]'));
+    const reveals = gsap.utils.toArray(section.querySelectorAll('[data-rbps-reveal]'));
+    const slides = gsap.utils.toArray(section.querySelectorAll('[data-rbps-slide]'));
+    
+    if (!slides.length) return;
+
+    // Clean up old triggers
+    ScrollTrigger.getAll().forEach(t => {
+      if (t.trigger && t.trigger.closest(`#${SECTION_ID}`)) t.kill();
+    });
+
+    // MASTER TIMELINE: Pins the whole container and sequences the shutter reveal
+    let tl = gsap.timeline({
+      scrollTrigger: {
+        trigger: container,
+        start: "top top",
+        end: () => `+=${slides.length * 100}%`,
+        pin: true,
+        scrub: 1,
+        invalidateOnRefresh: true,
+      }
+    });
+
+    // INITIAL STATE: Stack all shutters out of view except the first
+    gsap.set(outers.slice(1), { yPercent: 100 });
+    gsap.set(reveals.slice(1), { yPercent: -100 });
+
+    slides.forEach((slide, i) => {
+      // Proxy to control the internal parallax (eased variable)
+      const proxy = { progress: i === 0 ? 1 : 0 };
+      
+      // Animation sequence
+      if (i > 0) {
+        // Counter-motion reveal: Shutter opens from bottom while content scrolls up inside
+        tl.to([outers[i], reveals[i]], {
+          yPercent: 0,
+          duration: 1.25,
+          ease: "power1.inOut"
+        }, i === 1 ? 0 : "-=0.75");
+      }
+
+      // Sync the internal scale/blur/offset vars with the timeline
+      tl.to(proxy, {
+        progress: 1,
+        duration: 1.25,
+        ease: "power1.inOut",
+        onUpdate: () => {
+          slide.style.setProperty('--rbps-eased', proxy.progress.toFixed(4));
+        }
+      }, "<");
+
+      // Optional: Dim the current slide as it's covered by the next one
+      if (i < slides.length - 1) {
+        tl.to(slide, {
+          opacity: 0.3,
+          scale: 0.95,
+          duration: 0.8,
+          ease: "power1.inOut"
+        }, ">-0.4");
+      }
+    });
+
+    ScrollTrigger.refresh();
+  }
+
+  document.addEventListener('shopify:section:load', init);
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+
+  window.addEventListener('resize', () => {
+    ScrollTrigger.refresh();
+  });
+})();
+</script>
+
+{% schema %}
+{
+  "name": "Rare biblio slider",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Section width and spacing"
+    },
+    {
+      "type": "range",
+      "id": "section_max_width",
+      "label": "Section max width",
+      "min": 1000,
+      "max": 1600,
+      "step": 20,
+      "default": 1440,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Top padding",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "default": 0,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Bottom padding",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "default": 0,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "desktop_gap",
+      "label": "Desktop gap",
+      "min": 20,
+      "max": 120,
+      "step": 4,
+      "default": 48,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "mobile_gap",
+      "label": "Mobile gap",
+      "min": 12,
+      "max": 60,
+      "step": 4,
+      "default": 24,
+      "unit": "px"
+    },
+    {
+      "type": "header",
+      "content": "Slide sizing"
+    },
+    {
+      "type": "range",
+      "id": "slide_height_desktop",
+      "label": "Desktop slide height",
+      "min": 320,
+      "max": 900,
+      "step": 10,
+      "default": 600,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "slide_height_mobile",
+      "label": "Mobile slide height",
+      "min": 420,
+      "max": 900,
+      "step": 10,
+      "default": 650,
+      "unit": "px"
+    },
+    {
+      "type": "header",
+      "content": "Image"
+    },
+    {
+      "type": "range",
+      "id": "image_size_desktop",
+      "label": "Desktop image size",
+      "min": 280,
+      "max": 640,
+      "step": 4,
+      "default": 532,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "image_size_mobile",
+      "label": "Mobile image size",
+      "min": 180,
+      "max": 400,
+      "step": 4,
+      "default": 300,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "image_radius",
+      "label": "Image radius",
+      "min": 0,
+      "max": 1500,
+      "step": 15,
+      "default": 1365,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "image_overlay_opacity",
+      "label": "Image overlay darkness",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "default": 100,
+      "unit": "%"
+    },
+    {
+      "type": "header",
+      "content": "Text"
+    },
+    {
+      "type": "range",
+      "id": "content_width",
+      "label": "Text width",
+      "min": 260,
+      "max": 600,
+      "step": 10,
+      "default": 380,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "heading_size_desktop",
+      "label": "Desktop heading size",
+      "min": 28,
+      "max": 72,
+      "step": 2,
+      "default": 50,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "heading_size_mobile",
+      "label": "Mobile heading size",
+      "min": 24,
+      "max": 48,
+      "step": 2,
+      "default": 34,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "text_size_desktop",
+      "label": "Desktop text size",
+      "min": 14,
+      "max": 28,
+      "step": 1,
+      "default": 24,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "text_size_mobile",
+      "label": "Mobile text size",
+      "min": 13,
+      "max": 20,
+      "step": 1,
+      "default": 16,
+      "unit": "px"
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "bg_start",
+      "label": "Background start",
+      "default": "#271D0E"
+    },
+    {
+      "type": "color",
+      "id": "bg_end",
+      "label": "Background end",
+      "default": "#050504"
+    },
+    {
+      "type": "color",
+      "id": "border_color",
+      "label": "Border color",
+      "default": "#3A6EA5"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading color",
+      "default": "#F5EFE6"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#D7D0C6"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "slide",
+      "name": "Slide",
+      "settings": [
+        {
+          "type": "select",
+          "id": "layout",
+          "label": "Layout",
+          "default": "image_left",
+          "options": [
+            { "value": "image_left", "label": "Image left" },
+            { "value": "image_right", "label": "Image right" }
+          ]
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image"
+        },
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Heading",
+          "default": "Leather Selection"
+        },
+        {
+          "type": "richtext",
+          "id": "text",
+          "label": "Text",
+          "default": "<p>Welcome to Rare Biblio, the premier destination for bibliophiles and book lovers who appreciate timeless craftsmanship.</p>"
+        },
+        {
+          "type": "text",
+          "id": "button_label",
+          "label": "Button label"
+        },
+        {
+          "type": "url",
+          "id": "button_link",
+          "label": "Button link"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Rare biblio parallax slider",
+      "blocks": [
+        { "type": "slide" },
+        { "type": "slide" },
+        { "type": "slide" },
+        { "type": "slide" }
+      ]
+    }
+  ]
+}
+{% endschema %}  {% endcomment %}
+
+
+{% liquid
+  assign section_id = 'rb-parallax-slider-' | append: section.id
+%}
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+
+<section
+  id="{{ section_id }}"
+  class="rbps"
+  style="
+    --rbps-bg-start: {{ section.settings.bg_start }};
+    --rbps-bg-end: {{ section.settings.bg_end }};
+    --rbps-border-color: {{ section.settings.border_color }};
+    --rbps-heading-color: {{ section.settings.heading_color }};
+    --rbps-text-color: {{ section.settings.text_color }};
+    --rbps-overlay-opacity: {{ section.settings.image_overlay_opacity | divided_by: 100.0 }};
+    --rbps-heading-size-desktop: {{ section.settings.heading_size_desktop }}px;
+    --rbps-heading-size-mobile: {{ section.settings.heading_size_mobile }}px;
+    --rbps-text-size-desktop: {{ section.settings.text_size_desktop }}px;
+    --rbps-text-size-mobile: {{ section.settings.text_size_mobile }}px;
+    --rbps-slide-min-height-desktop: {{ section.settings.slide_height_desktop }}px;
+    --rbps-slide-min-height-mobile: {{ section.settings.slide_height_mobile }}px;
+    --rbps-image-size-desktop: {{ section.settings.image_size_desktop }}px;
+    --rbps-image-size-mobile: {{ section.settings.image_size_mobile }}px;
+    --rbps-image-radius: {{ section.settings.image_radius }}px;
+    --rbps-content-width: {{ section.settings.content_width }}px;
+    --rbps-section-max-width: {{ section.settings.section_max_width }}px;
+    --rbps-gap-desktop: {{ section.settings.desktop_gap }}px;
+    --rbps-gap-mobile: {{ section.settings.mobile_gap }}px;
+    --rbps-padding-top: {{ section.settings.padding_top }}px;
+    --rbps-padding-bottom: {{ section.settings.padding_bottom }}px;
+  "
+  data-rbps-section
+>
+  <div class="rbps__container" data-rbps-container>
+    <div class="rbps__inner">
+      {% for block in section.blocks %}
+        {% liquid
+          assign image_left = false
+          if block.settings.layout == 'image_left'
+            assign image_left = true
+          endif
+        %}
+
+        <article
+          class="rbps__slide {% if image_left %}rbps__slide--image-left{% else %}rbps__slide--image-right{% endif %}"
+          data-rbps-slide
+          style="z-index: {{ forloop.index }};"
+          {{ block.shopify_attributes }}
+        >
+          {%- comment -%} 
+            Counter-motion reveal structure:
+            Outer moves from 100% to 0.
+            Reveal (Inner) moves from -100% to 0.
+          {%- endcomment -%}
+          <div class="rbps__outer" data-rbps-outer>
+            <div class="rbps__inner-reveal" data-rbps-reveal>
+              
+              <div class="rbps__slide-bg"></div>
+
+              <div class="rbps__slide-grid">
+                <div class="rbps__media-wrap">
+                  <div class="rbps__media rbps__animate rbps__animate--media" data-rbps-anim="media">
+                    {% if block.settings.image != blank %}
+                      {{
+                        block.settings.image
+                        | image_url: width: 1600
+                        | image_tag:
+                          loading: 'lazy',
+                          widths: '400, 600, 800, 1000, 1200, 1400, 1600',
+                          sizes: '(max-width: 749px) 78vw, 532px',
+                          class: 'rbps__image',
+                          alt: block.settings.heading | escape
+                      }}
+                    {% else %}
+                      {{ 'image' | placeholder_svg_tag: 'rbps__image rbps__image--placeholder' }}
+                    {% endif %}
+                    <div class="rbps__image-overlay"></div>
+                  </div>
+                </div>
+
+                <div class="rbps__content-wrap">
+                  <div class="rbps__content">
+                    {% if block.settings.heading != blank %}
+                      <h2 class="rbps__heading rbps__animate rbps__animate--heading" data-rbps-anim="heading">
+                        {{ block.settings.heading }}
+                      </h2>
+                    {% endif %}
+
+                    {% if block.settings.text != blank %}
+                      <div class="rbps__text rte rbps__animate rbps__animate--text" data-rbps-anim="text">
+                        {{ block.settings.text }}
+                      </div>
+                    {% endif %}
+
+                    {% if block.settings.button_label != blank and block.settings.button_link != blank %}
+                      <div class="rbps__button-wrap rbps__animate rbps__animate--button" data-rbps-anim="button">
+                        <a href="{{ block.settings.button_link }}" class="rbps__button">
+                          {{ block.settings.button_label }}
+                        </a>
+                      </div>
+                    {% endif %}
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </article>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<style>
+  #{{ section_id }} {
+    position: relative;
+    background: #050504;
+    overflow: hidden;
+  }
+
+  #{{ section_id }} .rbps__container {
+    position: relative;
+    height: 100vh;
+    width: 100%;
+  }
+
+  #{{ section_id }} .rbps__inner {
+    width: min(100%, var(--rbps-section-max-width));
+    margin: 0 auto;
+    height: 100%;
+    position: relative;
+  }
+
+  #{{ section_id }} .rbps__slide {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    /* Controlled by GSAP */
+    --rbps-progress: 0;
+    --rbps-eased: 0;
+  }
+
+  /* Counter-motion Wrappers */
+  #{{ section_id }} .rbps__outer {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    position: absolute;
+    top: 0;
+    left: 0;
+    will-change: transform;
+  }
+
+  #{{ section_id }} .rbps__inner-reveal {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    position: absolute;
+    top: 0;
+    left: 0;
+    will-change: transform;
+  }
+
+  /* Background and Content */
+  #{{ section_id }} .rbps__slide-bg {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    background:
+      radial-gradient(77.47% 561.61% at 127.29% 73.12%, rgba(39, 29, 14, 0) 0%, #050504 100%),
+      linear-gradient(180deg, var(--rbps-bg-start) 0%, var(--rbps-bg-end) 100%);
+    opacity: calc(0.45 + (var(--rbps-eased) * 0.55));
+    transform: scale(calc(1.15 - (var(--rbps-eased) * 0.15)));
+    will-change: opacity, transform;
+  }
+
+  #{{ section_id }} .rbps__slide--image-left .rbps__slide-grid {
+    background: radial-gradient(73.61% 539.32% at 127.29% 73.12%, #271D0E 0%, #050504 100%);
+  }
+
+  #{{ section_id }} .rbps__slide--image-right .rbps__slide-grid {
+    background: radial-gradient(77.47% 561.61% at 127.29% 73.12%, rgba(39, 29, 14, 0) 0%, #050504 100%);
+  }
+
+  #{{ section_id }} .rbps__slide-grid {
+    position: relative;
+    z-index: 1;
+    height: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+    gap: var(--rbps-gap-desktop);
+    padding: 48px 32px;
+  }
+
+  #{{ section_id }} .rbps__slide--image-left .rbps__media-wrap { order: 1; }
+  #{{ section_id }} .rbps__slide--image-left .rbps__content-wrap { order: 2; }
+  #{{ section_id }} .rbps__slide--image-right .rbps__media-wrap { order: 2; }
+  #{{ section_id }} .rbps__slide--image-right .rbps__content-wrap { order: 1; }
+
+  #{{ section_id }} .rbps__media-wrap {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    perspective: 1200px;
+  }
+
+  #{{ section_id }} .rbps__media {
+    position: relative;
+    width: var(--rbps-image-size-desktop);
+    height: var(--rbps-image-size-desktop);
+    max-width: 100%;
+    border-radius: var(--rbps-image-radius);
+    overflow: hidden;
+    background: #0a0907;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.35);
+    will-change: transform, opacity;
+  }
+
+  #{{ section_id }} .rbps__image {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: cover;
+    object-position: center center;
+    transform: scale(calc(1.2 - (var(--rbps-eased) * 0.2)));
+    will-change: transform;
+  }
+
+  #{{ section_id }} .rbps__image-overlay {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 1;
+    border-radius: inherit;
+    background: radial-gradient(
+      52.48% 50% at 50% 50%,
+      rgba(0, 0, 0, 0) 0%,
+      rgba(0, 0, 0, var(--rbps-overlay-opacity)) 100%
+    );
+    opacity: calc(1 - (var(--rbps-eased) * 0.3));
+  }
+
+  #{{ section_id }} .rbps__content-wrap {
+    display: flex;
+    align-items: center;
+  }
+
+  #{{ section_id }} .rbps__slide--image-left .rbps__content-wrap {
+    justify-content: flex-start;
+    text-align: left;
+    padding-left: 40px;
+  }
+
+  #{{ section_id }} .rbps__slide--image-right .rbps__content-wrap {
+    justify-content: flex-start;
+    text-align: left;
+    padding-left: 80px;
+  }
+
+  #{{ section_id }} .rbps__content {
+    max-width: var(--rbps-content-width);
+  }
+
+  #{{ section_id }} .rbps__animate {
+    will-change: transform, opacity, filter;
+  }
+
+  #{{ section_id }} .rbps__animate--media,
+  #{{ section_id }} .rbps__animate--heading,
+  #{{ section_id }} .rbps__animate--text,
+  #{{ section_id }} .rbps__animate--button {
+    opacity: calc(0.1 + (var(--rbps-eased) * 0.9));
+  }
+
+  /* Internal Parallax Animations */
+  #{{ section_id }} .rbps__slide--image-left .rbps__animate--media {
+    transform:
+      translate3d(calc((1 - var(--rbps-eased)) * -120px), 0, 0)
+      scale(calc(0.7 + (var(--rbps-eased) * 0.3)))
+      rotate(calc((1 - var(--rbps-eased)) * -8deg));
+  }
+
+  #{{ section_id }} .rbps__slide--image-left .rbps__animate--heading {
+    transform:
+      translate3d(calc((1 - var(--rbps-eased)) * 120px), 0, 0)
+      scale(calc(0.85 + (var(--rbps-eased) * 0.15)));
+    filter: blur(calc((1 - var(--rbps-eased)) * 4px));
+  }
+
+  #{{ section_id }} .rbps__slide--image-left .rbps__animate--text {
+    transform: translate3d(calc((1 - var(--rbps-eased)) * 90px), 0, 0);
+  }
+
+  #{{ section_id }} .rbps__slide--image-right .rbps__animate--media {
+    transform:
+      translate3d(calc((1 - var(--rbps-eased)) * 120px), 0, 0)
+      scale(calc(0.7 + (var(--rbps-eased) * 0.3)))
+      rotate(calc((1 - var(--rbps-eased)) * 8deg));
+  }
+
+  #{{ section_id }} .rbps__slide--image-right .rbps__animate--heading {
+    transform:
+      translate3d(calc((1 - var(--rbps-eased)) * -120px), 0, 0)
+      scale(calc(0.85 + (var(--rbps-eased) * 0.15)));
+    filter: blur(calc((1 - var(--rbps-eased)) * 4px));
+  }
+
+  #{{ section_id }} .rbps__heading {
+    margin: 0 0 18px;
+    color: var(--rbps-heading-color);
+    font-family: "Bethany Elingston", serif;
+    font-weight: 400;
+    font-size: var(--rbps-heading-size-desktop);
+    line-height: 1;
+  }
+
+  #{{ section_id }} .rbps__text,
+  #{{ section_id }} .rbps__text p {
+    margin: 0;
+    color: var(--rbps-text-color);
+    opacity: 0.7;
+    font-family: "Satoshi", sans-serif;
+    font-weight: 400;
+    font-size: var(--rbps-text-size-desktop);
+    line-height: 1.35;
+  }
+
+  #{{ section_id }} .rbps__text p + p { margin-top: 10px; }
+  #{{ section_id }} .rbps__button-wrap { margin-top: 24px; }
+
+  #{{ section_id }} .rbps__button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 46px;
+    padding: 12px 22px;
+    border-radius: 999px;
+    text-decoration: none;
+    color: #fff;
+    border: 1px solid rgba(255,255,255,0.16);
+    background: rgba(255,255,255,0.06);
+    transition: transform .3s ease, background .3s ease, border-color .3s ease;
+  }
+
+  #{{ section_id }} .rbps__button:hover {
+    transform: translateY(-2px);
+    background: rgba(255,255,255,0.12);
+    border-color: rgba(255,255,255,0.24);
+  }
+
+  @media screen and (max-width: 749px) {
+    #{{ section_id }} .rbps__slide-grid {
+      grid-template-columns: 1fr;
+      gap: var(--rbps-gap-mobile);
+      padding: 32px 18px;
+    }
+
+    #{{ section_id }} .rbps__slide--image-left .rbps__content-wrap,
+    #{{ section_id }} .rbps__slide--image-right .rbps__content-wrap {
+      order: 2;
+      justify-content: center;
+      text-align: center;
+      padding-left: 0;
+    }
+
+    #{{ section_id }} .rbps__media {
+      width: min(100%, var(--rbps-image-size-mobile));
+      height: min(calc(100vw - 36px), var(--rbps-image-size-mobile));
+    }
+
+    #{{ section_id }} .rbps__heading { font-size: var(--rbps-heading-size-mobile); }
+    #{{ section_id }} .rbps__text, #{{ section_id }} .rbps__text p { font-size: var(--rbps-text-size-mobile); }
+
+    #{{ section_id }} .rbps__slide--image-left .rbps__animate--media,
+    #{{ section_id }} .rbps__slide--image-right .rbps__animate--media {
+      transform:
+        translate3d(0, calc((1 - var(--rbps-eased)) * 80px), 0)
+        scale(calc(0.8 + (var(--rbps-eased) * 0.2)));
+    }
+  }
+</style>
+
+<script>
+(function () {
+  const SECTION_ID = '{{ section_id }}';
+
+  function init() {
+    const section = document.getElementById(SECTION_ID);
+    if (!section) return;
+
+    gsap.registerPlugin(ScrollTrigger);
+
+    const container = section.querySelector('[data-rbps-container]');
+    const outers = gsap.utils.toArray(section.querySelectorAll('[data-rbps-outer]'));
+    const reveals = gsap.utils.toArray(section.querySelectorAll('[data-rbps-reveal]'));
+    const slides = gsap.utils.toArray(section.querySelectorAll('[data-rbps-slide]'));
+    
+    if (!slides.length) return;
+
+    // Clean up old triggers
+    ScrollTrigger.getAll().forEach(t => {
+      if (t.trigger && t.trigger.closest(`#${SECTION_ID}`)) t.kill();
+    });
+
+    // MASTER TIMELINE: Pins the whole container and sequences the shutter reveal
+    // FIX: scrub increased from 1 → 2 for slower, more deliberate scroll feel
+    let tl = gsap.timeline({
+      scrollTrigger: {
+        trigger: container,
+        start: "top top",
+        end: () => `+=${slides.length * 100}%`,
+        pin: true,
+        scrub: 2,
+        invalidateOnRefresh: true,
+      }
+    });
+
+    // INITIAL STATE: Stack all shutters out of view except the first
+    gsap.set(outers.slice(1), { yPercent: 100 });
+    gsap.set(reveals.slice(1), { yPercent: -100 });
+
+    slides.forEach((slide, i) => {
+      // Proxy to control the internal parallax (eased variable)
+      const proxy = { progress: i === 0 ? 1 : 0 };
+      
+      // Animation sequence
+      if (i > 0) {
+        // Counter-motion reveal: Shutter opens from bottom while content scrolls up inside
+        // FIX: duration increased from 1.25 → 1.8 for slower transition
+        tl.to([outers[i], reveals[i]], {
+          yPercent: 0,
+          duration: 1.8,
+          ease: "power1.inOut"
+        }, i === 1 ? 0 : "-=0.75");
+      }
+
+      // Sync the internal scale/blur/offset vars with the timeline
+      // FIX: duration increased from 1.25 → 1.8 to match reveal speed
+      tl.to(proxy, {
+        progress: 1,
+        duration: 1.8,
+        ease: "power1.inOut",
+        onUpdate: () => {
+          slide.style.setProperty('--rbps-eased', proxy.progress.toFixed(4));
+        }
+      }, "<");
+
+      // FIX: Use autoAlpha (opacity + visibility:hidden) instead of opacity:0.3
+      // This fully removes the covered slide from the render pipeline,
+      // preventing past slide text/images from bleeding through the slide on top.
+      if (i < slides.length - 1) {
+        tl.to(slide, {
+          autoAlpha: 0,
+          scale: 0.95,
+          duration: 0.5,
+          ease: "power1.inOut"
+        }, ">-0.4");
+      }
+    });
+
+    ScrollTrigger.refresh();
+  }
+
+  document.addEventListener('shopify:section:load', init);
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+
+  window.addEventListener('resize', () => {
+    ScrollTrigger.refresh();
+  });
+})();
+</script>
+
+{% schema %}
+{
+  "name": "Rare biblio slider",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Section width and spacing"
+    },
+    {
+      "type": "range",
+      "id": "section_max_width",
+      "label": "Section max width",
+      "min": 1000,
+      "max": 1600,
+      "step": 20,
+      "default": 1440,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Top padding",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "default": 0,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Bottom padding",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "default": 0,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "desktop_gap",
+      "label": "Desktop gap",
+      "min": 20,
+      "max": 120,
+      "step": 4,
+      "default": 48,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "mobile_gap",
+      "label": "Mobile gap",
+      "min": 12,
+      "max": 60,
+      "step": 4,
+      "default": 24,
+      "unit": "px"
+    },
+    {
+      "type": "header",
+      "content": "Slide sizing"
+    },
+    {
+      "type": "range",
+      "id": "slide_height_desktop",
+      "label": "Desktop slide height",
+      "min": 320,
+      "max": 900,
+      "step": 10,
+      "default": 600,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "slide_height_mobile",
+      "label": "Mobile slide height",
+      "min": 420,
+      "max": 900,
+      "step": 10,
+      "default": 650,
+      "unit": "px"
+    },
+    {
+      "type": "header",
+      "content": "Image"
+    },
+    {
+      "type": "range",
+      "id": "image_size_desktop",
+      "label": "Desktop image size",
+      "min": 280,
+      "max": 640,
+      "step": 4,
+      "default": 532,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "image_size_mobile",
+      "label": "Mobile image size",
+      "min": 180,
+      "max": 400,
+      "step": 4,
+      "default": 300,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "image_radius",
+      "label": "Image radius",
+      "min": 0,
+      "max": 1500,
+      "step": 15,
+      "default": 1365,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "image_overlay_opacity",
+      "label": "Image overlay darkness",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "default": 100,
+      "unit": "%"
+    },
+    {
+      "type": "header",
+      "content": "Text"
+    },
+    {
+      "type": "range",
+      "id": "content_width",
+      "label": "Text width",
+      "min": 260,
+      "max": 600,
+      "step": 10,
+      "default": 380,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "heading_size_desktop",
+      "label": "Desktop heading size",
+      "min": 28,
+      "max": 72,
+      "step": 2,
+      "default": 50,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "heading_size_mobile",
+      "label": "Mobile heading size",
+      "min": 24,
+      "max": 48,
+      "step": 2,
+      "default": 34,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "text_size_desktop",
+      "label": "Desktop text size",
+      "min": 14,
+      "max": 28,
+      "step": 1,
+      "default": 24,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "text_size_mobile",
+      "label": "Mobile text size",
+      "min": 13,
+      "max": 20,
+      "step": 1,
+      "default": 16,
+      "unit": "px"
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "bg_start",
+      "label": "Background start",
+      "default": "#271D0E"
+    },
+    {
+      "type": "color",
+      "id": "bg_end",
+      "label": "Background end",
+      "default": "#050504"
+    },
+    {
+      "type": "color",
+      "id": "border_color",
+      "label": "Border color",
+      "default": "#3A6EA5"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading color",
+      "default": "#F5EFE6"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#D7D0C6"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "slide",
+      "name": "Slide",
+      "settings": [
+        {
+          "type": "select",
+          "id": "layout",
+          "label": "Layout",
+          "default": "image_left",
+          "options": [
+            { "value": "image_left", "label": "Image left" },
+            { "value": "image_right", "label": "Image right" }
+          ]
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image"
+        },
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Heading",
+          "default": "Leather Selection"
+        },
+        {
+          "type": "richtext",
+          "id": "text",
+          "label": "Text",
+          "default": "<p>Welcome to Rare Biblio, the premier destination for bibliophiles and book lovers who appreciate timeless craftsmanship.</p>"
+        },
+        {
+          "type": "text",
+          "id": "button_label",
+          "label": "Button label"
+        },
+        {
+          "type": "url",
+          "id": "button_link",
+          "label": "Button link"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Rare biblio parallax slider",
+      "blocks": [
+        { "type": "slide" },
+        { "type": "slide" },
+        { "type": "slide" },
+        { "type": "slide" }
+      ]
+    }
+  ]
+}
+{% endschema %}
+

@@ -1,0 +1,508 @@
+{% liquid
+  assign section_id = 'rare-biblio-heading-' | append: section.id
+%}
+
+<section
+  id="{{ section_id }}"
+  class="rbh-section"
+  style="
+    --rbh-bg-color: {{ section.settings.section_bg }};
+    --rbh-title-max-width: {{ section.settings.title_max_width }}px;
+    --rbh-content-max-width: {{ section.settings.content_max_width }}px;
+    --rbh-padding-top: {{ section.settings.padding_top }}px;
+    --rbh-padding-bottom: {{ section.settings.padding_bottom }}px;
+    --rbh-title-size: {{ section.settings.title_size_desktop }}px;
+    --rbh-title-line-height: {{ section.settings.title_line_height_desktop }}%;
+    --rbh-text-size: {{ section.settings.text_size_desktop }}px;
+    --rbh-text-line-height: {{ section.settings.text_line_height_desktop }}px;
+    --rbh-title-color-start: {{ section.settings.title_gradient_start }};
+    --rbh-title-color-end: {{ section.settings.title_gradient_end }};
+    --rbh-text-color: {{ section.settings.text_color }};
+    --rbh-inner-gap: {{ section.settings.inner_gap }}px;
+    --rbh-anim-distance-title: {{ section.settings.anim_distance_title }}px;
+    --rbh-anim-distance-text: {{ section.settings.anim_distance_text }}px;
+    --rbh-anim-duration: {{ section.settings.anim_duration }}ms;
+  "
+>
+  <div class="rbh-section__wrap page-width{% if section.settings.full_width %} rbh-section__wrap--full{% endif %}">
+    <div class="rbh-section__content{% if section.settings.enable_scroll_animation %} rbh-section__content--animated{% endif %}">
+      {% if section.settings.heading != blank %}
+        <h2 class="rbh-section__title{% if section.settings.enable_scroll_animation %} rbh-animate-title{% endif %}" style="padding-top:10px">
+          {{ section.settings.heading }}
+        </h2>
+      {% endif %}
+
+      {% if section.settings.description != blank %}
+        <div class="rbh-section__description rte{% if section.settings.enable_scroll_animation %} rbh-animate-text{% endif %}">
+          {{ section.settings.description }}
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+<style>
+  #{{ section_id }} {
+    background: var(--rbh-bg-color);
+    padding-top: var(--rbh-padding-top);
+    padding-bottom: var(--rbh-padding-bottom);
+    overflow: hidden;
+  }
+
+  #{{ section_id }} .rbh-section__wrap {
+    width: 100%;
+    max-width: 100%;
+    margin: 0 auto;
+    padding-left: 20px;
+    padding-right: 20px;
+    box-sizing: border-box;
+  }
+
+  #{{ section_id }} .rbh-section__wrap--full {
+    max-width: 100%;
+  }
+
+  #{{ section_id }} .rbh-section__content {
+    max-width: var(--rbh-content-max-width);
+    margin: 0 auto;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: var(--rbh-inner-gap);
+    align-items: center;
+    justify-content: center;
+  }
+
+  #{{ section_id }} .rbh-section__title {
+    margin: 0;
+    max-width: var(--rbh-title-max-width);
+    width: 100%;
+    font-family: "Bethany Elingston", serif;
+    font-style: normal;
+    font-weight: 400;
+    font-size: var(--rbh-title-size);
+    line-height: var(--rbh-title-line-height);
+    text-align: center;
+    letter-spacing: 0;
+    background: radial-gradient(
+      84.35% 106.04% at 104.49% 58.65%,
+      var(--rbh-title-color-start) 0%,
+      var(--rbh-title-color-end) 100%
+    );
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    color: transparent;
+  }
+
+  #{{ section_id }} .rbh-section__description {
+    margin: 0;
+    max-width: 1016px;
+    width: 100%;
+    color: var(--rbh-text-color);
+    font-family: "Satoshi", sans-serif;
+    font-style: normal;
+    font-weight: 400;
+    font-size: var(--rbh-text-size);
+    line-height: var(--rbh-text-line-height);
+    letter-spacing: 0;
+    text-align: center;
+  }
+
+  #{{ section_id }} .rbh-section__description p {
+    margin: 0;
+    color: inherit;
+    font: inherit;
+  }
+
+  #{{ section_id }} .rbh-animate-title,
+  #{{ section_id }} .rbh-animate-text {
+    opacity: 0;
+    will-change: transform, opacity;
+    transition:
+      transform var(--rbh-anim-duration) cubic-bezier(0.22, 1, 0.36, 1),
+      opacity var(--rbh-anim-duration) ease;
+  }
+
+  /* title starts slightly upward */
+  #{{ section_id }} .rbh-animate-title {
+    transform: translate3d(0, calc(var(--rbh-anim-distance-title) * -1), 0);
+  }
+
+  /* text starts slightly downward */
+  #{{ section_id }} .rbh-animate-text {
+    transform: translate3d(0, var(--rbh-anim-distance-text), 0);
+    transition-delay: .08s;
+  }
+
+  #{{ section_id }}.is-visible .rbh-animate-title,
+  #{{ section_id }}.is-visible .rbh-animate-text {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+
+  @media screen and (max-width: 1200px) {
+    #{{ section_id }} {
+      --rbh-title-size: {{ section.settings.title_size_tablet }}px;
+      --rbh-title-line-height: {{ section.settings.title_line_height_tablet }}%;
+      --rbh-text-size: {{ section.settings.text_size_tablet }}px;
+      --rbh-text-line-height: {{ section.settings.text_line_height_tablet }}px;
+    }
+  }
+
+  @media screen and (max-width: 767px) {
+    #{{ section_id }} {
+      --rbh-padding-top: {{ section.settings.padding_top_mobile }}px;
+      --rbh-padding-bottom: {{ section.settings.padding_bottom_mobile }}px;
+      --rbh-title-size: {{ section.settings.title_size_mobile }}px;
+      --rbh-title-line-height: {{ section.settings.title_line_height_mobile }}%;
+      --rbh-text-size: {{ section.settings.text_size_mobile }}px;
+      --rbh-text-line-height: {{ section.settings.text_line_height_mobile }}px;
+      --rbh-inner-gap: {{ section.settings.inner_gap_mobile }}px;
+    }
+
+    #{{ section_id }} .rbh-section__wrap {
+      padding-left: 16px;
+      padding-right: 16px;
+    }
+
+    #{{ section_id }} .rbh-section__content,
+    #{{ section_id }} .rbh-section__title,
+    #{{ section_id }} .rbh-section__description {
+      max-width: 100%;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    #{{ section_id }} .rbh-animate-title,
+    #{{ section_id }} .rbh-animate-text {
+      opacity: 1 !important;
+      transform: none !important;
+      transition: none !important;
+    }
+  }
+</style>
+
+{% if section.settings.enable_scroll_animation %}
+  <script>
+    (function() {
+      var section = document.getElementById('{{ section_id }}');
+      if (!section) return;
+
+      var initialized = false;
+
+      function showSection() {
+        section.classList.add('is-visible');
+      }
+
+      if ('IntersectionObserver' in window) {
+        var observer = new IntersectionObserver(function(entries) {
+          entries.forEach(function(entry) {
+            if (entry.isIntersecting && !initialized) {
+              initialized = true;
+              showSection();
+              observer.unobserve(section);
+            }
+          });
+        }, {
+          threshold: 0.22,
+          rootMargin: '0px 0px -6% 0px'
+        });
+
+        observer.observe(section);
+      } else {
+        showSection();
+      }
+    })();
+  </script>
+{% endif %}
+
+{% schema %}
+{
+  "name": "Rare Biblio Heading",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "full_width",
+      "label": "Use full width container",
+      "default": false
+    },
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Forthcoming Exclusive"
+    },
+    {
+      "type": "richtext",
+      "id": "description",
+      "label": "Description",
+      "default": "<p>Welcome to Rare Biblio, the premier destination for bibliophiles and book lovers who appreciate the art of bookmaking.</p>"
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "section_bg",
+      "label": "Background color",
+      "default": "#050505"
+    },
+    {
+      "type": "color",
+      "id": "title_gradient_start",
+      "label": "Title gradient start",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "title_gradient_end",
+      "label": "Title gradient end",
+      "default": "#BB911E"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Description color",
+      "default": "#F5F1EA"
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "content_max_width",
+      "label": "Content max width",
+      "min": 600,
+      "max": 1300,
+      "step": 20,
+      "default": 1020
+    },
+    {
+      "type": "range",
+      "id": "title_max_width",
+      "label": "Title max width",
+      "min": 300,
+      "max": 900,
+      "step": 10,
+      "default": 680
+    },
+    {
+      "type": "range",
+      "id": "inner_gap",
+      "label": "Desktop gap",
+      "min": 0,
+      "max": 80,
+      "step": 2,
+      "default": 26
+    },
+    {
+      "type": "range",
+      "id": "inner_gap_mobile",
+      "label": "Mobile gap",
+      "min": 0,
+      "max": 50,
+      "step": 2,
+      "default": 18
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Desktop top padding",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "default": 52
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Desktop bottom padding",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "default": 52
+    },
+    {
+      "type": "range",
+      "id": "padding_top_mobile",
+      "label": "Mobile top padding",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_mobile",
+      "label": "Mobile bottom padding",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "default": 36
+    },
+    {
+      "type": "header",
+      "content": "Title typography"
+    },
+    {
+      "type": "range",
+      "id": "title_size_desktop",
+      "label": "Desktop title size",
+      "min": 24,
+      "max": 100,
+      "step": 2,
+      "default": 70
+    },
+    {
+      "type": "range",
+      "id": "title_line_height_desktop",
+      "label": "Desktop title line height (%)",
+      "min": 80,
+      "max": 140,
+      "step": 2,
+      "default": 100
+    },
+    {
+      "type": "range",
+      "id": "title_size_tablet",
+      "label": "Tablet title size",
+      "min": 20,
+      "max": 80,
+      "step": 2,
+      "default": 54
+    },
+    {
+      "type": "range",
+      "id": "title_line_height_tablet",
+      "label": "Tablet title line height (%)",
+      "min": 80,
+      "max": 140,
+      "step": 2,
+      "default": 100
+    },
+    {
+      "type": "range",
+      "id": "title_size_mobile",
+      "label": "Mobile title size",
+      "min": 18,
+      "max": 60,
+      "step": 2,
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "title_line_height_mobile",
+      "label": "Mobile title line height (%)",
+      "min": 80,
+      "max": 140,
+      "step": 2,
+      "default": 90
+    },
+    {
+      "type": "header",
+      "content": "Description typography"
+    },
+    {
+      "type": "range",
+      "id": "text_size_desktop",
+      "label": "Desktop description size",
+      "min": 12,
+      "max": 40,
+      "step": 1,
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "text_line_height_desktop",
+      "label": "Desktop description line height",
+      "min": 16,
+      "max": 60,
+      "step": 1,
+      "default": 39
+    },
+    {
+      "type": "range",
+      "id": "text_size_tablet",
+      "label": "Tablet description size",
+      "min": 12,
+      "max": 32,
+      "step": 1,
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "text_line_height_tablet",
+      "label": "Tablet description line height",
+      "min": 16,
+      "max": 52,
+      "step": 1,
+      "default": 32
+    },
+    {
+      "type": "range",
+      "id": "text_size_mobile",
+      "label": "Mobile description size",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "text_line_height_mobile",
+      "label": "Mobile description line height",
+      "min": 16,
+      "max": 36,
+      "step": 1,
+      "default": 26
+    },
+    {
+      "type": "header",
+      "content": "Animation"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_scroll_animation",
+      "label": "Enable scroll animation",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "anim_distance_title",
+      "label": "Title animation distance",
+      "min": 10,
+      "max": 100,
+      "step": 2,
+      "default": 28
+    },
+    {
+      "type": "range",
+      "id": "anim_distance_text",
+      "label": "Text animation distance",
+      "min": 10,
+      "max": 100,
+      "step": 2,
+      "default": 28
+    },
+    {
+      "type": "range",
+      "id": "anim_duration",
+      "label": "Animation duration (ms)",
+      "min": 300,
+      "max": 1500,
+      "step": 50,
+      "default": 800
+    }
+  ],
+  "presets": [
+    {
+      "name": "Rare Biblio Heading"
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,2901 @@
+{% comment %} {% liquid
+  assign sid = 'ppbs-' | append: section.id
+%}
+
+<section
+  id="{{ sid }}"
+  class="ppbs"
+  style="
+    --ppbs-h-desk: {{ section.settings.section_height_desktop }}px;
+    --ppbs-h-tab: {{ section.settings.section_height_tablet }}px;
+    --ppbs-h-mob: {{ section.settings.section_height_mobile }}px;
+
+    --ppbs-accent: {{ section.settings.accent_color }};
+    --ppbs-text: {{ section.settings.text_color }};
+    --ppbs-muted: {{ section.settings.muted_text_color }};
+    --ppbs-bg-s: {{ section.settings.bg_start }};
+    --ppbs-bg-e: {{ section.settings.bg_end }};
+
+    --ppbs-cmax: {{ section.settings.content_max_width }}px;
+    --ppbs-gap: {{ section.settings.content_gap }}px;
+    --ppbs-glow: {{ section.settings.overlay_opacity | divided_by: 100.0 }};
+
+    --ppbs-media-w-desk: {{ section.settings.image_width_desktop }}%;
+    --ppbs-media-w-tab: {{ section.settings.image_width_tablet }}%;
+    --ppbs-media-w-mob: {{ section.settings.image_width_mobile }}%;
+
+    --ppbs-media-top-desk: {{ section.settings.image_top_desktop }}px;
+    --ppbs-media-top-tab: {{ section.settings.image_top_tablet }}px;
+    --ppbs-media-top-mob: {{ section.settings.image_top_mobile }}px;
+
+    --ppbs-media-x-desk: {{ section.settings.image_horizontal_desktop }}%;
+    --ppbs-media-x-tab: {{ section.settings.image_horizontal_tablet }}%;
+    --ppbs-media-x-mob: {{ section.settings.image_horizontal_mobile }}%;
+
+    --ppbs-radius: {{ section.settings.image_radius }}px;
+    --ppbs-shadow-strength: {{ section.settings.image_shadow_strength }};
+    --ppbs-slides: {{ section.blocks.size | default: 1 }};
+  "
+>
+  <div class="ppbs__track">
+    <div class="ppbs__sticky">
+
+      <div class="ppbs__bg" aria-hidden="true" style="
+
+
+background: radial-gradient(65.38% 56.85% at 31.94% 59.17%, #4D3C04 0%, #0A0907 100%) /* warning: gradient uses a rotation that is not supported by CSS and may not behave as expected */;
+transform: matrix(-1, 0, 0, 1, 0, 0);
+
+
+
+">
+        <div class="ppbs__bg-grad"></div>
+        <div class="ppbs__bg-vig"></div>
+        <div class="ppbs__bg-noise"></div>
+        <div class="ppbs__bg-beams"></div>
+        <div class="ppbs__bg-halo"></div>
+      </div>
+
+      <div class="ppbs__frame">
+        {% if section.blocks.size > 0 %}
+          <div class="ppbs__slides" aria-live="polite">
+            {% for block in section.blocks %}
+              
+                {%- liquid
+  assign idx0 = forloop.index0
+-%}
+
+<article
+  class="ppbs__slide{% if forloop.first %} is-active{% endif %}"
+
+                data-slide
+                data-index="{{ idx0 }}"
+                data-countdown="{{ block.settings.countdown_date | escape }}"
+                {{ block.shopify_attributes }}
+              >
+                <div class="ppbs__wrap">
+                  <div class="ppbs__content">
+                    {% if block.settings.eyebrow != blank %}
+                      <div class="ppbs__eyebrow-wrap" data-pc>
+                        <span class="ppbs__eyebrow">{{ block.settings.eyebrow }}</span>
+                      </div>
+                    {% endif %}
+
+                    {% if block.settings.heading != blank %}
+                      <h2 class="ppbs__title" data-pc>{{ block.settings.heading | newline_to_br }}</h2>
+                    {% endif %}
+
+                    {% if block.settings.text != blank %}
+                      <div class="ppbs__desc rte" data-pc>{{ block.settings.text }}</div>
+                    {% endif %}
+
+                    {% if block.settings.meta_label_1 != blank or block.settings.meta_value_1 != blank or block.settings.meta_label_2 != blank or block.settings.meta_value_2 != blank %}
+                      <div class="ppbs__meta" data-pc>
+                        {% if block.settings.meta_label_1 != blank or block.settings.meta_value_1 != blank %}
+                          <div class="ppbs__meta-item">
+                            {% if block.settings.meta_label_1 != blank %}
+                              <div class="ppbs__meta-label">{{ block.settings.meta_label_1 }}</div>
+                            {% endif %}
+                            {% if block.settings.meta_value_1 != blank %}
+                              <div class="ppbs__meta-value">{{ block.settings.meta_value_1 }}</div>
+                            {% endif %}
+                          </div>
+                        {% endif %}
+
+                        {% if block.settings.meta_label_2 != blank or block.settings.meta_value_2 != blank %}
+                          <div class="ppbs__meta-item">
+                            {% if block.settings.meta_label_2 != blank %}
+                              <div class="ppbs__meta-label">{{ block.settings.meta_label_2 }}</div>
+                            {% endif %}
+                            {% if block.settings.meta_value_2 != blank %}
+                              <div class="ppbs__meta-value">{{ block.settings.meta_value_2 }}</div>
+                            {% endif %}
+                          </div>
+                        {% endif %}
+                      </div>
+                    {% endif %}
+
+                    <div class="ppbs__timer-wrap" data-pc>
+                      {% if block.settings.countdown_label != blank %}
+                        <div class="ppbs__timer-label">{{ block.settings.countdown_label }}</div>
+                      {% endif %}
+
+                      <div class="ppbs__timer" data-timer data-expired="{{ block.settings.expired_text | escape }}">
+                        <div class="ppbs__t-part">
+                          <span class="ppbs__t-val" data-days>00</span>
+                          <span class="ppbs__t-unit">{{ block.settings.days_label }}</span>
+                        </div>
+                        <span class="ppbs__t-sep">:</span>
+                        <div class="ppbs__t-part">
+                          <span class="ppbs__t-val" data-hours>00</span>
+                          <span class="ppbs__t-unit">{{ block.settings.hours_label }}</span>
+                        </div>
+                        <span class="ppbs__t-sep">:</span>
+                        <div class="ppbs__t-part">
+                          <span class="ppbs__t-val" data-minutes>00</span>
+                          <span class="ppbs__t-unit">{{ block.settings.minutes_label }}</span>
+                        </div>
+                        <span class="ppbs__t-sep">:</span>
+                        <div class="ppbs__t-part">
+                          <span class="ppbs__t-val" data-seconds>00</span>
+                          <span class="ppbs__t-unit">{{ block.settings.seconds_label }}</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {% if block.settings.button_label != blank %}
+                      <div class="ppbs__btn-row" data-pc>
+                        <a
+                          {% if block.settings.button_link != blank %}
+                            href="{{ block.settings.button_link }}"
+                          {% else %}
+                            role="link" aria-disabled="true"
+                          {% endif %}
+                          class="ppbs__btn"
+                        >
+                          <span>{{ block.settings.button_label }}</span>
+                        </a>
+                      </div>
+                    {% endif %}
+
+                    {% if section.blocks.size > 1 %}
+                      <div class="ppbs__nav" data-pc>
+                        <div class="ppbs__nav-counter">
+                          <span data-cur-idx>{{ forloop.index }}</span>
+                          <span class="ppbs__nav-slash">/</span>
+                          <span class="ppbs__nav-total">{{ section.blocks.size }}</span>
+                        </div>
+
+                        <div class="ppbs__prog">
+                          <span class="ppbs__prog-fill" data-prog-fill></span>
+                        </div>
+
+                        <div class="ppbs__arrows">
+                          <button type="button" class="ppbs__arrow" data-prev aria-label="Previous slide">
+                            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                              <path d="M14.5 5.5L8 12l6.5 6.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                          </button>
+                          <button type="button" class="ppbs__arrow" data-next aria-label="Next slide">
+                            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                              <path d="M9.5 5.5L16 12l-6.5 6.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                          </button>
+                        </div>
+                      </div>
+                    {% endif %}
+                  </div>
+
+                  <div class="ppbs__media">
+                    <div
+                      class="ppbs__media-inner"
+                      data-pm
+                      style="
+                        --slide-tilt-desktop: {{ block.settings.image_tilt_desktop }}deg;
+                        --slide-tilt-tablet: {{ block.settings.image_tilt_tablet }}deg;
+                        --slide-tilt-mobile: {{ block.settings.image_tilt_mobile }}deg;
+                        --slide-scale: {{ block.settings.image_scale | divided_by: 100.0 }};
+                        --slide-y: {{ block.settings.image_vertical_shift }}px;
+                      "
+                    >
+                      {% if block.settings.image != blank %}
+                        {{
+                          block.settings.image
+                          | image_url: width: 2000
+                          | image_tag:
+                            loading: 'lazy',
+                            widths: '360, 480, 640, 768, 900, 1200, 1600, 2000',
+                            sizes: '(max-width: 767px) 82vw, (max-width: 1199px) 46vw, 45vw',
+                            class: 'ppbs__img'
+                        }}
+                      {% else %}
+                        <div class="ppbs__placeholder">
+                          {{ 'product-1' | placeholder_svg_tag: 'placeholder-svg' }}
+                        </div>
+                      {% endif %}
+                    </div>
+                  </div>
+                </div>
+              </article>
+            {% endfor %}
+          </div>
+        {% else %}
+          <div class="ppbs__empty">
+            <div class="ppbs__wrap">
+              <div class="ppbs__content">
+                <div class="ppbs__eyebrow-wrap">
+                  <span class="ppbs__eyebrow">EXCLUSIVE</span>
+                </div>
+                <h2 class="ppbs__title">Add slides from the theme editor</h2>
+                <p class="ppbs__desc">Use Add block to create each premium parallax slide.</p>
+              </div>
+              <div class="ppbs__media">
+                <div
+                  class="ppbs__media-inner"
+                  style="
+                    --slide-tilt-desktop: 15deg;
+                    --slide-tilt-tablet: 10deg;
+                    --slide-tilt-mobile: 0deg;
+                    --slide-scale: 1;
+                    --slide-y: 0px;
+                  "
+                >
+                  <div class="ppbs__placeholder">
+                    {{ 'product-1' | placeholder_svg_tag: 'placeholder-svg' }}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+#{{ sid }},
+#{{ sid }} * {
+  box-sizing: border-box;
+}
+
+#{{ sid }} {
+  position: relative;
+  color: var(--ppbs-text);
+  background: #070605;
+  overflow: clip;
+  font-family: "Satoshi", sans-serif;
+}
+
+#{{ sid }} .ppbs__track {
+  position: relative;
+  height: calc(var(--ppbs-h-desk) * var(--ppbs-slides));
+}
+
+#{{ sid }} .ppbs__sticky {
+  position: sticky;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: var(--ppbs-h-desk);
+  min-height: 110svh;
+  overflow: hidden;
+}
+
+#{{ sid }} .ppbs__bg,
+#{{ sid }} .ppbs__bg > * {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+#{{ sid }} .ppbs__bg {
+  overflow: hidden;
+}
+
+#{{ sid }} .ppbs__bg-grad {
+  background: radial-gradient(65.38% 56.85% at 31.94% 59.17%, var(--ppbs-bg-s) 0%, var(--ppbs-bg-e) 100%);
+  transform: scaleX(-1);
+}
+
+#{{ sid }} .ppbs__bg-vig {
+  background:
+    linear-gradient(90deg, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0.28) 34%, rgba(0, 0, 0, 0.06) 55%, rgba(0, 0, 0, 0.38) 100%),
+    linear-gradient(180deg, rgba(0, 0, 0, 0.18) 0%, rgba(0, 0, 0, 0) 30%, rgba(0, 0, 0, 0.32) 100%);
+}
+
+#{{ sid }} .ppbs__bg-noise {
+  opacity: 0.045;
+  mix-blend-mode: screen;
+  background-image:
+    radial-gradient(circle at 20% 20%, rgba(255,255,255,.72) 0 1px, transparent 1px),
+    radial-gradient(circle at 72% 35%, rgba(255,255,255,.38) 0 1px, transparent 1px),
+    radial-gradient(circle at 50% 80%, rgba(255,255,255,.52) 0 1px, transparent 1px);
+  background-size: 18px 18px, 24px 24px, 26px 26px;
+}
+
+#{{ sid }} .ppbs__bg-beams {
+  opacity: var(--ppbs-glow);
+  background: linear-gradient(90deg, transparent 0%, rgba(187,145,31,.08) 16%, rgba(187,145,31,.23) 34%, rgba(187,145,31,.08) 50%, transparent 65%);
+  filter: blur(44px);
+  transform: translateX(16%);
+}
+
+#{{ sid }} .ppbs__bg-halo {
+  inset: auto auto 10% 48%;
+  width: min(44vw, 720px);
+  height: min(44vw, 720px);
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(187,145,31,.22) 0%, rgba(187,145,31,.08) 36%, rgba(187,145,31,0) 68%);
+  filter: blur(30px);
+  transform: translate(-50%, 0);
+}
+
+#{{ sid }} .ppbs__frame {
+  position: relative;
+  z-index: 2;
+  height: 100%;
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 0 clamp(18px, 2.8vw, 40px);
+}
+
+#{{ sid }} .ppbs__slides {
+  position: relative;
+  height: 100%;
+}
+
+#{{ sid }} .ppbs__slide {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity .6s cubic-bezier(.22,.61,.36,1), visibility .6s;
+}
+
+#{{ sid }} .ppbs__slide.is-active {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+#{{ sid }} .ppbs__wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  min-height: 100%;
+  padding: clamp(34px, 5vw, 70px) 0;
+}
+
+
+
+#{{ sid }} .ppbs__content {
+  position: relative;
+  z-index: 3;
+  width: min(100%, var(--ppbs-cmax));
+  max-width: var(--ppbs-cmax);
+}
+
+#{{ sid }} .ppbs__media {
+  position: absolute;
+  left: var(--ppbs-media-x-desk);
+  top: var(--ppbs-media-top-desk);
+  width: var(--ppbs-media-w-desk);
+  max-width: 780px;
+  aspect-ratio: 653 / 823;
+  z-index: 2;
+  pointer-events: none;
+}
+
+
+
+#{{ sid }} .ppbs__media-inner {
+  width: 100%;
+  height: 100%;
+  transform-origin: center center;
+  will-change: transform, opacity;
+  filter: drop-shadow(0 20px calc(60px * var(--ppbs-shadow-strength)) rgba(0, 0, 0, .52));
+}
+
+#{{ sid }} .ppbs__img,
+#{{ sid }} .ppbs__placeholder,
+#{{ sid }} .ppbs__placeholder svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+#{{ sid }} .ppbs__img {
+  object-fit: contain;
+  object-position: center;
+}
+
+#{{ sid }} .ppbs__eyebrow-wrap {
+  margin-bottom: 22px;
+}
+
+#{{ sid }} .ppbs__eyebrow {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  min-width: 170px;
+  padding: 10px 22px;
+  border-radius: 4px;
+  color: #fff8e7;
+ background: linear-gradient(270deg, rgba(142, 112, 37, 0) 0%, rgba(142, 112, 37, 0.854796) 78.75%, rgba(142, 112, 37, 0) 100%);
+  box-shadow: 0 10px 32px rgba(0,0,0,.24);
+  font-family: "Bethany Elingston", serif;
+  font-size: 18px;
+  line-height: 1;
+  letter-spacing: 0;
+}
+
+#{{ sid }} .ppbs__title {
+  max-width: 660px;
+  color: var(--ppbs-text);
+  font-family: "Bethany Elingston", serif;
+  font-weight: 400;
+  font-size: clamp(34px, 4.3vw, 60px);
+  line-height: 1.05;
+  letter-spacing: 0;
+  text-wrap: balance;
+}
+
+#{{ sid }} .ppbs__desc {
+  max-width: 610px;
+  margin-top: 24px;
+  color: var(--ppbs-muted);
+  font-size: clamp(15px, 1.55vw, 20px);
+  line-height: 1.5;
+}
+
+#{{ sid }} .ppbs__desc p {
+  margin: 0;
+}
+
+#{{ sid }} .ppbs__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 22px 52px;
+  margin-top: 32px;
+}
+
+#{{ sid }} .ppbs__meta-item {
+  min-width: 170px;
+}
+
+#{{ sid }} .ppbs__meta-label {
+  margin-bottom: 8px;
+  color: rgba(255,255,255,.62);
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+#{{ sid }} .ppbs__meta-value {
+  color: var(--ppbs-text);
+  font-weight: 500;
+  font-size: clamp(18px, 2vw, 24px);
+  line-height: 1.25;
+}
+
+#{{ sid }} .ppbs__timer-wrap {
+  margin-top: 30px;
+}
+
+#{{ sid }} .ppbs__timer-label {
+  margin-bottom: 16px;
+  color: rgba(255,255,255,.72);
+  font-size: 15px;
+  line-height: 1.3;
+}
+
+#{{ sid }} .ppbs__timer {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  flex-wrap: nowrap;
+}
+
+#{{ sid }} .ppbs__t-part {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  min-width: 72px;
+}
+
+#{{ sid }} .ppbs__t-val,
+#{{ sid }} .ppbs__t-sep {
+  color: var(--ppbs-accent);
+  font-weight: 700;
+  font-size: clamp(34px, 4.5vw, 64px);
+  line-height: 1;
+}
+
+#{{ sid }} .ppbs__t-unit {
+  margin-top: 8px;
+  color: rgba(255,255,255,.9);
+  font-size: 12px;
+  line-height: 1.2;
+  text-transform: uppercase;
+}
+
+#{{ sid }} .ppbs__timer.is-expired .ppbs__t-val,
+#{{ sid }} .ppbs__timer.is-expired .ppbs__t-sep {
+  opacity: .42;
+}
+
+#{{ sid }} .ppbs__btn-row {
+  margin-top: 34px;
+}
+
+#{{ sid }} .ppbs__btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 212px;
+  min-height: 60px;
+  padding: 12px 40px;
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,.24);
+  border-radius: 999px;
+  text-decoration: none;
+
+
+    background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+  background-image: url('https://cdn.shopify.com/s/files/1/0589/1719/1777/files/f89b1c50a8a368abe48fc6793fd85a8999a3c0ca.png?v=1775475634');
+}
+
+#{{ sid }} .ppbs__btn::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(255,255,255,.18) 0%, transparent 60%);
+  pointer-events: none;
+}
+
+#{{ sid }} .ppbs__btn:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.06);
+  box-shadow: 0 18px 50px rgba(0,0,0,.38), inset 0 1px 0 rgba(255,255,255,.32);
+}
+
+#{{ sid }} .ppbs__btn span {
+  position: relative;
+  z-index: 1;
+  color:rgb(255, 255, 255);
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1;
+  background:
+}
+
+#{{ sid }} .ppbs__nav {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  margin-top: 30px;
+  max-width: 360px;
+}
+
+#{{ sid }} .ppbs__nav-counter {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 64px;
+  color: var(--ppbs-text);
+  font-size: 24px;
+  line-height: 1;
+}
+
+#{{ sid }} .ppbs__nav-slash,
+#{{ sid }} .ppbs__nav-total {
+  opacity: .7;
+}
+
+#{{ sid }} .ppbs__prog {
+  flex: 1;
+  height: 2px;
+  background: rgba(255,255,255,.18);
+  overflow: hidden;
+}
+
+#{{ sid }} .ppbs__prog-fill {
+  display: block;
+  width: 0;
+  height: 100%;
+  background: rgba(255,255,255,.94);
+  transition: width .4s ease;
+}
+
+#{{ sid }} .ppbs__arrows {
+  display: inline-flex;
+  gap: 8px;
+}
+
+#{{ sid }} .ppbs__arrow {
+  width: 38px;
+  height: 38px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: rgba(255,255,255,.9);
+  cursor: pointer;
+  transition: transform .25s ease, opacity .25s ease;
+}
+
+#{{ sid }} .ppbs__arrow:hover {
+  transform: translateY(-1px);
+}
+
+#{{ sid }} .ppbs__arrow svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+#{{ sid }} .ppbs__empty {
+  height: 100%;
+}
+
+#{{ sid }} .ppbs__empty .ppbs__wrap {
+  height: 100%;
+}
+
+#{{ sid }} [data-pc],
+#{{ sid }} [data-pm] {
+  will-change: transform, opacity;
+}
+
+@media screen and (max-width: 1199px) {
+  #{{ sid }} .ppbs__track {
+    height: calc(var(--ppbs-h-tab) * var(--ppbs-slides));
+  }
+
+  #{{ sid }} .ppbs__sticky {
+    height: var(--ppbs-h-tab);
+  }
+
+  #{{ sid }} .ppbs__frame {
+    padding: 0 26px;
+  }
+
+  #{{ sid }} .ppbs__wrap,
+  #{{ sid }} .ppbs__slide--flip .ppbs__wrap {
+    padding: 42px 0;
+  }
+
+  #{{ sid }} .ppbs__content {
+    max-width: min(100%, 500px);
+  }
+
+  #{{ sid }} .ppbs__media {
+    top: var(--ppbs-media-top-tab);
+    left: var(--ppbs-media-x-tab);
+    width: var(--ppbs-media-w-tab);
+  }
+
+  #{{ sid }} .ppbs__slide--flip .ppbs__media {
+    left: auto;
+    right: var(--ppbs-media-x-tab);
+  }
+
+  #{{ sid }} .ppbs__meta {
+    gap: 18px 28px;
+  }
+
+  #{{ sid }} .ppbs__t-part {
+    min-width: 64px;
+  }
+}
+
+@media screen and (max-width: 767px) {
+  #{{ sid }} .ppbs__track {
+    height: calc(var(--ppbs-h-mob) * var(--ppbs-slides));
+  }
+
+  #{{ sid }} .ppbs__sticky {
+    height: var(--ppbs-h-mob);
+    min-height: 130svh;
+  }
+
+  #{{ sid }} .ppbs__frame {
+    padding: 0 18px;
+  }
+
+  #{{ sid }} .ppbs__slide {
+    position: absolute;
+    inset: 0;
+  }
+
+  #{{ sid }} .ppbs__wrap {
+    display: grid;
+    grid-template-columns: 1fr;
+    align-content: center;
+    justify-items: center;
+    gap: 18px;
+    min-height: 100%;
+    padding: 22px 0 24px;
+  }
+
+  #{{ sid }} .ppbs__content {
+    order: 2;
+    width: 100%;
+    max-width: 100%;
+    text-align: left;
+  }
+
+  #{{ sid }} .ppbs__media {
+    order: 1;
+    position: relative;
+    top: var(--ppbs-media-top-mob);
+    left: auto;
+    right: auto;
+    width: min(100%, var(--ppbs-media-w-mob));
+    max-width: 330px;
+    margin-inline: auto;
+  }
+
+  #{{ sid }} .ppbs__bg-halo {
+    width: 88vw;
+    height: 88vw;
+    left: 50%;
+    bottom: 26%;
+  }
+
+  #{{ sid }} .ppbs__eyebrow-wrap {
+    margin-bottom: 12px;
+  }
+
+  #{{ sid }} .ppbs__eyebrow {
+    min-height: 36px;
+    min-width: 120px;
+    padding: 8px 14px;
+    font-size: 13px;
+  }
+
+  #{{ sid }} .ppbs__title {
+    max-width: 100%;
+    font-size: clamp(28px, 8vw, 36px);
+    line-height: 1.08;
+  }
+
+  #{{ sid }} .ppbs__desc {
+    max-width: 100%;
+    margin-top: 12px;
+    font-size: 14px;
+    line-height: 1.45;
+  }
+
+  #{{ sid }} .ppbs__meta {
+    gap: 12px 18px;
+    margin-top: 18px;
+  }
+
+  #{{ sid }} .ppbs__meta-item {
+    min-width: calc(50% - 9px);
+  }
+
+  #{{ sid }} .ppbs__meta-label {
+    margin-bottom: 5px;
+    font-size: 12px;
+  }
+
+  #{{ sid }} .ppbs__meta-value {
+    font-size: 16px;
+  }
+
+  #{{ sid }} .ppbs__timer-wrap {
+    margin-top: 18px;
+  }
+
+  #{{ sid }} .ppbs__timer {
+    gap: 5px;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  #{{ sid }} .ppbs__timer::-webkit-scrollbar {
+    display: none;
+  }
+
+  #{{ sid }} .ppbs__t-part {
+    min-width: 50px;
+  }
+
+  #{{ sid }} .ppbs__t-unit {
+    margin-top: 4px;
+    font-size: 9px;
+  }
+
+  #{{ sid }} .ppbs__btn-row {
+    margin-top: 18px;
+  }
+
+  #{{ sid }} .ppbs__btn {
+    width: 100%;
+    min-width: 0;
+    min-height: 50px;
+    padding: 10px 20px;
+  }
+
+  #{{ sid }} .ppbs__btn span {
+    font-size: 15px;
+  }
+
+  #{{ sid }} .ppbs__nav {
+    gap: 10px;
+    margin-top: 18px;
+    max-width: 100%;
+  }
+
+  #{{ sid }} .ppbs__nav-counter {
+    min-width: 42px;
+    font-size: 16px;
+  }
+
+  #{{ sid }} .ppbs__arrow {
+    width: 30px;
+    height: 30px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #{{ sid }} .ppbs__slide,
+  #{{ sid }} .ppbs__btn,
+  #{{ sid }} [data-pc],
+  #{{ sid }} [data-pm] {
+    transition: none !important;
+    animation: none !important;
+  }
+}
+</style>
+
+<script>
+(function() {
+  'use strict';
+
+  var root = document.getElementById('{{ sid }}');
+  if (!root) return;
+
+  var track = root.querySelector('.ppbs__track');
+  var sticky = root.querySelector('.ppbs__sticky');
+  var slides = Array.from(root.querySelectorAll('[data-slide]'));
+  if (!slides.length) return;
+
+  var TOTAL = slides.length;
+  var cur = 0;
+  var ticking = false;
+  var scrollLocked = false;
+  var mobile = false;
+  var tablet = false;
+
+  function clamp(v, min, max) {
+    return v < min ? min : v > max ? max : v;
+  }
+
+  function easeOut3(t) {
+    return 1 - Math.pow(1 - t, 3);
+  }
+
+  function getMode() {
+    mobile = window.matchMedia('(max-width: 767px)').matches;
+    tablet = !mobile && window.matchMedia('(max-width: 1199px)').matches;
+  }
+
+  function getTilt(pm) {
+    if (!pm) return 0;
+    var styles = pm.style;
+    if (mobile) return parseFloat(styles.getPropertyValue('--slide-tilt-mobile')) || 0;
+    if (tablet) return parseFloat(styles.getPropertyValue('--slide-tilt-tablet')) || 0;
+    return parseFloat(styles.getPropertyValue('--slide-tilt-desktop')) || 0;
+  }
+
+  function getScale(pm) {
+    if (!pm) return 1;
+    return parseFloat(pm.style.getPropertyValue('--slide-scale')) || 1;
+  }
+
+  function getShiftY(pm) {
+    if (!pm) return 0;
+    return parseFloat(pm.style.getPropertyValue('--slide-y')) || 0;
+  }
+
+ 
+  function paint(idx, prog) {
+  slides.forEach(function(slide, i) {
+    var isActive = i === idx;
+    var pcs = Array.from(slide.querySelectorAll('[data-pc]'));
+    var pm = slide.querySelector('[data-pm]');
+    var tiltDeg = getTilt(pm);
+    var baseScale = getScale(pm);
+    var baseShiftY = getShiftY(pm);
+
+    slide.classList.toggle('is-active', isActive);
+
+    if (mobile) {
+      if (isActive) {
+        var mp = clamp(prog, 0, 1);
+        var mpe = easeOut3(mp);
+
+        pcs.forEach(function(el, j) {
+          var shiftY = (1 - mpe) * (34 + j * 8);
+          el.style.transform = 'translate3d(0,' + shiftY + 'px,0)';
+          el.style.opacity = (0.15 + mpe * 0.85).toFixed(3);
+        });
+
+        if (pm) {
+          var imgY = baseShiftY + (1 - mpe) * -36;
+          var imgS = baseScale * (0.92 + mpe * 0.08);
+          var imgO = 0.24 + mpe * 0.76;
+          pm.style.transform = 'translate3d(0,' + imgY + 'px,0) scale(' + imgS + ') rotate(' + tiltDeg + 'deg)';
+          pm.style.opacity = imgO.toFixed(3);
+        }
+      } else {
+        pcs.forEach(function(el) {
+          el.style.transform = 'translate3d(0,36px,0)';
+          el.style.opacity = '0';
+        });
+
+        if (pm) {
+          pm.style.transform = 'translate3d(0,' + (baseShiftY - 24) + 'px,0) scale(' + (baseScale * 0.92) + ') rotate(' + tiltDeg + 'deg)';
+          pm.style.opacity = '0';
+        }
+      }
+      return;
+    }
+
+    if (isActive) {
+      var p = clamp(prog, 0, 1);
+      var pe = easeOut3(p);
+
+      pcs.forEach(function(el, j) {
+        var shiftY = (1 - pe) * (28 + j * 7);
+        var shiftX = -(1 - pe) * (16 + j * 4);
+        el.style.transform = 'translate3d(' + shiftX + 'px,' + shiftY + 'px,0)';
+        el.style.opacity = (0.18 + pe * 0.82).toFixed(3);
+      });
+
+      if (pm) {
+        var mX = (1 - pe) * 72;
+        var mY = baseShiftY + (1 - pe) * (tablet ? 32 : 48);
+        var mS = baseScale * (0.92 + pe * 0.08);
+        var mO = 0.24 + pe * 0.76;
+        pm.style.transform = 'translate3d(' + mX + 'px,' + mY + 'px,0) scale(' + mS + ') rotate(' + tiltDeg + 'deg)';
+        pm.style.opacity = mO.toFixed(3);
+      }
+    } else {
+      pcs.forEach(function(el) {
+        el.style.transform = 'translate3d(-28px,34px,0)';
+        el.style.opacity = '0';
+      });
+
+      if (pm) {
+        pm.style.transform = 'translate3d(78px,' + (baseShiftY + 54) + 'px,0) scale(' + (baseScale * 0.88) + ') rotate(' + tiltDeg + 'deg)';
+        pm.style.opacity = '0';
+      }
+    }
+  });
+
+  root.querySelectorAll('[data-cur-idx]').forEach(function(el) {
+    el.textContent = idx + 1;
+  });
+
+  root.querySelectorAll('[data-prog-fill]').forEach(function(el) {
+    el.style.width = (((idx + 1) / TOTAL) * 100).toFixed(2) + '%';
+  });
+}
+
+
+  function readScroll() {
+    if (!track || !sticky) {
+      paint(cur, 1);
+      return;
+    }
+
+    var rect = track.getBoundingClientRect();
+    var sH = sticky.offsetHeight || window.innerHeight;
+    var scrollable = Math.max(track.offsetHeight - sH, 1);
+    var scrolled = clamp(-rect.top, 0, scrollable);
+    var gProg = scrolled / scrollable;
+    var raw = gProg * TOTAL;
+    var newIdx = clamp(Math.floor(raw), 0, TOTAL - 1);
+    var innerProg = raw - newIdx;
+
+    cur = newIdx;
+    paint(newIdx, innerProg);
+  }
+
+  function onScroll() {
+    if (ticking) return;
+    ticking = true;
+
+    requestAnimationFrame(function() {
+      readScroll();
+      ticking = false;
+    });
+  }
+
+  function scrollToSlide(idx) {
+    idx = clamp(idx, 0, TOTAL - 1);
+
+    var sH = sticky.offsetHeight || window.innerHeight;
+    var scrollable = Math.max(track.offsetHeight - sH, 1);
+    var fraction = idx / TOTAL;
+    var trackTop = track.getBoundingClientRect().top + window.pageYOffset;
+    var targetY = trackTop + scrollable * fraction;
+
+    scrollLocked = true;
+    window.scrollTo({ top: targetY, behavior: 'smooth' });
+
+    setTimeout(function() {
+      scrollLocked = false;
+      readScroll();
+    }, 700);
+  }
+
+  function checkMode() {
+    getMode();
+    readScroll();
+  }
+
+  root.addEventListener('click', function(e) {
+    if (e.target.closest('[data-prev]')) scrollToSlide(cur - 1);
+    if (e.target.closest('[data-next]')) scrollToSlide(cur + 1);
+  });
+
+  window.addEventListener('scroll', function() {
+    if (!scrollLocked) onScroll();
+  }, { passive: true });
+
+  window.addEventListener('resize', checkMode);
+  window.addEventListener('orientationchange', checkMode);
+
+  checkMode();
+  paint(0, 0);
+
+  requestAnimationFrame(function() {
+    requestAnimationFrame(function() {
+      readScroll();
+    });
+  });
+
+  function pad(n) {
+    return String(n).padStart(2, '0');
+  }
+
+  slides.forEach(function(slide) {
+    var box = slide.querySelector('[data-timer]');
+    if (!box) return;
+
+    var dateStr = slide.getAttribute('data-countdown');
+    if (!dateStr) return;
+
+    var targetMs = new Date(dateStr.replace(' ', 'T')).getTime();
+    if (isNaN(targetMs)) return;
+
+    var dEl = box.querySelector('[data-days]');
+    var hEl = box.querySelector('[data-hours]');
+    var mEl = box.querySelector('[data-minutes]');
+    var sEl = box.querySelector('[data-seconds]');
+
+    function tick() {
+      var diff = Math.max(0, Math.floor((targetMs - Date.now()) / 1000));
+
+      if (dEl) dEl.textContent = pad(Math.floor(diff / 86400));
+      if (hEl) hEl.textContent = pad(Math.floor((diff % 86400) / 3600));
+      if (mEl) mEl.textContent = pad(Math.floor((diff % 3600) / 60));
+      if (sEl) sEl.textContent = pad(diff % 60);
+
+      if (diff <= 0) {
+        box.classList.add('is-expired');
+      }
+    }
+
+    tick();
+    setInterval(tick, 1000);
+  });
+})();
+</script>
+
+{% schema %}
+{
+  "name": "Premium Parallax Slider",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Section height"
+    },
+    {
+      "type": "range",
+      "id": "section_height_desktop",
+      "label": "Desktop height",
+      "min": 700,
+      "max": 1200,
+      "step": 20,
+      "default": 900,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "section_height_tablet",
+      "label": "Tablet height",
+      "min": 620,
+      "max": 1000,
+      "step": 20,
+      "default": 820,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "section_height_mobile",
+      "label": "Mobile height",
+      "min": 620,
+      "max": 980,
+      "step": 20,
+      "default": 760,
+      "unit": "px"
+    },
+    {
+      "type": "header",
+      "content": "Text layout"
+    },
+    {
+      "type": "range",
+      "id": "content_max_width",
+      "label": "Text column max width",
+      "min": 380,
+      "max": 760,
+      "step": 10,
+      "default": 620,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "content_gap",
+      "label": "Column gap",
+      "min": 16,
+      "max": 120,
+      "step": 4,
+      "default": 48,
+      "unit": "px"
+    },
+    {
+      "type": "header",
+      "content": "Global image positioning"
+    },
+    {
+      "type": "range",
+      "id": "image_width_desktop",
+      "label": "Desktop image width",
+      "min": 28,
+      "max": 55,
+      "step": 1,
+      "default": 45,
+      "unit": "%"
+    },
+    {
+      "type": "range",
+      "id": "image_horizontal_desktop",
+      "label": "Desktop image horizontal position",
+      "min": 36,
+      "max": 58,
+      "step": 1,
+      "default": 51,
+      "unit": "%"
+    },
+    {
+      "type": "range",
+      "id": "image_top_desktop",
+      "label": "Desktop image top offset",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "default": 56,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "image_width_tablet",
+      "label": "Tablet image width",
+      "min": 32,
+      "max": 56,
+      "step": 1,
+      "default": 46,
+      "unit": "%"
+    },
+    {
+      "type": "range",
+      "id": "image_horizontal_tablet",
+      "label": "Tablet image horizontal position",
+      "min": 34,
+      "max": 54,
+      "step": 1,
+      "default": 45,
+      "unit": "%"
+    },
+    {
+      "type": "range",
+      "id": "image_top_tablet",
+      "label": "Tablet image top offset",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "default": 36,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "image_width_mobile",
+      "label": "Mobile image width",
+      "min": 56,
+      "max": 100,
+      "step": 2,
+      "default": 82,
+      "unit": "%"
+    },
+    {
+      "type": "range",
+      "id": "image_horizontal_mobile",
+      "label": "Mobile image horizontal position",
+      "min": 0,
+      "max": 10,
+      "step": 1,
+      "default": 0,
+      "unit": "%"
+    },
+    {
+      "type": "range",
+      "id": "image_top_mobile",
+      "label": "Mobile image top offset",
+      "min": -20,
+      "max": 40,
+      "step": 2,
+      "default": 0,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "image_radius",
+      "label": "Image radius",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "default": 0,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "image_shadow_strength",
+      "label": "Image shadow strength",
+      "min": 1,
+      "max": 3,
+      "step": 1,
+      "default": 2
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "bg_start",
+      "label": "Background gradient start",
+      "default": "#4D3C04"
+    },
+    {
+      "type": "color",
+      "id": "bg_end",
+      "label": "Background gradient end",
+      "default": "#070605"
+    },
+    {
+      "type": "color",
+      "id": "accent_color",
+      "label": "Accent color",
+      "default": "#BB911F"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Main text color",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "muted_text_color",
+      "label": "Muted text color",
+      "default": "#D9D4C7"
+    },
+    {
+      "type": "range",
+      "id": "overlay_opacity",
+      "label": "Gold glow intensity",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "default": 75,
+      "unit": "%"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "slide",
+      "name": "Slide",
+      "settings": [
+        {
+          "type": "header",
+          "content": "Image"
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image"
+        },
+        {
+          "type": "range",
+          "id": "image_scale",
+          "label": "Image scale",
+          "min": 80,
+          "max": 120,
+          "step": 2,
+          "default": 100,
+          "unit": "%"
+        },
+        {
+          "type": "range",
+          "id": "image_vertical_shift",
+          "label": "Image vertical shift",
+          "min": -80,
+          "max": 80,
+          "step": 4,
+          "default": 0,
+          "unit": "px"
+        },
+        {
+          "type": "range",
+          "id": "image_tilt_desktop",
+          "label": "Desktop tilt",
+          "min": -30,
+          "max": 30,
+          "step": 1,
+          "default": 15,
+          "unit": "deg"
+        },
+        {
+          "type": "range",
+          "id": "image_tilt_tablet",
+          "label": "Tablet tilt",
+          "min": -20,
+          "max": 20,
+          "step": 1,
+          "default": 10,
+          "unit": "deg"
+        },
+        {
+          "type": "range",
+          "id": "image_tilt_mobile",
+          "label": "Mobile tilt",
+          "min": -12,
+          "max": 12,
+          "step": 1,
+          "default": 0,
+          "unit": "deg"
+        },
+        {
+          "type": "header",
+          "content": "Text content"
+        },
+        {
+          "type": "text",
+          "id": "eyebrow",
+          "label": "Eyebrow badge",
+          "default": "EXCLUSIVE"
+        },
+        {
+          "type": "textarea",
+          "id": "heading",
+          "label": "Heading",
+          "default": "Voyage au centre\nde la terre",
+          "info": "Press Enter to break into a new line."
+        },
+        {
+          "type": "richtext",
+          "id": "text",
+          "label": "Description",
+          "default": "<p>Welcome to Rare Biblio, the premier destination for bibliophiles and book lovers who appreciate exceptional editions.</p>"
+        },
+        {
+          "type": "header",
+          "content": "Meta details"
+        },
+        {
+          "type": "text",
+          "id": "meta_label_1",
+          "label": "Meta label 1",
+          "default": "Year"
+        },
+        {
+          "type": "text",
+          "id": "meta_value_1",
+          "label": "Meta value 1",
+          "default": "1962, First Print"
+        },
+        {
+          "type": "text",
+          "id": "meta_label_2",
+          "label": "Meta label 2",
+          "default": "Binding"
+        },
+        {
+          "type": "text",
+          "id": "meta_value_2",
+          "label": "Meta value 2",
+          "default": "Quarter Leather"
+        },
+        {
+          "type": "header",
+          "content": "Countdown"
+        },
+        {
+          "type": "text",
+          "id": "countdown_label",
+          "label": "Timer label",
+          "default": "Reveals In"
+        },
+        {
+          "type": "text",
+          "id": "countdown_date",
+          "label": "Target date and time",
+          "info": "Format: 2026-12-31 23:59:59",
+          "default": "2026-12-31 23:59:59"
+        },
+        {
+          "type": "text",
+          "id": "expired_text",
+          "label": "Expired text",
+          "default": "Available now"
+        },
+        {
+          "type": "text",
+          "id": "days_label",
+          "label": "Days label",
+          "default": "Days"
+        },
+        {
+          "type": "text",
+          "id": "hours_label",
+          "label": "Hours label",
+          "default": "Hours"
+        },
+        {
+          "type": "text",
+          "id": "minutes_label",
+          "label": "Minutes label",
+          "default": "Minutes"
+        },
+        {
+          "type": "text",
+          "id": "seconds_label",
+          "label": "Seconds label",
+          "default": "Seconds"
+        },
+        {
+          "type": "header",
+          "content": "Button"
+        },
+        {
+          "type": "text",
+          "id": "button_label",
+          "label": "Button label",
+          "default": "NOTIFY ME"
+        },
+        {
+          "type": "url",
+          "id": "button_link",
+          "label": "Button link"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Premium Parallax Slider",
+      "blocks": [
+        { "type": "slide" },
+        { "type": "slide" },
+        { "type": "slide" }
+      ]
+    }
+  ]
+}
+{% endschema %} {% endcomment %}
+
+
+{% liquid
+  assign sid = 'ppbs-' | append: section.id
+  assign speed = section.settings.animation_speed
+  if speed == 'slow'
+    assign scrub_val = 2.5
+    assign tween_dur = 1.2
+  elsif speed == 'fast'
+    assign scrub_val = 0.6
+    assign tween_dur = 0.6
+  else
+    assign scrub_val = 1.4
+    assign tween_dur = 0.9
+  endif
+%}
+
+<section
+  id="{{ sid }}"
+  class="ppbs"
+  style="
+    --ppbs-h-desk: {{ section.settings.section_height_desktop }}px;
+    --ppbs-h-tab: {{ section.settings.section_height_tablet }}px;
+    --ppbs-h-mob: {{ section.settings.section_height_mobile }}px;
+
+    --ppbs-accent: {{ section.settings.accent_color }};
+    --ppbs-text: {{ section.settings.text_color }};
+    --ppbs-muted: {{ section.settings.muted_text_color }};
+    --ppbs-bg: {{ section.settings.background_color }};
+    --ppbs-bg-s: {{ section.settings.bg_start }};
+    --ppbs-bg-e: {{ section.settings.bg_end }};
+
+    --ppbs-cmax: {{ section.settings.content_max_width }}px;
+    --ppbs-gap: {{ section.settings.content_gap }}px;
+    --ppbs-glow: {{ section.settings.overlay_opacity | divided_by: 100.0 }};
+
+    --ppbs-media-w-desk: {{ section.settings.image_width_desktop }}%;
+    --ppbs-media-w-tab: {{ section.settings.image_width_tablet }}%;
+    --ppbs-media-w-mob: {{ section.settings.image_width_mobile }}%;
+
+    --ppbs-media-top-desk: {{ section.settings.image_top_desktop }}px;
+    --ppbs-media-top-tab: {{ section.settings.image_top_tablet }}px;
+    --ppbs-media-top-mob: {{ section.settings.image_top_mobile }}px;
+
+    --ppbs-media-x-desk: {{ section.settings.image_horizontal_desktop }}%;
+    --ppbs-media-x-tab: {{ section.settings.image_horizontal_tablet }}%;
+    --ppbs-media-x-mob: {{ section.settings.image_horizontal_mobile }}%;
+
+    --ppbs-radius: {{ section.settings.image_radius }}px;
+    --ppbs-shadow-strength: {{ section.settings.image_shadow_strength }};
+    --ppbs-slides: {{ section.blocks.size | default: 1 }};
+  "
+>
+  <div class="ppbs__track">
+    <div class="ppbs__sticky">
+
+      <div class="ppbs__bg" aria-hidden="true">
+        <div class="ppbs__bg-grad"></div>
+        <div class="ppbs__bg-vig"></div>
+        <div class="ppbs__bg-noise"></div>
+        <div class="ppbs__bg-beams"></div>
+        <div class="ppbs__bg-halo"></div>
+      </div>
+
+      <div class="ppbs__frame">
+        {% if section.blocks.size > 0 %}
+          <div class="ppbs__slides" aria-live="polite">
+            {% for block in section.blocks %}
+              {%- liquid
+                assign idx0 = forloop.index0
+              -%}
+
+              <article
+                class="ppbs__slide{% if forloop.first %} is-active{% endif %}"
+                data-slide
+                data-index="{{ idx0 }}"
+                data-countdown="{{ block.settings.countdown_date | escape }}"
+                {{ block.shopify_attributes }}
+              >
+                <div class="ppbs__wrap">
+                  <div class="ppbs__content">
+                    {% if block.settings.eyebrow != blank %}
+                      <div class="ppbs__eyebrow-wrap" data-pc>
+                        <span class="ppbs__eyebrow">{{ block.settings.eyebrow }}</span>
+                      </div>
+                    {% endif %}
+
+                    {% if block.settings.heading != blank %}
+                      <h2 class="ppbs__title" data-pc>{{ block.settings.heading | newline_to_br }}</h2>
+                    {% endif %}
+
+                    {% if block.settings.text != blank %}
+                      <div class="ppbs__desc rte" data-pc>{{ block.settings.text }}</div>
+                    {% endif %}
+
+                    {% if block.settings.meta_label_1 != blank or block.settings.meta_value_1 != blank or block.settings.meta_label_2 != blank or block.settings.meta_value_2 != blank %}
+                      <div class="ppbs__meta" data-pc>
+                        {% if block.settings.meta_label_1 != blank or block.settings.meta_value_1 != blank %}
+                          <div class="ppbs__meta-item">
+                            {% if block.settings.meta_label_1 != blank %}
+                              <div class="ppbs__meta-label">{{ block.settings.meta_label_1 }}</div>
+                            {% endif %}
+                            {% if block.settings.meta_value_1 != blank %}
+                              <div class="ppbs__meta-value">{{ block.settings.meta_value_1 }}</div>
+                            {% endif %}
+                          </div>
+                        {% endif %}
+
+                        {% if block.settings.meta_label_2 != blank or block.settings.meta_value_2 != blank %}
+                          <div class="ppbs__meta-item">
+                            {% if block.settings.meta_label_2 != blank %}
+                              <div class="ppbs__meta-label">{{ block.settings.meta_label_2 }}</div>
+                            {% endif %}
+                            {% if block.settings.meta_value_2 != blank %}
+                              <div class="ppbs__meta-value">{{ block.settings.meta_value_2 }}</div>
+                            {% endif %}
+                          </div>
+                        {% endif %}
+                      </div>
+                    {% endif %}
+
+                    <div class="ppbs__timer-wrap" data-pc>
+                      {% if block.settings.countdown_label != blank %}
+                        <div class="ppbs__timer-label">{{ block.settings.countdown_label }}</div>
+                      {% endif %}
+
+                      <div class="ppbs__timer" data-timer data-expired="{{ block.settings.expired_text | escape }}">
+                        <div class="ppbs__t-part">
+                          <span class="ppbs__t-val" data-days>00</span>
+                          <span class="ppbs__t-unit">{{ block.settings.days_label }}</span>
+                        </div>
+                        <span class="ppbs__t-sep">:</span>
+                        <div class="ppbs__t-part">
+                          <span class="ppbs__t-val" data-hours>00</span>
+                          <span class="ppbs__t-unit">{{ block.settings.hours_label }}</span>
+                        </div>
+                        <span class="ppbs__t-sep">:</span>
+                        <div class="ppbs__t-part">
+                          <span class="ppbs__t-val" data-minutes>00</span>
+                          <span class="ppbs__t-unit">{{ block.settings.minutes_label }}</span>
+                        </div>
+                        <span class="ppbs__t-sep">:</span>
+                        <div class="ppbs__t-part">
+                          <span class="ppbs__t-val" data-seconds>00</span>
+                          <span class="ppbs__t-unit">{{ block.settings.seconds_label }}</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {% if block.settings.button_label != blank %}
+                      <div class="ppbs__btn-row" data-pc>
+                        <a
+                          {% if block.settings.button_link != blank %}
+                            href="{{ block.settings.button_link }}"
+                          {% else %}
+                            role="link" aria-disabled="true"
+                          {% endif %}
+                          class="ppbs__btn"
+                        >
+                          <span>{{ block.settings.button_label }}</span>
+                        </a>
+                      </div>
+                    {% endif %}
+
+                    {% if section.blocks.size > 1 %}
+                      <div class="ppbs__nav" data-pc>
+                        <div class="ppbs__nav-counter">
+                          <span data-cur-idx>{{ forloop.index }}</span>
+                          <span class="ppbs__nav-slash">/</span>
+                          <span class="ppbs__nav-total">{{ section.blocks.size }}</span>
+                        </div>
+
+                        <div class="ppbs__prog">
+                          <span class="ppbs__prog-fill" data-prog-fill></span>
+                        </div>
+
+                        <div class="ppbs__arrows">
+                          <button type="button" class="ppbs__arrow" data-prev aria-label="Previous slide">
+                            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                              <path d="M14.5 5.5L8 12l6.5 6.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                          </button>
+                          <button type="button" class="ppbs__arrow" data-next aria-label="Next slide">
+                            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                              <path d="M9.5 5.5L16 12l-6.5 6.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                          </button>
+                        </div>
+                      </div>
+                    {% endif %}
+                  </div>
+
+                  <div class="ppbs__media">
+                    <div
+                      class="ppbs__media-inner"
+                      data-pm
+                      style="
+                        --slide-tilt-desktop: {{ block.settings.image_tilt_desktop }}deg;
+                        --slide-tilt-tablet: {{ block.settings.image_tilt_tablet }}deg;
+                        --slide-tilt-mobile: {{ block.settings.image_tilt_mobile }}deg;
+                        --slide-scale: {{ block.settings.image_scale | divided_by: 100.0 }};
+                        --slide-y: {{ block.settings.image_vertical_shift }}px;
+                      "
+                    >
+                      {% if block.settings.image != blank %}
+                        {{
+                          block.settings.image
+                          | image_url: width: 2000
+                          | image_tag:
+                            loading: 'lazy',
+                            widths: '360, 480, 640, 768, 900, 1200, 1600, 2000',
+                            sizes: '(max-width: 767px) 82vw, (max-width: 1199px) 46vw, 45vw',
+                            class: 'ppbs__img'
+                        }}
+                      {% else %}
+                        <div class="ppbs__placeholder">
+                          {{ 'product-1' | placeholder_svg_tag: 'placeholder-svg' }}
+                        </div>
+                      {% endif %}
+                    </div>
+                  </div>
+                </div>
+              </article>
+            {% endfor %}
+          </div>
+        {% else %}
+          <div class="ppbs__empty">
+            <div class="ppbs__wrap">
+              <div class="ppbs__content">
+                <div class="ppbs__eyebrow-wrap">
+                  <span class="ppbs__eyebrow">EXCLUSIVE</span>
+                </div>
+                <h2 class="ppbs__title">Add slides from the theme editor</h2>
+                <p class="ppbs__desc">Use Add block to create each premium parallax slide.</p>
+              </div>
+              <div class="ppbs__media">
+                <div
+                  class="ppbs__media-inner"
+                  style="
+                    --slide-tilt-desktop: 15deg;
+                    --slide-tilt-tablet: 10deg;
+                    --slide-tilt-mobile: 0deg;
+                    --slide-scale: 1;
+                    --slide-y: 0px;
+                  "
+                >
+                  <div class="ppbs__placeholder">
+                    {{ 'product-1' | placeholder_svg_tag: 'placeholder-svg' }}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+#{{ sid }},
+#{{ sid }} * {
+  box-sizing: border-box;
+}
+
+#{{ sid }} {
+  position: relative;
+  color: var(--ppbs-text);
+  background: var(--ppbs-bg, #000000);
+  overflow: clip;
+  font-family: "Satoshi", sans-serif;
+}
+
+/*
+  TRACK HEIGHT  —  HOLD + TRANSITION MODEL
+  Each slide = 2× viewport of scroll distance
+    First half  → slide fully visible (dwell / hold)
+    Second half → slide exits, next enters
+*/
+#{{ sid }} .ppbs__track {
+  position: relative;
+  height: calc(var(--ppbs-h-desk) * var(--ppbs-slides) * 2);
+}
+
+#{{ sid }} .ppbs__sticky {
+  position: sticky;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: var(--ppbs-h-desk);
+  max-height: 100vh;
+  max-height: 100dvh;
+  overflow: hidden;
+}
+
+/* ── Background ── */
+#{{ sid }} .ppbs__bg,
+#{{ sid }} .ppbs__bg > * {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+#{{ sid }} .ppbs__bg {
+  overflow: hidden;
+  will-change: transform;
+}
+#{{ sid }} .ppbs__bg-grad {
+  background: radial-gradient(65.38% 56.85% at 31.94% 59.17%, var(--ppbs-bg-s) 0%, var(--ppbs-bg-e) 100%);
+  transform: scaleX(-1);
+}
+#{{ sid }} .ppbs__bg-vig {
+  background:
+    linear-gradient(90deg, rgba(0,0,0,.8) 0%, rgba(0,0,0,.28) 34%, rgba(0,0,0,.06) 55%, rgba(0,0,0,.38) 100%),
+    linear-gradient(180deg, rgba(0,0,0,.18) 0%, rgba(0,0,0,0) 30%, rgba(0,0,0,.32) 100%);
+}
+#{{ sid }} .ppbs__bg-noise {
+  opacity: 0.045;
+  mix-blend-mode: screen;
+  background-image:
+    radial-gradient(circle at 20% 20%, rgba(255,255,255,.72) 0 1px, transparent 1px),
+    radial-gradient(circle at 72% 35%, rgba(255,255,255,.38) 0 1px, transparent 1px),
+    radial-gradient(circle at 50% 80%, rgba(255,255,255,.52) 0 1px, transparent 1px);
+  background-size: 18px 18px, 24px 24px, 26px 26px;
+}
+#{{ sid }} .ppbs__bg-beams {
+  opacity: var(--ppbs-glow);
+  background: linear-gradient(90deg, transparent 0%, rgba(187,145,31,.08) 16%, rgba(187,145,31,.23) 34%, rgba(187,145,31,.08) 50%, transparent 65%);
+  filter: blur(44px);
+  transform: translateX(16%);
+}
+#{{ sid }} .ppbs__bg-halo {
+  inset: auto auto 10% 48%;
+  width: min(44vw, 720px);
+  height: min(44vw, 720px);
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(187,145,31,.22) 0%, rgba(187,145,31,.08) 36%, rgba(187,145,31,0) 68%);
+  filter: blur(30px);
+  transform: translate(-50%, 0);
+}
+
+/* ── Frame / layout ── */
+#{{ sid }} .ppbs__frame {
+  position: relative;
+  z-index: 2;
+  height: 100%;
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 0 clamp(18px, 2.8vw, 40px);
+}
+#{{ sid }} .ppbs__slides {
+  position: relative;
+  height: 100%;
+}
+#{{ sid }} .ppbs__slide {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+/* First slide visible before JS loads */
+#{{ sid }} .ppbs__slide.is-active {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+/* Suppress flash during reinit */
+#{{ sid }}.ppbs--reinit .ppbs__slide {
+  transition: none !important;
+}
+
+#{{ sid }} .ppbs__wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  min-height: 100%;
+  height: 100%;
+  padding: clamp(34px, 5vw, 70px) 0;
+}
+#{{ sid }} .ppbs__content {
+  position: relative;
+  z-index: 3;
+  width: min(100%, var(--ppbs-cmax));
+  max-width: var(--ppbs-cmax);
+}
+#{{ sid }} .ppbs__media {
+  position: absolute;
+  left: var(--ppbs-media-x-desk);
+  top: var(--ppbs-media-top-desk);
+  width: var(--ppbs-media-w-desk);
+  max-width: 780px;
+  aspect-ratio: 653 / 823;
+  z-index: 2;
+  pointer-events: none;
+}
+#{{ sid }} .ppbs__media-inner {
+  width: 100%;
+  height: 100%;
+  transform-origin: center center;
+  will-change: transform, opacity;
+  filter: drop-shadow(0 20px calc(60px * var(--ppbs-shadow-strength)) rgba(0,0,0,.52));
+}
+#{{ sid }} .ppbs__img,
+#{{ sid }} .ppbs__placeholder,
+#{{ sid }} .ppbs__placeholder svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+#{{ sid }} .ppbs__img {
+  object-fit: contain;
+  object-position: center;
+}
+
+/* ── Typography / components ── */
+#{{ sid }} .ppbs__eyebrow-wrap { margin-bottom: 22px; }
+#{{ sid }} .ppbs__eyebrow {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  min-width: 170px;
+  padding: 10px 22px;
+  border-radius: 4px;
+  color: #fff8e7;
+  background: linear-gradient(270deg, rgba(142,112,37,0) 0%, rgba(142,112,37,.855) 78.75%, rgba(142,112,37,0) 100%);
+  box-shadow: 0 10px 32px rgba(0,0,0,.24);
+  font-family: "Bethany Elingston", serif;
+  font-size: 18px;
+  line-height: 1;
+}
+#{{ sid }} .ppbs__title {
+  max-width: 660px;
+  color: var(--ppbs-text);
+  font-family: "Bethany Elingston", serif;
+  font-weight: 400;
+  font-size: clamp(34px, 4.3vw, 60px);
+  line-height: 1.05;
+  text-wrap: balance;
+}
+#{{ sid }} .ppbs__desc {
+  max-width: 610px;
+  margin-top: 24px;
+  color: var(--ppbs-muted);
+  font-size: clamp(15px, 1.55vw, 20px);
+  line-height: 1.5;
+}
+#{{ sid }} .ppbs__desc p { margin: 0; }
+
+#{{ sid }} .ppbs__meta { display: flex; flex-wrap: wrap; gap: 22px 52px; margin-top: 32px; }
+#{{ sid }} .ppbs__meta-item { min-width: 170px; }
+#{{ sid }} .ppbs__meta-label { margin-bottom: 8px; color: rgba(255,255,255,.62); font-size: 14px; line-height: 1.4; }
+#{{ sid }} .ppbs__meta-value { color: var(--ppbs-text); font-weight: 500; font-size: clamp(18px, 2vw, 24px); line-height: 1.25; }
+
+#{{ sid }} .ppbs__timer-wrap { margin-top: 30px; }
+#{{ sid }} .ppbs__timer-label { margin-bottom: 16px; color: rgba(255,255,255,.72); font-size: 15px; line-height: 1.3; }
+#{{ sid }} .ppbs__timer { display: flex; align-items: flex-start; gap: 10px; flex-wrap: nowrap; }
+#{{ sid }} .ppbs__t-part { display: flex; flex-direction: column; align-items: flex-start; min-width: 72px; }
+#{{ sid }} .ppbs__t-val,
+#{{ sid }} .ppbs__t-sep { color: var(--ppbs-accent); font-weight: 700; font-size: clamp(34px, 4.5vw, 64px); line-height: 1; }
+#{{ sid }} .ppbs__t-unit { margin-top: 8px; color: rgba(255,255,255,.9); font-size: 12px; line-height: 1.2; text-transform: uppercase; }
+#{{ sid }} .ppbs__timer.is-expired .ppbs__t-val,
+#{{ sid }} .ppbs__timer.is-expired .ppbs__t-sep { opacity: .42; }
+
+#{{ sid }} .ppbs__btn-row { margin-top: 34px; }
+#{{ sid }} .ppbs__btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 212px;
+  min-height: 60px;
+  padding: 12px 40px;
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,.24);
+  border-radius: 999px;
+  text-decoration: none;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+  background-image: url('https://cdn.shopify.com/s/files/1/0589/1719/1777/files/f89b1c50a8a368abe48fc6793fd85a8999a3c0ca.png?v=1775475634');
+}
+#{{ sid }} .ppbs__btn::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(255,255,255,.18) 0%, transparent 60%);
+  pointer-events: none;
+}
+#{{ sid }} .ppbs__btn:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.06);
+  box-shadow: 0 18px 50px rgba(0,0,0,.38), inset 0 1px 0 rgba(255,255,255,.32);
+}
+#{{ sid }} .ppbs__btn span {
+  position: relative;
+  z-index: 1;
+  color: #fff;
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+/* ── Navigation ── */
+#{{ sid }} .ppbs__nav { display: flex; align-items: center; gap: 18px; margin-top: 30px; max-width: 360px; }
+#{{ sid }} .ppbs__nav-counter { display: inline-flex; align-items: center; gap: 6px; min-width: 64px; color: var(--ppbs-text); font-size: 24px; line-height: 1; }
+#{{ sid }} .ppbs__nav-slash,
+#{{ sid }} .ppbs__nav-total { opacity: .7; }
+#{{ sid }} .ppbs__prog { flex: 1; height: 2px; background: rgba(255,255,255,.18); overflow: hidden; }
+#{{ sid }} .ppbs__prog-fill { display: block; width: 0; height: 100%; background: rgba(255,255,255,.94); transition: width .4s ease; }
+#{{ sid }} .ppbs__arrows { display: inline-flex; gap: 8px; }
+#{{ sid }} .ppbs__arrow { width: 38px; height: 38px; padding: 0; border: 0; background: transparent; color: rgba(255,255,255,.9); cursor: pointer; transition: transform .25s ease, opacity .25s ease; }
+#{{ sid }} .ppbs__arrow:hover { transform: translateY(-1px); }
+#{{ sid }} .ppbs__arrow svg { display: block; width: 100%; height: 100%; }
+
+#{{ sid }} .ppbs__empty { height: 100%; }
+#{{ sid }} .ppbs__empty .ppbs__wrap { height: 100%; }
+
+/* ══════════════════════════════════════════
+   TABLET
+   ══════════════════════════════════════════ */
+@media screen and (max-width: 1199px) {
+  #{{ sid }} .ppbs__track {
+    height: calc(var(--ppbs-h-tab) * var(--ppbs-slides) * 2);
+  }
+  #{{ sid }} .ppbs__sticky { height: var(--ppbs-h-tab); }
+  #{{ sid }} .ppbs__frame { padding: 0 26px; }
+  #{{ sid }} .ppbs__wrap { padding: 42px 0; }
+  #{{ sid }} .ppbs__content { max-width: min(100%, 500px); }
+  #{{ sid }} .ppbs__media {
+    top: var(--ppbs-media-top-tab);
+    left: var(--ppbs-media-x-tab);
+    width: var(--ppbs-media-w-tab);
+  }
+  #{{ sid }} .ppbs__meta { gap: 18px 28px; }
+  #{{ sid }} .ppbs__t-part { min-width: 64px; }
+}
+
+/* ══════════════════════════════════════════
+   MOBILE
+   ══════════════════════════════════════════ */
+@media screen and (max-width: 767px) {
+  #{{ sid }} .ppbs__track {
+    height: calc(var(--ppbs-h-mob) * var(--ppbs-slides) * 2);
+  }
+  #{{ sid }} .ppbs__sticky {
+    height: var(--ppbs-h-mob);
+    max-height: 100vh;
+    max-height: 100dvh;
+  }
+  #{{ sid }} .ppbs__frame { padding: 0 18px; }
+  #{{ sid }} .ppbs__slide { position: absolute; inset: 0; }
+  #{{ sid }} .ppbs__wrap {
+    display: grid;
+    grid-template-columns: 1fr;
+    align-content: center;
+    justify-items: center;
+    gap: 18px;
+    height: 100%;
+    padding: 22px 0 24px;
+  }
+  #{{ sid }} .ppbs__content { order: 2; width: 100%; max-width: 100%; text-align: left; }
+  #{{ sid }} .ppbs__media {
+    order: 1;
+    position: relative;
+    top: var(--ppbs-media-top-mob);
+    left: auto; right: auto;
+    width: min(100%, var(--ppbs-media-w-mob));
+    max-width: 330px;
+    max-height: 40vh;
+    aspect-ratio: auto;
+    margin-inline: auto;
+  }
+  #{{ sid }} .ppbs__bg-halo { width: 88vw; height: 88vw; left: 50%; bottom: 26%; }
+  #{{ sid }} .ppbs__eyebrow-wrap { margin-bottom: 12px; }
+  #{{ sid }} .ppbs__eyebrow { min-height: 36px; min-width: 120px; padding: 8px 14px; font-size: 13px; }
+  #{{ sid }} .ppbs__title { max-width: 100%; font-size: clamp(28px, 8vw, 36px); line-height: 1.08; }
+  #{{ sid }} .ppbs__desc { max-width: 100%; margin-top: 12px; font-size: 14px; line-height: 1.45; }
+  #{{ sid }} .ppbs__meta { gap: 12px 18px; margin-top: 18px; }
+  #{{ sid }} .ppbs__meta-item { min-width: calc(50% - 9px); }
+  #{{ sid }} .ppbs__meta-label { margin-bottom: 5px; font-size: 12px; }
+  #{{ sid }} .ppbs__meta-value { font-size: 16px; }
+  #{{ sid }} .ppbs__timer-wrap { margin-top: 18px; }
+  #{{ sid }} .ppbs__timer { gap: 5px; overflow-x: auto; scrollbar-width: none; }
+  #{{ sid }} .ppbs__timer::-webkit-scrollbar { display: none; }
+  #{{ sid }} .ppbs__t-part { min-width: 50px; }
+  #{{ sid }} .ppbs__t-unit { margin-top: 4px; font-size: 9px; }
+  #{{ sid }} .ppbs__btn-row { margin-top: 18px; }
+  #{{ sid }} .ppbs__btn { width: 100%; min-width: 0; min-height: 50px; padding: 10px 20px; }
+  #{{ sid }} .ppbs__btn span { font-size: 15px; }
+  #{{ sid }} .ppbs__nav { gap: 10px; margin-top: 18px; max-width: 100%; }
+  #{{ sid }} .ppbs__nav-counter { min-width: 42px; font-size: 16px; }
+  #{{ sid }} .ppbs__arrow { width: 30px; height: 30px; }
+}
+</style>
+
+<script>
+(function() {
+  'use strict';
+
+  var root = document.getElementById('{{ sid }}');
+  if (!root) return;
+
+  var track  = root.querySelector('.ppbs__track');
+  var sticky = root.querySelector('.ppbs__sticky');
+  var slides = Array.from(root.querySelectorAll('[data-slide]'));
+  if (!slides.length) return;
+
+  var TOTAL = slides.length;
+  var mobile  = false;
+  var tablet  = false;
+
+  /* Speed from Liquid (pre-computed) */
+  var SCRUB     = {{ scrub_val }};
+  var TWEEN_DUR = {{ tween_dur }};
+
+  var countdownIntervals = [];
+
+  /* ── Helpers ── */
+  function getMode() {
+    mobile = window.matchMedia('(max-width: 767px)').matches;
+    tablet = !mobile && window.matchMedia('(max-width: 1199px)').matches;
+  }
+  function getTilt(pm) {
+    if (!pm) return 0;
+    var s = pm.style;
+    if (mobile)  return parseFloat(s.getPropertyValue('--slide-tilt-mobile'))  || 0;
+    if (tablet)  return parseFloat(s.getPropertyValue('--slide-tilt-tablet'))  || 0;
+    return parseFloat(s.getPropertyValue('--slide-tilt-desktop')) || 0;
+  }
+  function getScale(pm)  { return pm ? (parseFloat(pm.style.getPropertyValue('--slide-scale')) || 1) : 1; }
+  function getShiftY(pm) { return pm ? (parseFloat(pm.style.getPropertyValue('--slide-y'))     || 0) : 0; }
+
+  var counters  = Array.from(root.querySelectorAll('[data-cur-idx]'));
+  var progFills = Array.from(root.querySelectorAll('[data-prog-fill]'));
+
+  function updateNav(idx) {
+    counters.forEach(function(el)  { el.textContent = idx + 1; });
+    progFills.forEach(function(el) { el.style.width = (((idx + 1) / TOTAL) * 100).toFixed(2) + '%'; });
+  }
+
+  /*
+    ══════════════════════════════════════════════════════════
+    TIMELINE  —  HOLD → TRANSITION → HOLD → TRANSITION …
+    ──────────────────────────────────────────────────────────
+    Timeline total duration = TOTAL × 2
+
+    For slide index i:
+      holdStart       = i × 2        (slide fully visible)
+      transitionStart = i × 2 + 1    (current exits ↑, next enters ↑)
+
+    Example with 3 slides:
+      0→1  Slide 1 holds
+      1→2  Slide 1 out / Slide 2 in
+      2→3  Slide 2 holds
+      3→4  Slide 2 out / Slide 3 in
+      4→5  Slide 3 holds
+      5→6  (end)
+    ══════════════════════════════════════════════════════════
+  */
+  var masterTl;
+
+  function initGSAP() {
+    getMode();
+    root.classList.add('ppbs--reinit');
+
+    if (masterTl) {
+      masterTl.kill();
+      ScrollTrigger.getAll().forEach(function(t) { t.kill(); });
+    }
+
+    /* Reset non-first slides */
+    slides.forEach(function(slide, i) {
+      var pcs = Array.from(slide.querySelectorAll('[data-pc]'));
+      var pm  = slide.querySelector('[data-pm]');
+      if (i > 0) {
+        gsap.set(slide, { clearProps: 'all' });
+        gsap.set(pcs,   { clearProps: 'all' });
+        if (pm) gsap.set(pm, { clearProps: 'all' });
+      }
+    });
+
+    /* Initial positions */
+    slides.forEach(function(slide, i) {
+      slide.classList.remove('is-active');
+      var pcs     = Array.from(slide.querySelectorAll('[data-pc]'));
+      var pm      = slide.querySelector('[data-pm]');
+      var tilt    = getTilt(pm);
+      var scale   = getScale(pm);
+      var yOffset = getShiftY(pm);
+
+      if (i === 0) {
+        slide.classList.add('is-active');
+        gsap.set(slide, { zIndex: 10, yPercent: 0, autoAlpha: 1 });
+        gsap.set(pcs,   { y: 0, opacity: 1 });
+        if (pm) gsap.set(pm, { yPercent: 0, y: yOffset, scale: scale, rotation: tilt, opacity: 1 });
+      } else {
+        gsap.set(slide, { zIndex: 1, yPercent: 100, autoAlpha: 1 });
+        gsap.set(pcs,   { y: 120, opacity: 0 });
+        if (pm) gsap.set(pm, { yPercent: 40, y: yOffset, scale: scale * 0.92, rotation: tilt, opacity: 0 });
+      }
+    });
+
+    root.classList.remove('ppbs--reinit');
+
+    /* Slow background zoom */
+    var bgWrapper = root.querySelector('.ppbs__bg');
+    if (bgWrapper) {
+      gsap.to(bgWrapper, {
+        scale: 1.15,
+        scrollTrigger: { trigger: track, start: 'top top', end: 'bottom bottom', scrub: true }
+      });
+    }
+
+    if (TOTAL <= 1) return;
+
+    /* Set initial nav state */
+    updateNav(0);
+
+    var TL_DUR = TOTAL * 2;
+
+    masterTl = gsap.timeline({
+      scrollTrigger: {
+        trigger: track,
+        start: 'top top',
+        end: 'bottom bottom',
+        scrub: SCRUB,
+        onUpdate: function(self) {
+          var timePos = self.progress * TL_DUR;
+          var baseIdx = Math.floor(timePos / 2);
+          var remainder = timePos - (baseIdx * 2);
+          /* Switch counter at midpoint of transition when new slide is dominant */
+          var idx;
+          if (remainder > 1.5 && baseIdx < TOTAL - 1) {
+            idx = baseIdx + 1;
+          } else {
+            idx = Math.min(TOTAL - 1, baseIdx);
+          }
+          updateNav(idx);
+          slides.forEach(function(s, i) {
+            s.classList.toggle('is-active', i === idx);
+          });
+        }
+      }
+    });
+
+    for (var i = 0; i < TOTAL; i++) {
+      var holdStart       = i * 2;
+      var transitionStart = holdStart + 1;
+
+      /* Hold phase is implicit — nothing animates from holdStart → transitionStart */
+
+      if (i < TOTAL - 1) {
+        var cur    = slides[i];
+        var nxt    = slides[i + 1];
+        var curPcs = Array.from(cur.querySelectorAll('[data-pc]'));
+        var curPm  = cur.querySelector('[data-pm]');
+        var nxtPcs = Array.from(nxt.querySelectorAll('[data-pc]'));
+        var nxtPm  = nxt.querySelector('[data-pm]');
+        var t      = transitionStart;
+
+        /* ── Current slide exits upward ── */
+        masterTl.to(cur, { yPercent: -60, ease: 'none', duration: 1 }, t);
+
+        if (curPm) {
+          masterTl.to(curPm, {
+            yPercent: -50, opacity: 0, scale: getScale(curPm) * 1.05,
+            ease: 'none', duration: 1
+          }, t);
+        }
+        /* Text elements exit — fits within [t, t+0.7] */
+        if (curPcs.length) {
+          masterTl.to(curPcs, {
+            y: -80, opacity: 0, ease: 'none',
+            stagger: 0.02, duration: 0.5
+          }, t);
+        }
+
+        /* ── Next slide enters from below ── */
+        masterTl.set(nxt, { zIndex: 20 }, t);
+        masterTl.to(nxt, { yPercent: 0, ease: 'none', duration: 1 }, t);
+
+        if (nxtPm) {
+          masterTl.to(nxtPm, {
+            yPercent: 0, opacity: 1, scale: getScale(nxtPm),
+            ease: 'none', duration: 1
+          }, t);
+        }
+        /* Text elements enter — fits within [t+0.35, t+0.95] */
+        if (nxtPcs.length) {
+          masterTl.to(nxtPcs, {
+            y: 0, opacity: 1, ease: 'power2.out',
+            stagger: 0.04, duration: 0.55
+          }, t + 0.35);
+        }
+
+        masterTl.set(cur, { zIndex: 1 }, t + 1);
+      }
+    }
+  }
+
+  /* ── GSAP loader ── */
+  function loadGSAP() {
+    if (typeof gsap === 'undefined') {
+      var s1 = document.createElement('script');
+      s1.src = 'https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js';
+      document.head.appendChild(s1);
+      s1.onload = function() {
+        var s2 = document.createElement('script');
+        s2.src = 'https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js';
+        document.head.appendChild(s2);
+        s2.onload = function() {
+          gsap.registerPlugin(ScrollTrigger);
+          initGSAP();
+        };
+      };
+    } else if (typeof ScrollTrigger === 'undefined') {
+      var s2 = document.createElement('script');
+      s2.src = 'https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js';
+      document.head.appendChild(s2);
+      s2.onload = function() {
+        gsap.registerPlugin(ScrollTrigger);
+        initGSAP();
+      };
+    } else {
+      initGSAP();
+    }
+  }
+
+  loadGSAP();
+
+  /* Resize */
+  var resizeTimer;
+  window.addEventListener('resize', function() {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(initGSAP, 250);
+  });
+
+  /* Shopify Editor */
+  if (window.Shopify && Shopify.designMode) {
+    document.addEventListener('shopify:section:load', function(e) {
+      if (e.detail.sectionId.includes('{{ section.id }}')) {
+        setTimeout(function() {
+          loadGSAP();
+          requestAnimationFrame(function() {
+            if (typeof ScrollTrigger !== 'undefined') ScrollTrigger.refresh();
+          });
+        }, 150);
+      }
+    });
+  }
+
+  /* Arrow navigation — GSAP-powered scroll to land exactly in the hold zone */
+  var isScrolling = false;
+
+  function animateScrollTo(targetY, duration) {
+    if (isScrolling) return;
+    isScrolling = true;
+
+    var startY = window.pageYOffset || window.scrollY;
+    var diff = targetY - startY;
+    if (Math.abs(diff) < 2) { isScrolling = false; return; }
+
+    var obj = { val: 0 };
+    gsap.to(obj, {
+      val: 1,
+      duration: duration,
+      ease: 'power2.inOut',
+      onUpdate: function() {
+        window.scrollTo(0, startY + diff * obj.val);
+      },
+      onComplete: function() {
+        /* Snap precisely to target after animation */
+        window.scrollTo(0, targetY);
+        isScrolling = false;
+      }
+    });
+  }
+
+  root.addEventListener('click', function(e) {
+    var prevBtn = e.target.closest('[data-prev]');
+    var nextBtn = e.target.closest('[data-next]');
+
+    if (prevBtn || nextBtn) {
+      var stArray = typeof ScrollTrigger !== 'undefined' ? ScrollTrigger.getAll() : [];
+      var st = stArray.find(function(t) { return t.trigger === track; });
+
+      if (st) {
+        var TL_DUR     = TOTAL * 2;
+        var timePos    = st.progress * TL_DUR;
+        var baseIdx    = Math.floor(timePos / 2);
+        var remainder  = timePos - (baseIdx * 2);
+        var currentIdx = (remainder > 1.5 && baseIdx < TOTAL - 1) ? baseIdx + 1 : Math.min(TOTAL - 1, baseIdx);
+        var targetIdx  = currentIdx;
+
+        if (prevBtn) targetIdx = Math.max(0, currentIdx - 1);
+        if (nextBtn) targetIdx = Math.min(TOTAL - 1, currentIdx + 1);
+
+        if (targetIdx === currentIdx) return;
+
+        /* Land in the middle of that slide's hold zone */
+        var targetProg = ((targetIdx * 2) + 0.5) / TL_DUR;
+        var targetY    = st.start + (st.end - st.start) * targetProg;
+
+        /* Duration scales with distance — feels consistent for 1-slide or multi-slide jumps */
+        var distance = Math.abs(targetIdx - currentIdx);
+        var scrollDur = Math.min(0.6 + (distance * 0.3), 1.4);
+
+        animateScrollTo(Math.round(targetY), scrollDur);
+      }
+    }
+  });
+
+  /* ── Countdown ── */
+  function pad(n) { return String(n).padStart(2, '0'); }
+
+  function initCountdowns() {
+    countdownIntervals.forEach(function(id) { clearInterval(id); });
+    countdownIntervals = [];
+
+    slides.forEach(function(slide) {
+      var box = slide.querySelector('[data-timer]');
+      if (!box) return;
+      var dateStr = slide.getAttribute('data-countdown');
+      if (!dateStr) return;
+      var targetMs = new Date(dateStr.replace(' ', 'T')).getTime();
+      if (isNaN(targetMs)) return;
+
+      var dEl = box.querySelector('[data-days]');
+      var hEl = box.querySelector('[data-hours]');
+      var mEl = box.querySelector('[data-minutes]');
+      var sEl = box.querySelector('[data-seconds]');
+
+      function tick() {
+        var diff = Math.max(0, Math.floor((targetMs - Date.now()) / 1000));
+        if (dEl) dEl.textContent = pad(Math.floor(diff / 86400));
+        if (hEl) hEl.textContent = pad(Math.floor((diff % 86400) / 3600));
+        if (mEl) mEl.textContent = pad(Math.floor((diff % 3600) / 60));
+        if (sEl) sEl.textContent = pad(diff % 60);
+        if (diff <= 0) box.classList.add('is-expired');
+      }
+
+      tick();
+      countdownIntervals.push(setInterval(tick, 1000));
+    });
+  }
+
+  initCountdowns();
+})();
+</script>
+
+{% schema %}
+{
+  "name": "Premium Parallax Slider",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Section height"
+    },
+    {
+      "type": "range",
+      "id": "section_height_desktop",
+      "label": "Desktop height",
+      "min": 700,
+      "max": 1200,
+      "step": 20,
+      "default": 900,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "section_height_tablet",
+      "label": "Tablet height",
+      "min": 620,
+      "max": 1000,
+      "step": 20,
+      "default": 820,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "section_height_mobile",
+      "label": "Mobile height",
+      "min": 620,
+      "max": 980,
+      "step": 20,
+      "default": 760,
+      "unit": "px"
+    },
+    {
+      "type": "header",
+      "content": "Text layout"
+    },
+    {
+      "type": "range",
+      "id": "content_max_width",
+      "label": "Text column max width",
+      "min": 380,
+      "max": 760,
+      "step": 10,
+      "default": 620,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "content_gap",
+      "label": "Column gap",
+      "min": 16,
+      "max": 120,
+      "step": 4,
+      "default": 48,
+      "unit": "px"
+    },
+    {
+      "type": "header",
+      "content": "Global image positioning"
+    },
+    {
+      "type": "range",
+      "id": "image_width_desktop",
+      "label": "Desktop image width",
+      "min": 28,
+      "max": 55,
+      "step": 1,
+      "default": 45,
+      "unit": "%"
+    },
+    {
+      "type": "range",
+      "id": "image_horizontal_desktop",
+      "label": "Desktop image horizontal position",
+      "min": 36,
+      "max": 58,
+      "step": 1,
+      "default": 51,
+      "unit": "%"
+    },
+    {
+      "type": "range",
+      "id": "image_top_desktop",
+      "label": "Desktop image top offset",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "default": 56,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "image_width_tablet",
+      "label": "Tablet image width",
+      "min": 32,
+      "max": 56,
+      "step": 1,
+      "default": 46,
+      "unit": "%"
+    },
+    {
+      "type": "range",
+      "id": "image_horizontal_tablet",
+      "label": "Tablet image horizontal position",
+      "min": 34,
+      "max": 54,
+      "step": 1,
+      "default": 45,
+      "unit": "%"
+    },
+    {
+      "type": "range",
+      "id": "image_top_tablet",
+      "label": "Tablet image top offset",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "default": 36,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "image_width_mobile",
+      "label": "Mobile image width",
+      "min": 56,
+      "max": 100,
+      "step": 2,
+      "default": 82,
+      "unit": "%"
+    },
+    {
+      "type": "range",
+      "id": "image_horizontal_mobile",
+      "label": "Mobile image horizontal position",
+      "min": 0,
+      "max": 10,
+      "step": 1,
+      "default": 0,
+      "unit": "%"
+    },
+    {
+      "type": "range",
+      "id": "image_top_mobile",
+      "label": "Mobile image top offset",
+      "min": -20,
+      "max": 40,
+      "step": 2,
+      "default": 0,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "image_radius",
+      "label": "Image radius",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "default": 0,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "image_shadow_strength",
+      "label": "Image shadow strength",
+      "min": 1,
+      "max": 3,
+      "step": 1,
+      "default": 2
+    },
+    {
+      "type": "header",
+      "content": "Animation settings"
+    },
+    {
+      "type": "select",
+      "id": "animation_speed",
+      "label": "Animation speed",
+      "options": [
+        { "value": "slow", "label": "Slow — Cinematic" },
+        { "value": "normal", "label": "Normal" },
+        { "value": "fast", "label": "Fast — Snappy" }
+      ],
+      "default": "normal",
+      "info": "Controls how quickly slides transition when scrolling. Applies to all devices."
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Section background color",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "bg_start",
+      "label": "Gradient overlay start",
+      "default": "#4D3C04"
+    },
+    {
+      "type": "color",
+      "id": "bg_end",
+      "label": "Gradient overlay end",
+      "default": "#070605"
+    },
+    {
+      "type": "color",
+      "id": "accent_color",
+      "label": "Accent color",
+      "default": "#BB911F"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Main text color",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "muted_text_color",
+      "label": "Muted text color",
+      "default": "#D9D4C7"
+    },
+    {
+      "type": "range",
+      "id": "overlay_opacity",
+      "label": "Gold glow intensity",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "default": 75,
+      "unit": "%"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "slide",
+      "name": "Slide",
+      "settings": [
+        {
+          "type": "header",
+          "content": "Image"
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image"
+        },
+        {
+          "type": "range",
+          "id": "image_scale",
+          "label": "Image scale",
+          "min": 80,
+          "max": 120,
+          "step": 2,
+          "default": 100,
+          "unit": "%"
+        },
+        {
+          "type": "range",
+          "id": "image_vertical_shift",
+          "label": "Image vertical shift",
+          "min": -80,
+          "max": 80,
+          "step": 4,
+          "default": 0,
+          "unit": "px"
+        },
+        {
+          "type": "range",
+          "id": "image_tilt_desktop",
+          "label": "Desktop tilt",
+          "min": -30,
+          "max": 30,
+          "step": 1,
+          "default": 15,
+          "unit": "deg"
+        },
+        {
+          "type": "range",
+          "id": "image_tilt_tablet",
+          "label": "Tablet tilt",
+          "min": -20,
+          "max": 20,
+          "step": 1,
+          "default": 10,
+          "unit": "deg"
+        },
+        {
+          "type": "range",
+          "id": "image_tilt_mobile",
+          "label": "Mobile tilt",
+          "min": -12,
+          "max": 12,
+          "step": 1,
+          "default": 0,
+          "unit": "deg"
+        },
+        {
+          "type": "header",
+          "content": "Text content"
+        },
+        {
+          "type": "text",
+          "id": "eyebrow",
+          "label": "Eyebrow badge",
+          "default": "EXCLUSIVE"
+        },
+        {
+          "type": "textarea",
+          "id": "heading",
+          "label": "Heading",
+          "default": "Voyage au centre\nde la terre",
+          "info": "Press Enter to break into a new line."
+        },
+        {
+          "type": "richtext",
+          "id": "text",
+          "label": "Description",
+          "default": "<p>Welcome to Rare Biblio, the premier destination for bibliophiles and book lovers who appreciate exceptional editions.</p>"
+        },
+        {
+          "type": "header",
+          "content": "Meta details"
+        },
+        {
+          "type": "text",
+          "id": "meta_label_1",
+          "label": "Meta label 1",
+          "default": "Year"
+        },
+        {
+          "type": "text",
+          "id": "meta_value_1",
+          "label": "Meta value 1",
+          "default": "1962, First Print"
+        },
+        {
+          "type": "text",
+          "id": "meta_label_2",
+          "label": "Meta label 2",
+          "default": "Binding"
+        },
+        {
+          "type": "text",
+          "id": "meta_value_2",
+          "label": "Meta value 2",
+          "default": "Quarter Leather"
+        },
+        {
+          "type": "header",
+          "content": "Countdown"
+        },
+        {
+          "type": "text",
+          "id": "countdown_label",
+          "label": "Timer label",
+          "default": "Reveals In"
+        },
+        {
+          "type": "text",
+          "id": "countdown_date",
+          "label": "Target date and time",
+          "info": "Format: 2026-12-31 23:59:59",
+          "default": "2026-12-31 23:59:59"
+        },
+        {
+          "type": "text",
+          "id": "expired_text",
+          "label": "Expired text",
+          "default": "Available now"
+        },
+        {
+          "type": "text",
+          "id": "days_label",
+          "label": "Days label",
+          "default": "Days"
+        },
+        {
+          "type": "text",
+          "id": "hours_label",
+          "label": "Hours label",
+          "default": "Hours"
+        },
+        {
+          "type": "text",
+          "id": "minutes_label",
+          "label": "Minutes label",
+          "default": "Minutes"
+        },
+        {
+          "type": "text",
+          "id": "seconds_label",
+          "label": "Seconds label",
+          "default": "Seconds"
+        },
+        {
+          "type": "header",
+          "content": "Button"
+        },
+        {
+          "type": "text",
+          "id": "button_label",
+          "label": "Button label",
+          "default": "NOTIFY ME"
+        },
+        {
+          "type": "url",
+          "id": "button_link",
+          "label": "Button link"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Premium Parallax Slider",
+      "blocks": [
+        { "type": "slide" },
+        { "type": "slide" },
+        { "type": "slide" }
+      ]
+    }
+  ]
+}
+{% endschema %}

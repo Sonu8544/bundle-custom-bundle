@@ -1,0 +1,479 @@
+{% liquid
+  assign section_id = 'behind-the-book-' | append: section.id
+%}
+
+<section
+  id="{{ section_id }}"
+  class="btb-section"
+  style="
+    --btb-bg: {{ section.settings.section_bg }};
+    --btb-heading-size: {{ section.settings.heading_size_desktop }}px;
+    --btb-heading-line: {{ section.settings.heading_line_height_desktop }}px;
+    --btb-heading-max: {{ section.settings.heading_max_width }}px;
+    --btb-image-width: {{ section.settings.image_width_desktop }}px;
+    --btb-image-max: {{ section.settings.image_max_width_desktop }}%;
+    --btb-gap: {{ section.settings.content_gap_desktop }}px;
+    --btb-pt: {{ section.settings.padding_top_desktop }}px;
+    --btb-pb: {{ section.settings.padding_bottom_desktop }}px;
+    --btb-anim-distance-heading: {{ section.settings.anim_distance_heading }}px;
+    --btb-anim-distance-image: {{ section.settings.anim_distance_image }}px;
+    --btb-anim-duration: {{ section.settings.anim_duration }}ms;
+    --btb-text-start: {{ section.settings.heading_gradient_start }};
+    --btb-text-end: {{ section.settings.heading_gradient_end }};
+  "
+>
+  <div class="btb-section__inner{% if section.settings.full_width == false %} page-width{% endif %}">
+    <div class="btb-section__content{% if section.settings.enable_scroll_animation %} is-animated{% endif %}">
+      {% if section.settings.heading != blank %}
+        <h2 class="btb-section__heading{% if section.settings.enable_scroll_animation %} btb-anim-heading{% endif %}">
+          {{ section.settings.heading }}
+        </h2>
+      {% endif %}
+
+      {% if section.settings.image != blank %}
+        <div class="btb-section__ornament-wrap{% if section.settings.enable_scroll_animation %} btb-anim-image{% endif %}">
+          <img
+            class="btb-section__ornament"
+            src="{{ section.settings.image | image_url: width: 2400 }}"
+            alt="{{ section.settings.image.alt | escape | default: section.settings.heading | escape }}"
+            loading="lazy"
+            width="{{ section.settings.image.width }}"
+            height="{{ section.settings.image.height }}"
+          >
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+<style>
+  #{{ section_id }} {
+    background: var(--btb-bg);
+    padding-top: var(--btb-pt);
+    padding-bottom: var(--btb-pb);
+    overflow: hidden;
+  }
+
+  #{{ section_id }} .btb-section__inner {
+    width: 100%;
+    margin: 0 auto;
+    padding-left: 20px;
+    padding-right: 20px;
+    box-sizing: border-box;
+  }
+
+  #{{ section_id }} .btb-section__content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--btb-gap);
+    text-align: center;
+  }
+
+  #{{ section_id }} .btb-section__heading {
+    margin: 0;
+    width: 100%;
+    max-width: var(--btb-heading-max);
+    font-family: "Bethany Elingston", serif;
+    font-style: normal;
+    font-weight: 400;
+    font-size: var(--btb-heading-size);
+    line-height: var(--btb-heading-line);
+    text-align: center;
+    background: radial-gradient(
+      84.35% 106.04% at 104.49% 58.65%,
+      var(--btb-text-start) 0%,
+      var(--btb-text-end) 100%
+    );
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    color: transparent;
+  }
+
+  #{{ section_id }} .btb-section__ornament-wrap {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  #{{ section_id }} .btb-section__ornament {
+    display: block;
+    width: min(var(--btb-image-width), var(--btb-image-max));
+    max-width: 100%;
+    height: auto;
+    object-fit: contain;
+  }
+
+  #{{ section_id }} .btb-anim-heading,
+  #{{ section_id }} .btb-anim-image {
+    opacity: 0;
+    will-change: transform, opacity;
+    transition:
+      transform var(--btb-anim-duration) cubic-bezier(0.22, 1, 0.36, 1),
+      opacity var(--btb-anim-duration) ease;
+  }
+
+  #{{ section_id }} .btb-anim-heading {
+    transform: translate3d(0, calc(var(--btb-anim-distance-heading) * -1), 0);
+  }
+
+  #{{ section_id }} .btb-anim-image {
+    transform: translate3d(0, var(--btb-anim-distance-image), 0);
+    transition-delay: .1s;
+  }
+
+  #{{ section_id }}.is-visible .btb-anim-heading,
+  #{{ section_id }}.is-visible .btb-anim-image {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+
+  @media screen and (max-width: 1199px) {
+    #{{ section_id }} {
+      --btb-heading-size: {{ section.settings.heading_size_tablet }}px;
+      --btb-heading-line: {{ section.settings.heading_line_height_tablet }}px;
+      --btb-image-width: {{ section.settings.image_width_tablet }}px;
+      --btb-image-max: {{ section.settings.image_max_width_tablet }}%;
+      --btb-gap: {{ section.settings.content_gap_tablet }}px;
+    }
+  }
+
+  @media screen and (max-width: 767px) {
+    #{{ section_id }} {
+      --btb-heading-size: {{ section.settings.heading_size_mobile }}px;
+      --btb-heading-line: {{ section.settings.heading_line_height_mobile }}px;
+      --btb-image-width: {{ section.settings.image_width_mobile }}px;
+      --btb-image-max: {{ section.settings.image_max_width_mobile }}%;
+      --btb-gap: {{ section.settings.content_gap_mobile }}px;
+      --btb-pt: {{ section.settings.padding_top_mobile }}px;
+      --btb-pb: {{ section.settings.padding_bottom_mobile }}px;
+    }
+
+    #{{ section_id }} .btb-section__inner {
+      padding-left: 16px;
+      padding-right: 16px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    #{{ section_id }} .btb-anim-heading,
+    #{{ section_id }} .btb-anim-image {
+      opacity: 1 !important;
+      transform: none !important;
+      transition: none !important;
+    }
+  }
+</style>
+
+{% if section.settings.enable_scroll_animation %}
+  <script>
+    (function() {
+      var section = document.getElementById('{{ section_id }}');
+      if (!section) return;
+
+      if ('IntersectionObserver' in window) {
+        var observer = new IntersectionObserver(function(entries) {
+          entries.forEach(function(entry) {
+            if (entry.isIntersecting) {
+              section.classList.add('is-visible');
+              observer.unobserve(section);
+            }
+          });
+        }, {
+          threshold: 0.22,
+          rootMargin: '0px 0px -8% 0px'
+        });
+
+        observer.observe(section);
+      } else {
+        section.classList.add('is-visible');
+      }
+    })();
+  </script>
+{% endif %}
+
+{% schema %}
+{
+  "name": "Behind The Book",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "full_width",
+      "label": "Use full width container",
+      "default": false
+    },
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Behind the book"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Bottom ornament image"
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "section_bg",
+      "label": "Background color",
+      "default": "#050505"
+    },
+    {
+      "type": "color",
+      "id": "heading_gradient_start",
+      "label": "Heading gradient start",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "heading_gradient_end",
+      "label": "Heading gradient end",
+      "default": "#BB911E"
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "heading_max_width",
+      "label": "Heading max width",
+      "min": 300,
+      "max": 1200,
+      "step": 10,
+      "default": 700
+    },
+    {
+      "type": "range",
+      "id": "content_gap_desktop",
+      "label": "Desktop gap",
+      "min": 0,
+      "max": 100,
+      "step": 2,
+      "default": 34
+    },
+    {
+      "type": "range",
+      "id": "content_gap_tablet",
+      "label": "Tablet gap",
+      "min": 0,
+      "max": 100,
+      "step": 2,
+      "default": 28
+    },
+    {
+      "type": "range",
+      "id": "content_gap_mobile",
+      "label": "Mobile gap",
+      "min": 0,
+      "max": 80,
+      "step": 2,
+      "default": 22
+    },
+    {
+      "type": "range",
+      "id": "padding_top_desktop",
+      "label": "Desktop top padding",
+      "min": 0,
+      "max": 240,
+      "step": 4,
+      "default": 48
+    },
+  {
+  "type": "range",
+  "id": "padding_bottom_desktop",
+  "label": "Desktop bottom padding",
+  "min": 0,
+  "max": 240,
+  "step": 4,
+  "default": 40
+},
+  {
+  "type": "range",
+  "id": "padding_top_mobile",
+  "label": "Mobile top padding",
+  "min": 0,
+  "max": 160,
+  "step": 4,
+  "default": 32
+},
+    {
+      "type": "range",
+      "id": "padding_bottom_mobile",
+      "label": "Mobile bottom padding",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "default": 28
+    },
+    {
+      "type": "header",
+      "content": "Heading typography"
+    },
+    {
+      "type": "range",
+      "id": "heading_size_desktop",
+      "label": "Desktop heading size",
+      "min": 20,
+      "max": 120,
+      "step": 2,
+      "default": 70
+    },
+    {
+      "type": "range",
+      "id": "heading_line_height_desktop",
+      "label": "Desktop heading line height",
+      "min": 24,
+      "max": 140,
+      "step": 2,
+      "default": 84
+    },
+    {
+      "type": "range",
+      "id": "heading_size_tablet",
+      "label": "Tablet heading size",
+      "min": 20,
+      "max": 100,
+      "step": 2,
+      "default": 54
+    },
+    {
+      "type": "range",
+      "id": "heading_line_height_tablet",
+      "label": "Tablet heading line height",
+      "min": 24,
+      "max": 120,
+      "step": 2,
+      "default": 64
+    },
+    {
+      "type": "range",
+      "id": "heading_size_mobile",
+      "label": "Mobile heading size",
+      "min": 18,
+      "max": 72,
+      "step": 2,
+      "default": 38
+    },
+    {
+      "type": "range",
+      "id": "heading_line_height_mobile",
+      "label": "Mobile heading line height",
+      "min": 22,
+      "max": 90,
+      "step": 2,
+      "default": 46
+    },
+    {
+      "type": "header",
+      "content": "Image size"
+    },
+ {
+  "type": "range",
+  "id": "image_width_desktop",
+  "label": "Desktop image width (px)",
+  "min": 120,
+  "max": 1200,
+  "step": 20,
+  "default": 560
+},
+    {
+      "type": "range",
+      "id": "image_max_width_desktop",
+      "label": "Desktop image max width (%)",
+      "min": 20,
+      "max": 100,
+      "step": 1,
+      "default": 100
+    },
+    {
+      "type": "range",
+      "id": "image_width_tablet",
+      "label": "Tablet image width (px)",
+      "min": 100,
+      "max": 900,
+      "step": 10,
+      "default": 460
+    },
+    {
+      "type": "range",
+      "id": "image_max_width_tablet",
+      "label": "Tablet image max width (%)",
+      "min": 20,
+      "max": 100,
+      "step": 1,
+      "default": 100
+    },
+    {
+      "type": "range",
+      "id": "image_width_mobile",
+      "label": "Mobile image width (px)",
+      "min": 80,
+      "max": 500,
+      "step": 10,
+      "default": 260
+    },
+    {
+      "type": "range",
+      "id": "image_max_width_mobile",
+      "label": "Mobile image max width (%)",
+      "min": 20,
+      "max": 100,
+      "step": 1,
+      "default": 100
+    },
+    {
+      "type": "header",
+      "content": "Animation"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_scroll_animation",
+      "label": "Enable scroll animation",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "anim_distance_heading",
+      "label": "Heading animation distance",
+      "min": 10,
+      "max": 120,
+      "step": 2,
+      "default": 30
+    },
+    {
+      "type": "range",
+      "id": "anim_distance_image",
+      "label": "Image animation distance",
+      "min": 10,
+      "max": 120,
+      "step": 2,
+      "default": 30
+    },
+    {
+      "type": "range",
+      "id": "anim_duration",
+      "label": "Animation duration (ms)",
+      "min": 300,
+      "max": 1600,
+      "step": 50,
+      "default": 850
+    }
+  ],
+  "presets": [
+    {
+      "name": "Behind The Book"
+    }
+  ]
+}
+{% endschema %}

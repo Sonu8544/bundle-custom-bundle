@@ -1,0 +1,1322 @@
+{% comment %} {% liquid
+  assign sid = 'scroll-letter-' | append: section.id
+  assign parchment = section.settings.parchment_image
+%}
+
+<section
+  id="{{ sid }}"
+  class="slr-section"
+  style="
+    --slr-section-height: {{ section.settings.scroll_height }}vh;
+    --slr-max-width: {{ section.settings.max_width }}px;
+    --slr-roll-height-desktop: {{ section.settings.roll_height_desktop }}px;
+    --slr-roll-height-mobile: {{ section.settings.roll_height_mobile }}px;
+    --slr-open-height-desktop: {{ section.settings.open_height_desktop }}px;
+    --slr-open-height-mobile: {{ section.settings.open_height_mobile }}px;
+    --slr-text-width: {{ section.settings.text_width }}px;
+    --slr-heading-size-desktop: {{ section.settings.heading_size_desktop }}px;
+    --slr-heading-size-mobile: {{ section.settings.heading_size_mobile }}px;
+    --slr-body-size-desktop: {{ section.settings.body_size_desktop }}px;
+    --slr-body-size-mobile: {{ section.settings.body_size_mobile }}px;
+    --slr-title-color: {{ section.settings.title_color }};
+    --slr-body-color: {{ section.settings.body_color }};
+    --slr-bg: {{ section.settings.section_bg }};
+    --slr-overlay: {{ section.settings.overlay_color }};
+    --slr-overlay-opacity: {{ section.settings.overlay_opacity | divided_by: 100.0 }};
+    --slr-top-offset: {{ section.settings.sticky_top_offset }}px;
+    --slr-progress: 0;
+  "
+  data-slr-section
+>
+  <div class="slr-stage">
+    <div class="slr-sticky">
+      <div class="slr-backdrop"></div>
+
+      <div class="slr-scroll" data-slr-scroll>
+        <div class="slr-scroll__frame">
+          <div class="slr-scroll__top"></div>
+
+          <div class="slr-scroll__paper">
+            <div class="slr-scroll__paper-inner">
+              {% if section.settings.eyebrow != blank %}
+                <div class="slr-eyebrow">{{ section.settings.eyebrow }}</div>
+              {% endif %}
+
+              {% if section.settings.heading != blank %}
+                <h2 class="slr-heading">{{ section.settings.heading }}</h2>
+              {% endif %}
+
+              {% if section.settings.show_divider %}
+                <div class="slr-divider" aria-hidden="true">
+                  <span></span>
+                </div>
+              {% endif %}
+
+              {% if section.settings.body != blank %}
+                <div class="slr-body rte">
+                  {{ section.settings.body }}
+                </div>
+              {% endif %}
+
+              {% if section.settings.button_label != blank and section.settings.button_link != blank %}
+                <div class="slr-actions">
+                  <a class="slr-button" href="{{ section.settings.button_link }}">
+                    {{ section.settings.button_label }}
+                  </a>
+                </div>
+              {% endif %}
+            </div>
+          </div>
+
+          <div class="slr-scroll__bottom"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <style>
+    #{{ sid }} {
+      position: relative;
+      background: var(--slr-bg);
+      overflow: clip;
+    }
+
+    #{{ sid }} .slr-stage {
+      position: relative;
+      height: var(--slr-section-height);
+    }
+
+    #{{ sid }} .slr-sticky {
+      position: sticky;
+      top: var(--slr-top-offset);
+      min-height: calc(100vh - var(--slr-top-offset));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    #{{ sid }} .slr-backdrop {
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(
+          to bottom,
+          color-mix(in srgb, var(--slr-overlay) calc(var(--slr-overlay-opacity) * 100%), transparent),
+          transparent 20%,
+          transparent 80%,
+          color-mix(in srgb, var(--slr-overlay) calc(var(--slr-overlay-opacity) * 100%), transparent)
+        );
+      pointer-events: none;
+    }
+
+    #{{ sid }} .slr-scroll {
+      position: relative;
+      width: min(92vw, var(--slr-max-width));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transform:
+        translateY(calc((1 - var(--slr-progress)) * 60px))
+        scale(calc(0.82 + (var(--slr-progress) * 0.18)));
+      opacity: calc(0.35 + (var(--slr-progress) * 0.65));
+      transition: transform 0.12s linear, opacity 0.12s linear;
+      will-change: transform, opacity;
+    }
+
+    #{{ sid }} .slr-scroll__frame {
+      position: relative;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      filter: drop-shadow(0 30px 45px rgba(0,0,0,0.22));
+    }
+
+    #{{ sid }} .slr-scroll__top,
+    #{{ sid }} .slr-scroll__bottom,
+    #{{ sid }} .slr-scroll__paper {
+      width: 100%;
+      background-repeat: no-repeat;
+      background-position: center;
+      background-size: 100% 100%;
+    }
+
+    {% if parchment != blank %}
+      #{{ sid }} .slr-scroll__top,
+      #{{ sid }} .slr-scroll__bottom,
+      #{{ sid }} .slr-scroll__paper {
+        background-image: url('{{ parchment | image_url: width: 2200 }}');
+      }
+    {% else %}
+      #{{ sid }} .slr-scroll__top,
+      #{{ sid }} .slr-scroll__bottom,
+      #{{ sid }} .slr-scroll__paper {
+        background: #e8d2a7;
+      }
+    {% endif %}
+
+    #{{ sid }} .slr-scroll__top {
+      height: var(--slr-roll-height-desktop);
+      background-position: center top;
+      background-size: 100% auto;
+      z-index: 3;
+      transform: translateY(calc((1 - var(--slr-progress)) * 115px));
+      transition: transform 0.12s linear;
+      will-change: transform;
+    }
+
+    #{{ sid }} .slr-scroll__bottom {
+      height: var(--slr-roll-height-desktop);
+      background-position: center bottom;
+      background-size: 100% auto;
+      z-index: 3;
+      transform: translateY(calc((var(--slr-progress) - 1) * 115px));
+      transition: transform 0.12s linear;
+      will-change: transform;
+    }
+
+    #{{ sid }} .slr-scroll__paper {
+      position: relative;
+      overflow: hidden;
+      width: calc(100% - 7%);
+      min-height: 8px;
+      height: calc(16px + (var(--slr-progress) * var(--slr-open-height-desktop)));
+      margin-top: calc(var(--slr-roll-height-desktop) * -0.30);
+      margin-bottom: calc(var(--slr-roll-height-desktop) * -0.30);
+      background-position: center center;
+      background-size: 100% 100%;
+      transition: height 0.12s linear;
+      will-change: height;
+      z-index: 2;
+    }
+
+    #{{ sid }} .slr-scroll__paper::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+     
+      pointer-events: none;
+    }
+
+    #{{ sid }} .slr-scroll__paper-inner {
+      position: relative;
+      z-index: 2;
+      width: min(78%, var(--slr-text-width));
+      margin: 0 auto;
+      text-align: center;
+      padding:
+        calc(34px + (var(--slr-progress) * 54px))
+        20px
+        calc(26px + (var(--slr-progress) * 44px));
+      opacity: clamp(0, calc((var(--slr-progress) - 0.28) * 2.4), 1);
+      transform: translateY(calc((1 - var(--slr-progress)) * 28px));
+      transition: opacity 0.12s linear, transform 0.12s linear;
+      will-change: opacity, transform;
+      pointer-events: none;
+    }
+
+    #{{ sid }} .slr-eyebrow {
+      margin-bottom: 10px;
+      font-size: 14px;
+      line-height: 1.2;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--slr-title-color);
+      opacity: 0.75;
+    }
+
+    #{{ sid }} .slr-heading {
+      margin: 0;
+      color: var(--slr-title-color);
+      font-size: var(--slr-heading-size-desktop);
+      line-height: 1.08;
+      font-weight: 400;
+    }
+
+    #{{ sid }} .slr-divider {
+      display: flex;
+      justify-content: center;
+      margin: 18px 0 22px;
+    }
+
+    #{{ sid }} .slr-divider span {
+      display: block;
+      width: min(180px, 44%);
+      height: 1px;
+      background: linear-gradient(to right, transparent, rgba(115,83,33,0.55), transparent);
+      position: relative;
+    }
+
+    #{{ sid }} .slr-divider span::before {
+      content: "❦";
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -54%);
+      padding: 0 10px;
+      background: transparent;
+      color: rgba(115,83,33,0.72);
+      font-size: 18px;
+      line-height: 1;
+    }
+
+    #{{ sid }} .slr-body,
+    #{{ sid }} .slr-body p {
+      margin: 0;
+      color: var(--slr-body-color);
+      font-size: var(--slr-body-size-desktop);
+      line-height: 1.72;
+      font-weight: 400;
+    }
+
+    #{{ sid }} .slr-body p + p {
+      margin-top: 12px;
+    }
+
+    #{{ sid }} .slr-actions {
+      margin-top: 24px;
+      pointer-events: auto;
+    }
+
+    #{{ sid }} .slr-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 150px;
+      padding: 12px 22px;
+      border-radius: 999px;
+      text-decoration: none;
+      color: #fff;
+      background: #2a2117;
+      transition: transform 0.2s ease, opacity 0.2s ease;
+    }
+
+    #{{ sid }} .slr-button:hover {
+      transform: translateY(-1px);
+      opacity: 0.92;
+    }
+
+    @media (max-width: 989px) {
+      #{{ sid }} .slr-scroll {
+        width: min(94vw, 760px);
+      }
+
+      #{{ sid }} .slr-scroll__top,
+      #{{ sid }} .slr-scroll__bottom {
+        height: var(--slr-roll-height-mobile);
+      }
+
+      #{{ sid }} .slr-scroll__paper {
+        width: calc(100% - 9%);
+        height: calc(12px + (var(--slr-progress) * var(--slr-open-height-mobile)));
+        margin-top: calc(var(--slr-roll-height-mobile) * -0.28);
+        margin-bottom: calc(var(--slr-roll-height-mobile) * -0.28);
+      }
+
+      #{{ sid }} .slr-scroll__paper-inner {
+        width: min(82%, 540px);
+        padding:
+          calc(26px + (var(--slr-progress) * 34px))
+          14px
+          calc(22px + (var(--slr-progress) * 28px));
+      }
+
+      #{{ sid }} .slr-heading {
+        font-size: var(--slr-heading-size-mobile);
+      }
+
+      #{{ sid }} .slr-body,
+      #{{ sid }} .slr-body p {
+        font-size: var(--slr-body-size-mobile);
+        line-height: 1.65;
+      }
+    }
+
+    @media (max-width: 767px) {
+      #{{ sid }} .slr-stage {
+        height: max(var(--slr-section-height), 220vh);
+      }
+
+      #{{ sid }} .slr-sticky {
+        top: 0;
+        min-height: 100vh;
+      }
+
+      #{{ sid }} .slr-scroll {
+        width: min(96vw, 620px);
+      }
+
+      #{{ sid }} .slr-scroll__paper-inner {
+        width: min(84%, 440px);
+      }
+
+      #{{ sid }} .slr-divider {
+        margin: 14px 0 18px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      #{{ sid }} .slr-scroll,
+      #{{ sid }} .slr-scroll__top,
+      #{{ sid }} .slr-scroll__bottom,
+      #{{ sid }} .slr-scroll__paper,
+      #{{ sid }} .slr-scroll__paper-inner {
+        transition: none !important;
+      }
+    }
+  </style>
+
+  <script>
+    (() => {
+      const section = document.getElementById('{{ sid }}');
+      if (!section) return;
+
+      const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+
+      const updateProgress = () => {
+        const rect = section.getBoundingClientRect();
+        const total = Math.max(section.offsetHeight - window.innerHeight, 1);
+        const scrolled = clamp(-rect.top, 0, total);
+        const progress = prefersReduced ? 1 : clamp(scrolled / total, 0, 1);
+        section.style.setProperty('--slr-progress', progress.toFixed(4));
+      };
+
+      let ticking = false;
+      const onScroll = () => {
+        if (ticking) return;
+        ticking = true;
+        requestAnimationFrame(() => {
+          updateProgress();
+          ticking = false;
+        });
+      };
+
+      updateProgress();
+      window.addEventListener('scroll', onScroll, { passive: true });
+      window.addEventListener('resize', onScroll);
+      document.addEventListener('shopify:section:load', onScroll);
+      document.addEventListener('shopify:section:reorder', onScroll);
+      document.addEventListener('shopify:section:select', onScroll);
+    })();
+  </script>
+
+  {% schema %}
+  {
+    "name": "Scroll letter reveal",
+    "settings": [
+      {
+        "type": "image_picker",
+        "id": "parchment_image",
+        "label": "Parchment image"
+      },
+      {
+        "type": "text",
+        "id": "eyebrow",
+        "label": "Eyebrow",
+        "default": "Ancient Letter"
+      },
+      {
+        "type": "text",
+        "id": "heading",
+        "label": "Heading",
+        "default": "About Rare Biblio"
+      },
+      {
+        "type": "richtext",
+        "id": "body",
+        "label": "Content",
+        "default": "<p>Welcome to Rare Biblio, the premier destination for bibliophiles and book lovers who appreciate the art of bookmaking.</p>"
+      },
+      {
+        "type": "checkbox",
+        "id": "show_divider",
+        "label": "Show divider",
+        "default": true
+      },
+      {
+        "type": "text",
+        "id": "button_label",
+        "label": "Button label"
+      },
+      {
+        "type": "url",
+        "id": "button_link",
+        "label": "Button link"
+      },
+      {
+        "type": "header",
+        "content": "Layout"
+      },
+      {
+        "type": "range",
+        "id": "scroll_height",
+        "label": "Scroll animation height (vh)",
+        "min": 180,
+        "max": 420,
+        "step": 10,
+        "default": 260
+      },
+      {
+        "type": "range",
+        "id": "max_width",
+        "label": "Max scroll width",
+        "min": 500,
+        "max": 1200,
+        "step": 20,
+        "default": 760
+      },
+      {
+        "type": "range",
+        "id": "open_height_desktop",
+        "label": "Open paper height desktop",
+        "min": 260,
+        "max": 760,
+        "step": 10,
+        "default": 470
+      },
+      {
+        "type": "range",
+        "id": "open_height_mobile",
+        "label": "Open paper height mobile",
+        "min": 220,
+        "max": 620,
+        "step": 10,
+        "default": 360
+      },
+      {
+        "type": "range",
+        "id": "roll_height_desktop",
+        "label": "Roll height desktop",
+        "min": 80,
+        "max": 240,
+        "step": 10,
+        "default": 140
+      },
+      {
+        "type": "range",
+        "id": "roll_height_mobile",
+        "label": "Roll height mobile",
+        "min": 60,
+        "max": 180,
+        "step": 10,
+        "default": 100
+      },
+      {
+        "type": "range",
+        "id": "text_width",
+        "label": "Text width",
+        "min": 260,
+        "max": 700,
+        "step": 10,
+        "default": 430
+      },
+      {
+        "type": "range",
+        "id": "sticky_top_offset",
+        "label": "Sticky top offset",
+        "min": 0,
+        "max": 120,
+        "step": 4,
+        "default": 0
+      },
+      {
+        "type": "header",
+        "content": "Typography"
+      },
+      {
+        "type": "color",
+        "id": "title_color",
+        "label": "Heading color",
+        "default": "#2b2116"
+      },
+      {
+        "type": "color",
+        "id": "body_color",
+        "label": "Body color",
+        "default": "#2f261d"
+      },
+      {
+        "type": "range",
+        "id": "heading_size_desktop",
+        "label": "Heading size desktop",
+        "min": 24,
+        "max": 72,
+        "step": 2,
+        "default": 46
+      },
+      {
+        "type": "range",
+        "id": "heading_size_mobile",
+        "label": "Heading size mobile",
+        "min": 20,
+        "max": 48,
+        "step": 2,
+        "default": 30
+      },
+      {
+        "type": "range",
+        "id": "body_size_desktop",
+        "label": "Body size desktop",
+        "min": 14,
+        "max": 28,
+        "step": 1,
+        "default": 18
+      },
+      {
+        "type": "range",
+        "id": "body_size_mobile",
+        "label": "Body size mobile",
+        "min": 13,
+        "max": 24,
+        "step": 1,
+        "default": 16
+      },
+      {
+        "type": "header",
+        "content": "Background"
+      },
+      {
+        "type": "color",
+        "id": "section_bg",
+        "label": "Section background",
+        "default": "#050505"
+      },
+      {
+        "type": "color",
+        "id": "overlay_color",
+        "label": "Overlay color",
+        "default": "#000000"
+      },
+      {
+        "type": "range",
+        "id": "overlay_opacity",
+        "label": "Overlay opacity",
+        "min": 0,
+        "max": 100,
+        "step": 5,
+        "default": 35
+      }
+    ],
+    "presets": [
+      {
+        "name": "Scroll letter reveal"
+      }
+    ]
+  }
+  {% endschema %}
+</section> {% endcomment %}
+
+
+{% liquid
+  assign sid = 'scroll-letter-' | append: section.id
+  assign parchment = section.settings.parchment_image
+%}
+
+<section
+  id="{{ sid }}"
+  class="slr-section"
+  style="
+    --slr-section-height: {{ section.settings.scroll_height }}vh;
+    --slr-max-width: {{ section.settings.max_width }}px;
+    --slr-roll-height-desktop: {{ section.settings.roll_height_desktop }}px;
+    --slr-roll-height-mobile: {{ section.settings.roll_height_mobile }}px;
+    --slr-open-height-desktop: {{ section.settings.open_height_desktop }}px;
+    --slr-open-height-mobile: {{ section.settings.open_height_mobile }}px;
+    --slr-text-width: {{ section.settings.text_width }}px;
+    --slr-heading-size-desktop: {{ section.settings.heading_size_desktop }}px;
+    --slr-heading-size-mobile: {{ section.settings.heading_size_mobile }}px;
+    --slr-body-size-desktop: {{ section.settings.body_size_desktop }}px;
+    --slr-body-size-mobile: {{ section.settings.body_size_mobile }}px;
+    --slr-title-color: {{ section.settings.title_color }};
+    --slr-body-color: {{ section.settings.body_color }};
+    --slr-bg: {{ section.settings.section_bg }};
+    --slr-overlay: {{ section.settings.overlay_color }};
+    --slr-overlay-opacity: {{ section.settings.overlay_opacity | divided_by: 100.0 }};
+    --slr-top-offset: {{ section.settings.sticky_top_offset }}px;
+    --slr-progress: 0;
+  "
+  data-slr-section
+>
+  <div class="slr-stage">
+    <div class="slr-sticky">
+      <div class="slr-backdrop"></div>
+
+      <div class="slr-scroll" data-slr-scroll>
+        <div class="slr-scroll__frame">
+          <div class="slr-scroll__top"></div>
+
+          <div class="slr-scroll__paper">
+            <div class="slr-scroll__paper-inner">
+              {% if section.settings.eyebrow != blank %}
+                <div class="slr-eyebrow">{{ section.settings.eyebrow }}</div>
+              {% endif %}
+
+              {% if section.settings.heading != blank %}
+                <h2 class="slr-heading">
+                  {%- assign heading_parts = section.settings.heading | split: '|' -%}
+                  {%- if heading_parts.size == 2 -%}
+                    <span class="slr-heading__plain">{{ heading_parts[0] }}</span><span class="slr-heading__gradient">{{ heading_parts[1] }}</span>
+                  {%- else -%}
+                    {{ section.settings.heading }}
+                  {%- endif -%}
+                </h2>
+              {% endif %}
+
+              {% if section.settings.show_divider %}
+                <div class="slr-divider" aria-hidden="true">
+                  <span class="slr-divider__line slr-divider__line--left"></span>
+                  <span class="slr-divider__ornament">
+                    <svg width="60" height="22" viewBox="0 0 60 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M1 11 C8 4, 15 4, 22 11 C29 18, 36 18, 43 11 C50 4, 57 4, 59 11" stroke="rgba(115,83,33,0.55)" stroke-width="1" fill="none"/>
+                      <circle cx="30" cy="11" r="2.5" fill="rgba(115,83,33,0.60)"/>
+                      <circle cx="12" cy="11" r="1.5" fill="rgba(115,83,33,0.40)"/>
+                      <circle cx="48" cy="11" r="1.5" fill="rgba(115,83,33,0.40)"/>
+                    </svg>
+                  </span>
+                  <span class="slr-divider__line slr-divider__line--right"></span>
+                </div>
+              {% endif %}
+
+              {% if section.settings.body != blank %}
+                <div class="slr-body rte">
+                  {{ section.settings.body }}
+                </div>
+              {% endif %}
+
+              {% if section.settings.button_label != blank and section.settings.button_link != blank %}
+                <div class="slr-actions">
+                  <a class="slr-button" href="{{ section.settings.button_link }}">
+                    {{ section.settings.button_label }}
+                  </a>
+                </div>
+              {% endif %}
+            </div>
+          </div>
+
+          <div class="slr-scroll__bottom"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <style>
+    /* ── Google Fonts: Bethany Elingston is a custom/paid font.
+       Use @font-face in your theme.liquid or replace with your CDN URL.
+       Satoshi is loaded via Fontshare below as a fallback example. ── */
+    @import url('https://api.fontshare.com/v2/css?f[]=satoshi@400,500&display=swap');
+
+    #{{ sid }} {
+      position: relative;
+      background: var(--slr-bg);
+      overflow: clip;
+    }
+
+    #{{ sid }} .slr-stage {
+      position: relative;
+      height: var(--slr-section-height);
+    }
+
+    #{{ sid }} .slr-sticky {
+      position: sticky;
+      top: var(--slr-top-offset);
+      min-height: calc(100vh - var(--slr-top-offset));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    #{{ sid }} .slr-backdrop {
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(
+          to bottom,
+          color-mix(in srgb, var(--slr-overlay) calc(var(--slr-overlay-opacity) * 100%), transparent),
+          transparent 20%,
+          transparent 80%,
+          color-mix(in srgb, var(--slr-overlay) calc(var(--slr-overlay-opacity) * 100%), transparent)
+        );
+      pointer-events: none;
+    }
+
+    #{{ sid }} .slr-scroll {
+      position: relative;
+      width: min(92vw, var(--slr-max-width));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transform:
+        translateY(calc((1 - var(--slr-progress)) * 60px))
+        scale(calc(0.82 + (var(--slr-progress) * 0.18)));
+      opacity: calc(0.35 + (var(--slr-progress) * 0.65));
+      transition: transform 0.12s linear, opacity 0.12s linear;
+      will-change: transform, opacity;
+    }
+
+    #{{ sid }} .slr-scroll__frame {
+      position: relative;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      filter: drop-shadow(0 30px 60px rgba(0,0,0,0.35));
+    }
+
+    #{{ sid }} .slr-scroll__top,
+    #{{ sid }} .slr-scroll__bottom,
+    #{{ sid }} .slr-scroll__paper {
+      width: 100%;
+      background-repeat: no-repeat;
+      background-position: center;
+      background-size: 100% 100%;
+    }
+
+    {% if parchment != blank %}
+      #{{ sid }} .slr-scroll__top,
+      #{{ sid }} .slr-scroll__bottom,
+      #{{ sid }} .slr-scroll__paper {
+        background-image: url('{{ parchment | image_url: width: 2200 }}');
+      }
+    {% else %}
+      #{{ sid }} .slr-scroll__top,
+      #{{ sid }} .slr-scroll__bottom {
+        background: linear-gradient(180deg, #c8a96e 0%, #dfc08a 40%, #e8d49e 100%);
+        border-radius: 8px 8px 0 0;
+      }
+      #{{ sid }} .slr-scroll__bottom {
+        border-radius: 0 0 8px 8px;
+      }
+      #{{ sid }} .slr-scroll__paper {
+        background: linear-gradient(180deg, #e8d49e 0%, #f0dfa8 50%, #e8d49e 100%);
+      }
+    {% endif %}
+
+    /* ── Scroll top roll ── */
+    #{{ sid }} .slr-scroll__top {
+      height: var(--slr-roll-height-desktop);
+      background-position: center top;
+      background-size: 100% auto;
+      z-index: 3;
+      transform: translateY(calc((1 - var(--slr-progress)) * 115px));
+      transition: transform 0.12s linear;
+      will-change: transform;
+    }
+
+    /* ── Scroll bottom roll ── */
+    #{{ sid }} .slr-scroll__bottom {
+      height: var(--slr-roll-height-desktop);
+      background-position: center bottom;
+      background-size: 100% auto;
+      z-index: 3;
+      transform: translateY(calc((var(--slr-progress) - 1) * 115px));
+      transition: transform 0.12s linear;
+      will-change: transform;
+    }
+
+    /* ── Paper body ── */
+    #{{ sid }} .slr-scroll__paper {
+      position: relative;
+      overflow: hidden;
+      width: calc(100% - 7%);
+      min-height: 8px;
+      height: calc(16px + (var(--slr-progress) * var(--slr-open-height-desktop)));
+      margin-top: calc(var(--slr-roll-height-desktop) * -0.30);
+      margin-bottom: calc(var(--slr-roll-height-desktop) * -0.30);
+      background-position: center center;
+      background-size: 100% 100%;
+      transition: height 0.12s linear;
+      will-change: height;
+      z-index: 2;
+    }
+
+    /* Subtle vignette on paper edges */
+    #{{ sid }} .slr-scroll__paper::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        to bottom,
+        rgba(120, 80, 20, 0.06) 0%,
+        transparent 15%,
+        transparent 85%,
+        rgba(120, 80, 20, 0.06) 100%
+      );
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    /* ── Paper inner content ── */
+    #{{ sid }} .slr-scroll__paper-inner {
+      position: relative;
+      z-index: 2;
+      width: min(78%, var(--slr-text-width));
+      margin: 0 auto;
+      text-align: center;
+      padding:
+        calc(34px + (var(--slr-progress) * 54px))
+        20px
+        calc(26px + (var(--slr-progress) * 44px));
+      opacity: clamp(0, calc((var(--slr-progress) - 0.28) * 2.4), 1);
+      transform: translateY(calc((1 - var(--slr-progress)) * 28px));
+      transition: opacity 0.12s linear, transform 0.12s linear;
+      will-change: opacity, transform;
+      pointer-events: none;
+    }
+
+    /* ── Eyebrow ── */
+    #{{ sid }} .slr-eyebrow {
+      margin-bottom: 10px;
+      font-family: 'Satoshi', Georgia, serif;
+      font-size: 13px;
+      font-weight: 400;
+      line-height: 1.2;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--slr-title-color);
+      opacity: 0.65;
+    }
+
+    /* ── Heading: Bethany Elingston + gradient on accent word ── */
+    #{{ sid }} .slr-heading {
+      margin: 0 0 4px;
+      font-family: 'Bethany Elingston', 'Playfair Display', Georgia, serif;
+      font-size: var(--slr-heading-size-desktop);
+      line-height: 1.10;
+      font-weight: 400;
+      letter-spacing: 0;
+      color: var(--slr-title-color);
+    }
+
+    #{{ sid }} .slr-heading__plain {
+      color: var(--slr-title-color);
+    }
+
+    /* Figma gradient: 270.6deg, #A87E0A 9.74% → #000000 71.76% */
+    #{{ sid }} .slr-heading__gradient {
+      background: linear-gradient(270.6deg, #A87E0A 9.74%, #000000 71.76%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    /* ── Divider ── */
+    #{{ sid }} .slr-divider {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin: 16px 0 20px;
+    }
+
+    #{{ sid }} .slr-divider__line {
+      display: block;
+      flex: 1;
+      max-width: 80px;
+      height: 1px;
+      background: linear-gradient(to right, transparent, rgba(115,83,33,0.45));
+    }
+
+    #{{ sid }} .slr-divider__line--right {
+      background: linear-gradient(to left, transparent, rgba(115,83,33,0.45));
+    }
+
+    #{{ sid }} .slr-divider__ornament {
+      display: flex;
+      align-items: center;
+      flex-shrink: 0;
+    }
+
+    #{{ sid }} .slr-divider__ornament svg {
+      display: block;
+    }
+
+    /* ── Body copy: Satoshi ── */
+    #{{ sid }} .slr-body,
+    #{{ sid }} .slr-body p {
+      margin: 0;
+      font-family: 'Satoshi', Georgia, serif;
+      color: var(--slr-body-color);
+      font-size: var(--slr-body-size-desktop);
+      line-height: 1.75;
+      font-weight: 400;
+      letter-spacing: 0;
+    }
+
+    #{{ sid }} .slr-body p + p {
+      margin-top: 14px;
+    }
+
+    /* ── CTA button ── */
+    #{{ sid }} .slr-actions {
+      margin-top: 28px;
+      pointer-events: auto;
+    }
+
+    #{{ sid }} .slr-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 160px;
+      padding: 13px 28px;
+      border-radius: 999px;
+      text-decoration: none;
+      font-family: 'Satoshi', Georgia, serif;
+      font-size: 14px;
+      font-weight: 500;
+      letter-spacing: 0.04em;
+      color: #fff;
+      background: linear-gradient(135deg, #2a2117 0%, #4a3620 100%);
+      box-shadow: 0 4px 16px rgba(0,0,0,0.25);
+      transition: transform 0.22s ease, box-shadow 0.22s ease, opacity 0.22s ease;
+    }
+
+    #{{ sid }} .slr-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.32);
+      opacity: 0.93;
+    }
+
+    /* ═══════════════════════════════════
+       TABLET  (989px and below)
+    ═══════════════════════════════════ */
+    @media (max-width: 989px) {
+      #{{ sid }} .slr-scroll {
+        width: min(94vw, 760px);
+      }
+
+      #{{ sid }} .slr-scroll__top,
+      #{{ sid }} .slr-scroll__bottom {
+        height: var(--slr-roll-height-mobile);
+      }
+
+      #{{ sid }} .slr-scroll__paper {
+        width: calc(100% - 9%);
+        height: calc(12px + (var(--slr-progress) * var(--slr-open-height-mobile)));
+        margin-top: calc(var(--slr-roll-height-mobile) * -0.28);
+        margin-bottom: calc(var(--slr-roll-height-mobile) * -0.28);
+      }
+
+      #{{ sid }} .slr-scroll__paper-inner {
+        width: min(82%, 540px);
+        padding:
+          calc(26px + (var(--slr-progress) * 34px))
+          18px
+          calc(22px + (var(--slr-progress) * 28px));
+      }
+
+      #{{ sid }} .slr-heading {
+        font-size: var(--slr-heading-size-mobile);
+        line-height: 1.12;
+      }
+
+      #{{ sid }} .slr-body,
+      #{{ sid }} .slr-body p {
+        font-size: var(--slr-body-size-mobile);
+        line-height: 1.68;
+      }
+    }
+
+    /* ═══════════════════════════════════
+       MOBILE  (767px and below)
+    ═══════════════════════════════════ */
+    @media (max-width: 767px) {
+      #{{ sid }} .slr-stage {
+        height: max(var(--slr-section-height), 220vh);
+      }
+
+      #{{ sid }} .slr-sticky {
+        top: 0;
+        min-height: 100vh;
+      }
+
+      #{{ sid }} .slr-scroll {
+        width: min(96vw, 420px);
+      }
+
+      #{{ sid }} .slr-scroll__paper-inner {
+        width: min(84%, 340px);
+      }
+
+      #{{ sid }} .slr-heading {
+        font-size: clamp(22px, 7vw, var(--slr-heading-size-mobile));
+        line-height: 1.13;
+      }
+
+      #{{ sid }} .slr-body,
+      #{{ sid }} .slr-body p {
+        font-size: clamp(13px, 3.8vw, var(--slr-body-size-mobile));
+        line-height: 1.65;
+      }
+
+      #{{ sid }} .slr-divider {
+        margin: 12px 0 16px;
+      }
+
+      #{{ sid }} .slr-divider__ornament svg {
+        width: 48px;
+        height: 18px;
+      }
+
+      #{{ sid }} .slr-button {
+        min-width: 140px;
+        padding: 12px 22px;
+        font-size: 13px;
+      }
+    }
+
+    /* ═══════════════════════════════════
+       REDUCED MOTION
+    ═══════════════════════════════════ */
+    @media (prefers-reduced-motion: reduce) {
+      #{{ sid }} .slr-scroll,
+      #{{ sid }} .slr-scroll__top,
+      #{{ sid }} .slr-scroll__bottom,
+      #{{ sid }} .slr-scroll__paper,
+      #{{ sid }} .slr-scroll__paper-inner {
+        transition: none !important;
+      }
+    }
+  </style>
+
+  <script>
+    (() => {
+      const section = document.getElementById('{{ sid }}');
+      if (!section) return;
+
+      const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const clamp = (v, mn, mx) => Math.min(Math.max(v, mn), mx);
+
+      const updateProgress = () => {
+        const rect = section.getBoundingClientRect();
+        const total = Math.max(section.offsetHeight - window.innerHeight, 1);
+        const scrolled = clamp(-rect.top, 0, total);
+        const progress = prefersReduced ? 1 : clamp(scrolled / total, 0, 1);
+        section.style.setProperty('--slr-progress', progress.toFixed(4));
+      };
+
+      let ticking = false;
+      const onScroll = () => {
+        if (ticking) return;
+        ticking = true;
+        requestAnimationFrame(() => { updateProgress(); ticking = false; });
+      };
+
+      updateProgress();
+      window.addEventListener('scroll', onScroll, { passive: true });
+      window.addEventListener('resize', onScroll);
+      document.addEventListener('shopify:section:load', onScroll);
+      document.addEventListener('shopify:section:reorder', onScroll);
+      document.addEventListener('shopify:section:select', onScroll);
+    })();
+  </script>
+
+  {% schema %}
+  {
+    "name": "Scroll letter reveal",
+    "settings": [
+      {
+        "type": "image_picker",
+        "id": "parchment_image",
+        "label": "Parchment image"
+      },
+      {
+        "type": "text",
+        "id": "eyebrow",
+        "label": "Eyebrow (optional)",
+        "info": "Small label above the heading"
+      },
+      {
+        "type": "text",
+        "id": "heading",
+        "label": "Heading",
+        "default": "About |Rare Biblio",
+        "info": "Use a pipe | to split plain text from the gold-gradient word(s). E.g. 'About |Rare Biblio'"
+      },
+      {
+        "type": "richtext",
+        "id": "body",
+        "label": "Content",
+        "default": "<p>Welcome to Rare Biblio, the premier destination for bibliophiles and book lovers who appreciate the art of bookmaking.</p>"
+      },
+      {
+        "type": "checkbox",
+        "id": "show_divider",
+        "label": "Show divider",
+        "default": true
+      },
+      {
+        "type": "text",
+        "id": "button_label",
+        "label": "Button label"
+      },
+      {
+        "type": "url",
+        "id": "button_link",
+        "label": "Button link"
+      },
+      {
+        "type": "header",
+        "content": "Layout"
+      },
+      {
+        "type": "range",
+        "id": "scroll_height",
+        "label": "Scroll animation height (vh)",
+        "min": 180,
+        "max": 420,
+        "step": 10,
+        "default": 260
+      },
+      {
+        "type": "range",
+        "id": "max_width",
+        "label": "Max scroll width (desktop)",
+        "min": 500,
+        "max": 1200,
+        "step": 20,
+        "default": 860
+      },
+      {
+        "type": "range",
+        "id": "open_height_desktop",
+        "label": "Open paper height desktop",
+        "min": 260,
+        "max": 760,
+        "step": 10,
+        "default": 490
+      },
+      {
+        "type": "range",
+        "id": "open_height_mobile",
+        "label": "Open paper height mobile",
+        "min": 220,
+        "max": 620,
+        "step": 10,
+        "default": 380
+      },
+      {
+        "type": "range",
+        "id": "roll_height_desktop",
+        "label": "Roll height desktop",
+        "min": 80,
+        "max": 240,
+        "step": 10,
+        "default": 140
+      },
+      {
+        "type": "range",
+        "id": "roll_height_mobile",
+        "label": "Roll height mobile",
+        "min": 60,
+        "max": 180,
+        "step": 10,
+        "default": 100
+      },
+      {
+        "type": "range",
+        "id": "text_width",
+        "label": "Text max width",
+        "min": 260,
+        "max": 700,
+        "step": 10,
+        "default": 480
+      },
+      {
+        "type": "range",
+        "id": "sticky_top_offset",
+        "label": "Sticky top offset (header height)",
+        "min": 0,
+        "max": 120,
+        "step": 4,
+        "default": 0
+      },
+      {
+        "type": "header",
+        "content": "Typography"
+      },
+      {
+        "type": "color",
+        "id": "title_color",
+        "label": "Heading plain color",
+        "default": "#1a1208"
+      },
+      {
+        "type": "color",
+        "id": "body_color",
+        "label": "Body color",
+        "default": "#2a1f14"
+      },
+      {
+        "type": "range",
+        "id": "heading_size_desktop",
+        "label": "Heading size desktop (px)",
+        "min": 24,
+        "max": 72,
+        "step": 2,
+        "default": 48
+      },
+      {
+        "type": "range",
+        "id": "heading_size_mobile",
+        "label": "Heading size mobile (px)",
+        "min": 20,
+        "max": 48,
+        "step": 2,
+        "default": 32
+      },
+      {
+        "type": "range",
+        "id": "body_size_desktop",
+        "label": "Body size desktop (px)",
+        "min": 14,
+        "max": 28,
+        "step": 1,
+        "default": 17
+      },
+      {
+        "type": "range",
+        "id": "body_size_mobile",
+        "label": "Body size mobile (px)",
+        "min": 13,
+        "max": 24,
+        "step": 1,
+        "default": 15
+      },
+      {
+        "type": "header",
+        "content": "Background"
+      },
+      {
+        "type": "color",
+        "id": "section_bg",
+        "label": "Section background",
+        "default": "#050505"
+      },
+      {
+        "type": "color",
+        "id": "overlay_color",
+        "label": "Overlay color",
+        "default": "#000000"
+      },
+      {
+        "type": "range",
+        "id": "overlay_opacity",
+        "label": "Overlay opacity",
+        "min": 0,
+        "max": 100,
+        "step": 5,
+        "default": 35
+      }
+    ],
+    "presets": [
+      {
+        "name": "Scroll letter reveal"
+      }
+    ]
+  }
+  {% endschema %}
+</section>

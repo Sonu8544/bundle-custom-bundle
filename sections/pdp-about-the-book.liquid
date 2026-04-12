@@ -1,0 +1,767 @@
+{% liquid
+  assign sid = 'about-book-' | append: section.id
+%}
+
+<section
+  id="{{ sid }}"
+  class="about-book-section color-{{ section.settings.color_scheme }}"
+  style="
+    --ab-max-width: {{ section.settings.max_width }}px;
+    --ab-padding-top-desktop: {{ section.settings.padding_top_desktop }}px;
+    --ab-padding-bottom-desktop: {{ section.settings.padding_bottom_desktop }}px;
+    --ab-padding-top-mobile: {{ section.settings.padding_top_mobile }}px;
+    --ab-padding-bottom-mobile: {{ section.settings.padding_bottom_mobile }}px;
+
+    --ab-heading-size-desktop: {{ section.settings.heading_size_desktop }}px;
+    --ab-heading-size-tablet: {{ section.settings.heading_size_tablet }}px;
+    --ab-heading-size-mobile: {{ section.settings.heading_size_mobile }}px;
+
+    --ab-subheading-size-desktop: {{ section.settings.subheading_size_desktop }}px;
+    --ab-subheading-size-mobile: {{ section.settings.subheading_size_mobile }}px;
+
+    --ab-body-size-desktop: {{ section.settings.body_size_desktop }}px;
+    --ab-body-size-mobile: {{ section.settings.body_size_mobile }}px;
+
+    --ab-card-label-size: {{ section.settings.card_label_size }}px;
+    --ab-card-value-size: {{ section.settings.card_value_size }}px;
+
+    --ab-card-gap-desktop: {{ section.settings.card_gap_desktop }}px;
+    --ab-card-gap-mobile: {{ section.settings.card_gap_mobile }}px;
+
+    --ab-card-padding-x-desktop: {{ section.settings.card_padding_x_desktop }}px;
+    --ab-card-padding-y-desktop: {{ section.settings.card_padding_y_desktop }}px;
+    --ab-card-padding-x-mobile: {{ section.settings.card_padding_x_mobile }}px;
+    --ab-card-padding-y-mobile: {{ section.settings.card_padding_y_mobile }}px;
+
+    --ab-card-radius: {{ section.settings.card_radius }}px;
+    --ab-card-border-color: {{ section.settings.card_border_color }};
+    --ab-card-bg: {{ section.settings.card_bg }};
+    --ab-card-label-color: {{ section.settings.card_label_color }};
+    --ab-card-value-color: {{ section.settings.card_value_color }};
+    --ab-body-color: {{ section.settings.body_color }};
+    --ab-bg-color: {{ section.settings.section_bg }};
+    --ab-section-overlay-opacity: {{ section.settings.texture_opacity | divided_by: 100.0 }};
+  "
+>
+  <div class="about-book-section__bg"></div>
+
+  <div class="about-book-section__wrap page-width">
+    <div class="about-book-section__inner" {% if section.settings.enable_animation %}data-animate="true"{% endif %}>
+      {% if section.settings.heading != blank %}
+        <h2 class="about-book-section__heading">
+          {{ section.settings.heading }}
+        </h2>
+      {% endif %}
+
+      {% if section.blocks.size > 0 %}
+        <div class="about-book-section__cards" role="list">
+          {% for block in section.blocks %}
+            {% if block.type == 'meta_card' %}
+              <div class="about-book-section__card" role="listitem" {{ block.shopify_attributes }}>
+                {% if block.settings.label != blank %}
+                  <div class="about-book-section__card-label">{{ block.settings.label }}</div>
+                {% endif %}
+                {% if block.settings.value != blank %}
+                  <div class="about-book-section__card-value">{{ block.settings.value }}</div>
+                {% endif %}
+              </div>
+            {% endif %}
+          {% endfor %}
+        </div>
+      {% endif %}
+
+      {% if section.settings.description != blank %}
+        <div class="about-book-section__copy about-book-section__copy--intro rte">
+          {{ section.settings.description }}
+        </div>
+      {% endif %}
+
+      {% if section.settings.edition_heading != blank %}
+        <h3 class="about-book-section__subheading">
+          {{ section.settings.edition_heading }}
+        </h3>
+      {% endif %}
+
+      {% if section.settings.edition_text != blank %}
+        <div class="about-book-section__copy rte">
+          {{ section.settings.edition_text }}
+        </div>
+      {% endif %}
+
+      {% if section.settings.inside_heading != blank %}
+        <h3 class="about-book-section__subheading">
+          {{ section.settings.inside_heading }}
+        </h3>
+      {% endif %}
+
+      {% if section.settings.inside_intro != blank %}
+        <div class="about-book-section__copy rte">
+          {{ section.settings.inside_intro }}
+        </div>
+      {% endif %}
+
+      {% if section.settings.inside_list != blank %}
+        <div class="about-book-section__copy about-book-section__copy--list rte">
+          {{ section.settings.inside_list }}
+        </div>
+      {% endif %}
+    </div>
+  </div>
+
+  <style>
+    #{{ sid }} {
+      position: relative;
+      overflow: hidden;
+      background: var(--ab-bg-color);
+      padding-top: var(--ab-padding-top-desktop);
+      padding-bottom: var(--ab-padding-bottom-desktop);
+      isolation: isolate;
+    }
+
+    #{{ sid }} .about-book-section__bg {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      background:
+        radial-gradient(84.35% 106.04% at 104.49% 58.65%, rgba(255, 255, 255, 0.045) 0%, rgba(187, 145, 30, 0.02) 100%),
+        linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, rgba(8, 8, 8, 0.18) 100%);
+      opacity: var(--ab-section-overlay-opacity);
+      mix-blend-mode: screen;
+    }
+
+    #{{ sid }} .about-book-section__wrap {
+      position: relative;
+      z-index: 1;
+    }
+
+    #{{ sid }} .about-book-section__inner {
+      width: 100%;
+      max-width: var(--ab-max-width);
+      margin: 0 auto;
+    }
+
+    #{{ sid }} .about-book-section__heading,
+    #{{ sid }} .about-book-section__subheading {
+      margin: 0;
+      font-family: "Bethany Elingston", serif;
+      font-style: normal;
+      font-weight: 400;
+     
+      background: radial-gradient(84.35% 106.04% at 104.49% 58.65%, #ffffff 0%, #bb911e 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      color: transparent;
+    }
+
+    #{{ sid }} .about-book-section__heading {
+      font-size: var(--ab-heading-size-desktop);
+      line-height: 1.2;
+      margin-bottom: 38px;
+      max-width: 100%;
+    }
+
+    #{{ sid }} .about-book-section__subheading {
+      font-size: var(--ab-subheading_size-desktop, var(--ab-subheading-size-desktop));
+      margin-top: 28px;
+      margin-bottom: 16px;
+    }
+
+    #{{ sid }} .about-book-section__cards {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 20px var(--ab-card-gap-desktop);
+      margin-bottom: 42px;
+    }
+
+    #{{ sid }} .about-book-section__card {
+      position: relative;
+      min-height: 68px;
+      border-radius: var(--ab-card-radius);
+      border-left: 1px solid var(--ab-card-border-color);
+      background: var(--ab-card-bg);
+      padding: var(--ab-card-padding-y-desktop) var(--ab-card-padding-x-desktop);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      box-shadow:
+        inset 0 0 0 1px rgba(255, 255, 255, 0.025),
+        0 0 0 1px rgba(255, 255, 255, 0.02);
+    }
+
+    #{{ sid }} .about-book-section__card::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      pointer-events: none;
+      background: linear-gradient(90deg, rgba(255,255,255,0.02) 0%, rgba(255,255,255,0) 100%);
+      opacity: .7;
+    }
+
+    #{{ sid }} .about-book-section__card-label {
+      margin-bottom: 10px;
+      font-family: "Satoshi", sans-serif;
+      font-weight: 500;
+      font-size: var(--ab-card-label-size);
+      line-height: 1;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+      color: var(--ab-card-label-color);
+    }
+
+    #{{ sid }} .about-book-section__card-value {
+      font-family: "Satoshi", sans-serif;
+      font-weight: 500;
+      font-size: var(--ab-card-value-size);
+      line-height: 1.25;
+      letter-spacing: 0;
+      color: var(--ab-card-value-color);
+      word-break: break-word;
+    }
+
+    #{{ sid }} .about-book-section__copy {
+      color: var(--ab-body-color);
+      font-family: "Satoshi", sans-serif;
+      font-weight: 400;
+      font-size: var(--ab-body-size-desktop);
+      line-height: 1.75;
+      letter-spacing: 0;
+      max-width: 100%;
+    }
+
+    #{{ sid }} .about-book-section__copy--intro {
+      margin-bottom: 18px;
+    }
+
+    #{{ sid }} .about-book-section__copy--list {
+      margin-top: 8px;
+    }
+
+    #{{ sid }} .about-book-section__copy p {
+      margin: 0 0 14px;
+    }
+
+    #{{ sid }} .about-book-section__copy p:last-child {
+      margin-bottom: 0;
+    }
+
+    #{{ sid }} .about-book-section__copy ul,
+    #{{ sid }} .about-book-section__copy ol {
+      margin: 0;
+      padding-left: 24px;
+    }
+
+    #{{ sid }} .about-book-section__copy li {
+      margin-bottom: 8px;
+    }
+
+    #{{ sid }} .about-book-section__copy--list ul,
+    #{{ sid }} .about-book-section__copy--list ol {
+      list-style: none;
+      padding-left: 0;
+    }
+
+    #{{ sid }} .about-book-section__copy--list li {
+      position: relative;
+      padding-left: 0;
+    }
+
+    #{{ sid }} .about-book-section__inner[data-animate="true"] {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity .7s ease, transform .7s ease;
+    }
+
+    #{{ sid }} .about-book-section__inner[data-animate="true"].is-visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    @media screen and (max-width: 989px) {
+      #{{ sid }} .about-book-section__inner {
+        max-width: 100%;
+      }
+
+      #{{ sid }} .about-book-section__heading {
+        font-size: var(--ab-heading-size-tablet);
+        margin-bottom: 30px;
+      }
+
+      #{{ sid }} .about-book-section__cards {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media screen and (max-width: 749px) {
+      #{{ sid }} {
+        padding-top: var(--ab-padding-top-mobile);
+        padding-bottom: var(--ab-padding-bottom-mobile);
+      }
+
+      #{{ sid }} .about-book-section__heading {
+        font-size: var(--ab-heading-size-mobile);
+        line-height: 1.08;
+        margin-bottom: 24px;
+      }
+
+      #{{ sid }} .about-book-section__subheading {
+        font-size: var(--ab-subheading-size-mobile);
+        margin-top: 24px;
+        margin-bottom: 12px;
+      }
+
+      #{{ sid }} .about-book-section__cards {
+        grid-template-columns: 1fr;
+        gap: var(--ab-card-gap-mobile);
+        margin-bottom: 28px;
+      }
+
+      #{{ sid }} .about-book-section__card {
+        min-height: 64px;
+        padding: var(--ab-card-padding-y-mobile) var(--ab-card-padding-x-mobile);
+      }
+
+      #{{ sid }} .about-book-section__card-label {
+        margin-bottom: 8px;
+      }
+
+      #{{ sid }} .about-book-section__copy {
+        font-size: var(--ab-body-size-mobile);
+        line-height: 1.7;
+      }
+    }
+  </style>
+
+  {% if section.settings.enable_animation %}
+    <script>
+      (() => {
+        const section = document.querySelector('#{{ sid }} .about-book-section__inner[data-animate="true"]');
+        if (!section) return;
+
+        const observer = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              if (entry.isIntersecting) {
+                section.classList.add('is-visible');
+                observer.unobserve(section);
+              }
+            });
+          },
+          { threshold: 0.18 }
+        );
+
+        observer.observe(section);
+      })();
+    </script>
+  {% endif %}
+</section>
+
+{% schema %}
+{
+  "name": "About the book",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Main heading",
+      "default": "About the book"
+    },
+    {
+      "type": "richtext",
+      "id": "description",
+      "label": "Intro description",
+      "default": "<p>The Mughal Chronicles stands as the most comprehensive single-volume account of the Mughal Empire ever published in the English language. Now in its third revised and expanded edition, this landmark work by Professor R.C. Sharma has been the definitive reference for students, scholars, and enthusiasts of South Asian history for over two decades.</p>"
+    },
+    {
+      "type": "text",
+      "id": "edition_heading",
+      "label": "Edition heading",
+      "default": "About This Edition"
+    },
+    {
+      "type": "richtext",
+      "id": "edition_text",
+      "label": "Edition text",
+      "default": "<p>The third edition incorporates findings from recently declassified archival material held at the National Archives of India, the British Library's Oriental Collections, and newly translated Persian primary sources from the Aligarh Muslim University. Over 80 pages of new content have been added, along with a comprehensive genealogical appendix.</p>"
+    },
+    {
+      "type": "text",
+      "id": "inside_heading",
+      "label": "What's inside heading",
+      "default": "What's Inside"
+    },
+    {
+      "type": "richtext",
+      "id": "inside_intro",
+      "label": "What's inside intro",
+      "default": "<p>Spanning from the founding of the empire by Babur in 1526 to its formal dissolution in 1857, the book is organized into six thematic parts:</p>"
+    },
+    {
+      "type": "richtext",
+      "id": "inside_list",
+      "label": "What's inside list",
+      "default": "<p>Part I — The Foundations: Babur, Humayun, and the Central Asian inheritance</p><p>Part II — The Consolidation: Akbar's administrative and cultural revolution</p><p>Part III — The Imperial Zenith: Jahangir and Shah Jahan — art, architecture, and power</p><p>Part IV — The Orthodoxy and Its Consequences: Aurangzeb and the politics of religion</p><p>Part V — The Long Decline: The later Mughals and the rise of regional powers</p><p>Part VI — The Twilight Empire: From 1803 to the Revolt of 1857</p>"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_animation",
+      "label": "Enable scroll reveal animation",
+      "default": true
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "color",
+      "id": "section_bg",
+      "label": "Section background",
+      "default": "#050505"
+    },
+    {
+      "type": "range",
+      "id": "texture_opacity",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "label": "Background texture opacity",
+      "default": 50
+    },
+    {
+      "type": "color",
+      "id": "body_color",
+      "label": "Body text color",
+      "default": "#F5F2EB"
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "max_width",
+      "min": 900,
+      "max": 1400,
+      "step": 20,
+      "unit": "px",
+      "label": "Content max width",
+      "default": 1120
+    },
+    {
+      "type": "range",
+      "id": "padding_top_desktop",
+      "min": 40,
+      "max": 180,
+      "step": 4,
+      "unit": "px",
+      "label": "Top padding desktop",
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_desktop",
+      "min": 40,
+      "max": 180,
+      "step": 4,
+      "unit": "px",
+      "label": "Bottom padding desktop",
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "padding_top_mobile",
+      "min": 24,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Top padding mobile",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_mobile",
+      "min": 24,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Bottom padding mobile",
+      "default": 40
+    },
+    {
+      "type": "header",
+      "content": "Heading"
+    },
+    {
+      "type": "range",
+      "id": "heading_size_desktop",
+      "min": 40,
+      "max": 100,
+      "step": 2,
+      "unit": "px",
+      "label": "Heading size desktop",
+      "default": 70
+    },
+    {
+      "type": "range",
+      "id": "heading_size_tablet",
+      "min": 34,
+      "max": 80,
+      "step": 2,
+      "unit": "px",
+      "label": "Heading size tablet",
+      "default": 56
+    },
+    {
+      "type": "range",
+      "id": "heading_size_mobile",
+      "min": 28,
+      "max": 52,
+      "step": 2,
+      "unit": "px",
+      "label": "Heading size mobile",
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "subheading_size_desktop",
+      "min": 18,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "label": "Subheading size desktop",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "subheading_size_mobile",
+      "min": 16,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "label": "Subheading size mobile",
+      "default": 22
+    },
+    {
+      "type": "header",
+      "content": "Body text"
+    },
+    {
+      "type": "range",
+      "id": "body_size_desktop",
+      "min": 12,
+      "max": 22,
+      "step": 1,
+      "unit": "px",
+      "label": "Body size desktop",
+      "default": 15
+    },
+    {
+      "type": "range",
+      "id": "body_size_mobile",
+      "min": 12,
+      "max": 18,
+      "step": 1,
+      "unit": "px",
+      "label": "Body size mobile",
+      "default": 14
+    },
+    {
+      "type": "header",
+      "content": "Cards"
+    },
+    {
+      "type": "color",
+      "id": "card_bg",
+      "label": "Card background",
+      "default": "rgba(255,255,255,0.07)"
+    },
+    {
+      "type": "color",
+      "id": "card_border_color",
+      "label": "Card left border color",
+      "default": "#BB911F"
+    },
+    {
+      "type": "color",
+      "id": "card_label_color",
+      "label": "Card label color",
+      "default": "#EBDAB8"
+    },
+    {
+      "type": "color",
+      "id": "card_value_color",
+      "label": "Card value color",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "range",
+      "id": "card_radius",
+      "min": 0,
+      "max": 30,
+      "step": 1,
+      "unit": "px",
+      "label": "Card radius",
+      "default": 10
+    },
+    {
+      "type": "range",
+      "id": "card_gap_desktop",
+      "min": 8,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "label": "Card gap desktop",
+      "default": 18
+    },
+    {
+      "type": "range",
+      "id": "card_gap_mobile",
+      "min": 8,
+      "max": 28,
+      "step": 2,
+      "unit": "px",
+      "label": "Card gap mobile",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "card_padding_x_desktop",
+      "min": 12,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "label": "Card horizontal padding desktop",
+      "default": 18
+    },
+    {
+      "type": "range",
+      "id": "card_padding_y_desktop",
+      "min": 10,
+      "max": 28,
+      "step": 2,
+      "unit": "px",
+      "label": "Card vertical padding desktop",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "card_padding_x_mobile",
+      "min": 12,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "label": "Card horizontal padding mobile",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "card_padding_y_mobile",
+      "min": 10,
+      "max": 24,
+      "step": 2,
+      "unit": "px",
+      "label": "Card vertical padding mobile",
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "card_label_size",
+      "min": 10,
+      "max": 16,
+      "step": 1,
+      "unit": "px",
+      "label": "Card label size",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "card_value_size",
+      "min": 12,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "label": "Card value size",
+      "default": 14
+    }
+  ],
+  "blocks": [
+    {
+      "type": "meta_card",
+      "name": "Info card",
+      "limit": 12,
+      "settings": [
+        {
+          "type": "text",
+          "id": "label",
+          "label": "Label",
+          "default": "AUTHOR"
+        },
+        {
+          "type": "text",
+          "id": "value",
+          "label": "Value",
+          "default": "R.C. Sharma"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "About the book",
+      "blocks": [
+        {
+          "type": "meta_card",
+          "settings": {
+            "label": "AUTHOR",
+            "value": "R.C. Sharma"
+          }
+        },
+        {
+          "type": "meta_card",
+          "settings": {
+            "label": "GENRE",
+            "value": "Religion"
+          }
+        },
+        {
+          "type": "meta_card",
+          "settings": {
+            "label": "TOTAL PAGES",
+            "value": "1456"
+          }
+        },
+        {
+          "type": "meta_card",
+          "settings": {
+            "label": "ISBN NO.",
+            "value": "543645647456464"
+          }
+        },
+        {
+          "type": "meta_card",
+          "settings": {
+            "label": "LANGUAGE",
+            "value": "English"
+          }
+        },
+        {
+          "type": "meta_card",
+          "settings": {
+            "label": "BINDING",
+            "value": "Hard Bound"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

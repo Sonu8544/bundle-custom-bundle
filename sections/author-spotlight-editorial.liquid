@@ -1,0 +1,979 @@
+{% liquid
+  assign sid = 'author-spotlight-' | append: section.id
+  assign desktop_bg = section.settings.background_image_desktop
+  assign mobile_bg = section.settings.background_image_mobile
+  assign desktop_top_overlay = section.settings.top_overlay_image_desktop
+  assign mobile_top_overlay = section.settings.top_overlay_image_mobile
+  assign profile_image = section.settings.profile_image
+%}
+
+<section
+  id="{{ sid }}"
+  class="author-spotlight"
+  style="
+    --as-section-max-width: {{ section.settings.section_max_width }}px;
+    --as-content-max-width: {{ section.settings.content_max_width }}px;
+    --as-section-radius: {{ section.settings.section_radius }}px;
+
+    --as-padding-top-desktop: {{ section.settings.padding_top_desktop }}px;
+    --as-padding-bottom-desktop: {{ section.settings.padding_bottom_desktop }}px;
+    --as-padding-side-desktop: {{ section.settings.padding_side_desktop }}px;
+
+    --as-padding-top-mobile: {{ section.settings.padding_top_mobile }}px;
+    --as-padding-bottom-mobile: {{ section.settings.padding_bottom_mobile }}px;
+    --as-padding-side-mobile: {{ section.settings.padding_side_mobile }}px;
+
+    --as-avatar-size-desktop: {{ section.settings.avatar_size_desktop }}px;
+    --as-avatar-size-mobile: {{ section.settings.avatar_size_mobile }}px;
+
+    --as-title-size-desktop: {{ section.settings.title_size_desktop }}px;
+    --as-title-size-mobile: {{ section.settings.title_size_mobile }}px;
+    --as-title-line-desktop: {{ section.settings.title_line_height_desktop }}%;
+    --as-title-line-mobile: {{ section.settings.title_line_height_mobile }}%;
+
+    --as-heading-size-desktop: {{ section.settings.subheading_size_desktop }}px;
+    --as-heading-size-mobile: {{ section.settings.subheading_size_mobile }}px;
+
+    --as-body-size-desktop: {{ section.settings.body_size_desktop }}px;
+    --as-body-size-mobile: {{ section.settings.body_size_mobile }}px;
+
+    --as-body-line-desktop: {{ section.settings.body_line_height_desktop }}px;
+    --as-body-line-mobile: {{ section.settings.body_line_height_mobile }}px;
+
+    --as-section-gap-desktop: {{ section.settings.section_gap_desktop }}px;
+    --as-section-gap-mobile: {{ section.settings.section_gap_mobile }}px;
+
+    --as-title-gap-desktop: {{ section.settings.title_gap_desktop }}px;
+    --as-title-gap-mobile: {{ section.settings.title_gap_mobile }}px;
+
+    --as-top-overlay-height-desktop: {{ section.settings.top_overlay_height_desktop }}px;
+    --as-top-overlay-height-mobile: {{ section.settings.top_overlay_height_mobile }}px;
+
+    --as-avatar-top-space-desktop: {{ section.settings.avatar_top_space_desktop }}px;
+    --as-avatar-top-space-mobile: {{ section.settings.avatar_top_space_mobile }}px;
+
+    --as-bg-color: {{ section.settings.background_color }};
+    --as-text-color: {{ section.settings.text_color }};
+    --as-muted-color: {{ section.settings.muted_text_color }};
+    --as-overlay-color: {{ section.settings.overlay_color }};
+    --as-overlay-opacity: {{ section.settings.overlay_opacity | divided_by: 100.0 }};
+    --as-bottom-fade-opacity: {{ section.settings.bottom_fade_opacity | divided_by: 100.0 }};
+    --as-card-border-color: {{ section.settings.avatar_border_color }};
+    --as-title-fallback-color: {{ section.settings.title_fallback_color }};
+    --as-title-gradient-start: {{ section.settings.title_gradient_start }};
+    --as-title-gradient-middle: {{ section.settings.title_gradient_middle }};
+    --as-title-gradient-end: {{ section.settings.title_gradient_end }};
+    --as-heading-gradient-start: {{ section.settings.heading_gradient_start }};
+    --as-heading-gradient-end: {{ section.settings.heading_gradient_end }};
+
+    --as-title-font: {{ section.settings.title_font_family }};
+    --as-body-font: {{ section.settings.body_font_family }};
+    --as-heading-font: {{ section.settings.heading_font_family }};
+  "
+>
+  <div class="author-spotlight__outer" style='margin-top:-125px !important'>
+    <div class="author-spotlight__bg">
+      {% if desktop_bg != blank %}
+        {{
+          desktop_bg
+          | image_url: width: 2400
+          | image_tag:
+            class: 'author-spotlight__bg-image author-spotlight__bg-image--desktop',
+            widths: '1200, 1400, 1600, 1800, 2000, 2400',
+            loading: 'lazy',
+            alt: section.settings.background_alt
+        }}
+      {% endif %}
+
+      {% if mobile_bg != blank %}
+        {{
+          mobile_bg
+          | image_url: width: 1200
+          | image_tag:
+            class: 'author-spotlight__bg-image author-spotlight__bg-image--mobile',
+            widths: '480, 640, 750, 900, 1200',
+            loading: 'lazy',
+            alt: section.settings.background_alt
+        }}
+      {% endif %}
+
+      <div class="author-spotlight__color-overlay"></div>
+      <div class="author-spotlight__bottom-fade"></div>
+
+      {% if desktop_top_overlay != blank %}
+        {{
+          desktop_top_overlay
+          | image_url: width: 2400
+          | image_tag:
+            class: 'author-spotlight__top-overlay author-spotlight__top-overlay--desktop',
+            widths: '1200, 1400, 1600, 1800, 2000, 2400',
+            loading: 'lazy',
+            alt: section.settings.top_overlay_alt
+        }}
+      {% endif %}
+
+      {% if mobile_top_overlay != blank %}
+        {{
+          mobile_top_overlay
+          | image_url: width: 1200
+          | image_tag:
+            class: 'author-spotlight__top-overlay author-spotlight__top-overlay--mobile',
+            widths: '480, 640, 750, 900, 1200',
+            loading: 'lazy',
+            alt: section.settings.top_overlay_alt
+        }}
+      {% endif %}
+    </div>
+
+    <div class="author-spotlight__inner">
+      <div class="author-spotlight__content">
+        {% if profile_image != blank %}
+          <div class="author-spotlight__avatar-wrap">
+            {{
+              profile_image
+              | image_url: width: 900
+              | image_tag:
+                class: 'author-spotlight__avatar',
+                widths: '240, 320, 480, 640, 900',
+                loading: 'lazy',
+                alt: section.settings.author_name
+            }}
+          </div>
+        {% endif %}
+
+        {% if section.settings.author_name != blank %}
+          <h2 class="author-spotlight__title">
+            {{ section.settings.author_name }}
+          </h2>
+        {% endif %}
+
+        {% if section.settings.intro_text != blank %}
+          <div class="author-spotlight__intro rte">
+            {{ section.settings.intro_text }}
+          </div>
+        {% endif %}
+
+        {% for block in section.blocks %}
+          {% case block.type %}
+            {% when 'content_block' %}
+              <div class="author-spotlight__text-block" {{ block.shopify_attributes }}>
+                {% if block.settings.heading != blank %}
+                  <h3 class="author-spotlight__heading">
+                    {{ block.settings.heading }}
+                  </h3>
+                {% endif %}
+
+                {% if block.settings.body != blank %}
+                  <div class="author-spotlight__body rte">
+                    {{ block.settings.body }}
+                  </div>
+                {% endif %}
+              </div>
+
+            {% when 'list_block' %}
+              <div class="author-spotlight__text-block" {{ block.shopify_attributes }}>
+                {% if block.settings.heading != blank %}
+                  <h3 class="author-spotlight__heading">
+                    {{ block.settings.heading }}
+                  </h3>
+                {% endif %}
+
+                {% if block.settings.intro != blank %}
+                  <div class="author-spotlight__body rte">
+                    {{ block.settings.intro }}
+                  </div>
+                {% endif %}
+
+                {% if block.settings.list_items != blank %}
+                  <div class="author-spotlight__list-wrap">
+                    {% assign list_lines = block.settings.list_items | newline_to_br | split: '<br />' %}
+                    <ul class="author-spotlight__list">
+                      {% for item in list_lines %}
+                        {% assign clean_item = item | strip %}
+                        {% if clean_item != blank %}
+                          <li class="author-spotlight__list-item">{{ clean_item }}</li>
+                        {% endif %}
+                      {% endfor %}
+                    </ul>
+                  </div>
+                {% endif %}
+              </div>
+          {% endcase %}
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+  <style>
+    #{{ sid }} {
+      background: transparent;
+      color: var(--as-text-color);
+    }
+
+    #{{ sid }} .author-spotlight__outer {
+      position: relative;
+      max-width: var(--as-section-max-width);
+      margin: 0 auto;
+      border-radius: var(--as-section-radius);
+      overflow: hidden;
+      background: var(--as-bg-color);
+      min-height: 100%;
+      isolation: isolate;
+    }
+
+    #{{ sid }} .author-spotlight__bg {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+    }
+
+    #{{ sid }} .author-spotlight__bg-image,
+    #{{ sid }} .author-spotlight__top-overlay {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      user-select: none;
+      pointer-events: none;
+    }
+
+    #{{ sid }} .author-spotlight__bg-image--mobile,
+    #{{ sid }} .author-spotlight__top-overlay--mobile {
+      display: none;
+    }
+
+    #{{ sid }} .author-spotlight__top-overlay {
+      top: 0;
+      bottom: auto;
+      height: var(--as-top-overlay-height-desktop);
+      object-fit: cover;
+      object-position: center top;
+      opacity: 1;
+    }
+
+    #{{ sid }} .author-spotlight__color-overlay {
+      position: absolute;
+      inset: 0;
+      background: var(--as-overlay-color);
+      opacity: var(--as-overlay-opacity);
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    #{{ sid }} .author-spotlight__bottom-fade {
+      position: absolute;
+      inset: auto 0 0 0;
+      height: 42%;
+      background: linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,var(--as-bottom-fade-opacity)) 100%);
+      z-index: 2;
+      pointer-events: none;
+    }
+
+    #{{ sid }} .author-spotlight__inner {
+      position: relative;
+      z-index: 3;
+      padding-top: var(--as-padding-top-desktop);
+      padding-right: var(--as-padding-side-desktop);
+      padding-bottom: var(--as-padding-bottom-desktop);
+      padding-left: var(--as-padding-side-desktop);
+    }
+
+    #{{ sid }} .author-spotlight__content {
+      width: 100%;
+      max-width: var(--as-content-max-width);
+      margin: 0 auto;
+      text-align: left;
+    }
+
+    #{{ sid }} .author-spotlight__avatar-wrap {
+      display: flex;
+      justify-content: center;
+      margin-top: var(--as-avatar-top-space-desktop);
+      margin-bottom: 30px;
+    }
+
+    #{{ sid }} .author-spotlight__avatar {
+      width: var(--as-avatar-size-desktop);
+      height: var(--as-avatar-size-desktop);
+      min-width: var(--as-avatar-size-desktop);
+      border-radius: 50%;
+      object-fit: cover;
+      display: block;
+     
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+      background: rgba(255,255,255,0.05);
+    }
+
+    #{{ sid }} .author-spotlight__title {
+      margin: 0 0 var(--as-title-gap-desktop);
+      text-align: center;
+      font-family: var(--as-title-font), serif;
+      font-size: var(--as-title-size-desktop);
+      font-weight: 400;
+    
+      color: var(--as-title-fallback-color);
+      background: linear-gradient(
+        270.6deg,
+        var(--as-title-gradient-start) 9.74%,
+        var(--as-title-gradient-middle) 45%,
+        var(--as-title-gradient-end) 71.76%
+      );
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    #{{ sid }} .author-spotlight__intro,
+    #{{ sid }} .author-spotlight__body,
+    #{{ sid }} .author-spotlight__list-item {
+      font-family: var(--as-body-font), sans-serif;
+      font-size: var(--as-body-size-desktop);
+      font-weight: 400;
+      
+      color: var(--as-text-color);
+    }
+
+    #{{ sid }} .author-spotlight__intro {
+      margin: 0 0 var(--as-section-gap-desktop);
+    }
+
+    #{{ sid }} .author-spotlight__text-block + .author-spotlight__text-block {
+      margin-top: var(--as-section-gap-desktop);
+    }
+
+    #{{ sid }} .author-spotlight__heading {
+      margin: 0 0 18px;
+      font-family: var(--as-heading-font), serif;
+      font-size: var(--as-heading-size-desktop);
+      font-weight: 400;
+     
+      color: #ffffff;
+      background: radial-gradient(
+        84.35% 106.04% at 104.49% 58.65%,
+        var(--as-heading-gradient-start) 0%,
+        var(--as-heading-gradient-end) 100%
+      );
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    #{{ sid }} .author-spotlight__list-wrap {
+      margin-top: 14px;
+    }
+
+    #{{ sid }} .author-spotlight__list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: grid;
+      gap: 4px;
+    }
+
+    #{{ sid }} .author-spotlight__list-item {
+      position: relative;
+      padding-left: 0;
+      color: var(--as-muted-color);
+    }
+
+    #{{ sid }} .rte p {
+      margin: 0 0 14px;
+    }
+
+    #{{ sid }} .rte p:last-child {
+      margin-bottom: 0;
+    }
+
+    @media screen and (max-width: 989px) {
+      #{{ sid }} .author-spotlight__top-overlay {
+        height: calc(var(--as-top-overlay-height-desktop) * 0.82);
+      }
+
+      #{{ sid }} .author-spotlight__title {
+        font-size: calc(var(--as-title-size-desktop) * 0.72);
+      }
+    }
+
+    @media screen and (max-width: 749px) {
+      #{{ sid }} .author-spotlight__bg-image--desktop,
+      #{{ sid }} .author-spotlight__top-overlay--desktop {
+        display: none;
+      }
+
+      #{{ sid }} .author-spotlight__bg-image--mobile,
+      #{{ sid }} .author-spotlight__top-overlay--mobile {
+        display: block;
+      }
+
+      #{{ sid }} .author-spotlight__top-overlay {
+        height: var(--as-top-overlay-height-mobile);
+      }
+
+      #{{ sid }} .author-spotlight__inner {
+        padding-top: var(--as-padding-top-mobile);
+        padding-right: var(--as-padding-side-mobile);
+        padding-bottom: var(--as-padding-bottom-mobile);
+        padding-left: var(--as-padding-side-mobile);
+      }
+
+      #{{ sid }} .author-spotlight__avatar-wrap {
+        margin-top: var(--as-avatar-top-space-mobile);
+        margin-bottom: 22px;
+      }
+
+      #{{ sid }} .author-spotlight__avatar {
+        width: var(--as-avatar-size-mobile);
+        height: var(--as-avatar-size-mobile);
+        min-width: var(--as-avatar-size-mobile);
+      }
+
+      #{{ sid }} .author-spotlight__title {
+        margin-bottom: var(--as-title-gap-mobile);
+        font-size: var(--as-title-size-mobile);
+        
+
+      }
+
+      #{{ sid }} .author-spotlight__heading {
+        font-size: var(--as-heading-size-mobile);
+        margin-bottom: 12px;
+      }
+
+      #{{ sid }} .author-spotlight__intro,
+      #{{ sid }} .author-spotlight__body,
+      #{{ sid }} .author-spotlight__list-item {
+        font-size: var(--as-body-size-mobile);
+
+      }
+
+      #{{ sid }} .author-spotlight__intro {
+        margin-bottom: var(--as-section-gap-mobile);
+      }
+
+      #{{ sid }} .author-spotlight__text-block + .author-spotlight__text-block {
+        margin-top: var(--as-section-gap-mobile);
+      }
+
+      #{{ sid }} .author-spotlight__bottom-fade {
+        height: 55%;
+      }
+    }
+  </style>
+</section>
+
+{% schema %}
+{
+  "name": "Author spotlight",
+  "tag": "section",
+  "class": "section section-author-spotlight-editorial",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Images"
+    },
+    {
+      "type": "image_picker",
+      "id": "background_image_desktop",
+      "label": "Background image desktop"
+    },
+    {
+      "type": "image_picker",
+      "id": "background_image_mobile",
+      "label": "Background image mobile"
+    },
+    {
+      "type": "image_picker",
+      "id": "top_overlay_image_desktop",
+      "label": "Top decorative overlay desktop"
+    },
+    {
+      "type": "image_picker",
+      "id": "top_overlay_image_mobile",
+      "label": "Top decorative overlay mobile"
+    },
+    {
+      "type": "image_picker",
+      "id": "profile_image",
+      "label": "Author image"
+    },
+    {
+      "type": "text",
+      "id": "background_alt",
+      "label": "Background image alt text",
+      "default": "Editorial background"
+    },
+    {
+      "type": "text",
+      "id": "top_overlay_alt",
+      "label": "Top overlay alt text",
+      "default": "Top decorative overlay"
+    },
+    {
+      "type": "header",
+      "content": "Main content"
+    },
+    {
+      "type": "text",
+      "id": "author_name",
+      "label": "Author name",
+      "default": "J.K. Rowling"
+    },
+    {
+      "type": "richtext",
+      "id": "intro_text",
+      "label": "Intro text",
+      "default": "<p>The Mughal Chronicles stands as the most comprehensive single-volume account of the Mughal Empire ever published in the English language. Now in its third revised and expanded edition, this landmark work by Professor R.C. Sharma has been the definitive reference for students, scholars, and enthusiasts of South Asian history for over two decades.</p>"
+    },
+    {
+      "type": "header",
+      "content": "Fonts"
+    },
+    {
+      "type": "text",
+      "id": "title_font_family",
+      "label": "Title font family",
+      "default": "Bethany Elingston"
+    },
+    {
+      "type": "text",
+      "id": "heading_font_family",
+      "label": "Subheading font family",
+      "default": "Bethany Elingston"
+    },
+    {
+      "type": "text",
+      "id": "body_font_family",
+      "label": "Body font family",
+      "default": "Satoshi"
+    },
+    {
+      "type": "header",
+      "content": "Layout widths"
+    },
+    {
+      "type": "range",
+      "id": "section_max_width",
+      "label": "Section max width",
+      "min": 1200,
+      "max": 2700,
+      "step": 20,
+      "default": 2700
+    },
+    {
+      "type": "range",
+      "id": "content_max_width",
+      "label": "Content max width",
+      "min": 700,
+      "max": 1300,
+      "step": 10,
+      "default": 1140
+    },
+    {
+      "type": "range",
+      "id": "section_radius",
+      "label": "Section border radius",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "default": 0
+    },
+    {
+      "type": "header",
+      "content": "Desktop spacing"
+    },
+    {
+      "type": "range",
+      "id": "padding_top_desktop",
+      "label": "Top padding desktop",
+      "min": 40,
+      "max": 260,
+      "step": 10,
+      "default": 70
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_desktop",
+      "label": "Bottom padding desktop",
+      "min": 40,
+      "max": 260,
+      "step": 10,
+      "default": 70
+    },
+    {
+      "type": "range",
+      "id": "padding_side_desktop",
+      "label": "Side padding desktop",
+      "min": 20,
+      "max": 120,
+      "step": 4,
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "avatar_top_space_desktop",
+      "label": "Avatar top space desktop",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "title_gap_desktop",
+      "label": "Gap below title desktop",
+      "min": 10,
+      "max": 80,
+      "step": 2,
+      "default": 34
+    },
+    {
+      "type": "range",
+      "id": "section_gap_desktop",
+      "label": "Gap between text sections desktop",
+      "min": 20,
+      "max": 100,
+      "step": 4,
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "top_overlay_height_desktop",
+      "label": "Top overlay height desktop",
+      "min": 120,
+      "max": 500,
+      "step": 10,
+      "default": 220
+    },
+    {
+      "type": "header",
+      "content": "Mobile spacing"
+    },
+    {
+      "type": "range",
+      "id": "padding_top_mobile",
+      "label": "Top padding mobile",
+      "min": 20,
+      "max": 160,
+      "step": 4,
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_mobile",
+      "label": "Bottom padding mobile",
+      "min": 20,
+      "max": 180,
+      "step": 4,
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "padding_side_mobile",
+      "label": "Side padding mobile",
+      "min": 12,
+      "max": 40,
+      "step": 2,
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "avatar_top_space_mobile",
+      "label": "Avatar top space mobile",
+      "min": 0,
+      "max": 100,
+      "step": 2,
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "title_gap_mobile",
+      "label": "Gap below title mobile",
+      "min": 10,
+      "max": 50,
+      "step": 2,
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "section_gap_mobile",
+      "label": "Gap between text sections mobile",
+      "min": 16,
+      "max": 60,
+      "step": 2,
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "top_overlay_height_mobile",
+      "label": "Top overlay height mobile",
+      "min": 80,
+      "max": 320,
+      "step": 4,
+      "default": 140
+    },
+    {
+      "type": "header",
+      "content": "Avatar sizes"
+    },
+    {
+      "type": "range",
+      "id": "avatar_size_desktop",
+      "label": "Avatar size desktop",
+      "min": 160,
+      "max": 420,
+      "step": 4,
+      "default": 320
+    },
+    {
+      "type": "range",
+      "id": "avatar_size_mobile",
+      "label": "Avatar size mobile",
+      "min": 100,
+      "max": 260,
+      "step": 4,
+      "default": 180
+    },
+    {
+      "type": "color",
+      "id": "avatar_border_color",
+      "label": "Avatar border color",
+      "default": "#D7C7A0"
+    },
+    {
+      "type": "header",
+      "content": "Typography sizes"
+    },
+    {
+      "type": "range",
+      "id": "title_size_desktop",
+      "label": "Title size desktop",
+      "min": 42,
+      "max": 140,
+      "step": 2,
+      "default": 100
+    },
+    {
+      "type": "range",
+      "id": "title_size_mobile",
+      "label": "Title size mobile",
+      "min": 28,
+      "max": 72,
+      "step": 2,
+      "default": 52
+    },
+    {
+      "type": "range",
+      "id": "title_line_height_desktop",
+      "label": "Title line height desktop %",
+      "min": 80,
+      "max": 140,
+      "step": 2,
+      "default": 100
+    },
+    {
+      "type": "range",
+      "id": "title_line_height_mobile",
+      "label": "Title line height mobile %",
+      "min": 80,
+      "max": 140,
+      "step": 2,
+      "default": 100
+    },
+    {
+      "type": "range",
+      "id": "subheading_size_desktop",
+      "label": "Subheading size desktop",
+      "min": 16,
+      "max": 42,
+      "step": 1,
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "subheading_size_mobile",
+      "label": "Subheading size mobile",
+      "min": 14,
+      "max": 32,
+      "step": 1,
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "body_size_desktop",
+      "label": "Body size desktop",
+      "min": 12,
+      "max": 26,
+      "step": 1,
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "body_size_mobile",
+      "label": "Body size mobile",
+      "min": 12,
+      "max": 22,
+      "step": 1,
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "body_line_height_desktop",
+      "label": "Body line height desktop",
+      "min": 18,
+      "max": 40,
+      "step": 1,
+      "default": 27
+    },
+    {
+      "type": "range",
+      "id": "body_line_height_mobile",
+      "label": "Body line height mobile",
+      "min": 18,
+      "max": 34,
+      "step": 1,
+      "default": 24
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Fallback background color",
+      "default": "#060606"
+    },
+    {
+      "type": "color",
+      "id": "overlay_color",
+      "label": "Overlay color",
+      "default": "#000000"
+    },
+    {
+      "type": "range",
+      "id": "overlay_opacity",
+      "label": "Overlay opacity",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "default": 28
+    },
+    {
+      "type": "range",
+      "id": "bottom_fade_opacity",
+      "label": "Bottom fade opacity",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "default": 92
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Body text color",
+      "default": "#FCFCFC"
+    },
+    {
+      "type": "color",
+      "id": "muted_text_color",
+      "label": "Secondary text color",
+      "default": "#E8E3D8"
+    },
+    {
+      "type": "color",
+      "id": "title_fallback_color",
+      "label": "Title fallback color",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "title_gradient_start",
+      "label": "Title gradient start",
+      "default": "#A87E0A"
+    },
+    {
+      "type": "color",
+      "id": "title_gradient_middle",
+      "label": "Title gradient middle",
+      "default": "#C9A53D"
+    },
+    {
+      "type": "color",
+      "id": "title_gradient_end",
+      "label": "Title gradient end",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "heading_gradient_start",
+      "label": "Subheading gradient start",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "heading_gradient_end",
+      "label": "Subheading gradient end",
+      "default": "#BB911E"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "content_block",
+      "name": "Content block",
+      "settings": [
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Heading",
+          "default": "Writing Style, Themes, and Storytelling Approach"
+        },
+        {
+          "type": "richtext",
+          "id": "body",
+          "label": "Body",
+          "default": "<p>Rowling’s writing style balances clarity with imagination. Her prose is accessible yet layered, allowing younger readers to enter the story while offering deeper themes for adults. She structures her narratives around mystery, gradually revealing information through clues, foreshadowing, and emotional turning points.</p><p>Recurring themes in her work include friendship, belonging, prejudice, power, and the consequences of choice. At the heart of her stories is the idea that love and loyalty are forces stronger than fear, giving her fantasy a moral and emotional depth.</p>"
+        }
+      ]
+    },
+    {
+      "type": "list_block",
+      "name": "List block",
+      "settings": [
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Heading",
+          "default": "J.K. Rowling’s Works in Collector and Leather-Bound Editions"
+        },
+        {
+          "type": "richtext",
+          "id": "intro",
+          "label": "Intro",
+          "default": "<p>Spanning from the founding of the empire by Babur in 1526 to its formal dissolution in 1857, the book is organized into six thematic parts:</p>"
+        },
+        {
+          "type": "textarea",
+          "id": "list_items",
+          "label": "List items (one per line)",
+          "default": "Part I — The Foundations: Babur, Humayun, and the Central Asian inheritance\nPart II — The Consolidation: Akbar's administrative and cultural revolution\nPart III — The Imperial Zenith: Jahangir and Shah Jahan — art, architecture, and power\nPart IV — The Orthodoxy and Its Consequences: Aurangzeb and the politics of religion\nPart V — The Long Decline: The later Mughals and the rise of regional powers\nPart VI — The Twilight Empire: From 1803 to the Revolt of 1857"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Author spotlight editorial",
+      "blocks": [
+        {
+          "type": "content_block"
+        },
+        {
+          "type": "list_block"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

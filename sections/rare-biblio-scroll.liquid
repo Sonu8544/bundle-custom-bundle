@@ -1,0 +1,1418 @@
+{% comment %} {% liquid
+  assign sid = 'rb-scroll-' | append: section.id
+%}
+
+<section
+  id="{{ sid }}"
+  class="rb-scroll-section"
+  style="
+    --rb-bg: {{ section.settings.section_bg }};
+    --rb-text: {{ section.settings.text_color }};
+    --rb-accent: {{ section.settings.accent_color }};
+    --rb-maxw-d: {{ section.settings.max_width_desktop }}px;
+    --rb-maxw-m: {{ section.settings.max_width_mobile }}px;
+    --rb-min-body-d: {{ section.settings.min_body_height_desktop }}px;
+    --rb-max-body-d: {{ section.settings.max_body_height_desktop }}px;
+    --rb-min-body-m: {{ section.settings.min_body_height_mobile }}px;
+    --rb-max-body-m: {{ section.settings.max_body_height_mobile }}px;
+    --rb-content-w-d: {{ section.settings.content_width_desktop }}%;
+    --rb-content-w-m: {{ section.settings.content_width_mobile }}%;
+    --rb-pad-x-d: {{ section.settings.content_pad_x_desktop }}px;
+    --rb-pad-y-d: {{ section.settings.content_pad_y_desktop }}px;
+    --rb-pad-x-m: {{ section.settings.content_pad_x_mobile }}px;
+    --rb-pad-y-m: {{ section.settings.content_pad_y_mobile }}px;
+    --rb-head-size-d: {{ section.settings.heading_size_desktop }}px;
+    --rb-head-size-m: {{ section.settings.heading_size_mobile }}px;
+    --rb-body-size-d: {{ section.settings.body_size_desktop }}px;
+    --rb-body-size-m: {{ section.settings.body_size_mobile }}px;
+    --rb-line-d: {{ section.settings.body_line_height_desktop | times: 0.1 }};
+    --rb-line-m: {{ section.settings.body_line_height_mobile | times: 0.1 }};
+    --rb-section-pt-d: {{ section.settings.padding_top_desktop }}px;
+    --rb-section-pb-d: {{ section.settings.padding_bottom_desktop }}px;
+    --rb-section-pt-m: {{ section.settings.padding_top_mobile }}px;
+    --rb-section-pb-m: {{ section.settings.padding_bottom_mobile }}px;
+    --rb-shadow-opacity: {{ section.settings.shadow_opacity | divided_by: 100.0 }};
+    --rb-open-range: {{ section.settings.scroll_open_distance }}px;
+    --rb-tilt-top: {{ section.settings.top_roll_degrees }}deg;
+    --rb-tilt-bottom: {{ section.settings.bottom_roll_degrees }}deg;
+    --rb-roller-gap: {{ section.settings.roller_overlap }}px;
+    --rb-paper-radius: {{ section.settings.paper_radius }}px;
+  "
+>
+  <div class="rb-scroll-shell page-width {% if section.settings.full_width %}rb-scroll-shell--full{% endif %}">
+    <div class="rb-scroll-stage" data-scroll-stage>
+      <div class="rb-scroll-wrap" data-scroll-wrap>
+        <div class="rb-scroll-roller rb-scroll-roller--top" data-top-roller>
+          <div class="rb-scroll-roller__img rb-scroll-roller__img--desktop">
+            {% if section.settings.top_roller_desktop != blank %}
+              {{
+                section.settings.top_roller_desktop
+                | image_url: width: 2400
+                | image_tag:
+                  loading: 'lazy',
+                  widths: '500, 800, 1100, 1400, 1800, 2200, 2400',
+                  class: 'rb-scroll-roller__asset',
+                  alt: section.settings.heading_plain
+              }}
+            {% endif %}
+          </div>
+          <div class="rb-scroll-roller__img rb-scroll-roller__img--mobile">
+            {% if section.settings.top_roller_mobile != blank %}
+              {{
+                section.settings.top_roller_mobile
+                | image_url: width: 1400
+                | image_tag:
+                  loading: 'lazy',
+                  widths: '360, 540, 720, 960, 1200, 1400',
+                  class: 'rb-scroll-roller__asset',
+                  alt: section.settings.heading_plain
+              }}
+            {% elsif section.settings.top_roller_desktop != blank %}
+              {{
+                section.settings.top_roller_desktop
+                | image_url: width: 1400
+                | image_tag:
+                  loading: 'lazy',
+                  widths: '360, 540, 720, 960, 1200, 1400',
+                  class: 'rb-scroll-roller__asset',
+                  alt: section.settings.heading_plain
+              }}
+            {% endif %}
+          </div>
+          <span class="rb-scroll-roller__shadow"></span>
+        </div>
+
+        <div class="rb-scroll-paper" data-paper>
+          <div class="rb-scroll-paper__bg rb-scroll-paper__bg--desktop">
+            {% if section.settings.paper_body_desktop != blank %}
+              {{
+                section.settings.paper_body_desktop
+                | image_url: width: 2000
+                | image_tag:
+                  loading: 'lazy',
+                  widths: '500, 800, 1100, 1400, 1800, 2000',
+                  class: 'rb-scroll-paper__bg-image',
+                  alt: section.settings.heading_plain
+              }}
+            {% endif %}
+          </div>
+
+          <div class="rb-scroll-paper__bg rb-scroll-paper__bg--mobile">
+            {% if section.settings.paper_body_mobile != blank %}
+              {{
+                section.settings.paper_body_mobile
+                | image_url: width: 1400
+                | image_tag:
+                  loading: 'lazy',
+                  widths: '360, 540, 720, 960, 1200, 1400',
+                  class: 'rb-scroll-paper__bg-image',
+                  alt: section.settings.heading_plain
+              }}
+            {% elsif section.settings.paper_body_desktop != blank %}
+              {{
+                section.settings.paper_body_desktop
+                | image_url: width: 1400
+                | image_tag:
+                  loading: 'lazy',
+                  widths: '360, 540, 720, 960, 1200, 1400',
+                  class: 'rb-scroll-paper__bg-image',
+                  alt: section.settings.heading_plain
+              }}
+            {% endif %}
+          </div>
+
+          {% if section.settings.paper_overlay_texture != blank %}
+            <div class="rb-scroll-paper__texture">
+              {{
+                section.settings.paper_overlay_texture
+                | image_url: width: 1800
+                | image_tag:
+                  loading: 'lazy',
+                  widths: '400, 800, 1200, 1600, 1800',
+                  class: 'rb-scroll-paper__texture-image',
+                  alt: ''
+              }}
+            </div>
+          {% endif %}
+
+          <div class="rb-scroll-content" data-content>
+            {% if section.settings.eyebrow != blank %}
+              <p class="rb-scroll-content__eyebrow">{{ section.settings.eyebrow }}</p>
+            {% endif %}
+
+            {% if section.settings.heading_plain != blank or section.settings.heading_accent != blank %}
+              <h2 class="rb-scroll-content__heading">
+                <span>{{ section.settings.heading_plain }}</span>
+                {% if section.settings.heading_accent != blank %}
+                  <span class="rb-scroll-content__heading-accent"> {{ section.settings.heading_accent }}</span>
+                {% endif %}
+              </h2>
+            {% endif %}
+
+            {% if section.settings.divider_image != blank %}
+              <div class="rb-scroll-content__divider rb-scroll-content__divider--image">
+                {{
+                  section.settings.divider_image
+                  | image_url: width: 800
+                  | image_tag:
+                    loading: 'lazy',
+                    widths: '200, 400, 600, 800',
+                    class: 'rb-scroll-content__divider-image',
+                    alt: ''
+                }}
+              </div>
+            {% elsif section.settings.show_default_divider %}
+              <div class="rb-scroll-content__divider rb-scroll-content__divider--default" aria-hidden="true">
+                <span></span>
+              </div>
+            {% endif %}
+
+            {% if section.settings.body != blank %}
+              <div class="rb-scroll-content__body rte">
+                {{ section.settings.body }}
+              </div>
+            {% endif %}
+          </div>
+        </div>
+
+        <div class="rb-scroll-roller rb-scroll-roller--bottom" data-bottom-roller>
+          <span class="rb-scroll-roller__shadow"></span>
+          <div class="rb-scroll-roller__img rb-scroll-roller__img--desktop">
+            {% if section.settings.bottom_roller_desktop != blank %}
+              {{
+                section.settings.bottom_roller_desktop
+                | image_url: width: 2400
+                | image_tag:
+                  loading: 'lazy',
+                  widths: '500, 800, 1100, 1400, 1800, 2200, 2400',
+                  class: 'rb-scroll-roller__asset',
+                  alt: section.settings.heading_plain
+              }}
+            {% endif %}
+          </div>
+          <div class="rb-scroll-roller__img rb-scroll-roller__img--mobile">
+            {% if section.settings.bottom_roller_mobile != blank %}
+              {{
+                section.settings.bottom_roller_mobile
+                | image_url: width: 1400
+                | image_tag:
+                  loading: 'lazy',
+                  widths: '360, 540, 720, 960, 1200, 1400',
+                  class: 'rb-scroll-roller__asset',
+                  alt: section.settings.heading_plain
+              }}
+            {% elsif section.settings.bottom_roller_desktop != blank %}
+              {{
+                section.settings.bottom_roller_desktop
+                | image_url: width: 1400
+                | image_tag:
+                  loading: 'lazy',
+                  widths: '360, 540, 720, 960, 1200, 1400',
+                  class: 'rb-scroll-roller__asset',
+                  alt: section.settings.heading_plain
+              }}
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <style>
+    #{{ sid }}{
+      background: var(--rb-bg);
+      padding-top: var(--rb-section-pt-d);
+      padding-bottom: var(--rb-section-pb-d);
+      overflow: clip;
+    }
+
+    #{{ sid }} .rb-scroll-shell{
+      position: relative;
+    }
+
+    #{{ sid }} .rb-scroll-shell--full{
+      max-width: 100%;
+      padding-left: 0;
+      padding-right: 0;
+    }
+
+    #{{ sid }} .rb-scroll-stage{
+      position: relative;
+      width: min(100%, var(--rb-maxw-d));
+      margin: 0 auto;
+      perspective: 1400px;
+      perspective-origin: 50% 45%;
+    }
+
+    #{{ sid }} .rb-scroll-wrap{
+      position: relative;
+      width: 100%;
+      transform-style: preserve-3d;
+      --scroll-progress: 0;
+    }
+
+    #{{ sid }} .rb-scroll-roller{
+      position: relative;
+      z-index: 5;
+      width: 100%;
+      transform-style: preserve-3d;
+      will-change: transform;
+      transition: transform 0.16s linear;
+    }
+
+    #{{ sid }} .rb-scroll-roller--top{
+      margin-bottom: calc(var(--rb-roller-gap) * -1);
+      transform-origin: center center;
+      transform: translate3d(0, 0, 30px) rotateX(calc(var(--scroll-progress) * var(--rb-tilt-top)));
+    }
+
+    #{{ sid }} .rb-scroll-roller--bottom{
+      margin-top: calc(var(--rb-roller-gap) * -1);
+      transform-origin: center center;
+      transform: translate3d(0, 0, 30px) rotateX(calc(var(--scroll-progress) * var(--rb-tilt-bottom)));
+    }
+
+    #{{ sid }} .rb-scroll-roller__img{
+      display: block;
+      line-height: 0;
+    }
+
+    #{{ sid }} .rb-scroll-roller__img--mobile{
+      display: none;
+    }
+
+    #{{ sid }} .rb-scroll-roller__asset{
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+
+    #{{ sid }} .rb-scroll-roller__shadow{
+      position: absolute;
+      left: 8%;
+      right: 8%;
+      height: 22px;
+      pointer-events: none;
+      opacity: calc(var(--scroll-progress) * var(--rb-shadow-opacity));
+      background: radial-gradient(ellipse at center, rgba(0,0,0,0.58) 0%, rgba(0,0,0,0.18) 48%, rgba(0,0,0,0) 78%);
+      transition: opacity 0.16s linear;
+    }
+
+    #{{ sid }} .rb-scroll-roller--top .rb-scroll-roller__shadow{
+      bottom: -10px;
+    }
+
+    #{{ sid }} .rb-scroll-roller--bottom .rb-scroll-roller__shadow{
+      top: -10px;
+    }
+
+    #{{ sid }} .rb-scroll-paper{
+      position: relative;
+      z-index: 2;
+      width: 100%;
+      min-height: var(--rb-min-body-d);
+      height: var(--rb-min-body-d);
+      overflow: hidden;
+      border-radius: var(--rb-paper-radius);
+      will-change: height, transform;
+      transition: height 0.22s ease, transform 0.16s linear;
+      transform: translate3d(0, 0, 0) scaleY(calc(0.92 + (var(--scroll-progress) * 0.08)));
+      box-shadow: 0 18px 50px rgba(0,0,0,0.16);
+    }
+
+    #{{ sid }} .rb-scroll-paper__bg,
+    #{{ sid }} .rb-scroll-paper__texture{
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+    }
+
+    #{{ sid }} .rb-scroll-paper__bg--mobile{
+      display: none;
+    }
+
+    #{{ sid }} .rb-scroll-paper__bg-image,
+    #{{ sid }} .rb-scroll-paper__texture-image{
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: fill;
+    }
+
+    #{{ sid }} .rb-scroll-paper__texture{
+      mix-blend-mode: multiply;
+      opacity: 0.28;
+    }
+
+    #{{ sid }} .rb-scroll-content{
+      position: relative;
+      z-index: 2;
+      width: min(var(--rb-content-w-d), 100%);
+      margin: 0 auto;
+      padding: var(--rb-pad-y-d) var(--rb-pad-x-d);
+      color: var(--rb-text);
+      text-align: center;
+    }
+
+    #{{ sid }} .rb-scroll-content__eyebrow{
+      margin: 0 0 12px;
+      font-size: 14px;
+      line-height: 1;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--rb-accent);
+    }
+
+    #{{ sid }} .rb-scroll-content__heading{
+      margin: 0;
+      font-size: var(--rb-head-size-d);
+      line-height: 1.04;
+      font-weight: 400;
+      color: var(--rb-text);
+    }
+
+    #{{ sid }} .rb-scroll-content__heading-accent{
+      color: var(--rb-accent);
+    }
+
+    #{{ sid }} .rb-scroll-content__divider{
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 24px auto 28px;
+    }
+
+    #{{ sid }} .rb-scroll-content__divider--default span{
+      display: block;
+      width: min(180px, 45vw);
+      height: 1px;
+      background: linear-gradient(90deg, transparent 0%, rgba(164,124,58,0.4) 20%, rgba(164,124,58,0.95) 50%, rgba(164,124,58,0.4) 80%, transparent 100%);
+      position: relative;
+    }
+
+    #{{ sid }} .rb-scroll-content__divider--default span::before,
+    #{{ sid }} .rb-scroll-content__divider--default span::after{
+      content: "";
+      position: absolute;
+      top: 50%;
+      width: 8px;
+      height: 8px;
+      border: 1px solid rgba(164,124,58,0.7);
+      border-radius: 50%;
+      transform: translateY(-50%);
+    }
+
+    #{{ sid }} .rb-scroll-content__divider--default span::before{
+      left: -14px;
+    }
+
+    #{{ sid }} .rb-scroll-content__divider--default span::after{
+      right: -14px;
+    }
+
+    #{{ sid }} .rb-scroll-content__divider-image{
+      display: block;
+      width: auto;
+      max-width: min(240px, 65%);
+      height: auto;
+    }
+
+    #{{ sid }} .rb-scroll-content__body{
+      font-size: var(--rb-body-size-d);
+      line-height: var(--rb-line-d);
+      color: var(--rb-text);
+      max-width: 100%;
+      margin: 0 auto;
+    }
+
+    #{{ sid }} .rb-scroll-content__body p{
+      margin: 0 0 14px;
+    }
+
+    #{{ sid }} .rb-scroll-content__body p:last-child{
+      margin-bottom: 0;
+    }
+
+    #{{ sid }} .rb-scroll-content__body strong{
+      font-weight: 700;
+    }
+
+    #{{ sid }} .rb-scroll-content__body a{
+      color: inherit;
+    }
+
+    @media screen and (max-width: 989px){
+      #{{ sid }}{
+        padding-top: var(--rb-section-pt-m);
+        padding-bottom: var(--rb-section-pb-m);
+      }
+
+      #{{ sid }} .rb-scroll-stage{
+        width: min(100%, var(--rb-maxw-m));
+      }
+
+      #{{ sid }} .rb-scroll-roller__img--desktop,
+      #{{ sid }} .rb-scroll-paper__bg--desktop{
+        display: none;
+      }
+
+      #{{ sid }} .rb-scroll-roller__img--mobile,
+      #{{ sid }} .rb-scroll-paper__bg--mobile{
+        display: block;
+      }
+
+      #{{ sid }} .rb-scroll-paper{
+        min-height: var(--rb-min-body-m);
+        height: var(--rb-min-body-m);
+      }
+
+      #{{ sid }} .rb-scroll-content{
+        width: min(var(--rb-content-w-m), 100%);
+        padding: var(--rb-pad-y-m) var(--rb-pad-x-m);
+      }
+
+      #{{ sid }} .rb-scroll-content__eyebrow{
+        font-size: 12px;
+        margin-bottom: 10px;
+      }
+
+      #{{ sid }} .rb-scroll-content__heading{
+        font-size: var(--rb-head-size-m);
+      }
+
+      #{{ sid }} .rb-scroll-content__divider{
+        margin: 18px auto 22px;
+      }
+
+      #{{ sid }} .rb-scroll-content__body{
+        font-size: var(--rb-body-size-m);
+        line-height: var(--rb-line-m);
+      }
+
+      #{{ sid }} .rb-scroll-roller__shadow{
+        left: 10%;
+        right: 10%;
+        height: 18px;
+      }
+    }
+  </style>
+
+  <script>
+    (() => {
+      const section = document.getElementById('{{ sid }}');
+      if (!section) return;
+
+      const wrap = section.querySelector('[data-scroll-wrap]');
+      const paper = section.querySelector('[data-paper]');
+      const content = section.querySelector('[data-content]');
+      if (!wrap || !paper || !content) return;
+
+      let ticking = false;
+      let lastProgress = -1;
+
+      function getIsMobile() {
+        return window.matchMedia('(max-width: 989px)').matches;
+      }
+
+      function clamp(value, min, max) {
+        return Math.max(min, Math.min(max, value));
+      }
+
+      function getTargetBodyHeight() {
+        const styles = getComputedStyle(section);
+        const isMobile = getIsMobile();
+
+        const minHeight = parseFloat(styles.getPropertyValue(isMobile ? '--rb-min-body-m' : '--rb-min-body-d')) || 0;
+        const maxHeight = parseFloat(styles.getPropertyValue(isMobile ? '--rb-max-body-m' : '--rb-max-body-d')) || 9999;
+
+        const contentHeight = Math.ceil(content.scrollHeight);
+        const target = contentHeight;
+
+        return clamp(target, minHeight, maxHeight);
+      }
+
+      function applyHeight(progress) {
+        const styles = getComputedStyle(section);
+        const isMobile = getIsMobile();
+
+        const minHeight = parseFloat(styles.getPropertyValue(isMobile ? '--rb-min-body-m' : '--rb-min-body-d')) || 0;
+        const targetHeight = getTargetBodyHeight();
+        const openHeight = minHeight + ((targetHeight - minHeight) * progress);
+
+        paper.style.height = openHeight.toFixed(2) + 'px';
+      }
+
+      function updateProgress() {
+        ticking = false;
+
+        const rect = section.getBoundingClientRect();
+        const styles = getComputedStyle(section);
+        const openRange = parseFloat(styles.getPropertyValue('--rb-open-range')) || window.innerHeight;
+
+        const viewportTrigger = window.innerHeight * 0.82;
+        const distance = viewportTrigger - rect.top;
+        const progress = clamp(distance / openRange, 0, 1);
+
+        if (Math.abs(progress - lastProgress) < 0.002) return;
+        lastProgress = progress;
+
+        wrap.style.setProperty('--scroll-progress', progress.toFixed(4));
+        applyHeight(progress);
+      }
+
+      function requestUpdate() {
+        if (ticking) return;
+        ticking = true;
+        requestAnimationFrame(updateProgress);
+      }
+
+      function refresh() {
+        applyHeight(lastProgress > -1 ? lastProgress : 0);
+        requestUpdate();
+      }
+
+      window.addEventListener('scroll', requestUpdate, { passive: true });
+      window.addEventListener('resize', refresh);
+
+      document.addEventListener('shopify:section:load', refresh);
+      document.addEventListener('shopify:section:reorder', refresh);
+      document.addEventListener('shopify:block:select', refresh);
+      document.addEventListener('shopify:block:deselect', refresh);
+
+      if (document.fonts && document.fonts.ready) {
+        document.fonts.ready.then(refresh).catch(() => refresh());
+      } else {
+        refresh();
+      }
+
+      setTimeout(refresh, 80);
+      setTimeout(refresh, 300);
+    })();
+  </script>
+</section>
+
+{% schema %}
+{
+  "name": "Rare Biblio Scroll",
+  "tag": "section",
+  "class": "section rare-biblio-scroll",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "full_width",
+      "label": "Use full width container",
+      "default": false
+    },
+    {
+      "type": "color",
+      "id": "section_bg",
+      "label": "Section background",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#17130f"
+    },
+    {
+      "type": "color",
+      "id": "accent_color",
+      "label": "Accent color",
+      "default": "#8f722f"
+    },
+
+    {
+      "type": "header",
+      "content": "Desktop assets"
+    },
+    {
+      "type": "image_picker",
+      "id": "top_roller_desktop",
+      "label": "Top roller image (desktop)"
+    },
+    {
+      "type": "image_picker",
+      "id": "paper_body_desktop",
+      "label": "Paper body image (desktop)"
+    },
+    {
+      "type": "image_picker",
+      "id": "bottom_roller_desktop",
+      "label": "Bottom roller image (desktop)"
+    },
+
+    {
+      "type": "header",
+      "content": "Mobile assets"
+    },
+    {
+      "type": "image_picker",
+      "id": "top_roller_mobile",
+      "label": "Top roller image (mobile)"
+    },
+    {
+      "type": "image_picker",
+      "id": "paper_body_mobile",
+      "label": "Paper body image (mobile)"
+    },
+    {
+      "type": "image_picker",
+      "id": "bottom_roller_mobile",
+      "label": "Bottom roller image (mobile)"
+    },
+    {
+      "type": "image_picker",
+      "id": "paper_overlay_texture",
+      "label": "Optional parchment texture overlay"
+    },
+
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "About us"
+    },
+    {
+      "type": "text",
+      "id": "heading_plain",
+      "label": "Heading first part",
+      "default": "About Rare"
+    },
+    {
+      "type": "text",
+      "id": "heading_accent",
+      "label": "Heading accent part",
+      "default": "Biblio"
+    },
+    {
+      "type": "richtext",
+      "id": "body",
+      "label": "Body text",
+      "default": "<p>Welcome to Rare Biblio, the premier destination for bibliophiles and book lovers who appreciate the art of bookmaking. As a rare books store, we specialize in handcrafted leather-bound books, personalization and customization services, and restoration of valuable old books, antiquarian books, and manuscripts.</p>"
+    },
+    {
+      "type": "image_picker",
+      "id": "divider_image",
+      "label": "Custom divider image"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_default_divider",
+      "label": "Show default divider if no image is uploaded",
+      "default": true
+    },
+
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "max_width_desktop",
+      "label": "Max width desktop",
+      "min": 700,
+      "max": 1600,
+      "step": 10,
+      "default": 980
+    },
+    {
+      "type": "range",
+      "id": "max_width_mobile",
+      "label": "Max width mobile",
+      "min": 260,
+      "max": 700,
+      "step": 10,
+      "default": 520
+    },
+    {
+      "type": "range",
+      "id": "content_width_desktop",
+      "label": "Content width desktop",
+      "min": 35,
+      "max": 90,
+      "step": 1,
+      "default": 64
+    },
+    {
+      "type": "range",
+      "id": "content_width_mobile",
+      "label": "Content width mobile",
+      "min": 70,
+      "max": 96,
+      "step": 1,
+      "default": 84
+    },
+    {
+      "type": "range",
+      "id": "content_pad_x_desktop",
+      "label": "Content side padding desktop",
+      "min": 10,
+      "max": 120,
+      "step": 2,
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "content_pad_y_desktop",
+      "label": "Content top-bottom padding desktop",
+      "min": 20,
+      "max": 180,
+      "step": 2,
+      "default": 64
+    },
+    {
+      "type": "range",
+      "id": "content_pad_x_mobile",
+      "label": "Content side padding mobile",
+      "min": 8,
+      "max": 60,
+      "step": 2,
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "content_pad_y_mobile",
+      "label": "Content top-bottom padding mobile",
+      "min": 16,
+      "max": 100,
+      "step": 2,
+      "default": 34
+    },
+    {
+      "type": "range",
+      "id": "min_body_height_desktop",
+      "label": "Closed paper height desktop",
+      "min": 40,
+      "max": 240,
+      "step": 2,
+      "default": 54
+    },
+    {
+      "type": "range",
+      "id": "max_body_height_desktop",
+      "label": "Max open paper height desktop",
+      "min": 300,
+      "max": 1300,
+      "step": 10,
+      "default": 760
+    },
+    {
+      "type": "range",
+      "id": "min_body_height_mobile",
+      "label": "Closed paper height mobile",
+      "min": 30,
+      "max": 180,
+      "step": 2,
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "max_body_height_mobile",
+      "label": "Max open paper height mobile",
+      "min": 220,
+      "max": 1100,
+      "step": 10,
+      "default": 620
+    },
+    {
+      "type": "range",
+      "id": "roller_overlap",
+      "label": "Roller overlap with paper",
+      "min": 0,
+      "max": 50,
+      "step": 1,
+      "default": 8
+    },
+    {
+      "type": "range",
+      "id": "paper_radius",
+      "label": "Paper corner softness",
+      "min": 0,
+      "max": 40,
+      "step": 1,
+      "default": 6
+    },
+
+    {
+      "type": "header",
+      "content": "Typography"
+    },
+    {
+      "type": "range",
+      "id": "heading_size_desktop",
+      "label": "Heading size desktop",
+      "min": 24,
+      "max": 100,
+      "step": 2,
+      "default": 58
+    },
+    {
+      "type": "range",
+      "id": "heading_size_mobile",
+      "label": "Heading size mobile",
+      "min": 20,
+      "max": 60,
+      "step": 2,
+      "default": 34
+    },
+    {
+      "type": "range",
+      "id": "body_size_desktop",
+      "label": "Body size desktop",
+      "min": 12,
+      "max": 34,
+      "step": 1,
+      "default": 18
+    },
+    {
+      "type": "range",
+      "id": "body_size_mobile",
+      "label": "Body size mobile",
+      "min": 11,
+      "max": 24,
+      "step": 1,
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "body_line_height_desktop",
+      "label": "Body line height desktop (x10)",
+      "min": 10,
+      "max": 20,
+      "step": 1,
+      "default": 17
+    },
+    {
+      "type": "range",
+      "id": "body_line_height_mobile",
+      "label": "Body line height mobile (x10)",
+      "min": 10,
+      "max": 20,
+      "step": 1,
+      "default": 16
+    },
+
+    {
+      "type": "header",
+      "content": "Scroll animation"
+    },
+    {
+      "type": "range",
+      "id": "scroll_open_distance",
+      "label": "Scroll distance to fully open",
+      "min": 150,
+      "max": 1150,
+      "step": 10,
+      "default": 520
+    },
+    {
+      "type": "range",
+      "id": "top_roll_degrees",
+      "label": "Top roller rotation strength",
+      "min": -25,
+      "max": 0,
+      "step": 1,
+      "default": -10
+    },
+    {
+      "type": "range",
+      "id": "bottom_roll_degrees",
+      "label": "Bottom roller rotation strength",
+      "min": 0,
+      "max": 25,
+      "step": 1,
+      "default": 10
+    },
+    {
+      "type": "range",
+      "id": "shadow_opacity",
+      "label": "Roller shadow strength",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "default": 42
+    },
+
+    {
+      "type": "header",
+      "content": "Section spacing"
+    },
+    {
+      "type": "range",
+      "id": "padding_top_desktop",
+      "label": "Padding top desktop",
+      "min": 0,
+      "max": 200,
+      "step": 2,
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_desktop",
+      "label": "Padding bottom desktop",
+      "min": 0,
+      "max": 200,
+      "step": 2,
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "padding_top_mobile",
+      "label": "Padding top mobile",
+      "min": 0,
+      "max": 140,
+      "step": 2,
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_mobile",
+      "label": "Padding bottom mobile",
+      "min": 0,
+      "max": 140,
+      "step": 2,
+      "default": 20
+    }
+  ],
+  "presets": [
+    {
+      "name": "Rare Biblio Scroll"
+    }
+  ]
+}
+{% endschema %} {% endcomment %}
+
+{% comment %}
+  Parchment Scroll Section
+  ========================
+  Interactive scroll that unrolls on wheel/swipe/keyboard input.
+  3D rotating wooden rollers, auto-fitting text, spring physics.
+
+  SETUP:
+  1. Upload scroll-top.png, scroll-mid.png, scroll-bot.png to your theme's Assets folder
+  2. Add this file to your theme's Sections folder
+  3. Add the section to any page/template via the theme editor
+
+  Or use the image_picker settings to upload custom scroll images.
+{% endcomment %}
+
+
+{% comment %}
+  Parchment Scroll Section — Interactive scroll with 3D rollers
+  Smooth scroll pass-through: only captures when actively opening/closing.
+  Fully open or closed → page scrolls normally.
+{% endcomment %}
+
+{%- liquid
+  assign sid = section.id
+  assign heading = section.settings.heading
+  assign subtitle = section.settings.subtitle
+  assign body_text = section.settings.body_text
+  assign quote_text = section.settings.quote_text
+  assign footer_text = section.settings.footer_text
+  assign bg_color = section.settings.bg_color
+  assign section_height = section.settings.section_height
+  assign max_scroll_width = section.settings.max_scroll_width
+  assign full_screen = section.settings.full_screen
+
+  if section.settings.img_top != blank
+    assign img_top = section.settings.img_top | image_url: width: 1098
+  else
+    assign img_top = 'scroll-top.png' | asset_url
+  endif
+  if section.settings.img_mid != blank
+    assign img_mid = section.settings.img_mid | image_url: width: 1098
+  else
+    assign img_mid = 'scroll-mid.png' | asset_url
+  endif
+  if section.settings.img_bot != blank
+    assign img_bot = section.settings.img_bot | image_url: width: 1098
+  else
+    assign img_bot = 'scroll-bot.png' | asset_url
+  endif
+-%}
+
+{{ 'https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&display=swap' | stylesheet_tag }}
+
+<style>
+  #scroll-{{ sid }} {
+    position: relative;
+    width: 100%;
+    {% if full_screen %}
+      height: 100vh; height: 100dvh;
+    {% else %}
+      height: {{ section_height }}px;
+    {% endif %}
+    background: {{ bg_color }};
+    overflow: hidden;
+    -webkit-user-select: none; user-select: none;
+    font-family: 'Cormorant Garamond', 'Georgia', serif;
+  }
+  #scroll-{{ sid }}::before {
+    content: ''; position: absolute; inset: 0;
+    background: radial-gradient(ellipse at 50% 40%, rgba(30,22,10,0.25) 0%, {{ bg_color }} 70%);
+    z-index: 0; pointer-events: none;
+  }
+  #scroll-{{ sid }} .ps-scene {
+    position: absolute; top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    perspective: 900px; perspective-origin: 50% 50%;
+    width: 92%; max-width: {{ max_scroll_width }}px; z-index: 2;
+  }
+  #scroll-{{ sid }} .ps-wrap {
+    display: flex; flex-direction: column; align-items: center;
+    transform-style: preserve-3d;
+  }
+  #scroll-{{ sid }} .ps-roller {
+    width: 100%; position: relative; z-index: 10;
+    transform-style: preserve-3d; will-change: transform, filter;
+  }
+  #scroll-{{ sid }} .ps-roller img {
+    width: 100%; height: auto; display: block;
+    pointer-events: none; -webkit-user-drag: none;
+  }
+  #scroll-{{ sid }} .ps-paper {
+    width: 100%; height: 0; overflow: hidden;
+    position: relative; z-index: 1;
+    margin-top: -12px; margin-bottom: -12px;
+    will-change: height;
+  }
+  #scroll-{{ sid }} .ps-paper-inner {
+    width: 100%; min-height: 100%;
+    background-image: url('{{ img_mid }}');
+    background-size: 100% auto;
+    background-repeat: repeat-y;
+    background-position: top center;
+    display: flex; align-items: center; justify-content: center;
+  }
+  #scroll-{{ sid }} .ps-txt {
+    position: relative; z-index: 2; width: 100%;
+    padding: 10px 19% 10px 19%;
+    text-align: center; color: {{ section.settings.text_color }};
+    opacity: 0; will-change: opacity;
+  }
+  #scroll-{{ sid }} .ps-txt h2 {
+    font-family: 'Cinzel', 'Georgia', serif; font-weight: 700;
+    color: {{ section.settings.heading_color }};
+    margin: 0 0 0.3em 0;
+    text-shadow: 1px 1px 2px rgba(255,240,200,0.3);
+    letter-spacing: 2.5px; line-height: 1.15; padding: 0;
+  }
+  #scroll-{{ sid }} .ps-txt .ps-sub {
+    font-family: 'Cinzel', serif; font-weight: 400;
+    letter-spacing: 3px; text-transform: uppercase;
+    color: {{ section.settings.heading_color }};
+    opacity: 0.7; margin-bottom: 0.5em; line-height: 1.3;
+  }
+  #scroll-{{ sid }} .ps-txt .ps-body { line-height: 1.6; margin-bottom: 0.35em; }
+  #scroll-{{ sid }} .ps-txt .ps-quote {
+    font-style: italic; opacity: 0.72; margin: 0.4em 0; line-height: 1.5;
+  }
+  #scroll-{{ sid }} .ps-txt .ps-sep {
+    border: none; border-top: 1px solid rgba(90,50,20,0.18);
+    margin: 0.5em auto; width: 45%;
+  }
+  #scroll-{{ sid }} .ps-txt .ps-stamp {
+    font-family: 'Cinzel', serif; letter-spacing: 4px;
+    text-transform: uppercase; opacity: 0.8; padding-top: 0.15em;
+  }
+  #scroll-{{ sid }} .ps-hint {
+    position: absolute; bottom: 22px; left: 50%;
+    transform: translateX(-50%);
+    color: {{ section.settings.accent_color }};
+    text-transform: uppercase; letter-spacing: 3px;
+    font-size: 0.55rem; font-family: 'Cinzel', serif; font-weight: 700;
+    z-index: 100; background: rgba(10,8,4,0.85);
+    padding: 8px 22px; border-radius: 22px;
+    border: 1px solid rgba(212,175,55,0.12);
+    backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+    pointer-events: none; transition: opacity 0.5s;
+    animation: psFloat-{{ sid }} 3s ease-in-out infinite; white-space: nowrap;
+  }
+  @keyframes psFloat-{{ sid }} {
+    0%, 100% { transform: translateX(-50%) translateY(0); }
+    50%      { transform: translateX(-50%) translateY(-5px); }
+  }
+  #scroll-{{ sid }} .ps-pbar {
+    position: absolute; right: 12px; top: 50%;
+    transform: translateY(-50%);
+    width: 3px; height: 80px;
+    background: rgba(212,175,55,0.08);
+    border-radius: 3px; z-index: 100;
+    overflow: hidden; opacity: 0; transition: opacity 0.4s;
+  }
+  #scroll-{{ sid }} .ps-pbar-fill {
+    width: 100%; height: 0%;
+    background: {{ section.settings.accent_color }};
+    opacity: 0.5; border-radius: 3px; transition: height 0.05s;
+  }
+  @media (max-width: 480px) {
+    #scroll-{{ sid }} .ps-scene { width: 97%; }
+    #scroll-{{ sid }} .ps-txt { padding: 6px 17% 6px 17%; }
+  }
+</style>
+
+<div id="scroll-{{ sid }}">
+  <div class="ps-hint" data-ps-hint>Scroll · Swipe · Arrow Keys</div>
+  <div class="ps-pbar" data-ps-pbar><div class="ps-pbar-fill" data-ps-pfill></div></div>
+  <div class="ps-scene">
+    <div class="ps-wrap" data-ps-wrap>
+      <div class="ps-roller ps-top-r" data-ps-top>
+        <img src="{{ img_top }}" alt="" draggable="false" loading="lazy">
+      </div>
+      <div class="ps-paper" data-ps-paper>
+        <div class="ps-paper-inner" data-ps-pin>
+          <div class="ps-txt" data-ps-txt>
+            {% if heading != blank %}<h2>{{ heading }}</h2>{% endif %}
+            {% if subtitle != blank %}<p class="ps-sub">{{ subtitle }}</p>{% endif %}
+            {% if body_text != blank %}<div class="ps-body">{{ body_text }}</div>{% endif %}
+            {% if quote_text != blank %}<p class="ps-quote">&ldquo;{{ quote_text }}&rdquo;</p>{% endif %}
+            {% if heading != blank or body_text != blank %}<hr class="ps-sep">{% endif %}
+            {% if footer_text != blank %}<p class="ps-stamp">{{ footer_text }}</p>{% endif %}
+          </div>
+        </div>
+      </div>
+      <div class="ps-roller ps-bot-r" data-ps-bot>
+        <img src="{{ img_bot }}" alt="" draggable="false" loading="lazy">
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function() {
+  var root  = document.getElementById('scroll-{{ sid }}');
+  if (!root) return;
+
+  var paper = root.querySelector('[data-ps-paper]');
+  var pIn   = root.querySelector('[data-ps-pin]');
+  var txt   = root.querySelector('[data-ps-txt]');
+  var hint  = root.querySelector('[data-ps-hint]');
+  var topR  = root.querySelector('[data-ps-top]');
+  var botR  = root.querySelector('[data-ps-bot]');
+  var wrap  = root.querySelector('[data-ps-wrap]');
+  var pbar  = root.querySelector('[data-ps-pbar]');
+  var pFill = root.querySelector('[data-ps-pfill]');
+
+  var progress = 0, target = 0, raf = null, touched = false;
+  var TOP_R = 0.2504, BOT_R = 0.2304;
+
+  /*
+   * SCROLL PASS-THROUGH STATE
+   * ─────────────────────────
+   * escaped = user hit an edge and scroll was released to the page.
+   * We only re-capture when user scrolls back toward the scroll range
+   * AND the section is centered in the viewport.
+   */
+  var escaped = false;
+  var EDGE = 0.005;
+
+  function maxH() {
+    var rh = root.offsetHeight;
+    var ww = wrap.offsetWidth;
+    return Math.min(rh - TOP_R * ww - BOT_R * ww - 36, 540);
+  }
+
+  function isCentered() {
+    var r  = root.getBoundingClientRect();
+    var vh = window.innerHeight;
+    var mid = r.top + r.height / 2;
+    return mid > vh * 0.1 && mid < vh * 0.9;
+  }
+
+  /**
+   * Should we capture this scroll event or let the page handle it?
+   *
+   * @param {number} delta - positive = scroll down, negative = scroll up
+   * @returns {boolean} true = capture (preventDefault), false = pass through
+   */
+  function shouldCapture(delta) {
+    if (!isCentered()) {
+      escaped = false;
+      return false;
+    }
+
+    /* Already escaped → stay escaped until user reverses into range */
+    if (escaped) {
+      var reEnterFromBottom = target <= EDGE && delta > 0;
+      var reEnterFromTop   = target >= 1 - EDGE && delta < 0;
+      if (reEnterFromBottom || reEnterFromTop) {
+        escaped = false;
+        return true;
+      }
+      return false;
+    }
+
+    /* Mid-range → always capture */
+    if (target > EDGE && target < 1 - EDGE) return true;
+
+    /* At bottom (closed, ≈ 0) */
+    if (target <= EDGE) {
+      if (delta > 0) return true;   /* opening → capture */
+      escaped = true; return false;  /* scrolling up → release */
+    }
+
+    /* At top (fully open, ≈ 1) */
+    if (target >= 1 - EDGE) {
+      if (delta < 0) return true;   /* closing → capture */
+      escaped = true; return false;  /* scrolling down → release */
+    }
+
+    return true;
+  }
+
+  /* ── Text auto-fit ── */
+  function fitText() {
+    var mh = maxH(), ww = wrap.offsetWidth;
+    var bB = Math.min(ww * 0.032, 16.5);
+    var bT = Math.min(ww * 0.052, 27);
+    var bS = Math.min(ww * 0.02, 10);
+    var bQ = bB * 0.92;
+    var bSt = Math.min(ww * 0.015, 8);
+
+    txt.style.fontSize = bB + 'px';
+    var h2  = txt.querySelector('h2');
+    var sub = txt.querySelector('.ps-sub');
+    var qt  = txt.querySelector('.ps-quote');
+    var st  = txt.querySelector('.ps-stamp');
+    if (h2)  h2.style.fontSize  = bT + 'px';
+    if (sub) sub.style.fontSize = bS + 'px';
+    if (qt)  qt.style.fontSize  = bQ + 'px';
+    if (st)  st.style.fontSize  = bSt + 'px';
+
+    var ch = txt.scrollHeight;
+    if (ch > mh - 16) {
+      var s = Math.max((mh - 16) / ch, 0.4);
+      txt.style.fontSize = (bB * s) + 'px';
+      if (h2)  h2.style.fontSize  = (bT * s) + 'px';
+      if (sub) sub.style.fontSize = (bS * s) + 'px';
+      if (qt)  qt.style.fontSize  = (bQ * s) + 'px';
+      if (st)  st.style.fontSize  = (bSt * s) + 'px';
+    }
+  }
+
+  /* ── Render ── */
+  function render() {
+    var mh = maxH(), h = progress * mh;
+    paper.style.height  = h + 'px';
+    pIn.style.minHeight = h + 'px';
+
+    var deg = progress * 12, lift = progress * 4;
+    topR.style.transform = 'rotateX(' + (-deg) + 'deg) translateZ(' + lift + 'px)';
+    botR.style.transform = 'rotateX(' + deg + 'deg) translateZ(' + lift + 'px)';
+
+    var br = 1 + progress * 0.08;
+    topR.querySelector('img').style.filter = 'brightness(' + br + ')';
+    botR.querySelector('img').style.filter = 'brightness(' + br + ')';
+
+    txt.style.opacity  = progress > 0.18 ? Math.min((progress - 0.18) / 0.3, 1) : 0;
+    hint.style.opacity = progress > 0.03 ? 0 : 1;
+
+    if (touched) {
+      pbar.style.opacity = progress > 0.01 && progress < 0.99 ? 0.8 : 0;
+      pFill.style.height = (progress * 100) + '%';
+    }
+  }
+
+  function animate() {
+    var d = target - progress;
+    if (Math.abs(d) > 0.0002) {
+      progress += d * 0.13;
+      render();
+      raf = requestAnimationFrame(animate);
+    } else {
+      progress = target; render(); raf = null;
+    }
+  }
+
+  function go(v) {
+    target = Math.max(0, Math.min(1, v));
+    if (!touched) touched = true;
+    if (!raf) raf = requestAnimationFrame(animate);
+  }
+
+  /* ── WHEEL ── */
+  root.addEventListener('wheel', function(e) {
+    if (shouldCapture(e.deltaY)) {
+      e.preventDefault();
+      go(target + e.deltaY * 0.0008);
+    }
+  }, { passive: false });
+
+  /* ── TOUCH ── */
+  var ty0 = 0, tp0 = 0, tActive = false;
+  root.addEventListener('touchstart', function(e) {
+    ty0 = e.touches[0].clientY; tp0 = target; tActive = true;
+  }, { passive: true });
+
+  root.addEventListener('touchmove', function(e) {
+    if (!tActive) return;
+    var dy = ty0 - e.touches[0].clientY;
+    if (shouldCapture(dy)) {
+      e.preventDefault();
+      go(tp0 + dy * 0.002);
+    }
+  }, { passive: false });
+
+  root.addEventListener('touchend', function() { tActive = false; }, { passive: true });
+
+  /* ── KEYBOARD ── */
+  document.addEventListener('keydown', function(e) {
+    if (!isCentered()) return;
+    if (e.key === 'ArrowDown' || e.key === ' ') {
+      if (shouldCapture(1)) { e.preventDefault(); go(target + 0.08); }
+    } else if (e.key === 'ArrowUp') {
+      if (shouldCapture(-1)) { e.preventDefault(); go(target - 0.08); }
+    }
+  });
+
+  /* ── Reset escape when section re-enters viewport center ── */
+  var st;
+  window.addEventListener('scroll', function() {
+    clearTimeout(st);
+    st = setTimeout(function() {
+      if (isCentered() && escaped) escaped = false;
+    }, 150);
+  }, { passive: true });
+
+  window.addEventListener('resize', function() { fitText(); render(); });
+  fitText(); render();
+})();
+</script>
+
+{% schema %}
+{
+  "name": "Parchment Scroll",
+  "tag": "section",
+  "class": "parchment-scroll-section",
+  "limit": 1,
+  "settings": [
+    { "type": "header", "content": "Scroll Content" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Responsive Wisdom" },
+    { "type": "text", "id": "subtitle", "label": "Subtitle", "default": "An Ancient Principle" },
+    { "type": "richtext", "id": "body_text", "label": "Body text", "default": "<p>This scroll automatically adapts to your device. Whether viewed on a phone, tablet, or desktop, the parchment frame stays perfectly aligned and the text scales to fit.</p>" },
+    { "type": "text", "id": "quote_text", "label": "Quote", "default": "True design is fluid — like water through a bamboo pipe." },
+    { "type": "text", "id": "footer_text", "label": "Footer stamp", "default": "Anno Domini • MMXXVI" },
+    { "type": "header", "content": "Layout" },
+    { "type": "checkbox", "id": "full_screen", "label": "Full screen height", "default": true },
+    { "type": "range", "id": "section_height", "label": "Section height (when not full screen)", "min": 400, "max": 1000, "step": 50, "default": 700, "unit": "px" },
+    { "type": "range", "id": "max_scroll_width", "label": "Max scroll width", "min": 400, "max": 900, "step": 20, "default": 680, "unit": "px" },
+    { "type": "header", "content": "Colors" },
+    { "type": "color", "id": "bg_color", "label": "Background color", "default": "#0a0804" },
+    { "type": "color", "id": "text_color", "label": "Text color", "default": "#4a3222" },
+    { "type": "color", "id": "heading_color", "label": "Heading color", "default": "#5c3a1e" },
+    { "type": "color", "id": "accent_color", "label": "Accent color (hints & progress)", "default": "#d4af37" },
+    { "type": "header", "content": "Scroll Images" },
+    { "type": "paragraph", "content": "Upload custom scroll images, or leave empty to use default assets (scroll-top.png, scroll-mid.png, scroll-bot.png)." },
+    { "type": "image_picker", "id": "img_top", "label": "Top roller image" },
+    { "type": "image_picker", "id": "img_mid", "label": "Middle paper tile" },
+    { "type": "image_picker", "id": "img_bot", "label": "Bottom roller image" }
+  ],
+  "presets": [{ "name": "Parchment Scroll", "category": "Custom" }]
+}
+{% endschema %}

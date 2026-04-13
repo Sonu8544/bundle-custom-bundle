@@ -7,13 +7,59 @@
   assign fallback_poster = desktop_poster | default: mobile_poster
 %}
 
-<section id="{{ section_id }}" class="hwb-video-section">
+<section
+  id="{{ section_id }}"
+  class="hwb-video-section{% if section.settings.autoplay_video %} hwb-video-section--autoplay{% endif %}"
+>
   <div class="hwb-video-section__inner">
     <div
       class="hwb-video-section__media"
       data-hwb-wrap
       {% if section.settings.enable_click_to_play %}data-click-play="true"{% endif %}
     >
+      {% if desktop_video != blank or mobile_video != blank %}
+        <div class="hwb-video-section__poster-layer" aria-hidden="true">
+          {% if desktop_poster != blank %}
+            <img
+              class="hwb-video-section__poster-img hwb-video-section__poster-img--desktop"
+              src="{{ desktop_poster | image_url: width: 2200 }}"
+              alt=""
+              width="2200"
+              height="1240"
+              loading="lazy"
+            >
+          {% elsif fallback_poster != blank %}
+            <img
+              class="hwb-video-section__poster-img hwb-video-section__poster-img--desktop"
+              src="{{ fallback_poster | image_url: width: 2200 }}"
+              alt=""
+              width="2200"
+              height="1240"
+              loading="lazy"
+            >
+          {% endif %}
+          {% if mobile_poster != blank %}
+            <img
+              class="hwb-video-section__poster-img hwb-video-section__poster-img--mobile"
+              src="{{ mobile_poster | image_url: width: 1400 }}"
+              alt=""
+              width="1400"
+              height="788"
+              loading="lazy"
+            >
+          {% elsif fallback_poster != blank %}
+            <img
+              class="hwb-video-section__poster-img hwb-video-section__poster-img--mobile"
+              src="{{ fallback_poster | image_url: width: 1400 }}"
+              alt=""
+              width="1400"
+              height="788"
+              loading="lazy"
+            >
+          {% endif %}
+        </div>
+      {% endif %}
+
       <div class="hwb-video-section__overlay"></div>
       <div class="hwb-video-section__vignette"></div>
 
@@ -24,7 +70,8 @@
           preload="metadata"
           playsinline
           webkit-playsinline
-          {% if section.settings.autoplay_video %}autoplay muted loop{% endif %}
+          loop
+          {% if section.settings.autoplay_video %}autoplay muted{% endif %}
           {% unless section.settings.autoplay_video %}controlslist="nodownload noplaybackrate"{% endunless %}
           data-hwb-video-desktop
         >
@@ -39,7 +86,8 @@
           preload="metadata"
           playsinline
           webkit-playsinline
-          {% if section.settings.autoplay_video %}autoplay muted loop{% endif %}
+          loop
+          {% if section.settings.autoplay_video %}autoplay muted{% endif %}
           {% unless section.settings.autoplay_video %}controlslist="nodownload noplaybackrate"{% endunless %}
           data-hwb-video-mobile
         >
@@ -74,8 +122,8 @@
           {% if section.settings.autoplay_video %}hidden{% endif %}
         >
           <span class="hwb-video-section__inline-play-circle">
-            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-              <path d="M8.5 6.5L17.5 12L8.5 17.5V6.5Z" fill="currentColor"></path>
+            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" class="hwb-video-section__play-icon">
+              <path d="M9 6.5L18.5 12L9 17.5V6.5Z" fill="currentColor"></path>
             </svg>
           </span>
         </button>
@@ -103,6 +151,7 @@
     --hwb-text-color: {{ section.settings.text_color }};
     --hwb-play-bg-1: {{ section.settings.play_bg_start }};
     --hwb-play-bg-2: {{ section.settings.play_bg_end }};
+    --hwb-play-bg-deep: {{ section.settings.play_bg_deep }};
     --hwb-play-icon: {{ section.settings.play_icon_color }};
     --hwb-gap-desktop: {{ section.settings.content_gap_desktop }}px;
     --hwb-gap-mobile: {{ section.settings.content_gap_mobile }}px;
@@ -123,6 +172,27 @@
     isolation: isolate;
   }
 
+  #{{ section_id }} .hwb-video-section__poster-layer {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    overflow: hidden;
+  }
+
+  #{{ section_id }} .hwb-video-section__poster-img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center center;
+  }
+
+  #{{ section_id }} .hwb-video-section__poster-img--mobile {
+    display: none;
+  }
+
   #{{ section_id }} .hwb-video-section__video,
   #{{ section_id }} .hwb-video-section__placeholder,
   #{{ section_id }} .hwb-video-section__placeholder img,
@@ -131,12 +201,23 @@
     inset: 0;
     width: 100%;
     height: 100%;
+    z-index: 2;
   }
 
   #{{ section_id }} .hwb-video-section__video,
   #{{ section_id }} .hwb-video-section__placeholder img {
     object-fit: cover;
     object-position: center center;
+  }
+
+  /* Hide video when paused so poster layer shows (click-to-play mode) */
+  #{{ section_id }}:not(.hwb-video-section--autoplay) .hwb-video-section__video {
+    opacity: 0;
+    transition: opacity 0.4s ease;
+  }
+
+  #{{ section_id }}:not(.hwb-video-section--autoplay) .hwb-video-section__media.is-playing .hwb-video-section__video {
+    opacity: 1;
   }
 
   #{{ section_id }} .hwb-video-section__video--mobile {
@@ -146,7 +227,7 @@
   #{{ section_id }} .hwb-video-section__overlay {
     position: absolute;
     inset: 0;
-    z-index: 2;
+    z-index: 3;
     background: linear-gradient(
       180deg,
       rgba(0, 0, 0, 0.56) 0%,
@@ -161,7 +242,7 @@
   #{{ section_id }} .hwb-video-section__vignette {
     position: absolute;
     inset: 0;
-    z-index: 3;
+    z-index: 4;
     pointer-events: none;
     background:
       radial-gradient(circle at center, rgba(0, 0, 0, 0) 28%, rgba(0, 0, 0, 0.25) 62%, rgba(0, 0, 0, 0.72) 100%),
@@ -174,7 +255,7 @@
     left: 50%;
     top: var(--hwb-content-top-desktop);
     transform: translate(-50%, -50%);
-    z-index: 5;
+    z-index: 6;
     width: min(100%, 1200px);
     padding: 0 24px;
     display: flex;
@@ -186,13 +267,15 @@
 
   #{{ section_id }} .hwb-video-section__heading {
     margin: 0;
-  background: radial-gradient(84.35% 106.04% at 104.49% 58.65%, #FFFFFF 0%, #BB911E 100%) /* warning: gradient uses a rotation that is not supported by CSS and may not behave as expected */;
--webkit-background-clip: text;
--webkit-text-fill-color: transparent;
-background-clip: text;
-
-
-
+    background: radial-gradient(
+      ellipse 84.35% 106.04% at 104.49% 58.65%,
+      #ffffff 0%,
+      #bb911e 100%
+    );
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
     font-family: "Bethany Elingston", serif;
     font-weight: 400;
     font-style: normal;
@@ -221,21 +304,34 @@ background-clip: text;
     justify-content: center;
     width: var(--hwb-inline-play-size-desktop);
     height: var(--hwb-inline-play-size-desktop);
-    border-radius: 999px;
-    background: linear-gradient(135deg, var(--hwb-play-bg-1), var(--hwb-play-bg-2));
+    border-radius: 50%;
+    background: linear-gradient(
+      90deg,
+      var(--hwb-play-bg-deep) 0%,
+      var(--hwb-play-bg-1) 38%,
+      var(--hwb-play-bg-2) 100%
+    );
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.38),
+      inset 0 -1px 0 rgba(0, 0, 0, 0.22),
+      0 8px 28px rgba(0, 0, 0, 0.45);
     color: var(--hwb-play-icon);
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
-    transition: transform 0.25s ease, opacity 0.25s ease;
+    transition: transform 0.25s ease, opacity 0.25s ease, box-shadow 0.25s ease;
   }
 
   #{{ section_id }} .hwb-video-section__inline-play:hover .hwb-video-section__inline-play-circle {
-    transform: scale(1.06);
+    transform: scale(1.05);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.45),
+      inset 0 -1px 0 rgba(0, 0, 0, 0.2),
+      0 12px 36px rgba(0, 0, 0, 0.5);
   }
 
-  #{{ section_id }} .hwb-video-section__inline-play svg {
-    width: 34%;
-    height: 34%;
-    margin-left: 2px;
+  #{{ section_id }} .hwb-video-section__inline-play .hwb-video-section__play-icon {
+    width: 85%;
+    height: 85%;
+    margin-left: 3px;
+    flex-shrink: 0;
   }
 
   #{{ section_id }} .hwb-video-section__media.is-playing .hwb-video-section__content {
@@ -253,6 +349,14 @@ background-clip: text;
     }
 
     #{{ section_id }} .hwb-video-section__video--mobile {
+      display: block;
+    }
+
+    #{{ section_id }} .hwb-video-section__poster-img--desktop {
+      display: none;
+    }
+
+    #{{ section_id }} .hwb-video-section__poster-img--mobile {
       display: block;
     }
 
@@ -333,17 +437,31 @@ background-clip: text;
       setState('is-paused');
     }
 
+    function togglePlay() {
+      var video = activeVideo();
+      if (!video) return;
+      if (video.paused) {
+        playVideo();
+      } else {
+        pauseVideo();
+      }
+    }
+
     if (playBtn) {
       playBtn.addEventListener('click', function(e) {
         e.preventDefault();
-        var video = activeVideo();
-        if (!video) return;
+        e.stopPropagation();
+        togglePlay();
+      });
+    }
 
-        if (video.paused) {
-          playVideo();
-        } else {
-          pauseVideo();
-        }
+    if (wrap.getAttribute('data-click-play') === 'true') {
+      [desktopVideo, mobileVideo].forEach(function(video) {
+        if (!video) return;
+        video.addEventListener('click', function(e) {
+          e.preventDefault();
+          togglePlay();
+        });
       });
     }
 
@@ -524,6 +642,12 @@ background-clip: text;
       "content": "Play button"
     },
     {
+      "type": "color",
+      "id": "play_bg_deep",
+      "label": "Play button gradient (deep gold, left)",
+      "default": "#5C4818"
+    },
+    {
       "type": "range",
       "id": "inline_play_size_desktop",
       "label": "Desktop play button size",
@@ -546,14 +670,14 @@ background-clip: text;
     {
       "type": "color",
       "id": "play_bg_start",
-      "label": "Play button gradient start",
-      "default": "#F3DE9A"
+      "label": "Play button gradient (mid)",
+      "default": "#E8CF7A"
     },
     {
       "type": "color",
       "id": "play_bg_end",
-      "label": "Play button gradient end",
-      "default": "#BE9220"
+      "label": "Play button gradient (bright, right)",
+      "default": "#F5EDD4"
     },
     {
       "type": "color",

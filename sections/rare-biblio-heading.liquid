@@ -24,6 +24,7 @@
     --rbh-anim-distance-title: {{ section.settings.anim_distance_title }}px;
     --rbh-anim-distance-text: {{ section.settings.anim_distance_text }}px;
     --rbh-anim-duration: {{ section.settings.anim_duration }}ms;
+    --rbh-last-word-opacity: {{ section.settings.last_word_opacity | times: 0.01 }};
   "
 >
   <div class="rbh-section__wrap page-width{% if section.settings.full_width %} rbh-section__wrap--full{% endif %}">
@@ -120,6 +121,16 @@
     letter-spacing: inherit;
   }
 
+  /* Last word in description: muted / “deactive” */
+  #{{ section_id }} .rbh-section__word--deactive {
+    opacity: var(--rbh-last-word-opacity);
+    font-weight: inherit;
+    font-style: inherit;
+    font-size: inherit;
+    line-height: inherit;
+    letter-spacing: inherit;
+  }
+
   #{{ section_id }} .rbh-animate-title,
   #{{ section_id }} .rbh-animate-text {
     opacity: 0;
@@ -176,6 +187,22 @@
 
     #{{ section_id }} .rbh-section__description {
       font-size: var(--rbh-text-size);
+      line-height: var(--rbh-text-line-height);
+    }
+
+    /* Font size only on small screens — beats theme .rte rules on nested tags */
+    #{{ section_id }} .rbh-section__description li,
+    #{{ section_id }} .rbh-section__description a {
+      font-size: var(--rbh-text-size);
+      line-height: var(--rbh-text-line-height);
+    }
+
+    #{{ section_id }} .rbh-section__description p {
+      font-size: 18px;
+      line-height: 1.3;
+      font-family: "Satoshi", var(--font-body-family), -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-weight: 400;
+      font-style: normal;
     }
 
     #{{ section_id }} .rbh-section__wrap {
@@ -244,6 +271,54 @@
   </script>
 {% endif %}
 
+<script>
+  (function() {
+    var section = document.getElementById('{{ section_id }}');
+    if (!section) return;
+    var desc = section.querySelector('.rbh-section__description');
+    if (!desc) return;
+
+    function wrapLastWord() {
+      if (desc.querySelector('.rbh-section__word--deactive')) return;
+
+      var walker = document.createTreeWalker(desc, NodeFilter.SHOW_TEXT, null);
+      var last = null;
+      var n;
+      while ((n = walker.nextNode())) {
+        if (/\S/.test(n.textContent)) last = n;
+      }
+      if (!last || !last.parentNode) return;
+      if (last.parentElement && last.parentElement.classList.contains('rbh-section__word--deactive')) return;
+
+      var text = last.textContent;
+      var trimmed = text.replace(/\s+$/, '');
+      if (!trimmed) return;
+
+      var lastSpace = trimmed.lastIndexOf(' ');
+      var frag = document.createDocumentFragment();
+      var span = document.createElement('span');
+      span.className = 'rbh-section__word--deactive';
+
+      if (lastSpace === -1) {
+        span.textContent = trimmed;
+        frag.appendChild(span);
+      } else {
+        var before = trimmed.slice(0, lastSpace);
+        var word = trimmed.slice(lastSpace + 1);
+        frag.appendChild(document.createTextNode(before + ' '));
+        span.textContent = word;
+        frag.appendChild(span);
+      }
+      if (text.length > trimmed.length) {
+        frag.appendChild(document.createTextNode(text.slice(trimmed.length)));
+      }
+      last.parentNode.replaceChild(frag, last);
+    }
+
+    wrapLastWord();
+  })();
+</script>
+
 {% schema %}
 {
   "name": "Rare Biblio Heading",
@@ -296,6 +371,17 @@
       "id": "text_color",
       "label": "Description color",
       "default": "#E8E4DD"
+    },
+    {
+      "type": "range",
+      "id": "last_word_opacity",
+      "label": "Last word muted (deactive) strength",
+      "min": 25,
+      "max": 100,
+      "step": 5,
+      "default": 45,
+      "unit": "%",
+      "info": "Applies to the final word of the description for a softer, inactive look."
     },
     {
       "type": "header",
@@ -412,7 +498,7 @@
       "min": 18,
       "max": 60,
       "step": 2,
-      "default": 34
+      "default": 32
     },
     {
       "type": "header",

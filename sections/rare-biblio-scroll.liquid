@@ -1011,14 +1011,26 @@
 {%- liquid
   assign sid = section.id
   assign heading = section.settings.heading
-  assign subtitle = section.settings.subtitle
+  assign heading_lead = section.settings.heading_lead
+  assign heading_accent = section.settings.heading_accent
+  assign subtitle = section.settings.subtitle | strip
+  if subtitle == '-'
+    assign subtitle = ''
+  endif
   assign body_text = section.settings.body_text
-  assign quote_text = section.settings.quote_text
-  assign footer_text = section.settings.footer_text
+  assign quote_text = section.settings.quote_text | strip
+  if quote_text == '-'
+    assign quote_text = ''
+  endif
+  assign footer_text = section.settings.footer_text | strip
+  if footer_text == '-'
+    assign footer_text = ''
+  endif
   assign bg_color = section.settings.bg_color
   assign section_height = section.settings.section_height
   assign max_scroll_width = section.settings.max_scroll_width
   assign full_screen = section.settings.full_screen
+  assign show_title_divider = section.settings.show_title_divider
 
   if section.settings.img_top != blank
     assign img_top = section.settings.img_top | image_url: width: 1098
@@ -1037,7 +1049,7 @@
   endif
 -%}
 
-{{ 'https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&display=swap' | stylesheet_tag }}
+{{ 'https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&display=swap' | stylesheet_tag }}
 
 <style>
   #scroll-{{ sid }} {
@@ -1055,7 +1067,7 @@
   }
   #scroll-{{ sid }}::before {
     content: ''; position: absolute; inset: 0;
-    background: radial-gradient(ellipse at 50% 40%, rgba(30,22,10,0.25) 0%, {{ bg_color }} 70%);
+    background: radial-gradient(ellipse at 50% 42%, rgba(30,22,10,0.12) 0%, transparent 62%);
     z-index: 0; pointer-events: none;
   }
   #scroll-{{ sid }} .ps-scene {
@@ -1092,30 +1104,87 @@
   }
   #scroll-{{ sid }} .ps-txt {
     position: relative; z-index: 2; width: 100%;
-    padding: 10px 19% 10px 19%;
+    padding: clamp(12px, 2.8vw, 22px) clamp(14%, 5vw, 20%) clamp(14px, 2.5vw, 24px);
     text-align: center; color: {{ section.settings.text_color }};
     opacity: 0; will-change: opacity;
   }
-  #scroll-{{ sid }} .ps-txt h2 {
-    font-family: 'Cinzel', 'Georgia', serif; font-weight: 700;
+  #scroll-{{ sid }} .ps-txt h2.ps-title {
+    font-family: 'Cormorant Garamond', 'Georgia', 'Times New Roman', serif;
+    font-weight: 600;
+    margin: 0 0 0.28em 0;
+    letter-spacing: 0.02em;
+    line-height: 1.18;
+    padding: 0;
+    text-shadow: 0 1px 0 rgba(255, 248, 235, 0.35);
+  }
+  #scroll-{{ sid }} .ps-txt h2.ps-title--plain {
     color: {{ section.settings.heading_color }};
-    margin: 0 0 0.3em 0;
-    text-shadow: 1px 1px 2px rgba(255,240,200,0.3);
-    letter-spacing: 2.5px; line-height: 1.15; padding: 0;
+  }
+  #scroll-{{ sid }} .ps-txt .ps-title__lead {
+    color: {{ section.settings.heading_color }};
+    font-weight: 600;
+  }
+  #scroll-{{ sid }} .ps-txt .ps-title__accent {
+    display: inline-block;
+    margin-left: 0.14em;
+    font-weight: 600;
+    background: linear-gradient(165deg, #e8d5a8 0%, {{ section.settings.accent_color }} 38%, #6b5420 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+  }
+  #scroll-{{ sid }} .ps-ornament {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.35em;
+    margin: 0.55em auto 0.65em;
+    max-width: min(320px, 88%);
+  }
+  #scroll-{{ sid }} .ps-ornament__line {
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, {{ section.settings.accent_color }}, transparent);
+    opacity: 0.85;
+  }
+  #scroll-{{ sid }} .ps-ornament__flourish {
+    flex: 0 0 auto;
+    width: 10px;
+    height: 10px;
+    border: 1px solid {{ section.settings.accent_color }};
+    transform: rotate(45deg);
+    opacity: 0.9;
+    box-shadow: 0 0 0 1px rgba(212, 175, 55, 0.25);
   }
   #scroll-{{ sid }} .ps-txt .ps-sub {
     font-family: 'Cinzel', serif; font-weight: 400;
-    letter-spacing: 3px; text-transform: uppercase;
+    letter-spacing: 0.12em; text-transform: uppercase;
     color: {{ section.settings.heading_color }};
-    opacity: 0.7; margin-bottom: 0.5em; line-height: 1.3;
+    opacity: 0.75; margin: 0.4em 0 0.5em; line-height: 1.35;
+    font-size: 0.88em;
   }
-  #scroll-{{ sid }} .ps-txt .ps-body { line-height: 1.6; margin-bottom: 0.35em; }
+  #scroll-{{ sid }} .ps-txt .ps-body {
+    font-family: "Satoshi", var(--font-body-family, system-ui), -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-weight: 400;
+    line-height: 1.65;
+    margin: 0;
+    text-align: center;
+    color: {{ section.settings.text_color }};
+  }
+  #scroll-{{ sid }} .ps-txt .ps-body p {
+    margin: 0 0 0.65em 0;
+  }
+  #scroll-{{ sid }} .ps-txt .ps-body p:last-child {
+    margin-bottom: 0;
+  }
   #scroll-{{ sid }} .ps-txt .ps-quote {
-    font-style: italic; opacity: 0.72; margin: 0.4em 0; line-height: 1.5;
+    font-style: italic; opacity: 0.72; margin: 0.5em 0; line-height: 1.5;
+    font-family: "Satoshi", var(--font-body-family, system-ui), sans-serif;
   }
   #scroll-{{ sid }} .ps-txt .ps-sep {
-    border: none; border-top: 1px solid rgba(90,50,20,0.18);
-    margin: 0.5em auto; width: 45%;
+    border: none; border-top: 1px solid rgba(90,50,20,0.2);
+    margin: 0.65em auto 0.4em; width: 42%;
   }
   #scroll-{{ sid }} .ps-txt .ps-stamp {
     font-family: 'Cinzel', serif; letter-spacing: 4px;
@@ -1151,9 +1220,21 @@
     background: {{ section.settings.accent_color }};
     opacity: 0.5; border-radius: 3px; transition: height 0.05s;
   }
+  @media (max-width: 989px) {
+    #scroll-{{ sid }} .ps-txt {
+      padding: clamp(10px, 2.2vw, 18px) clamp(12%, 4.5vw, 17%) clamp(12px, 2.2vw, 20px);
+    }
+  }
+  @media (max-width: 749px) {
+    #scroll-{{ sid }} .ps-scene { width: 94%; }
+    #scroll-{{ sid }} .ps-txt {
+      padding: 8px clamp(10%, 4vw, 15%) 12px;
+    }
+    #scroll-{{ sid }} .ps-ornament { margin: 0.45em auto 0.55em; }
+  }
   @media (max-width: 480px) {
-    #scroll-{{ sid }} .ps-scene { width: 97%; }
-    #scroll-{{ sid }} .ps-txt { padding: 6px 17% 6px 17%; }
+    #scroll-{{ sid }} .ps-scene { width: 96%; }
+    #scroll-{{ sid }} .ps-txt { padding: 6px clamp(8%, 3.5vw, 13%) 10px; }
   }
 </style>
 
@@ -1168,12 +1249,32 @@
       <div class="ps-paper" data-ps-paper>
         <div class="ps-paper-inner" data-ps-pin>
           <div class="ps-txt" data-ps-txt>
-            {% if heading != blank %}<h2>{{ heading }}</h2>{% endif %}
+            {% if heading_lead != blank or heading_accent != blank %}
+              <h2 class="ps-title">
+                {% if heading_lead != blank %}<span class="ps-title__lead">{{ heading_lead }}</span>{% endif %}
+                {% if heading_accent != blank %}<span class="ps-title__accent">{{ heading_accent }}</span>{% endif %}
+              </h2>
+            {% elsif heading != blank %}
+              <h2 class="ps-title ps-title--plain">{{ heading }}</h2>
+            {% endif %}
+
+            {% if show_title_divider %}
+              {% if heading_lead != blank or heading_accent != blank or heading != blank %}
+                <div class="ps-ornament" aria-hidden="true">
+                  <span class="ps-ornament__line"></span>
+                  <span class="ps-ornament__flourish"></span>
+                  <span class="ps-ornament__line"></span>
+                </div>
+              {% endif %}
+            {% endif %}
+
             {% if subtitle != blank %}<p class="ps-sub">{{ subtitle }}</p>{% endif %}
-            {% if body_text != blank %}<div class="ps-body">{{ body_text }}</div>{% endif %}
+            {% if body_text != blank %}<div class="ps-body rte">{{ body_text }}</div>{% endif %}
             {% if quote_text != blank %}<p class="ps-quote">&ldquo;{{ quote_text }}&rdquo;</p>{% endif %}
-            {% if heading != blank or body_text != blank %}<hr class="ps-sep">{% endif %}
-            {% if footer_text != blank %}<p class="ps-stamp">{{ footer_text }}</p>{% endif %}
+            {% if footer_text != blank %}
+              <hr class="ps-sep">
+              <p class="ps-stamp">{{ footer_text }}</p>
+            {% endif %}
           </div>
         </div>
       </div>
@@ -1393,20 +1494,24 @@
   "limit": 1,
   "settings": [
     { "type": "header", "content": "Scroll Content" },
-    { "type": "text", "id": "heading", "label": "Heading", "default": "Responsive Wisdom" },
-    { "type": "text", "id": "subtitle", "label": "Subtitle", "default": "An Ancient Principle" },
-    { "type": "richtext", "id": "body_text", "label": "Body text", "default": "<p>This scroll automatically adapts to your device. Whether viewed on a phone, tablet, or desktop, the parchment frame stays perfectly aligned and the text scales to fit.</p>" },
-    { "type": "text", "id": "quote_text", "label": "Quote", "default": "True design is fluid — like water through a bamboo pipe." },
-    { "type": "text", "id": "footer_text", "label": "Footer stamp", "default": "Anno Domini • MMXXVI" },
+    { "type": "paragraph", "content": "Title: first part in dark type, second part in gold. Leave both blank to use the single heading line below." },
+    { "type": "text", "id": "heading_lead", "label": "Heading (first part)", "default": "About Rare" },
+    { "type": "text", "id": "heading_accent", "label": "Heading (gold part)", "default": "Biblio" },
+    { "type": "text", "id": "heading", "label": "Heading (single line fallback)", "default": "About Rare Biblio", "info": "Used only if both split title fields above are empty." },
+    { "type": "checkbox", "id": "show_title_divider", "label": "Show gold divider under title", "default": true },
+    { "type": "text", "id": "subtitle", "label": "Subtitle", "default": "-", "info": "Optional. Replace with your subtitle, or leave as a single hyphen (-) to hide." },
+    { "type": "richtext", "id": "body_text", "label": "Body text", "default": "<p>Welcome to Rare Biblio, the premier destination for bibliophiles and book lovers who appreciate the art of bookmaking. As a rare books store, we specialize in handcrafted leather-bound books, personalization &amp; customization services, and restoration of valuable old books, antiquarian books, and manuscripts.</p>" },
+    { "type": "text", "id": "quote_text", "label": "Quote", "default": "-", "info": "Optional. Leave as a single hyphen (-) to hide." },
+    { "type": "text", "id": "footer_text", "label": "Footer stamp", "default": "-", "info": "Optional. Leave as a single hyphen (-) to hide." },
     { "type": "header", "content": "Layout" },
     { "type": "checkbox", "id": "full_screen", "label": "Full screen height", "default": true },
     { "type": "range", "id": "section_height", "label": "Section height (when not full screen)", "min": 400, "max": 1000, "step": 50, "default": 700, "unit": "px" },
     { "type": "range", "id": "max_scroll_width", "label": "Max scroll width", "min": 400, "max": 900, "step": 20, "default": 680, "unit": "px" },
     { "type": "header", "content": "Colors" },
     { "type": "color", "id": "bg_color", "label": "Background color", "default": "#0a0804" },
-    { "type": "color", "id": "text_color", "label": "Text color", "default": "#4a3222" },
-    { "type": "color", "id": "heading_color", "label": "Heading color", "default": "#5c3a1e" },
-    { "type": "color", "id": "accent_color", "label": "Accent color (hints & progress)", "default": "#d4af37" },
+    { "type": "color", "id": "text_color", "label": "Body text color", "default": "#17130f" },
+    { "type": "color", "id": "heading_color", "label": "Heading (first part) color", "default": "#121212" },
+    { "type": "color", "id": "accent_color", "label": "Gold accent (title, divider, hints)", "default": "#a87e0a" },
     { "type": "header", "content": "Scroll Images" },
     { "type": "paragraph", "content": "Upload custom scroll images, or leave empty to use default assets (scroll-top.png, scroll-mid.png, scroll-bot.png)." },
     { "type": "image_picker", "id": "img_top", "label": "Top roller image" },

@@ -1542,9 +1542,14 @@ transform: matrix(-1, 0, 0, 1, 0, 0);
     --ppbs-accent: {{ section.settings.accent_color }};
     --ppbs-text: {{ section.settings.text_color }};
     --ppbs-muted: {{ section.settings.muted_text_color }};
-    --ppbs-bg: {{ section.settings.background_color }};
-    --ppbs-bg-s: {{ section.settings.bg_start }};
-    --ppbs-bg-e: {{ section.settings.bg_end }};
+    --ppbs-bg: {{ section.settings.background_color | default: '#060504' }};
+    --ppbs-bg-s: {{ section.settings.bg_start | default: '#4D3C04' }};
+    --ppbs-bg-e: {{ section.settings.bg_end | default: '#0A0807' }};
+    --ppbs-lin-a: {{ section.settings.bg_linear_start | default: '#060504' }};
+    --ppbs-lin-b: {{ section.settings.bg_linear_end | default: '#14110C' }};
+    --ppbs-lin-angle: {{ section.settings.bg_linear_angle | default: 168 }}deg;
+    --ppbs-rad-x: {{ section.settings.bg_radial_position_x | default: 72 }}%;
+    --ppbs-rad-y: {{ section.settings.bg_radial_position_y | default: 59 }}%;
 
     --ppbs-cmax: {{ section.settings.content_max_width }}px;
     --ppbs-gap: {{ section.settings.content_gap }}px;
@@ -1571,6 +1576,7 @@ transform: matrix(-1, 0, 0, 1, 0, 0);
     <div class="ppbs__sticky">
 
       <div class="ppbs__bg" aria-hidden="true">
+        <div class="ppbs__bg-linear"></div>
         <div class="ppbs__bg-grad"></div>
         <div class="ppbs__bg-vig"></div>
         <div class="ppbs__bg-noise"></div>
@@ -1706,7 +1712,12 @@ transform: matrix(-1, 0, 0, 1, 0, 0);
                     {% endif %}
                   </div>
 
-                  <div class="ppbs__media">
+                  <div
+                    class="ppbs__media"
+                    {% if block.settings.image != blank %}
+                      style="--ppbs-media-ar: {{ block.settings.image.aspect_ratio }};"
+                    {% endif %}
+                  >
                     <div
                       class="ppbs__media-inner"
                       data-pm
@@ -1726,7 +1737,9 @@ transform: matrix(-1, 0, 0, 1, 0, 0);
                             loading: 'lazy',
                             widths: '360, 480, 640, 768, 900, 1200, 1600, 2000',
                             sizes: '(max-width: 767px) 82vw, (max-width: 1199px) 46vw, 45vw',
-                            class: 'ppbs__img'
+                            class: 'ppbs__img',
+                            width: block.settings.image.width,
+                            height: block.settings.image.height
                         }}
                       {% else %}
                         <div class="ppbs__placeholder">
@@ -1782,16 +1795,14 @@ transform: matrix(-1, 0, 0, 1, 0, 0);
 #{{ sid }} {
   position: relative;
   color: var(--ppbs-text);
-  background: var(--ppbs-bg, #000000);
+  background-color: var(--ppbs-bg, #060504);
   overflow: clip;
-  font-family: "Satoshi", sans-serif;
+  font-family: "Satoshi", var(--font-body-family), -apple-system, BlinkMacSystemFont, sans-serif;
+  -webkit-font-smoothing: antialiased;
 }
 
 /*
-  TRACK HEIGHT  —  HOLD + TRANSITION MODEL
-  Each slide = 2× viewport of scroll distance
-    First half  → slide fully visible (dwell / hold)
-    Second half → slide exits, next enters
+  TRACK HEIGHT  —  scroll-driven slide transitions
 */
 #{{ sid }} .ppbs__track {
   position: relative;
@@ -1807,9 +1818,26 @@ transform: matrix(-1, 0, 0, 1, 0, 0);
   max-height: 100vh;
   max-height: 100dvh;
   overflow: hidden;
+  isolation: isolate;
+  background-color: var(--ppbs-bg, #060504);
+  /* Base + bronze radial on the sticky layer so they always show behind content (frame/slides are transparent). */
+  background-image:
+    radial-gradient(
+      ellipse 65.38% 56.85% at var(--ppbs-rad-x, 72%) var(--ppbs-rad-y, 59%),
+      var(--ppbs-bg-s, #4d3c04) 0%,
+      var(--ppbs-bg-e, #0a0807) 100%
+    ),
+    linear-gradient(
+      var(--ppbs-lin-angle, 168deg),
+      var(--ppbs-lin-a, #060504) 0%,
+      var(--ppbs-lin-b, #14110c) 52%,
+      var(--ppbs-bg, #060504) 100%
+    );
+  background-repeat: no-repeat, no-repeat;
+  background-size: 100% 100%, 100% 100%;
 }
 
-/* ── Background ── */
+/* ── Background layers ── */
 #{{ sid }} .ppbs__bg,
 #{{ sid }} .ppbs__bg > * {
   position: absolute;
@@ -1818,19 +1846,25 @@ transform: matrix(-1, 0, 0, 1, 0, 0);
 }
 #{{ sid }} .ppbs__bg {
   overflow: hidden;
-  will-change: transform;
+  z-index: 0;
+}
+#{{ sid }} .ppbs__bg-linear {
+  z-index: 0;
+  background: none;
 }
 #{{ sid }} .ppbs__bg-grad {
-  background: radial-gradient(65.38% 56.85% at 31.94% 59.17%, var(--ppbs-bg-s) 0%, var(--ppbs-bg-e) 100%);
-  transform: scaleX(-1);
+  z-index: 1;
+  background: none;
 }
 #{{ sid }} .ppbs__bg-vig {
+  z-index: 2;
   background:
-    linear-gradient(90deg, rgba(0,0,0,.8) 0%, rgba(0,0,0,.28) 34%, rgba(0,0,0,.06) 55%, rgba(0,0,0,.38) 100%),
-    linear-gradient(180deg, rgba(0,0,0,.18) 0%, rgba(0,0,0,0) 30%, rgba(0,0,0,.32) 100%);
+    linear-gradient(90deg, rgba(0,0,0,.42) 0%, rgba(0,0,0,.14) 36%, rgba(0,0,0,.04) 56%, rgba(0,0,0,.28) 100%),
+    linear-gradient(180deg, rgba(0,0,0,.1) 0%, rgba(0,0,0,0) 32%, rgba(0,0,0,.22) 100%);
 }
 #{{ sid }} .ppbs__bg-noise {
-  opacity: 0.045;
+  z-index: 3;
+  opacity: 0.04;
   mix-blend-mode: screen;
   background-image:
     radial-gradient(circle at 20% 20%, rgba(255,255,255,.72) 0 1px, transparent 1px),
@@ -1839,17 +1873,20 @@ transform: matrix(-1, 0, 0, 1, 0, 0);
   background-size: 18px 18px, 24px 24px, 26px 26px;
 }
 #{{ sid }} .ppbs__bg-beams {
+  z-index: 4;
   opacity: var(--ppbs-glow);
-  background: linear-gradient(90deg, transparent 0%, rgba(187,145,31,.08) 16%, rgba(187,145,31,.23) 34%, rgba(187,145,31,.08) 50%, transparent 65%);
+  background: linear-gradient(90deg, transparent 38%, rgba(187,145,31,.1) 58%, rgba(187,145,31,.26) 74%, rgba(187,145,31,.12) 88%, transparent 100%);
   filter: blur(44px);
-  transform: translateX(16%);
+  transform: translateX(0);
 }
 #{{ sid }} .ppbs__bg-halo {
-  inset: auto auto 10% 48%;
+  z-index: 5;
+  inset: auto auto 10% auto;
+  left: var(--ppbs-rad-x, 72%);
   width: min(44vw, 720px);
   height: min(44vw, 720px);
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(187,145,31,.22) 0%, rgba(187,145,31,.08) 36%, rgba(187,145,31,0) 68%);
+  background: radial-gradient(circle, rgba(187,145,31,.24) 0%, rgba(187,145,31,.09) 38%, rgba(187,145,31,0) 70%);
   filter: blur(30px);
   transform: translate(-50%, 0);
 }
@@ -1873,6 +1910,7 @@ transform: matrix(-1, 0, 0, 1, 0, 0);
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
+  transition: opacity 0.5s ease, visibility 0.5s ease;
 }
 /* First slide visible before JS loads */
 #{{ sid }} .ppbs__slide.is-active {
@@ -1905,7 +1943,7 @@ transform: matrix(-1, 0, 0, 1, 0, 0);
   top: var(--ppbs-media-top-desk);
   width: var(--ppbs-media-w-desk);
   max-width: 780px;
-  aspect-ratio: 653 / 823;
+  aspect-ratio: var(--ppbs-media-ar, 653 / 823);
   z-index: 2;
   pointer-events: none;
 }
@@ -1913,8 +1951,8 @@ transform: matrix(-1, 0, 0, 1, 0, 0);
   width: 100%;
   height: 100%;
   transform-origin: center center;
-  will-change: transform, opacity;
   filter: drop-shadow(0 20px calc(60px * var(--ppbs-shadow-strength)) rgba(0,0,0,.52));
+  transform: translateY(var(--slide-y, 0px)) scale(var(--slide-scale, 1)) rotate(var(--slide-tilt-desktop, 0deg));
 }
 #{{ sid }} .ppbs__img,
 #{{ sid }} .ppbs__placeholder,
@@ -1929,43 +1967,51 @@ transform: matrix(-1, 0, 0, 1, 0, 0);
 }
 
 /* ── Typography / components ── */
-#{{ sid }} .ppbs__eyebrow-wrap { margin-bottom: 22px; }
+#{{ sid }} .ppbs__eyebrow-wrap { margin-bottom: 20px; }
 #{{ sid }} .ppbs__eyebrow {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 48px;
-  min-width: 170px;
-  padding: 10px 22px;
-  border-radius: 4px;
-  color: #fff8e7;
-  background: linear-gradient(270deg, rgba(142,112,37,0) 0%, rgba(142,112,37,.855) 78.75%, rgba(142,112,37,0) 100%);
-  box-shadow: 0 10px 32px rgba(0,0,0,.24);
-  font-family: "Bethany Elingston", serif;
-  font-size: 18px;
+  min-height: 46px;
+  min-width: 188px;
+  padding: 12px 28px;
+  border-radius: 2px;
+  color: #fffef8;
+  background: linear-gradient(270deg, rgba(142, 112, 37, 0) 0%, rgba(142, 112, 37, 0.854796) 78.75%, rgba(142, 112, 37, 0) 100%);
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.35);
+  font-family: "Bethany Elingston", var(--font-heading-family), Georgia, serif;
+  font-size: 14px;
+  font-weight: 600;
   line-height: 1;
+  letter-spacing: 2.4px;
+  text-transform: uppercase;
 }
 #{{ sid }} .ppbs__title {
-  max-width: 660px;
+  max-width: min(640px, 100%);
+  margin: 0;
   color: var(--ppbs-text);
-  font-family: "Bethany Elingston", serif;
+  font-family: "Bethany Elingston", var(--font-heading-family), Georgia, serif;
   font-weight: 400;
-  font-size: clamp(34px, 4.3vw, 60px);
-  line-height: 1.05;
+  font-synthesis: none;
+  font-size: clamp(36px, 4.5vw, 58px);
+  line-height: 1.22;
+  letter-spacing: 0.02em;
   text-wrap: balance;
+  text-rendering: optimizeLegibility;
+  text-shadow: 0 2px 28px rgba(0, 0, 0, 0.4);
 }
 #{{ sid }} .ppbs__desc {
-  max-width: 610px;
-  margin-top: 24px;
-  color: var(--ppbs-muted);
-  font-size: clamp(15px, 1.55vw, 20px);
-  line-height: 1.5;
+  max-width: min(640px, 100%);
+  margin-top: 20px;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: clamp(15px, 1.5vw, 18px);
+  line-height: 1.55;
 }
 #{{ sid }} .ppbs__desc p { margin: 0; }
 
 #{{ sid }} .ppbs__meta { display: flex; flex-wrap: wrap; gap: 22px 52px; margin-top: 32px; }
 #{{ sid }} .ppbs__meta-item { min-width: 170px; }
-#{{ sid }} .ppbs__meta-label { margin-bottom: 8px; color: rgba(255,255,255,.62); font-size: 14px; line-height: 1.4; }
+#{{ sid }} .ppbs__meta-label { margin-bottom: 8px; color: rgba(255, 255, 255, 0.48); font-size: 12px; line-height: 1.4; letter-spacing: 0.5px; }
 #{{ sid }} .ppbs__meta-value { color: var(--ppbs-text); font-weight: 500; font-size: clamp(18px, 2vw, 24px); line-height: 1.25; }
 
 #{{ sid }} .ppbs__timer-wrap { margin-top: 30px; }
@@ -2022,7 +2068,7 @@ transform: matrix(-1, 0, 0, 1, 0, 0);
 #{{ sid }} .ppbs__nav-counter { display: inline-flex; align-items: center; gap: 6px; min-width: 64px; color: var(--ppbs-text); font-size: 24px; line-height: 1; }
 #{{ sid }} .ppbs__nav-slash,
 #{{ sid }} .ppbs__nav-total { opacity: .7; }
-#{{ sid }} .ppbs__prog { flex: 1; height: 2px; background: rgba(255,255,255,.18); overflow: hidden; }
+#{{ sid }} .ppbs__prog { flex: 1; height: 3px; background: rgba(255,255,255,.14); border-radius: 2px; overflow: hidden; }
 #{{ sid }} .ppbs__prog-fill { display: block; width: 0; height: 100%; background: rgba(255,255,255,.94); transition: width .4s ease; }
 #{{ sid }} .ppbs__arrows { display: inline-flex; gap: 8px; }
 #{{ sid }} .ppbs__arrow { width: 38px; height: 38px; padding: 0; border: 0; background: transparent; color: rgba(255,255,255,.9); cursor: pointer; transition: transform .25s ease, opacity .25s ease; }
@@ -2047,6 +2093,9 @@ transform: matrix(-1, 0, 0, 1, 0, 0);
     top: var(--ppbs-media-top-tab);
     left: var(--ppbs-media-x-tab);
     width: var(--ppbs-media-w-tab);
+  }
+  #{{ sid }} .ppbs__media-inner {
+    transform: translateY(var(--slide-y, 0px)) scale(var(--slide-scale, 1)) rotate(var(--slide-tilt-tablet, 0deg));
   }
   #{{ sid }} .ppbs__meta { gap: 18px 28px; }
   #{{ sid }} .ppbs__t-part { min-width: 64px; }
@@ -2081,16 +2130,23 @@ transform: matrix(-1, 0, 0, 1, 0, 0);
     position: relative;
     top: var(--ppbs-media-top-mob);
     left: auto; right: auto;
-    width: min(100%, var(--ppbs-media-w-mob));
+    width: min(100%, min(330px, calc(40vh * var(--ppbs-media-ar, 0.793))));
     max-width: 330px;
     max-height: 40vh;
-    aspect-ratio: auto;
+    aspect-ratio: var(--ppbs-media-ar, 653 / 823);
     margin-inline: auto;
+  }
+  #{{ sid }} .ppbs__media-inner {
+    transform: translateY(var(--slide-y, 0px)) scale(var(--slide-scale, 1)) rotate(var(--slide-tilt-mobile, 0deg));
+  }
+  #{{ sid }} .ppbs__track {
+    --ppbs-rad-x: 52%;
+    --ppbs-rad-y: 36%;
   }
   #{{ sid }} .ppbs__bg-halo { width: 88vw; height: 88vw; left: 50%; bottom: 26%; }
   #{{ sid }} .ppbs__eyebrow-wrap { margin-bottom: 12px; }
-  #{{ sid }} .ppbs__eyebrow { min-height: 36px; min-width: 120px; padding: 8px 14px; font-size: 13px; }
-  #{{ sid }} .ppbs__title { max-width: 100%; font-size: clamp(28px, 8vw, 36px); line-height: 1.08; }
+  #{{ sid }} .ppbs__eyebrow { min-height: 38px; min-width: 160px; padding: 10px 22px; font-size: 12px; letter-spacing: 2px; }
+  #{{ sid }} .ppbs__title { max-width: 100%; font-size: clamp(30px, 7.5vw, 40px); line-height: 1.2; letter-spacing: 0.015em; }
   #{{ sid }} .ppbs__desc { max-width: 100%; margin-top: 12px; font-size: 14px; line-height: 1.45; }
   #{{ sid }} .ppbs__meta { gap: 12px 18px; margin-top: 18px; }
   #{{ sid }} .ppbs__meta-item { min-width: calc(50% - 9px); }
@@ -2675,8 +2731,54 @@ transform: matrix(-1, 0, 0, 1, 0, 0);
     {
       "type": "color",
       "id": "bg_end",
-      "label": "Gradient overlay end",
-      "default": "#070605"
+      "label": "Radial overlay end",
+      "default": "#070605",
+      "info": "Outer color for the bronze radial glow."
+    },
+    {
+      "type": "color",
+      "id": "bg_linear_start",
+      "label": "Linear gradient — top",
+      "default": "#060504",
+      "info": "Base layer: dark tone at the start of the linear blend."
+    },
+    {
+      "type": "color",
+      "id": "bg_linear_end",
+      "label": "Linear gradient — bottom",
+      "default": "#14110C",
+      "info": "Mid blend toward deep warm charcoal."
+    },
+    {
+      "type": "range",
+      "id": "bg_linear_angle",
+      "label": "Linear gradient angle",
+      "min": 0,
+      "max": 360,
+      "step": 4,
+      "default": 168,
+      "unit": "deg"
+    },
+    {
+      "type": "range",
+      "id": "bg_radial_position_x",
+      "label": "Radial glow center (horizontal)",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "default": 72,
+      "unit": "%",
+      "info": "Higher values move the bronze glow toward the book (right)."
+    },
+    {
+      "type": "range",
+      "id": "bg_radial_position_y",
+      "label": "Radial glow center (vertical)",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "default": 59,
+      "unit": "%"
     },
     {
       "type": "color",

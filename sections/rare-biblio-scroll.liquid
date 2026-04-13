@@ -1225,16 +1225,132 @@
       padding: clamp(10px, 2.2vw, 18px) clamp(12%, 4.5vw, 17%) clamp(12px, 2.2vw, 20px);
     }
   }
+  /* Small screens: full-bleed scroll; copy inset ~12% each side of paper (mockup: 10–15%) */
   @media (max-width: 749px) {
-    #scroll-{{ sid }} .ps-scene { width: 94%; }
-    #scroll-{{ sid }} .ps-txt {
-      padding: 8px clamp(10%, 4vw, 15%) 12px;
+    #scroll-{{ sid }} .ps-scene {
+      left: 0;
+      right: 0;
+      width: 100%;
+      max-width: none;
+      transform: translateY(-50%);
+      padding-left: env(safe-area-inset-left, 0px);
+      padding-right: env(safe-area-inset-right, 0px);
+      box-sizing: border-box;
     }
-    #scroll-{{ sid }} .ps-ornament { margin: 0.45em auto 0.55em; }
+    #scroll-{{ sid }} .ps-wrap {
+      width: 100%;
+      max-width: 100%;
+    }
+    #scroll-{{ sid }} .ps-paper-inner {
+      min-width: 0;
+      overflow-x: hidden;
+      box-sizing: border-box;
+    }
+    #scroll-{{ sid }} .ps-paper {
+      overflow-x: hidden;
+    }
+    #scroll-{{ sid }} .ps-txt {
+      width: 100%;
+      max-width: 100%;
+      min-width: 0;
+      box-sizing: border-box;
+      padding-top: 8px;
+      padding-bottom: 12px;
+      /* Deckled art needs a wider inset than the flat center — % is of .ps-paper-inner */
+      padding-left: max(18%, 18px, env(safe-area-inset-left, 0px));
+      padding-right: max(18%, 18px, env(safe-area-inset-right, 0px));
+      overflow-x: hidden;
+      overflow-wrap: anywhere;
+      word-break: break-word;
+      font-size: 15px;
+      line-height: 1.6;
+    }
+    #scroll-{{ sid }} .ps-txt h2.ps-title {
+      word-wrap: break-word;
+      overflow-wrap: anywhere;
+      word-break: break-word;
+      max-width: 100%;
+      hyphens: auto;
+      -webkit-hyphens: auto;
+    }
+    #scroll-{{ sid }} .ps-txt h2.ps-title .ps-title__accent {
+      max-width: 100%;
+      overflow-wrap: anywhere;
+      word-break: break-word;
+    }
+    #scroll-{{ sid }} .ps-txt .ps-body {
+      font-size: 1em;
+      width: 100%;
+      min-width: 0;
+      word-wrap: break-word;
+      overflow-wrap: anywhere;
+      word-break: break-word;
+      max-width: 100%;
+      hyphens: auto;
+      -webkit-hyphens: auto;
+    }
+    #scroll-{{ sid }} .ps-txt .ps-body p,
+    #scroll-{{ sid }} .ps-txt .ps-body li,
+    #scroll-{{ sid }} .ps-txt .ps-body td,
+    #scroll-{{ sid }} .ps-txt .ps-body th {
+      max-width: 100%;
+      box-sizing: border-box;
+      overflow-wrap: anywhere;
+      word-break: break-word;
+    }
+    #scroll-{{ sid }} .ps-txt .ps-body * {
+      max-width: 100%;
+      box-sizing: border-box;
+      overflow-wrap: anywhere;
+      word-break: break-word;
+    }
+    #scroll-{{ sid }} .ps-txt .ps-body p {
+      margin: 0 0 0.65em 0;
+    }
+    #scroll-{{ sid }} .ps-txt .ps-body img,
+    #scroll-{{ sid }} .ps-txt .ps-body video,
+    #scroll-{{ sid }} .ps-txt .ps-body iframe {
+      max-width: 100%;
+      height: auto;
+    }
+    #scroll-{{ sid }} .ps-txt .ps-body table {
+      max-width: 100%;
+      display: block;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    #scroll-{{ sid }} .ps-txt .ps-sub,
+    #scroll-{{ sid }} .ps-txt .ps-quote,
+    #scroll-{{ sid }} .ps-txt .ps-stamp {
+      overflow-wrap: anywhere;
+      word-break: break-word;
+      max-width: 100%;
+    }
+    #scroll-{{ sid }} .ps-ornament {
+      margin: 0.45em auto 0.55em;
+      width: 100%;
+      max-width: min(300px, 76%);
+      padding-left: 0;
+      padding-right: 0;
+      box-sizing: border-box;
+    }
   }
   @media (max-width: 480px) {
-    #scroll-{{ sid }} .ps-scene { width: 96%; }
-    #scroll-{{ sid }} .ps-txt { padding: 6px clamp(8%, 3.5vw, 13%) 10px; }
+    #scroll-{{ sid }} .ps-txt {
+      padding-top: 6px;
+      padding-bottom: 10px;
+      padding-left: max(19%, 16px, env(safe-area-inset-left, 0px));
+      padding-right: max(19%, 16px, env(safe-area-inset-right, 0px));
+    }
+    #scroll-{{ sid }} .ps-ornament {
+      max-width: min(260px, 62%);
+    }
+  }
+  @media (max-width: 389px) {
+    #scroll-{{ sid }} .ps-txt {
+      padding-left: max(20%, 14px, env(safe-area-inset-left, 0px));
+      padding-right: max(20%, 14px, env(safe-area-inset-right, 0px));
+    }
   }
 </style>
 
@@ -1368,14 +1484,25 @@
     return true;
   }
 
-  /* ── Text auto-fit ── */
+  /* ── Text auto-fit (≤749px: 15px body; wider: scale from scroll width) ── */
   function fitText() {
     var mh = maxH(), ww = wrap.offsetWidth;
-    var bB = Math.min(ww * 0.032, 16.5);
-    var bT = Math.min(ww * 0.052, 27);
-    var bS = Math.min(ww * 0.02, 10);
-    var bQ = bB * 0.92;
-    var bSt = Math.min(ww * 0.015, 8);
+    var narrow = window.innerWidth <= 749;
+    var bB, bT, bS, bQ, bSt;
+
+    if (narrow) {
+      bB = 15;
+      bT = Math.min(Math.max(ww * 0.058, 22), 28);
+      bS = Math.min(10, Math.round(15 * 0.67));
+      bQ = 13.8;
+      bSt = Math.min(ww * 0.018, 8);
+    } else {
+      bB = Math.min(ww * 0.032, 16.5);
+      bT = Math.min(ww * 0.052, 27);
+      bS = Math.min(ww * 0.02, 10);
+      bQ = bB * 0.92;
+      bSt = Math.min(ww * 0.015, 8);
+    }
 
     txt.style.fontSize = bB + 'px';
     var h2  = txt.querySelector('h2');
@@ -1389,7 +1516,8 @@
 
     var ch = txt.scrollHeight;
     if (ch > mh - 16) {
-      var s = Math.max((mh - 16) / ch, 0.4);
+      var minScale = narrow ? Math.max(12 / bB, 0.72) : 0.4;
+      var s = Math.max((mh - 16) / ch, minScale);
       txt.style.fontSize = (bB * s) + 'px';
       if (h2)  h2.style.fontSize  = (bT * s) + 'px';
       if (sub) sub.style.fontSize = (bS * s) + 'px';

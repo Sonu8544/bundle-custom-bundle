@@ -2438,6 +2438,10 @@
             assign image_left = true
           endif
           assign show_content_grad = block.settings.enable_content_gradient | default: true
+          assign rbps_img_loading = 'lazy'
+          if forloop.first
+            assign rbps_img_loading = 'eager'
+          endif
         %}
 
         <article
@@ -2464,7 +2468,7 @@
                         block.settings.image
                         | image_url: width: 1600
                         | image_tag:
-                          loading: 'lazy',
+                          loading: rbps_img_loading,
                           widths: '400, 600, 800, 1000, 1200, 1400, 1600',
                           sizes: '(max-width: 749px) 78vw, 532px',
                           class: 'rbps__image',
@@ -2842,6 +2846,12 @@
         pin: true,
         scrub: 2,
         invalidateOnRefresh: true,
+        onUpdate: (self) => {
+          // Pin/scroll measurement can lag first paint; keep first slide readable at section start
+          if (slides[0] && self.progress < 0.14) {
+            slides[0].style.setProperty('--rbps-eased', '1');
+          }
+        },
       }
     });
 
@@ -2849,8 +2859,9 @@
     gsap.set(outers.slice(1), { yPercent: 100 });
     gsap.set(reveals.slice(1), { yPercent: -100 });
 
-    // Slide 1: no “entry” blur/scale — proxy tween 1→1 never fired onUpdate before
-    gsap.set(slides[0], { '--rbps-eased': 1, autoAlpha: 1 });
+    // Slide 1: full “revealed” state (avoids black overlay + ~10% content opacity from --rbps-eased: 0)
+    gsap.set(slides[0], { '--rbps-eased': '1', autoAlpha: 1 });
+    slides[0].style.setProperty('--rbps-eased', '1');
     // Slides 2+: hidden so higher z-index siblings don’t stack on top / bleed through
     if (slides.length > 1) {
       gsap.set(slides.slice(1), { autoAlpha: 0 });
@@ -2891,6 +2902,13 @@
     });
 
     ScrollTrigger.refresh();
+
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        if (slides[0]) slides[0].style.setProperty('--rbps-eased', '1');
+        ScrollTrigger.refresh();
+      });
+    });
   }
 
   document.addEventListener('shopify:section:load', init);

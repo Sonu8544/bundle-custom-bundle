@@ -1,5 +1,8 @@
 {% liquid
   assign sid = 'rb-footer-' | append: section.id
+  assign mono_a = section.settings.monogram_grad_a | default: '#E8C96A'
+  assign mono_b = section.settings.monogram_grad_b | default: '#A67C2E'
+  assign mono_c = section.settings.monogram_grad_c | default: '#3D2610'
 %}
 
 <section id="{{ sid }}" class="rb-footer rb-footer--animated">
@@ -8,10 +11,10 @@
       <div class="rb-footer__ornament rb-reveal rb-reveal--left" data-rb-parallax data-rb-speed="0.18">
         {{
           section.settings.top_ornament
-          | image_url: width: 1400
+          | image_url: width: 2000
           | image_tag:
             loading: 'lazy',
-            widths: '400, 600, 800, 1000, 1200, 1400',
+            widths: '400, 600, 800, 1000, 1200, 1400, 1600, 1800, 2000',
             class: 'rb-footer__ornament-img',
             alt: section.settings.ornament_alt
         }}
@@ -34,16 +37,20 @@
     </nav>
 
     {% if section.settings.logo_image != blank %}
-      <div class="rb-footer__logo-wrap rb-reveal rb-reveal--up" data-rb-parallax data-rb-speed="-0.12">
+      <div class="rb-footer__logo-wrap rb-footer__logo-wrap--image rb-reveal rb-reveal--up" data-rb-parallax data-rb-speed="-0.12">
         {{
           section.settings.logo_image
-          | image_url: width: 1600
+          | image_url: width: 2400
           | image_tag:
             loading: 'lazy',
-            widths: '400, 600, 800, 1000, 1200, 1400, 1600',
+            widths: '400, 600, 800, 1000, 1200, 1400, 1600, 1800, 2000, 2200, 2400',
             class: 'rb-footer__logo-img',
             alt: section.settings.logo_alt
         }}
+      </div>
+    {% elsif section.settings.use_css_monogram %}
+      <div class="rb-footer__logo-wrap rb-footer__logo-wrap--text rb-reveal rb-reveal--up" data-rb-parallax data-rb-speed="-0.12">
+        <span class="rb-footer__mark-text" aria-hidden="true">RB</span>
       </div>
     {% endif %}
   </div>
@@ -52,11 +59,16 @@
     #{{ sid }}{
       position: relative;
       overflow: hidden;
-      background: {{ section.settings.bg_color }};
+      --rb-mono-a: {{ mono_a }};
+      --rb-mono-b: {{ mono_b }};
+      --rb-mono-c: {{ mono_c }};
+      background: linear-gradient(to top, #201911 0%, #050504 40%);
       color: {{ section.settings.text_color }};
       padding-top: {{ section.settings.padding_top_desktop }}px;
-      padding-bottom: {{ section.settings.padding_bottom_desktop }}px;
+      padding-bottom: 0 !important;
       isolation: isolate;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
     }
 
     #{{ sid }} .page-width{
@@ -74,20 +86,6 @@
       align-items: center;
     }
 
-    #{{ sid }}::after{
-      content: "";
-      position: absolute;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      width: 100%;
-      height: {{ section.settings.bottom_gradient_height_desktop }}px;
-      pointer-events: none;
-      z-index: 1;
-      opacity: {{ section.settings.bottom_gradient_opacity | divided_by: 100.0 }};
-      background: linear-gradient(360deg, #4D3C04 0%, rgba(7, 6, 5, 0) 116.43%);
-    }
-
     #{{ sid }} .rb-footer__ornament{
       width: 100%;
       display: flex;
@@ -103,6 +101,7 @@
       width: min(100%, {{ section.settings.ornament_width_desktop }}px);
       max-width: 100%;
       height: auto;
+      filter: drop-shadow(0 2px 14px rgba(212, 175, 55, 0.14)) drop-shadow(0 8px 28px rgba(0, 0, 0, 0.5));
     }
 
     #{{ sid }} .rb-footer__nav{
@@ -111,6 +110,7 @@
       justify-content: center;
       align-items: center;
       gap: {{ section.settings.nav_gap_desktop }}px;
+      margin-top: {{ section.settings.nav_margin_top_desktop }}px;
       margin-bottom: {{ section.settings.nav_bottom_spacing_desktop }}px;
       position: relative;
       z-index: 2;
@@ -120,10 +120,11 @@
       color: {{ section.settings.text_color }};
       text-decoration: none;
       font-size: {{ section.settings.menu_font_size_desktop }}px;
-      line-height: 1;
-      font-weight: 400;
-      letter-spacing: 0;
+      line-height: 1.25;
+      font-weight: 300;
+      letter-spacing: 0.02em;
       font-family: {{ section.settings.font_family }};
+      white-space: nowrap;
       transition: opacity .3s ease, color .3s ease, transform .3s ease, text-shadow .3s ease;
       will-change: transform, opacity;
     }
@@ -144,11 +145,47 @@
       will-change: transform;
     }
 
+    #{{ sid }} .rb-footer__logo-wrap--image{
+      overflow: hidden;
+      align-items: flex-start;
+      justify-content: center;
+      margin-top: {{ section.settings.logo_top_offset }}px;
+    }
+
     #{{ sid }} .rb-footer__logo-img{
       display: block;
-      width: min(100%, {{ section.settings.logo_width_desktop }}px);
+      /* width: min(100%, {{ section.settings.logo_width_desktop }}px); */
       max-width: 100%;
       height: auto;
+      object-fit: contain;
+      object-position: center top;
+      clip-path: inset(0 0 {{ section.settings.logo_bottom_crop }}% 0);
+      -webkit-clip-path: inset(0 0 {{ section.settings.logo_bottom_crop }}% 0);
+    }
+
+    #{{ sid }} .rb-footer__logo-wrap--text{
+      overflow: hidden;
+      align-items: flex-end;
+      justify-content: center;
+      padding-top: {{ section.settings.monogram_padding_top }}px;
+      margin-bottom: {{ section.settings.monogram_margin_bottom }}px;
+    }
+
+    #{{ sid }} .rb-footer__mark-text{
+      display: block;
+      font-family: {{ section.settings.monogram_font_family }};
+      font-weight: 400;
+      font-style: normal;
+      line-height: 0.82;
+      letter-spacing: -0.02em;
+      text-align: center;
+      font-size: clamp(80px, 18vw, {{ section.settings.monogram_font_max }}px);
+      background: linear-gradient(168deg, var(--rb-mono-a) 0%, var(--rb-mono-b) 45%, var(--rb-mono-c) 92%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      color: transparent;
+      -webkit-text-stroke: {{ section.settings.monogram_stroke | times: 0.1 }}px rgba(245, 240, 230, 0.45);
     }
 
     #{{ sid }} .rb-reveal{
@@ -246,11 +283,7 @@
     @media screen and (max-width: 989px){
       #{{ sid }}{
         padding-top: {{ section.settings.padding_top_tablet }}px;
-        padding-bottom: {{ section.settings.padding_bottom_tablet }}px;
-      }
-
-      #{{ sid }}::after{
-        height: {{ section.settings.bottom_gradient_height_tablet }}px;
+        padding-bottom: 0 !important;
       }
 
       #{{ sid }} .rb-footer__ornament{
@@ -263,31 +296,39 @@
 
       #{{ sid }} .rb-footer__nav{
         gap: {{ section.settings.nav_gap_tablet }}px;
+        margin-top: {{ section.settings.nav_margin_top_tablet }}px;
         margin-bottom: {{ section.settings.nav_bottom_spacing_tablet }}px;
       }
 
       #{{ sid }} .rb-footer__nav-link{
         font-size: {{ section.settings.menu_font_size_tablet }}px;
+        font-weight: 300;
+      }
+
+      #{{ sid }} .rb-footer__logo-wrap--image{
+        margin-top: {{ section.settings.logo_top_offset_tablet }}px;
       }
 
       #{{ sid }} .rb-footer__logo-img{
         width: min(100%, {{ section.settings.logo_width_tablet }}px);
+        clip-path: inset(0 0 {{ section.settings.logo_bottom_crop_tablet }}% 0);
+        -webkit-clip-path: inset(0 0 {{ section.settings.logo_bottom_crop_tablet }}% 0);
+      }
+
+      #{{ sid }} .rb-footer__mark-text{
+        font-size: clamp(64px, 20vw, {{ section.settings.monogram_font_max_tablet }}px);
       }
     }
 
     @media screen and (max-width: 749px){
       #{{ sid }}{
         padding-top: {{ section.settings.padding_top_mobile }}px;
-        padding-bottom: {{ section.settings.padding_bottom_mobile }}px;
+        padding-bottom: 0 !important;
       }
 
       #{{ sid }} .page-width{
         padding-left: 16px;
         padding-right: 16px;
-      }
-
-      #{{ sid }}::after{
-        height: {{ section.settings.bottom_gradient_height_mobile }}px;
       }
 
       #{{ sid }} .rb-footer__ornament{
@@ -299,17 +340,40 @@
       }
 
       #{{ sid }} .rb-footer__nav{
-        flex-direction: column;
-        gap: {{ section.settings.nav_gap_mobile }}px;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: center;
+        align-items: center;
+        column-gap: {{ section.settings.nav_column_gap_mobile }}px;
+        row-gap: {{ section.settings.nav_gap_mobile }}px;
+        margin-top: {{ section.settings.nav_margin_top_mobile }}px;
         margin-bottom: {{ section.settings.nav_bottom_spacing_mobile }}px;
       }
 
       #{{ sid }} .rb-footer__nav-link{
         font-size: {{ section.settings.menu_font_size_mobile }}px;
+        font-weight: 300;
+        white-space: normal;
+        text-align: center;
+      }
+
+      #{{ sid }} .rb-footer__logo-wrap--image{
+        margin-top: {{ section.settings.logo_top_offset_mobile }}px;
       }
 
       #{{ sid }} .rb-footer__logo-img{
         width: min(100%, {{ section.settings.logo_width_mobile }}px);
+        clip-path: inset(0 0 {{ section.settings.logo_bottom_crop_mobile }}% 0);
+        -webkit-clip-path: inset(0 0 {{ section.settings.logo_bottom_crop_mobile }}% 0);
+      }
+
+      #{{ sid }} .rb-footer__mark-text{
+        font-size: clamp(56px, 24vw, {{ section.settings.monogram_font_max_mobile }}px);
+      }
+
+      #{{ sid }} .rb-footer__logo-wrap--text{
+        padding-top: {{ section.settings.monogram_padding_top_mobile }}px;
+        margin-bottom: {{ section.settings.monogram_margin_bottom_mobile }}px;
       }
     }
   </style>
@@ -397,6 +461,108 @@
       "default": "RB logo"
     },
     {
+      "type": "checkbox",
+      "id": "use_css_monogram",
+      "label": "CSS monogram when no logo image",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "monogram_font_family",
+      "label": "Monogram font stack",
+      "default": "'Bethany Elingston', 'Playfair Display', Georgia, 'Times New Roman', serif"
+    },
+    {
+      "type": "color",
+      "id": "monogram_grad_a",
+      "label": "Monogram gradient light",
+      "default": "#E8C96A"
+    },
+    {
+      "type": "color",
+      "id": "monogram_grad_b",
+      "label": "Monogram gradient mid",
+      "default": "#A67C2E"
+    },
+    {
+      "type": "color",
+      "id": "monogram_grad_c",
+      "label": "Monogram gradient dark",
+      "default": "#3D2610"
+    },
+    {
+      "type": "range",
+      "id": "monogram_stroke",
+      "label": "Monogram outline (×0.1px)",
+      "min": 0,
+      "max": 15,
+      "step": 1,
+      "default": 4
+    },
+    {
+      "type": "range",
+      "id": "monogram_font_max",
+      "label": "Monogram max size desktop",
+      "min": 120,
+      "max": 520,
+      "step": 5,
+      "default": 400
+    },
+    {
+      "type": "range",
+      "id": "monogram_font_max_tablet",
+      "label": "Monogram max size tablet",
+      "min": 100,
+      "max": 420,
+      "step": 4,
+      "default": 280
+    },
+    {
+      "type": "range",
+      "id": "monogram_font_max_mobile",
+      "label": "Monogram max size mobile",
+      "min": 80,
+      "max": 300,
+      "step": 4,
+      "default": 200
+    },
+    {
+      "type": "range",
+      "id": "monogram_padding_top",
+      "label": "Monogram space above desktop",
+      "min": 0,
+      "max": 80,
+      "step": 4,
+      "default": 4
+    },
+    {
+      "type": "range",
+      "id": "monogram_margin_bottom",
+      "label": "Monogram offset below desktop",
+      "min": -80,
+      "max": 40,
+      "step": 4,
+      "default": -28
+    },
+    {
+      "type": "range",
+      "id": "monogram_padding_top_mobile",
+      "label": "Monogram space above mobile",
+      "min": 0,
+      "max": 48,
+      "step": 4,
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "monogram_margin_bottom_mobile",
+      "label": "Monogram offset below mobile",
+      "min": -48,
+      "max": 32,
+      "step": 4,
+      "default": -16
+    },
+    {
       "type": "text",
       "id": "font_family",
       "label": "Font family",
@@ -405,8 +571,14 @@
     {
       "type": "color",
       "id": "bg_color",
-      "label": "Background color",
-      "default": "#070605"
+      "label": "Background top",
+      "default": "#1E1C1A"
+    },
+    {
+      "type": "color",
+      "id": "bg_color_bottom",
+      "label": "Background bottom",
+      "default": "#2C2824"
     },
     {
       "type": "color",
@@ -431,11 +603,12 @@
     {
       "type": "range",
       "id": "bottom_gradient_opacity",
-      "label": "Bottom gradient opacity",
+      "label": "Bronze overlay opacity",
       "min": 0,
       "max": 100,
       "step": 5,
-      "default": 100
+      "default": 65,
+      "info": "Strength of the bottom-to-top #4D3C04 wash over the footer background."
     },
     {
       "type": "range",
@@ -480,21 +653,12 @@
     },
     {
       "type": "range",
-      "id": "padding_bottom_desktop",
-      "label": "Bottom padding desktop",
-      "min": 40,
-      "max": 240,
-      "step": 4,
-      "default": 40
-    },
-    {
-      "type": "range",
       "id": "ornament_width_desktop",
       "label": "Top ornament width desktop",
       "min": 200,
-      "max": 900,
+      "max": 1000,
       "step": 10,
-      "default": 520
+      "default": 680
     },
     {
       "type": "range",
@@ -503,7 +667,7 @@
       "min": 10,
       "max": 100,
       "step": 2,
-      "default": 34
+      "default": 40
     },
     {
       "type": "range",
@@ -516,30 +680,57 @@
     },
     {
       "type": "range",
+      "id": "nav_margin_top_desktop",
+      "label": "Space above menu desktop",
+      "min": 0,
+      "max": 80,
+      "step": 2,
+      "default": 0
+    },
+    {
+      "type": "range",
       "id": "nav_gap_desktop",
       "label": "Menu gap desktop",
       "min": 10,
-      "max": 60,
+      "max": 80,
       "step": 2,
-      "default": 28
+      "default": 32
     },
     {
       "type": "range",
       "id": "nav_bottom_spacing_desktop",
       "label": "Space below menu desktop",
       "min": 10,
-      "max": 120,
-      "step": 2,
-      "default": 26
+      "max": 110,
+      "step": 1,
+      "default": 35
     },
     {
       "type": "range",
       "id": "logo_width_desktop",
       "label": "Logo width desktop",
-      "min": 180,
+      "min": 200,
       "max": 1180,
       "step": 10,
-      "default": 620
+      "default": 820
+    },
+    {
+      "type": "range",
+      "id": "logo_top_offset",
+      "label": "Logo top offset desktop",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "logo_bottom_crop",
+      "label": "Logo bottom crop desktop %",
+      "min": 0,
+      "max": 50,
+      "step": 1,
+      "default": 10
     },
 
     {
@@ -557,21 +748,12 @@
     },
     {
       "type": "range",
-      "id": "padding_bottom_tablet",
-      "label": "Bottom padding tablet",
-      "min": 20,
-      "max": 180,
-      "step": 4,
-      "default": 20
-    },
-    {
-      "type": "range",
       "id": "ornament_width_tablet",
       "label": "Top ornament width tablet",
       "min": 180,
-      "max": 700,
+      "max": 800,
       "step": 10,
-      "default": 420
+      "default": 560
     },
     {
       "type": "range",
@@ -580,7 +762,7 @@
       "min": 10,
       "max": 80,
       "step": 2,
-      "default": 28
+      "default": 40
     },
     {
       "type": "range",
@@ -593,12 +775,21 @@
     },
     {
       "type": "range",
+      "id": "nav_margin_top_tablet",
+      "label": "Space above menu tablet",
+      "min": 0,
+      "max": 64,
+      "step": 2,
+      "default": 0
+    },
+    {
+      "type": "range",
       "id": "nav_gap_tablet",
       "label": "Menu gap tablet",
       "min": 10,
-      "max": 40,
+      "max": 56,
       "step": 2,
-      "default": 22
+      "default": 28
     },
     {
       "type": "range",
@@ -606,17 +797,35 @@
       "label": "Space below menu tablet",
       "min": 10,
       "max": 80,
-      "step": 2,
-      "default": 22
+      "step": 1,
+      "default": 35
     },
     {
       "type": "range",
       "id": "logo_width_tablet",
       "label": "Logo width tablet",
-      "min": 180,
-      "max": 900,
+      "min": 200,
+      "max": 960,
       "step": 10,
-      "default": 480
+      "default": 640
+    },
+    {
+      "type": "range",
+      "id": "logo_top_offset_tablet",
+      "label": "Logo top offset tablet",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "logo_bottom_crop_tablet",
+      "label": "Logo bottom crop tablet %",
+      "min": 0,
+      "max": 50,
+      "step": 1,
+      "default": 10
     },
 
     {
@@ -634,21 +843,12 @@
     },
     {
       "type": "range",
-      "id": "padding_bottom_mobile",
-      "label": "Bottom padding mobile",
-      "min": 0,
-      "max": 120,
-      "step": 4,
-      "default": 0
-    },
-    {
-      "type": "range",
       "id": "ornament_width_mobile",
       "label": "Top ornament width mobile",
-      "min": 140,
-      "max": 400,
+      "min": 160,
+      "max": 420,
       "step": 10,
-      "default": 250
+      "default": 320
     },
     {
       "type": "range",
@@ -657,7 +857,7 @@
       "min": 8,
       "max": 60,
       "step": 2,
-      "default": 26
+      "default": 40
     },
     {
       "type": "range",
@@ -670,10 +870,28 @@
     },
     {
       "type": "range",
+      "id": "nav_margin_top_mobile",
+      "label": "Space above menu mobile",
+      "min": 0,
+      "max": 48,
+      "step": 2,
+      "default": 0
+    },
+    {
+      "type": "range",
       "id": "nav_gap_mobile",
-      "label": "Menu gap mobile",
+      "label": "Menu row gap mobile",
       "min": 8,
-      "max": 40,
+      "max": 48,
+      "step": 2,
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "nav_column_gap_mobile",
+      "label": "Menu column gap mobile",
+      "min": 8,
+      "max": 48,
       "step": 2,
       "default": 20
     },
@@ -683,17 +901,35 @@
       "label": "Space below menu mobile",
       "min": 10,
       "max": 80,
-      "step": 2,
-      "default": 20
+      "step": 1,
+      "default": 35
     },
     {
       "type": "range",
       "id": "logo_width_mobile",
       "label": "Logo width mobile",
-      "min": 140,
-      "max": 500,
+      "min": 200,
+      "max": 520,
       "step": 10,
-      "default": 300
+      "default": 380
+    },
+    {
+      "type": "range",
+      "id": "logo_top_offset_mobile",
+      "label": "Logo top offset mobile",
+      "min": 0,
+      "max": 80,
+      "step": 4,
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "logo_bottom_crop_mobile",
+      "label": "Logo bottom crop mobile %",
+      "min": 0,
+      "max": 55,
+      "step": 1,
+      "default": 12
     }
   ],
   "blocks": [

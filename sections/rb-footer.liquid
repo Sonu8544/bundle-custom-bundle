@@ -110,8 +110,8 @@
       justify-content: center;
       align-items: center;
       gap: {{ section.settings.nav_gap_desktop }}px;
-      margin-top: {{ section.settings.nav_margin_top_desktop }}px;
-      margin-bottom: {{ section.settings.nav_bottom_spacing_desktop }}px;
+      margin-top: 10px;
+      margin-bottom: 45px;
       position: relative;
       z-index: 2;
     }
@@ -296,8 +296,8 @@
 
       #{{ sid }} .rb-footer__nav{
         gap: {{ section.settings.nav_gap_tablet }}px;
-        margin-top: {{ section.settings.nav_margin_top_tablet }}px;
-        margin-bottom: {{ section.settings.nav_bottom_spacing_tablet }}px;
+        margin-top: 10px;
+        margin-bottom: 45px;
       }
 
       #{{ sid }} .rb-footer__nav-link{
@@ -346,8 +346,8 @@
         align-items: center;
         column-gap: {{ section.settings.nav_column_gap_mobile }}px;
         row-gap: {{ section.settings.nav_gap_mobile }}px;
-        margin-top: {{ section.settings.nav_margin_top_mobile }}px;
-        margin-bottom: {{ section.settings.nav_bottom_spacing_mobile }}px;
+        margin-top: 10px;
+        margin-bottom: 45px;
       }
 
       #{{ sid }} .rb-footer__nav-link{
@@ -680,30 +680,12 @@
     },
     {
       "type": "range",
-      "id": "nav_margin_top_desktop",
-      "label": "Space above menu desktop",
-      "min": 0,
-      "max": 80,
-      "step": 2,
-      "default": 0
-    },
-    {
-      "type": "range",
       "id": "nav_gap_desktop",
       "label": "Menu gap desktop",
       "min": 10,
       "max": 80,
       "step": 2,
       "default": 32
-    },
-    {
-      "type": "range",
-      "id": "nav_bottom_spacing_desktop",
-      "label": "Space below menu desktop",
-      "min": 10,
-      "max": 110,
-      "step": 1,
-      "default": 35
     },
     {
       "type": "range",
@@ -775,30 +757,12 @@
     },
     {
       "type": "range",
-      "id": "nav_margin_top_tablet",
-      "label": "Space above menu tablet",
-      "min": 0,
-      "max": 64,
-      "step": 2,
-      "default": 0
-    },
-    {
-      "type": "range",
       "id": "nav_gap_tablet",
       "label": "Menu gap tablet",
       "min": 10,
       "max": 56,
       "step": 2,
       "default": 28
-    },
-    {
-      "type": "range",
-      "id": "nav_bottom_spacing_tablet",
-      "label": "Space below menu tablet",
-      "min": 10,
-      "max": 80,
-      "step": 1,
-      "default": 35
     },
     {
       "type": "range",
@@ -870,15 +834,6 @@
     },
     {
       "type": "range",
-      "id": "nav_margin_top_mobile",
-      "label": "Space above menu mobile",
-      "min": 0,
-      "max": 48,
-      "step": 2,
-      "default": 0
-    },
-    {
-      "type": "range",
       "id": "nav_gap_mobile",
       "label": "Menu row gap mobile",
       "min": 8,
@@ -894,15 +849,6 @@
       "max": 48,
       "step": 2,
       "default": 20
-    },
-    {
-      "type": "range",
-      "id": "nav_bottom_spacing_mobile",
-      "label": "Space below menu mobile",
-      "min": 10,
-      "max": 80,
-      "step": 1,
-      "default": 35
     },
     {
       "type": "range",

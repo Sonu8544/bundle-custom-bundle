@@ -3,6 +3,7 @@
   assign mono_a = section.settings.monogram_grad_a | default: '#E8C96A'
   assign mono_b = section.settings.monogram_grad_b | default: '#A67C2E'
   assign mono_c = section.settings.monogram_grad_c | default: '#3D2610'
+  assign rb_footer_logo_mobile = 'https://cdn.shopify.com/s/files/1/0589/1719/1777/files/logo_5_1_Vectorized_1.png?v=1776112680'
 %}
 
 <section id="{{ sid }}" class="rb-footer rb-footer--animated">
@@ -19,6 +20,8 @@
             alt: section.settings.ornament_alt
         }}
       </div>
+    {% else %}
+      <div class="rb-footer__ornament rb-footer__ornament--fallback" aria-hidden="true"></div>
     {% endif %}
 
     <nav class="rb-footer__nav" aria-label="Footer Navigation">
@@ -38,15 +41,18 @@
 
     {% if section.settings.logo_image != blank %}
       <div class="rb-footer__logo-wrap rb-footer__logo-wrap--image rb-reveal rb-reveal--up" data-rb-parallax data-rb-speed="-0.12">
-        {{
-          section.settings.logo_image
-          | image_url: width: 2400
-          | image_tag:
-            loading: 'lazy',
-            widths: '400, 600, 800, 1000, 1200, 1400, 1600, 1800, 2000, 2200, 2400',
-            class: 'rb-footer__logo-img',
-            alt: section.settings.logo_alt
-        }}
+        <picture>
+          <source media="(max-width: 749px)" srcset="{{ rb_footer_logo_mobile }}">
+          {{
+            section.settings.logo_image
+            | image_url: width: 2400
+            | image_tag:
+              loading: 'lazy',
+              widths: '400, 600, 800, 1000, 1200, 1400, 1600, 1800, 2000, 2200, 2400',
+              class: 'rb-footer__logo-img',
+              alt: section.settings.logo_alt
+          }}
+        </picture>
       </div>
     {% elsif section.settings.use_css_monogram %}
       <div class="rb-footer__logo-wrap rb-footer__logo-wrap--text rb-reveal rb-reveal--up" data-rb-parallax data-rb-speed="-0.12">
@@ -104,6 +110,10 @@
       filter: drop-shadow(0 2px 14px rgba(212, 175, 55, 0.14)) drop-shadow(0 8px 28px rgba(0, 0, 0, 0.5));
     }
 
+    #{{ sid }} .rb-footer__ornament--fallback{
+      display: none;
+    }
+
     #{{ sid }} .rb-footer__nav{
       display: flex;
       flex-wrap: wrap;
@@ -150,6 +160,12 @@
       align-items: flex-start;
       justify-content: center;
       margin-top: {{ section.settings.logo_top_offset }}px;
+    }
+
+    #{{ sid }} .rb-footer__logo-wrap--image picture{
+      display: block;
+      width: 100%;
+      max-width: 100%;
     }
 
     #{{ sid }} .rb-footer__logo-img{
@@ -321,59 +337,152 @@
     }
 
     @media screen and (max-width: 749px){
+      /* Mobile-only layout: solid black, vertical menu, large gold RB (reference) */
       #{{ sid }}{
-        padding-top: {{ section.settings.padding_top_mobile }}px;
+        padding-top: 80px;
         padding-bottom: 0 !important;
+        background: #000000;
+        color: #ffffff;
       }
 
       #{{ sid }} .page-width{
-        padding-left: 16px;
-        padding-right: 16px;
+        padding-left: 20px;
+        padding-right: 20px;
+      }
+
+      #{{ sid }} .rb-footer__inner{
+        min-height: 0;
+        justify-content: flex-start;
+      }
+
+      /* Static presentation: no scroll parallax / reveal motion on small screens */
+      #{{ sid }} [data-rb-parallax]{
+        transform: none !important;
+      }
+
+      #{{ sid }} .rb-reveal{
+        animation: none !important;
+        opacity: 1 !important;
+        transform: none !important;
+        filter: none !important;
+        text-shadow: none !important;
       }
 
       #{{ sid }} .rb-footer__ornament{
+        width: 100%;
         margin-bottom: {{ section.settings.ornament_bottom_spacing_mobile }}px;
+        margin-top: 0;
       }
 
       #{{ sid }} .rb-footer__ornament-img{
         width: min(100%, {{ section.settings.ornament_width_mobile }}px);
+        max-width: 100%;
+        filter: drop-shadow(0 1px 0 rgba(212, 175, 55, 0.35))
+          drop-shadow(0 0 20px rgba(212, 175, 55, 0.12));
+      }
+
+      #{{ sid }} .rb-footer__ornament--fallback{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 36px;
+      }
+
+      #{{ sid }} .rb-footer__ornament--fallback::before{
+        content: '';
+        width: min(100%, 340px);
+        height: 28px;
+        background: center / contain no-repeat
+          url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 360 28' fill='none'%3E%3Cdefs%3E%3ClinearGradient id='a' x1='0' y1='0' x2='1' y2='0'%3E%3Cstop stop-color='%235c4218'/%3E%3Cstop offset='.22' stop-color='%23c9a84a'/%3E%3Cstop offset='.5' stop-color='%23e8c96a'/%3E%3Cstop offset='.78' stop-color='%23c9a84a'/%3E%3Cstop offset='1' stop-color='%235c4218'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath stroke='url(%23a)' stroke-width='1.1' d='M0 14h52l10-6 10 6h68l14-9 14 9h68l10-6 10 6H360'/%3E%3Cpath stroke='%23e8c96a' stroke-opacity='.35' stroke-width='.6' d='M168 14c8-6 16-6 24 0'/%3E%3C/svg%3E");
+        filter: drop-shadow(0 0 12px rgba(212, 175, 55, 0.15));
       }
 
       #{{ sid }} .rb-footer__nav{
-        flex-direction: row;
-        flex-wrap: wrap;
+        display: flex;
+        flex-direction: column;
+        flex-wrap: nowrap;
         justify-content: center;
         align-items: center;
-        column-gap: {{ section.settings.nav_column_gap_mobile }}px;
-        row-gap: {{ section.settings.nav_gap_mobile }}px;
-        margin-top: 10px;
-        margin-bottom: 45px;
+        gap: {{ section.settings.nav_column_gap_mobile }}px;
+        margin-top: 0;
+        margin-bottom: 40px;
+        width: 100%;
       }
 
       #{{ sid }} .rb-footer__nav-link{
+        color: #ffffff;
         font-size: {{ section.settings.menu_font_size_mobile }}px;
-        font-weight: 300;
-        white-space: normal;
+        font-weight: 400;
+        letter-spacing: 0.04em;
+        white-space: nowrap;
         text-align: center;
+        line-height: 1.35;
+      }
+
+      #{{ sid }} .rb-footer__nav-link:hover{
+        opacity: 0.85;
+        transform: none;
+        text-shadow: none;
+      }
+
+      #{{ sid }} .rb-footer__logo-wrap{
+        margin-top: 0;
+        width: 100%;
+        flex: 0 0 auto;
+        display: flex;
+        align-items: flex-start;
+        justify-content: center;
+        min-height: 0;
       }
 
       #{{ sid }} .rb-footer__logo-wrap--image{
-        margin-top: {{ section.settings.logo_top_offset_mobile }}px;
+        margin-top: 0;
+        overflow: hidden;
+        align-items: flex-end;
+        justify-content: center;
       }
 
       #{{ sid }} .rb-footer__logo-img{
-        width: min(100%, {{ section.settings.logo_width_mobile }}px);
+        width: min(100%, {{ section.settings.logo_width_mobile | plus: 80 }}px);
+        max-width: 100%;
+        height: auto;
+        object-fit: contain;
+        object-position: center bottom;
         clip-path: inset(0 0 {{ section.settings.logo_bottom_crop_mobile }}% 0);
         -webkit-clip-path: inset(0 0 {{ section.settings.logo_bottom_crop_mobile }}% 0);
-      }
-
-      #{{ sid }} .rb-footer__mark-text{
-        font-size: clamp(56px, 24vw, {{ section.settings.monogram_font_max_mobile }}px);
+        transform: translateY(2%) scale(1.06);
+        transform-origin: center bottom;
       }
 
       #{{ sid }} .rb-footer__logo-wrap--text{
-        padding-top: {{ section.settings.monogram_padding_top_mobile }}px;
-        margin-bottom: {{ section.settings.monogram_margin_bottom_mobile }}px;
+        overflow: hidden;
+        align-items: center;
+        justify-content: center;
+        padding-top: 0;
+        padding-bottom: 0;
+        margin-bottom: clamp(-18px, -4vw, -6px);
+      }
+
+      #{{ sid }} .rb-footer__mark-text{
+        font-size: clamp(180px, 62vw, 360px);
+        line-height: 0.76;
+        letter-spacing: -0.03em;
+        padding-bottom: 0.04em;
+        transform: translateY(4%);
+        background: linear-gradient(
+          180deg,
+          #4a3410 0%,
+          #8a6a28 18%,
+          #e8c96a 48%,
+          #c9a84a 52%,
+          #5c4218 88%,
+          #2a1f0a 100%
+        );
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        color: transparent;
+        -webkit-text-stroke: {{ section.settings.monogram_stroke | times: 0.1 }}px rgba(232, 201, 106, 0.22);
       }
     }
   </style>
@@ -821,7 +930,7 @@
       "min": 8,
       "max": 60,
       "step": 2,
-      "default": 40
+      "default": 18
     },
     {
       "type": "range",
@@ -831,15 +940,6 @@
       "max": 24,
       "step": 1,
       "default": 18
-    },
-    {
-      "type": "range",
-      "id": "nav_gap_mobile",
-      "label": "Menu row gap mobile",
-      "min": 8,
-      "max": 48,
-      "step": 2,
-      "default": 14
     },
     {
       "type": "range",

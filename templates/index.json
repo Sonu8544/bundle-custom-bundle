@@ -338,7 +338,7 @@
         "slide_YtkL6t": {
           "type": "slide",
           "settings": {
-            "layout": "image_left",
+            "enable_content_gradient": true,
             "image": "shopify://shop_images/fa631e62c9f25d05121c8f258d37e724a5f5ce9d.png",
             "heading": "Leather Selection",
             "text": "<p>Welcome to Rare Biblio, the premier destination for bibliophiles and book lovers who appreciate timeless craftsmanship.</p>",
@@ -349,7 +349,7 @@
         "slide_nFaXRC": {
           "type": "slide",
           "settings": {
-            "layout": "image_left",
+            "enable_content_gradient": true,
             "image": "shopify://shop_images/0e3b361c0b28b517cca2ec25f47eb851cc7ab5ce.png",
             "heading": "Hand Binding",
             "text": "<p>Welcome to Rare Biblio, the premier destination for bibliophiles and book lovers who appreciate timeless craftsmanship.</p>",
@@ -360,7 +360,7 @@
         "slide_AdHVWg": {
           "type": "slide",
           "settings": {
-            "layout": "image_left",
+            "enable_content_gradient": true,
             "image": "shopify://shop_images/0e3b361c0b28b517cca2ec25f47eb851cc7ab5ce.png",
             "heading": "Gold Embossing",
             "text": "<p>Welcome to Rare Biblio, the premier destination for bibliophiles and book lovers who appreciate timeless craftsmanship.</p>",
@@ -371,7 +371,7 @@
         "slide_Rztf7r": {
           "type": "slide",
           "settings": {
-            "layout": "image_left",
+            "enable_content_gradient": true,
             "image": "shopify://shop_images/0e3b361c0b28b517cca2ec25f47eb851cc7ab5ce.png",
             "heading": "Authentication",
             "text": "<p>Welcome to Rare Biblio, the premier destination for bibliophiles and book lovers who appreciate timeless craftsmanship.</p>",

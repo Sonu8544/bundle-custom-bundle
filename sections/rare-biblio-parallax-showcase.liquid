@@ -157,6 +157,7 @@
   #{{ section_id }} .rbps__slide--image-right .rbps__content-wrap { order: 1; }
 
   #{{ section_id }} .rbps__media-wrap {
+    align-self: center;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -204,6 +205,8 @@
   }
 
   #{{ section_id }} .rbps__content-wrap {
+    position: relative;
+    z-index: 1;
     display: flex;
     align-items: center;
   }
@@ -215,6 +218,8 @@
   }
 
   #{{ section_id }} .rbps__content {
+    position: relative;
+    z-index: 1;
     max-width: var(--rbps-content-width);
   }
 
@@ -727,14 +732,15 @@
       "name": "Slide",
       "settings": [
         {
-          "type": "select",
-          "id": "layout",
-          "label": "Layout",
-          "default": "image_left",
-          "options": [
-            { "value": "image_left", "label": "Image left" },
-            { "value": "image_right", "label": "Image right" }
-          ]
+          "type": "paragraph",
+          "content": "Slides alternate automatically: 1st = image left / text right, 2nd = text left / image right, then repeat."
+        },
+        {
+          "type": "checkbox",
+          "id": "enable_content_gradient",
+          "label": "Content column gradient",
+          "default": true,
+          "info": "Warm radial behind the text column (#271D0E → #050504). Turn off for a flat background."
         },
         {
           "type": "image_picker",
@@ -955,6 +961,7 @@
   #{{ section_id }} .rbps__slide--image-right .rbps__content-wrap { order: 1; }
 
   #{{ section_id }} .rbps__media-wrap {
+    align-self: center;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -1007,6 +1014,8 @@
   }
 
   #{{ section_id }} .rbps__content-wrap {
+    position: relative;
+    z-index: 1;
     display: flex;
     align-items: center;
   }
@@ -1026,6 +1035,8 @@
   }
 
   #{{ section_id }} .rbps__content {
+    position: relative;
+    z-index: 1;
     max-width: var(--rbps-content-width);
   }
 
@@ -1545,14 +1556,15 @@
       "name": "Slide",
       "settings": [
         {
-          "type": "select",
-          "id": "layout",
-          "label": "Layout",
-          "default": "image_left",
-          "options": [
-            { "value": "image_left", "label": "Image left" },
-            { "value": "image_right", "label": "Image right" }
-          ]
+          "type": "paragraph",
+          "content": "Slides alternate automatically: 1st = image left / text right, 2nd = text left / image right, then repeat."
+        },
+        {
+          "type": "checkbox",
+          "id": "enable_content_gradient",
+          "label": "Content column gradient",
+          "default": true,
+          "info": "Warm radial behind the text column (#271D0E → #050504). Turn off for a flat background."
         },
         {
           "type": "image_picker",
@@ -1746,6 +1758,11 @@
     --rbps-eased: 0;
   }
 
+  /* First slide: full reveal before JS runs (avoids blur/low-opacity “entry” state) */
+  #{{ section_id }} .rbps__slide:first-child {
+    --rbps-eased: 1;
+  }
+
   /* Counter-motion Wrappers */
   #{{ section_id }} .rbps__outer {
     width: 100%;
@@ -1781,23 +1798,38 @@
     will-change: opacity, transform;
   }
 
-  #{{ section_id }} .rbps__slide--image-left .rbps__slide-grid {
-    background: radial-gradient(73.61% 539.32% at 127.29% 73.12%, #271D0E 0%, #050504 100%);
-  }
-
-  #{{ section_id }} .rbps__slide--image-right .rbps__slide-grid {
-    background: radial-gradient(77.47% 561.61% at 127.29% 73.12%, rgba(39, 29, 14, 0) 0%, #050504 100%);
-  }
-
   #{{ section_id }} .rbps__slide-grid {
     position: relative;
     z-index: 1;
     height: 100%;
     display: grid;
     grid-template-columns: 1fr 1fr;
-    align-items: center;
+    align-items: stretch;
     gap: var(--rbps-gap-desktop);
     padding: 48px 32px;
+  }
+
+  #{{ section_id }} .rbps__content-wrap--grad {
+    align-self: stretch;
+    min-height: 100%;
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+  }
+
+  #{{ section_id }} .rbps__slide--image-left .rbps__content-wrap--grad {
+    background-image: radial-gradient(
+      ellipse 73.61% 539.32% at 127.29% 73.12%,
+      #271d0e 0%,
+      #050504 100%
+    );
+  }
+
+  #{{ section_id }} .rbps__slide--image-right .rbps__content-wrap--grad {
+    background-image: radial-gradient(
+      ellipse 73.61% 539.32% at -27.29% 73.12%,
+      #271d0e 0%,
+      #050504 100%
+    );
   }
 
   #{{ section_id }} .rbps__slide--image-left .rbps__media-wrap { order: 1; }
@@ -1806,6 +1838,7 @@
   #{{ section_id }} .rbps__slide--image-right .rbps__content-wrap { order: 1; }
 
   #{{ section_id }} .rbps__media-wrap {
+    align-self: center;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -1851,6 +1884,8 @@
   }
 
   #{{ section_id }} .rbps__content-wrap {
+    position: relative;
+    z-index: 1;
     display: flex;
     align-items: center;
   }
@@ -1868,6 +1903,8 @@
   }
 
   #{{ section_id }} .rbps__content {
+    position: relative;
+    z-index: 1;
     max-width: var(--rbps-content-width);
   }
 
@@ -2300,14 +2337,15 @@
       "name": "Slide",
       "settings": [
         {
-          "type": "select",
-          "id": "layout",
-          "label": "Layout",
-          "default": "image_left",
-          "options": [
-            { "value": "image_left", "label": "Image left" },
-            { "value": "image_right", "label": "Image right" }
-          ]
+          "type": "paragraph",
+          "content": "Slides alternate automatically: 1st = image left / text right, 2nd = text left / image right, then repeat."
+        },
+        {
+          "type": "checkbox",
+          "id": "enable_content_gradient",
+          "label": "Content column gradient",
+          "default": true,
+          "info": "Warm radial behind the text column (#271D0E → #050504). Turn off for a flat background."
         },
         {
           "type": "image_picker",
@@ -2394,10 +2432,12 @@
     <div class="rbps__inner">
       {% for block in section.blocks %}
         {% liquid
+          assign idx_mod = forloop.index0 | modulo: 2
           assign image_left = false
-          if block.settings.layout == 'image_left'
+          if idx_mod == 0
             assign image_left = true
           endif
+          assign show_content_grad = block.settings.enable_content_gradient | default: true
         %}
 
         <article
@@ -2437,7 +2477,7 @@
                   </div>
                 </div>
 
-                <div class="rbps__content-wrap">
+                <div class="rbps__content-wrap{% if show_content_grad %} rbps__content-wrap--grad{% endif %}">
                   <div class="rbps__content">
                     {% if block.settings.heading != blank %}
                       <h2 class="rbps__heading rbps__animate rbps__animate--heading" data-rbps-anim="heading">
@@ -2501,6 +2541,11 @@
     --rbps-eased: 0;
   }
 
+  /* First slide: full reveal before JS runs (avoids blur/low-opacity “entry” state) */
+  #{{ section_id }} .rbps__slide:first-child {
+    --rbps-eased: 1;
+  }
+
   /* Counter-motion Wrappers */
   #{{ section_id }} .rbps__outer {
     width: 100%;
@@ -2536,23 +2581,38 @@
     will-change: opacity, transform;
   }
 
-  #{{ section_id }} .rbps__slide--image-left .rbps__slide-grid {
-    background: radial-gradient(73.61% 539.32% at 127.29% 73.12%, #271D0E 0%, #050504 100%);
-  }
-
-  #{{ section_id }} .rbps__slide--image-right .rbps__slide-grid {
-    background: radial-gradient(77.47% 561.61% at 127.29% 73.12%, rgba(39, 29, 14, 0) 0%, #050504 100%);
-  }
-
   #{{ section_id }} .rbps__slide-grid {
     position: relative;
     z-index: 1;
     height: 100%;
     display: grid;
     grid-template-columns: 1fr 1fr;
-    align-items: center;
+    align-items: stretch;
     gap: var(--rbps-gap-desktop);
     padding: 48px 32px;
+  }
+
+  #{{ section_id }} .rbps__content-wrap--grad {
+    align-self: stretch;
+    min-height: 100%;
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+  }
+
+  #{{ section_id }} .rbps__slide--image-left .rbps__content-wrap--grad {
+    background-image: radial-gradient(
+      ellipse 73.61% 539.32% at 127.29% 73.12%,
+      #271d0e 0%,
+      #050504 100%
+    );
+  }
+
+  #{{ section_id }} .rbps__slide--image-right .rbps__content-wrap--grad {
+    background-image: radial-gradient(
+      ellipse 73.61% 539.32% at -27.29% 73.12%,
+      #271d0e 0%,
+      #050504 100%
+    );
   }
 
   #{{ section_id }} .rbps__slide--image-left .rbps__media-wrap { order: 1; }
@@ -2561,6 +2621,7 @@
   #{{ section_id }} .rbps__slide--image-right .rbps__content-wrap { order: 1; }
 
   #{{ section_id }} .rbps__media-wrap {
+    align-self: center;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -2606,6 +2667,8 @@
   }
 
   #{{ section_id }} .rbps__content-wrap {
+    position: relative;
+    z-index: 1;
     display: flex;
     align-items: center;
   }
@@ -2623,6 +2686,8 @@
   }
 
   #{{ section_id }} .rbps__content {
+    position: relative;
+    z-index: 1;
     max-width: var(--rbps-content-width);
   }
 
@@ -2784,42 +2849,44 @@
     gsap.set(outers.slice(1), { yPercent: 100 });
     gsap.set(reveals.slice(1), { yPercent: -100 });
 
+    // Slide 1: no “entry” blur/scale — proxy tween 1→1 never fired onUpdate before
+    gsap.set(slides[0], { '--rbps-eased': 1, autoAlpha: 1 });
+    // Slides 2+: hidden so higher z-index siblings don’t stack on top / bleed through
+    if (slides.length > 1) {
+      gsap.set(slides.slice(1), { autoAlpha: 0 });
+    }
+
     slides.forEach((slide, i) => {
-      // Proxy to control the internal parallax (eased variable)
       const proxy = { progress: i === 0 ? 1 : 0 };
-      
-      // Animation sequence
+      const revealAt = i === 1 ? 0 : '-=0.75';
+
       if (i > 0) {
-        // Counter-motion reveal: Shutter opens from bottom while content scrolls up inside
-        // FIX: duration increased from 1.25 → 1.8 for slower transition
+        tl.to(slides[i], { autoAlpha: 1, duration: 0.05, ease: 'none' }, revealAt);
         tl.to([outers[i], reveals[i]], {
           yPercent: 0,
           duration: 1.8,
-          ease: "power1.inOut"
-        }, i === 1 ? 0 : "-=0.75");
+          ease: 'power1.inOut'
+        }, revealAt);
       }
 
-      // Sync the internal scale/blur/offset vars with the timeline
-      // FIX: duration increased from 1.25 → 1.8 to match reveal speed
-      tl.to(proxy, {
-        progress: 1,
-        duration: 1.8,
-        ease: "power1.inOut",
-        onUpdate: () => {
-          slide.style.setProperty('--rbps-eased', proxy.progress.toFixed(4));
-        }
-      }, "<");
+      if (i > 0) {
+        tl.to(proxy, {
+          progress: 1,
+          duration: 1.8,
+          ease: 'power1.inOut',
+          onUpdate: () => {
+            slide.style.setProperty('--rbps-eased', proxy.progress.toFixed(4));
+          }
+        }, '<');
+      }
 
-      // FIX: Use autoAlpha (opacity + visibility:hidden) instead of opacity:0.3
-      // This fully removes the covered slide from the render pipeline,
-      // preventing past slide text/images from bleeding through the slide on top.
       if (i < slides.length - 1) {
         tl.to(slide, {
           autoAlpha: 0,
           scale: 0.95,
           duration: 0.5,
-          ease: "power1.inOut"
-        }, ">-0.4");
+          ease: 'power1.inOut'
+        }, '>-0.4');
       }
     });
 
@@ -3060,14 +3127,15 @@
       "name": "Slide",
       "settings": [
         {
-          "type": "select",
-          "id": "layout",
-          "label": "Layout",
-          "default": "image_left",
-          "options": [
-            { "value": "image_left", "label": "Image left" },
-            { "value": "image_right", "label": "Image right" }
-          ]
+          "type": "paragraph",
+          "content": "Slides alternate automatically: 1st = image left / text right, 2nd = text left / image right, then repeat."
+        },
+        {
+          "type": "checkbox",
+          "id": "enable_content_gradient",
+          "label": "Content column gradient",
+          "default": true,
+          "info": "Warm radial behind the text column (#271D0E → #050504). Turn off for a flat background."
         },
         {
           "type": "image_picker",

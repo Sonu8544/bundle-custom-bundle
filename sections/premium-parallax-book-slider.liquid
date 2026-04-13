@@ -1736,7 +1736,7 @@ transform: matrix(-1, 0, 0, 1, 0, 0);
                           | image_tag:
                             loading: 'lazy',
                             widths: '360, 480, 640, 768, 900, 1200, 1600, 2000',
-                            sizes: '(max-width: 767px) 82vw, (max-width: 1199px) 46vw, 45vw',
+                            sizes: '(max-width: 767px) 90vw, (max-width: 1199px) 46vw, 45vw',
                             class: 'ppbs__img',
                             width: block.settings.image.width,
                             height: block.settings.image.height
@@ -2120,19 +2120,94 @@ transform: matrix(-1, 0, 0, 1, 0, 0);
     grid-template-columns: 1fr;
     align-content: center;
     justify-items: center;
-    gap: 18px;
+    /* gap: 18px; */
     height: 100%;
-    padding: 22px 0 24px;
+    /* Extra top space so the first block (book image) clears the section above */
+    padding: clamp(28px, 8vw, 48px) 0 24px;
   }
-  #{{ sid }} .ppbs__content { order: 2; width: 100%; max-width: 100%; text-align: left; }
+  #{{ sid }} .ppbs__content {
+    order: 2;
+    width: 100%;
+    max-width: 100%;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  #{{ sid }} .ppbs__eyebrow-wrap {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    margin-bottom: 12px;
+  }
+  #{{ sid }} .ppbs__title,
+  #{{ sid }} .ppbs__desc {
+    text-align: center;
+  }
+  /* Year + Binding (meta): always one row, two equal columns */
+  #{{ sid }} .ppbs__meta {
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 12px 18px;
+    margin-top: 18px;
+    width: 100%;
+    max-width: 100%;
+  }
+  #{{ sid }} .ppbs__meta-item {
+    flex: 1 1 0;
+    min-width: 0;
+    max-width: 50%;
+    text-align: center;
+  }
+  #{{ sid }} .ppbs__meta-label,
+  #{{ sid }} .ppbs__meta-value {
+    overflow-wrap: anywhere;
+    word-break: break-word;
+  }
+  #{{ sid }} .ppbs__timer-wrap {
+    width: 100%;
+    text-align: center;
+    margin-top: 18px;
+  }
+  #{{ sid }} .ppbs__timer-label {
+    text-align: center;
+  }
+  #{{ sid }} .ppbs__timer {
+    justify-content: center;
+    gap: 5px;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  #{{ sid }} .ppbs__timer::-webkit-scrollbar { display: none; }
+  #{{ sid }} .ppbs__t-part {
+    min-width: 50px;
+    align-items: center;
+  }
+  #{{ sid }} .ppbs__t-unit { margin-top: 4px; font-size: 9px; }
+  #{{ sid }} .ppbs__btn-row {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    margin-top: 18px;
+  }
+  #{{ sid }} .ppbs__nav {
+    justify-content: center;
+    margin-inline: auto;
+    gap: 10px;
+    margin-top: 18px;
+    max-width: 100%;
+  }
   #{{ sid }} .ppbs__media {
     order: 1;
     position: relative;
     top: var(--ppbs-media-top-mob);
-    left: auto; right: auto;
-    width: min(100%, min(330px, calc(40vh * var(--ppbs-media-ar, 0.793))));
-    max-width: 330px;
-    max-height: 40vh;
+    left: auto;
+    right: auto;
+    width: min(100%, min(380px, calc(46vh * var(--ppbs-media-ar, 0.793))));
+    max-width: 380px;
+    max-height: 46vh;
     aspect-ratio: var(--ppbs-media-ar, 653 / 823);
     margin-inline: auto;
   }
@@ -2144,23 +2219,23 @@ transform: matrix(-1, 0, 0, 1, 0, 0);
     --ppbs-rad-y: 36%;
   }
   #{{ sid }} .ppbs__bg-halo { width: 88vw; height: 88vw; left: 50%; bottom: 26%; }
-  #{{ sid }} .ppbs__eyebrow-wrap { margin-bottom: 12px; }
   #{{ sid }} .ppbs__eyebrow { min-height: 38px; min-width: 160px; padding: 10px 22px; font-size: 12px; letter-spacing: 2px; }
   #{{ sid }} .ppbs__title { max-width: 100%; font-size: clamp(30px, 7.5vw, 40px); line-height: 1.2; letter-spacing: 0.015em; }
-  #{{ sid }} .ppbs__desc { max-width: 100%; margin-top: 12px; font-size: 14px; line-height: 1.45; }
-  #{{ sid }} .ppbs__meta { gap: 12px 18px; margin-top: 18px; }
-  #{{ sid }} .ppbs__meta-item { min-width: calc(50% - 9px); }
+  #{{ sid }} .ppbs__desc {
+    max-width: 100%;
+    margin-top: 12px;
+    font-size: 16px;
+    line-height: 1.5;
+  }
+  #{{ sid }} .ppbs__desc p,
+  #{{ sid }} .ppbs__desc li {
+    font-size: 16px;
+    line-height: 1.5;
+  }
   #{{ sid }} .ppbs__meta-label { margin-bottom: 5px; font-size: 12px; }
   #{{ sid }} .ppbs__meta-value { font-size: 16px; }
-  #{{ sid }} .ppbs__timer-wrap { margin-top: 18px; }
-  #{{ sid }} .ppbs__timer { gap: 5px; overflow-x: auto; scrollbar-width: none; }
-  #{{ sid }} .ppbs__timer::-webkit-scrollbar { display: none; }
-  #{{ sid }} .ppbs__t-part { min-width: 50px; }
-  #{{ sid }} .ppbs__t-unit { margin-top: 4px; font-size: 9px; }
-  #{{ sid }} .ppbs__btn-row { margin-top: 18px; }
   #{{ sid }} .ppbs__btn { width: 100%; min-width: 0; min-height: 50px; padding: 10px 20px; }
   #{{ sid }} .ppbs__btn span { font-size: 15px; }
-  #{{ sid }} .ppbs__nav { gap: 10px; margin-top: 18px; max-width: 100%; }
   #{{ sid }} .ppbs__nav-counter { min-width: 42px; font-size: 16px; }
   #{{ sid }} .ppbs__arrow { width: 30px; height: 30px; }
 }

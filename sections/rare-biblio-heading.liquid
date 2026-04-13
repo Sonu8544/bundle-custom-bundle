@@ -2,6 +2,8 @@
   assign section_id = 'rare-biblio-heading-' | append: section.id
 %}
 
+{{ 'https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap' | stylesheet_tag }}
+
 <section
   id="{{ section_id }}"
   class="rbh-section"
@@ -9,10 +11,10 @@
     --rbh-bg-color: {{ section.settings.section_bg }};
     --rbh-title-max-width: {{ section.settings.title_max_width }}px;
     --rbh-content-max-width: {{ section.settings.content_max_width }}px;
+    --rbh-desc-max-width: {{ section.settings.description_max_width }}px;
     --rbh-padding-top: {{ section.settings.padding_top }}px;
     --rbh-padding-bottom: {{ section.settings.padding_bottom }}px;
     --rbh-title-size: {{ section.settings.title_size_desktop }}px;
-    --rbh-title-line-height: {{ section.settings.title_line_height_desktop }}%;
     --rbh-text-size: {{ section.settings.text_size_desktop }}px;
     --rbh-text-line-height: {{ section.settings.text_line_height_desktop }}px;
     --rbh-title-color-start: {{ section.settings.title_gradient_start }};
@@ -27,7 +29,7 @@
   <div class="rbh-section__wrap page-width{% if section.settings.full_width %} rbh-section__wrap--full{% endif %}">
     <div class="rbh-section__content{% if section.settings.enable_scroll_animation %} rbh-section__content--animated{% endif %}">
       {% if section.settings.heading != blank %}
-        <h2 class="rbh-section__title{% if section.settings.enable_scroll_animation %} rbh-animate-title{% endif %}" style="padding-top:10px">
+        <h2 class="rbh-section__title{% if section.settings.enable_scroll_animation %} rbh-animate-title{% endif %}">
           {{ section.settings.heading }}
         </h2>
       {% endif %}
@@ -53,8 +55,8 @@
     width: 100%;
     max-width: 100%;
     margin: 0 auto;
-    padding-left: 20px;
-    padding-right: 20px;
+    padding-left: 24px;
+    padding-right: 24px;
     box-sizing: border-box;
   }
 
@@ -77,17 +79,18 @@
     margin: 0;
     max-width: var(--rbh-title-max-width);
     width: 100%;
-    font-family: "Bethany Elingston", serif;
+    font-family: 'Playfair Display', 'Bethany Elingston', var(--font-heading-family), Georgia, serif;
     font-style: normal;
-    font-weight: 400;
+    font-weight: 600;
     font-size: var(--rbh-title-size);
-    line-height: var(--rbh-title-line-height);
     text-align: center;
-    letter-spacing: 0;
-    background: radial-gradient(
-      84.35% 106.04% at 104.49% 58.65%,
-      var(--rbh-title-color-start) 0%,
-      var(--rbh-title-color-end) 100%
+    letter-spacing: 1px;
+    text-wrap: balance;
+    font-feature-settings: 'kern' 1, 'liga' 1;
+    background: linear-gradient(
+      165deg,
+      var(--rbh-title-color-end) 0%,
+      var(--rbh-title-color-start) 100%
     );
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -97,22 +100,24 @@
 
   #{{ section_id }} .rbh-section__description {
     margin: 0;
-    max-width: 1016px;
+    max-width: var(--rbh-desc-max-width);
     width: 100%;
     color: var(--rbh-text-color);
-    font-family: "Satoshi", sans-serif;
+    font-family: "Satoshi", var(--font-body-family), -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     font-style: normal;
     font-weight: 400;
     font-size: var(--rbh-text-size);
     line-height: var(--rbh-text-line-height);
-    letter-spacing: 0;
+    letter-spacing: 0.5px;
     text-align: center;
+    text-wrap: balance;
   }
 
   #{{ section_id }} .rbh-section__description p {
     margin: 0;
     color: inherit;
     font: inherit;
+    letter-spacing: inherit;
   }
 
   #{{ section_id }} .rbh-animate-title,
@@ -132,7 +137,7 @@
   /* text starts slightly downward */
   #{{ section_id }} .rbh-animate-text {
     transform: translate3d(0, var(--rbh-anim-distance-text), 0);
-    transition-delay: .08s;
+    transition-delay: 80ms;
   }
 
   #{{ section_id }}.is-visible .rbh-animate-title,
@@ -144,9 +149,13 @@
   @media screen and (max-width: 1200px) {
     #{{ section_id }} {
       --rbh-title-size: {{ section.settings.title_size_tablet }}px;
-      --rbh-title-line-height: {{ section.settings.title_line_height_tablet }}%;
       --rbh-text-size: {{ section.settings.text_size_tablet }}px;
       --rbh-text-line-height: {{ section.settings.text_line_height_tablet }}px;
+    }
+
+    #{{ section_id }} .rbh-section__wrap {
+      padding-left: 20px;
+      padding-right: 20px;
     }
   }
 
@@ -155,10 +164,18 @@
       --rbh-padding-top: {{ section.settings.padding_top_mobile }}px;
       --rbh-padding-bottom: {{ section.settings.padding_bottom_mobile }}px;
       --rbh-title-size: {{ section.settings.title_size_mobile }}px;
-      --rbh-title-line-height: {{ section.settings.title_line_height_mobile }}%;
       --rbh-text-size: {{ section.settings.text_size_mobile }}px;
       --rbh-text-line-height: {{ section.settings.text_line_height_mobile }}px;
       --rbh-inner-gap: {{ section.settings.inner_gap_mobile }}px;
+    }
+
+    #{{ section_id }} .rbh-section__title {
+      font-size: var(--rbh-title-size);
+      letter-spacing: 1px;
+    }
+
+    #{{ section_id }} .rbh-section__description {
+      font-size: var(--rbh-text-size);
     }
 
     #{{ section_id }} .rbh-section__wrap {
@@ -167,9 +184,19 @@
     }
 
     #{{ section_id }} .rbh-section__content,
-    #{{ section_id }} .rbh-section__title,
-    #{{ section_id }} .rbh-section__description {
+    #{{ section_id }} .rbh-section__title {
       max-width: 100%;
+    }
+
+    #{{ section_id }} .rbh-section__description {
+      max-width: var(--rbh-desc-max-width);
+    }
+  }
+
+  @media screen and (max-width: 389px) {
+    #{{ section_id }} .rbh-section__wrap {
+      padding-left: 14px;
+      padding-right: 14px;
     }
   }
 
@@ -239,7 +266,8 @@
       "type": "richtext",
       "id": "description",
       "label": "Description",
-      "default": "<p>Welcome to Rare Biblio, the premier destination for bibliophiles and book lovers who appreciate the art of bookmaking.</p>"
+      "default": "<p>Welcome to Rare Biblio, the premier destination for bibliophiles and book lovers who<br>appreciate the art of bookmaking.</p>",
+      "info": "Use Shift+Enter after who for a line break, or edit HTML (e.g. br tag)."
     },
     {
       "type": "header",
@@ -249,25 +277,25 @@
       "type": "color",
       "id": "section_bg",
       "label": "Background color",
-      "default": "#050505"
+      "default": "#000000"
     },
     {
       "type": "color",
       "id": "title_gradient_start",
       "label": "Title gradient start",
-      "default": "#FFFFFF"
+      "default": "#E8DCC8"
     },
     {
       "type": "color",
       "id": "title_gradient_end",
       "label": "Title gradient end",
-      "default": "#BB911E"
+      "default": "#B8941E"
     },
     {
       "type": "color",
       "id": "text_color",
       "label": "Description color",
-      "default": "#F5F1EA"
+      "default": "#E8E4DD"
     },
     {
       "type": "header",
@@ -289,7 +317,17 @@
       "min": 300,
       "max": 900,
       "step": 10,
-      "default": 680
+      "default": 720
+    },
+    {
+      "type": "range",
+      "id": "description_max_width",
+      "label": "Description max width",
+      "min": 400,
+      "max": 1300,
+      "step": 10,
+      "default": 1020,
+      "info": "Max width of the description column (px). Match Content max width for full width."
     },
     {
       "type": "range",
@@ -298,7 +336,7 @@
       "min": 0,
       "max": 80,
       "step": 2,
-      "default": 26
+      "default": 28
     },
     {
       "type": "range",
@@ -316,7 +354,7 @@
       "min": 0,
       "max": 200,
       "step": 4,
-      "default": 52
+      "default": 72
     },
     {
       "type": "range",
@@ -325,7 +363,7 @@
       "min": 0,
       "max": 200,
       "step": 4,
-      "default": 52
+      "default": 72
     },
     {
       "type": "range",
@@ -356,16 +394,7 @@
       "min": 24,
       "max": 100,
       "step": 2,
-      "default": 70
-    },
-    {
-      "type": "range",
-      "id": "title_line_height_desktop",
-      "label": "Desktop title line height (%)",
-      "min": 80,
-      "max": 140,
-      "step": 2,
-      "default": 100
+      "default": 56
     },
     {
       "type": "range",
@@ -378,30 +407,12 @@
     },
     {
       "type": "range",
-      "id": "title_line_height_tablet",
-      "label": "Tablet title line height (%)",
-      "min": 80,
-      "max": 140,
-      "step": 2,
-      "default": 100
-    },
-    {
-      "type": "range",
       "id": "title_size_mobile",
       "label": "Mobile title size",
       "min": 18,
       "max": 60,
       "step": 2,
-      "default": 36
-    },
-    {
-      "type": "range",
-      "id": "title_line_height_mobile",
-      "label": "Mobile title line height (%)",
-      "min": 80,
-      "max": 140,
-      "step": 2,
-      "default": 90
+      "default": 34
     },
     {
       "type": "header",
@@ -414,7 +425,7 @@
       "min": 12,
       "max": 40,
       "step": 1,
-      "default": 24
+      "default": 26
     },
     {
       "type": "range",
@@ -423,7 +434,7 @@
       "min": 16,
       "max": 60,
       "step": 1,
-      "default": 39
+      "default": 40
     },
     {
       "type": "range",
@@ -432,7 +443,7 @@
       "min": 12,
       "max": 32,
       "step": 1,
-      "default": 20
+      "default": 21
     },
     {
       "type": "range",
@@ -459,7 +470,7 @@
       "min": 16,
       "max": 36,
       "step": 1,
-      "default": 26
+      "default": 24
     },
     {
       "type": "header",

@@ -156,6 +156,11 @@
       padding-left: 16px;
       padding-right: 16px;
     }
+
+    /* Smaller title on small screens (relative to mobile heading setting) */
+    #{{ section_id }} .btb-section__heading {
+      font-size: calc(var(--btb-heading-size) * 0.62);
+    }
   }
 
   @media (prefers-reduced-motion: reduce) {

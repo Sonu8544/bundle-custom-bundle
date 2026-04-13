@@ -1,1 +1,142 @@
-{"name":"t:sections.footer.name","type":"footer","sections":{"rb_footer_qYJ8Ab":{"type":"rb-footer","blocks":{"link_eQAJab":{"type":"link","settings":{"label":"Home","link":""}},"link_i9jcfU":{"type":"link","settings":{"label":"Rare biblio","link":""}},"link_P6pjyc":{"type":"link","settings":{"label":"Explore Books","link":""}},"link_ba33cf":{"type":"link","settings":{"label":"About Us","link":""}}},"block_order":["link_eQAJab","link_i9jcfU","link_P6pjyc","link_ba33cf"],"name":"RB Footer","settings":{"top_ornament":"shopify:\/\/shop_images\/Group.png","ornament_alt":"Footer ornament","logo_image":"shopify:\/\/shop_images\/Group_2.png","logo_alt":"RB logo","font_family":"Satoshi, sans-serif","bg_color":"#070605","text_color":"#F4F1EA","content_width":1200,"bottom_gradient_opacity":100,"bottom_gradient_height_desktop":180,"bottom_gradient_height_tablet":140,"bottom_gradient_height_mobile":100,"padding_top_desktop":60,"padding_bottom_desktop":40,"ornament_width_desktop":520,"ornament_bottom_spacing_desktop":34,"menu_font_size_desktop":18,"nav_gap_desktop":28,"nav_bottom_spacing_desktop":26,"logo_width_desktop":620,"padding_top_tablet":46,"padding_bottom_tablet":20,"ornament_width_tablet":420,"ornament_bottom_spacing_tablet":28,"menu_font_size_tablet":18,"nav_gap_tablet":22,"nav_bottom_spacing_tablet":22,"logo_width_tablet":480,"padding_top_mobile":36,"padding_bottom_mobile":0,"ornament_width_mobile":250,"ornament_bottom_spacing_mobile":26,"menu_font_size_mobile":18,"nav_gap_mobile":20,"nav_bottom_spacing_mobile":20,"logo_width_mobile":300}},"footer":{"type":"footer","blocks":{"55172ef6-3a6a-4cfa-b790-88739b47891f":{"type":"link_list","settings":{"heading":"Quick links","menu":"main-menu"}},"6e0c08d4-cd4c-439c-b5e2-a483bba29ec2":{"type":"brand_information","settings":{"show_social":true}},"f95fe295-fbc2-4d2b-a952-72670c2ab328":{"type":"text","settings":{"heading":"Resources","subtext":"<ul><li><a href=\"https:\/\/shopify.dev\/docs\/apps\/tools\/development-stores\/generated-data\" target=\"_blank\" title=\"Generated test data developer docs\">Generated test data docs<\/a><\/li><li><a href=\"https:\/\/shopify.dev\/docs\/apps\/tools\/graphiql-admin-api\" target=\"_blank\" title=\"GraphiQL API explorer\">GraphiQL API explorer<\/a><\/li><\/ul>"}}},"block_order":["55172ef6-3a6a-4cfa-b790-88739b47891f","6e0c08d4-cd4c-439c-b5e2-a483bba29ec2","f95fe295-fbc2-4d2b-a952-72670c2ab328"],"disabled":true,"settings":{"color_scheme":"inverse","newsletter_enable":false,"newsletter_heading":"Subscribe to our emails","enable_follow_on_shop":true,"show_social":true,"enable_country_selector":false,"enable_language_selector":true,"payment_enable":true,"show_policy":true,"margin_top":48,"padding_top":36,"padding_bottom":36}}},"order":["rb_footer_qYJ8Ab","footer"]}
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "name": "t:sections.footer.name",
+  "type": "footer",
+  "sections": {
+    "rb_footer_qYJ8Ab": {
+      "type": "rb-footer",
+      "blocks": {
+        "link_eQAJab": {
+          "type": "link",
+          "settings": {
+            "label": "Home",
+            "link": ""
+          }
+        },
+        "link_i9jcfU": {
+          "type": "link",
+          "settings": {
+            "label": "Rare biblio",
+            "link": ""
+          }
+        },
+        "link_P6pjyc": {
+          "type": "link",
+          "settings": {
+            "label": "Explore Books",
+            "link": ""
+          }
+        },
+        "link_ba33cf": {
+          "type": "link",
+          "settings": {
+            "label": "About Us",
+            "link": ""
+          }
+        }
+      },
+      "block_order": [
+        "link_eQAJab",
+        "link_i9jcfU",
+        "link_P6pjyc",
+        "link_ba33cf"
+      ],
+      "name": "RB Footer",
+      "settings": {
+        "top_ornament": "shopify://shop_images/Group.png",
+        "ornament_alt": "Footer ornament",
+        "logo_image": "shopify://shop_images/Group_2.png",
+        "logo_alt": "RB logo",
+        "font_family": "Satoshi, sans-serif",
+        "bg_color": "#070605",
+        "text_color": "#f4f1ea",
+        "content_width": 1200,
+        "bottom_gradient_opacity": 100,
+        "bottom_gradient_height_desktop": 180,
+        "bottom_gradient_height_tablet": 140,
+        "bottom_gradient_height_mobile": 100,
+        "padding_top_desktop": 120,
+        "padding_bottom_desktop": 84,
+        "ornament_width_desktop": 520,
+        "ornament_bottom_spacing_desktop": 34,
+        "menu_font_size_desktop": 18,
+        "nav_gap_desktop": 28,
+        "nav_bottom_spacing_desktop": 26,
+        "logo_width_desktop": 620,
+        "padding_top_tablet": 46,
+        "padding_bottom_tablet": 20,
+        "ornament_width_tablet": 420,
+        "ornament_bottom_spacing_tablet": 28,
+        "menu_font_size_tablet": 18,
+        "nav_gap_tablet": 22,
+        "nav_bottom_spacing_tablet": 22,
+        "logo_width_tablet": 480,
+        "padding_top_mobile": 36,
+        "padding_bottom_mobile": 0,
+        "ornament_width_mobile": 250,
+        "ornament_bottom_spacing_mobile": 26,
+        "menu_font_size_mobile": 18,
+        "nav_gap_mobile": 20,
+        "nav_bottom_spacing_mobile": 20,
+        "logo_width_mobile": 300
+      }
+    },
+    "footer": {
+      "type": "footer",
+      "blocks": {
+        "55172ef6-3a6a-4cfa-b790-88739b47891f": {
+          "type": "link_list",
+          "settings": {
+            "heading": "Quick links",
+            "menu": "main-menu"
+          }
+        },
+        "6e0c08d4-cd4c-439c-b5e2-a483bba29ec2": {
+          "type": "brand_information",
+          "settings": {
+            "show_social": true
+          }
+        },
+        "f95fe295-fbc2-4d2b-a952-72670c2ab328": {
+          "type": "text",
+          "settings": {
+            "heading": "Resources",
+            "subtext": "<ul><li><a href=\"https://shopify.dev/docs/apps/tools/development-stores/generated-data\" target=\"_blank\" title=\"Generated test data developer docs\">Generated test data docs</a></li><li><a href=\"https://shopify.dev/docs/apps/tools/graphiql-admin-api\" target=\"_blank\" title=\"GraphiQL API explorer\">GraphiQL API explorer</a></li></ul>"
+          }
+        }
+      },
+      "block_order": [
+        "55172ef6-3a6a-4cfa-b790-88739b47891f",
+        "6e0c08d4-cd4c-439c-b5e2-a483bba29ec2",
+        "f95fe295-fbc2-4d2b-a952-72670c2ab328"
+      ],
+      "disabled": true,
+      "settings": {
+        "color_scheme": "inverse",
+        "newsletter_enable": false,
+        "newsletter_heading": "Subscribe to our emails",
+        "enable_follow_on_shop": true,
+        "show_social": true,
+        "enable_country_selector": false,
+        "enable_language_selector": true,
+        "payment_enable": true,
+        "show_policy": true,
+        "margin_top": 48,
+        "padding_top": 36,
+        "padding_bottom": 36
+      }
+    }
+  },
+  "order": [
+    "rb_footer_qYJ8Ab",
+    "footer"
+  ]
+}

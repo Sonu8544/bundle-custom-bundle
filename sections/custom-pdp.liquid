@@ -450,6 +450,7 @@
   display: flex;
   flex-direction: column;
   gap: 0;
+  margin-top: 100px;
 }
 
 /* Exclusive badge */
@@ -1207,47 +1208,39 @@ height: 39px;
 
 
 
+{%- liquid
+  assign pdp_bg = section.settings.background_color | default: '#0D0D0B'
+  assign hero_fallback = 'https://cdn.shopify.com/s/files/1/0589/1719/1777/files/arafed-image-round-table-with-light-coming-from-it_1034560-94186_2_1.png?v=1776115204'
+  if section.settings.bg_image_desktop != blank
+    assign hero_desktop = section.settings.bg_image_desktop | image_url: width: 1920
+  else
+    assign hero_desktop = hero_fallback
+  endif
+  if section.settings.bg_image_mobile != blank
+    assign hero_mobile = section.settings.bg_image_mobile | image_url: width: 768
+  else
+    assign hero_mobile = hero_desktop
+  endif
+-%}
 <section
   id="exclusive-book-product-{{ section.id }}"
-  class="exclusive-book-product"
+  class="exclusive-book-product exclusive-book-product--bg-{{ section.settings.background_type }}"
   style="
     --section-bg: {{ section.settings.background_color }};
     --gradient-start: {{ section.settings.gradient_start }};
     --gradient-mid: {{ section.settings.gradient_mid }};
     --gradient-end: {{ section.settings.gradient_end }};
     --gradient-angle: {{ section.settings.gradient_angle }}deg;
+    --hero-bg-image: url('{{ hero_desktop }}');
+    --hero-bg-image-mobile: url('{{ hero_mobile }}');
     --accent-gold: #C9A885;
     --accent-gold-deep: #8E7025;
     --text-primary: #FFFFFF;
     --text-muted: #A89880;
   "
 >
-  {%- if section.settings.background_type == 'gradient' -%}
-    <div class="section-bg-gradient"></div>
-  {%- elsif section.settings.background_type == 'image' -%}
-    <div class="section-bg-image">
-      {%- if section.settings.bg_image_desktop != blank -%}
-        <img
-          src="{{ section.settings.bg_image_desktop | image_url: width: 1920 }}"
-          alt=""
-          class="bg-img bg-img--desktop"
-          loading="lazy"
-          width="1920"
-          height="1080"
-        >
-      {%- endif -%}
-      {%- if section.settings.bg_image_mobile != blank -%}
-        <img
-          src="{{ section.settings.bg_image_mobile | image_url: width: 768 }}"
-          alt=""
-          class="bg-img bg-img--mobile"
-          loading="lazy"
-          width="768"
-          height="1024"
-        >
-      {%- endif -%}
-    </div>
-  {%- endif -%}
+  {%- comment -%} Full-bleed hero: background image only {%- endcomment -%}
+  <div class="section-bg-hero" style="background-color: {{ pdp_bg }};" aria-hidden="true"></div>
 
   <div class="exclusive-book-product__inner">
 
@@ -1395,13 +1388,16 @@ height: 39px;
         </h1>
       </div>
 
-      <p class="product-author">
-        {%- if product != blank -%}
-          {{ product.vendor }}
-        {%- else -%}
-          {{ section.settings.product_author | default: 'JK Rowling' | upcase }}
-        {%- endif -%}
-      </p>
+      {%- liquid
+        assign author_display = section.settings.product_author
+        if author_display == blank and product != blank
+          assign author_display = product.vendor
+        endif
+        if author_display == blank
+          assign author_display = 'JK Rowling'
+        endif
+      -%}
+      <p class="product-author">{{ author_display | upcase }}</p>
 
       <div class="signed-copies-badge">
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
@@ -1511,12 +1507,14 @@ height: 39px;
   </div>
 </section>
 
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Satoshi:wght@300;400;500&display=swap" rel="stylesheet">
+
 <style>
 /* =============================================
    EXCLUSIVE BOOK PRODUCT — SECTION STYLES
    ============================================= */
-
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Satoshi:wght@300;400;500&display=swap');
 
 @font-face {
   font-family: 'Bethany Ellington';
@@ -1532,56 +1530,67 @@ height: 39px;
   --font-body: 'Satoshi', 'DM Sans', system-ui, sans-serif;
 }
 
+#shopify-section-{{ section.id }}.shopify-section.exclusive-book-product-section {
+  background-color: transparent;
+  width: 100%;
+}
+
 #exclusive-book-product-{{ section.id }} {
   position: relative;
-  background-color: var(--section-bg, #0D0D0B);
+  width: 100%;
+  background-color: transparent;
   min-height: 100vh;
+  min-height: -webkit-fill-available;
+  min-height: 100dvh;
   overflow: hidden;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
+  isolation: isolate;
 }
 
-/* Background layers */
-.section-bg-gradient {
+/*
+  Hero: image + atmospheric overlays (matches reference — spotlights up top, readable type, soft fade to next section).
+  Layer order (top → bottom): bottom vignette, uniform dim, photo.
+*/
+#exclusive-book-product-{{ section.id }} .section-bg-hero {
   position: absolute;
   inset: 0;
-  background: linear-gradient(
-    var(--gradient-angle, 135deg),
-    var(--gradient-start, #0D0D0B) 0%,
-    var(--gradient-mid, #1A1510) 50%,
-    var(--gradient-end, #0D0D0B) 100%
-  );
-  pointer-events: none;
-  z-index: 0;
-}
-
-.section-bg-image {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  z-index: 0;
-}
-.section-bg-image .bg-img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
-  object-position: center;
+  min-height: 100%;
+  pointer-events: none;
+  z-index: 0;
+  box-sizing: border-box;
+  background-color: var(--section-bg, #0d0d0b);
+  background-image:
+    linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.38) 62%, rgba(0, 0, 0, 0.72) 100%),
+    linear-gradient(rgba(0, 0, 0, 0.22), rgba(0, 0, 0, 0.22)),
+    url({{ hero_desktop | json }});
+  background-position: 0 0, 0 0, center top;
+  background-size: 100% 100%, 100% 100%, cover;
+  -webkit-background-size: 100% 100%, 100% 100%, cover;
+  background-repeat: no-repeat;
+  background-attachment: scroll;
+  background-clip: border-box;
+  background-origin: border-box;
+  background-blend-mode: normal, normal, normal;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
 }
-.section-bg-image .bg-img--mobile { display: none; }
 
-/* Inner layout */
-.exclusive-book-product__inner {
+/* Inner layout — columns top-aligned so .product-info lines up with top of gallery */
+#exclusive-book-product-{{ section.id }} .exclusive-book-product__inner {
   position: relative;
-  z-index: 1;
+  z-index: 2;
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 60px;
   width: 100%;
   max-width: 1280px;
   margin: 0 auto;
-  padding: 80px 40px;
-  align-items: center;
+  padding: clamp(88px, 11vh, 132px) 40px clamp(100px, 14vh, 160px);
+  align-items: start;
 }
 
 /* ── Gallery ────────────────── */
@@ -1595,8 +1604,12 @@ height: 39px;
   position: relative;
   width: 100%;
   aspect-ratio: 0.75 / 1;
-  border-radius: 4px;
+  border-radius: 12px;
   overflow: hidden;
+  box-shadow:
+    0 56px 150px 0 #00000030 inset,
+    0 34px 50px 0 #341C0699,
+    0 48px 80px -12px rgba(52, 28, 6, 0.55);
 
   /* enable touch swipe */
   touch-action: pan-y;
@@ -1621,6 +1634,10 @@ height: 39px;
   object-fit: cover;
   display: block;
   pointer-events: none;
+}
+
+.gallery-slide--active img {
+  filter: drop-shadow(0 18px 36px rgba(52, 28, 6, 0.42));
 }
 
 .gallery-slide .placeholder-svg,
@@ -1736,13 +1753,13 @@ height: 39px;
 .thumb {
   width: calc(25% - 8px);
   aspect-ratio: 0.78 / 1;
-  border-radius: 3px;
+  border-radius: 12px;
   overflow: hidden;
   background: #111;
-  border: 1px solid transparent;
+  border: 2px solid transparent;
   cursor: pointer;
   padding: 0;
-  transition: border-color 0.2s;
+  transition: border-color 0.25s, box-shadow 0.25s;
   flex-shrink: 0;
 }
 .thumb img {
@@ -1752,10 +1769,11 @@ height: 39px;
   display: block;
 }
 .thumb--active {
-  border-color: var(--accent-gold);
+  border-color: #c9a885;
+  box-shadow: 0 0 0 1px rgba(201, 168, 133, 0.45), 0 8px 24px rgba(0, 0, 0, 0.35);
 }
 .thumb:hover:not(.thumb--active) {
-  border-color: rgba(201, 168, 133, 0.4);
+  border-color: rgba(201, 168, 133, 0.45);
 }
 
 /* when more than 4 thumbs, shrink a bit so they all fit */
@@ -1767,6 +1785,7 @@ height: 39px;
   display: flex;
   flex-direction: column;
   gap: 0;
+  margin-top: 100px;
 }
 
 /* Exclusive badge */
@@ -1775,23 +1794,24 @@ height: 39px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 172px;
-  height: 39px;
-  padding: 10px 22px;
+  max-width: 200px;
+  min-height: 48px;
+  padding: 12px 20px;
   border-radius: 4px;
   color: #fff8e7;
   background: linear-gradient(270deg, rgba(142, 112, 37, 0) 0%, rgba(142, 112, 37, 0.854796) 78.75%, rgba(142, 112, 37, 0) 100%);
-  box-shadow: 0 10px 32px rgba(0,0,0,.24);
+  box-shadow: 0 10px 32px rgba(0, 0, 0, 0.24);
+  box-sizing: border-box;
 }
 
 .exclusive-badge__text {
   font-family: var(--font-display);
   font-weight: 400;
   font-style: normal;
-  font-size: 14px;
-  line-height: 22px;
+  font-size: 22px;
+  line-height: 1.15;
   letter-spacing: 0.12em;
-  color: #F5E6CF;
+  color: #f5e6cf;
   text-transform: uppercase;
 }
 
@@ -1807,19 +1827,21 @@ height: 39px;
   font-family: var(--font-display);
   font-weight: 400;
   font-style: normal;
-  font-size: 60px;
-  line-height: 71px;
-  letter-spacing: 0;
-  color: var(--text-primary);
+  font-size: clamp(40px, 4.2vw, 60px);
+  line-height: 1.12;
+  letter-spacing: -0.02em;
+  color: #f5f2eb;
   margin: 0;
   flex: 1;
+  max-width: 18ch;
+  text-wrap: balance;
 }
 
 .product-author {
   font-family: var(--font-body);
   font-weight: 400;
-  font-size: 16px;
-  line-height: 30px;
+  font-size: 14px;
+  line-height: 26px;
   letter-spacing: 0.20em;
   text-transform: uppercase;
   text-decoration: underline;
@@ -1832,18 +1854,21 @@ height: 39px;
 .signed-copies-badge {
   display: inline-flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   padding: 10px 18px;
-  border: 1px solid #C9A885;
-  border-radius: 4px;
+  border: 1px solid rgba(201, 168, 133, 0.85);
+  border-radius: 999px;
   width: fit-content;
   margin-bottom: 32px;
+  background: rgba(0, 0, 0, 0.18);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
 }
 
 .signed-copies-badge__text {
   font-family: var(--font-body);
   font-weight: 400;
-  font-size: 18px;
+  font-size: 15px;
   line-height: 1;
   color: #C9A885;
 }
@@ -1863,11 +1888,11 @@ height: 39px;
 
 .price-amount {
   font-family: var(--font-body);
-  font-weight: 400;
+  font-weight: 500;
   font-size: 36px;
   line-height: 1;
-  color: var(--accent-gold);
-  letter-spacing: -0.01em;
+  color: #ffffff;
+  letter-spacing: -0.02em;
 }
 
 .price-compare {
@@ -1917,8 +1942,9 @@ height: 39px;
 .product-actions {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 22px;
   flex-wrap: wrap;
+  margin-top: 4px;
 }
 
 .quantity-control {
@@ -1935,8 +1961,8 @@ height: 39px;
   height: 60px;
   border-radius: 80px;
   filter: drop-shadow(0px 14px 24px rgba(255, 208, 88, 0.2));
-  border: 1px solid;
-  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: #000000;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1945,7 +1971,7 @@ height: 39px;
   transition: background 0.2s;
   flex-shrink: 0;
 }
-.qty-btn:hover { background: rgba(255,255,255,0.14); }
+.qty-btn:hover { background: #1a1a1a; }
 
 .qty-input {
   width: 42px;
@@ -1963,32 +1989,38 @@ height: 39px;
 .qty-input::-webkit-outer-spin-button { -webkit-appearance: none; }
 
 .cta-btn {
-  color: white;
+  color: #ffffff;
   position: relative;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 212px;
-  min-height: 60px;
-  padding: 12px 40px;
+  min-width: 220px;
+  min-height: 56px;
+  padding: 14px 42px;
   overflow: hidden;
-  border: 1px solid rgba(255,255,255,.24);
-  border-radius: 60px;
+  border: 1px solid rgba(232, 213, 181, 0.45);
+  border-radius: 999px;
   text-decoration: none;
-  filter: drop-shadow(0px 14px 24px rgba(255, 208, 88, 0.2));
-  font-family: "Satoshi", sans-serif;
+  font-family: var(--font-body);
   font-weight: 700;
+  font-size: 14px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  background-color: transparent;
+  background-image: url('https://cdn.shopify.com/s/files/1/0589/1719/1777/files/f89b1c50a8a368abe48fc6793fd85a8999a3c0ca_7991f07a-d217-4f4e-bd7a-f6113fc84bf9.png?v=1776090622');
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center;
-  background-image: url('https://cdn.shopify.com/s/files/1/0589/1719/1777/files/f89b1c50a8a368abe48fc6793fd85a8999a3c0ca.png?v=1775475634');
-  transition: opacity 0.2s, transform 0.2s, box-shadow 0.2s;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
+  box-shadow: 0 14px 36px rgba(52, 28, 6, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.35);
+  transition: opacity 0.2s, transform 0.2s, box-shadow 0.2s, filter 0.2s;
   cursor: pointer;
 }
 .cta-btn:hover {
-  opacity: 0.92;
-  transform: translateY(-1px);
-  box-shadow: 0 8px 32px rgba(184,137,42,0.45);
+  opacity: 0.96;
+  transform: translateY(-2px);
+  box-shadow: 0 18px 44px rgba(52, 28, 6, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.4);
+  filter: brightness(1.03);
 }
 .cta-btn:active { transform: translateY(0); }
 .cta-btn:disabled {
@@ -2096,8 +2128,19 @@ height: 39px;
     gap: 32px;
     padding: 40px 20px 60px;
   }
-  .section-bg-image .bg-img--desktop { display: none; }
-  .section-bg-image .bg-img--mobile { display: block; }
+  #exclusive-book-product-{{ section.id }} .section-bg-hero {
+    background-image:
+      linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.4) 58%, rgba(0, 0, 0, 0.76) 100%),
+      linear-gradient(rgba(0, 0, 0, 0.24), rgba(0, 0, 0, 0.24)),
+      url({{ hero_mobile | json }});
+    background-position: 0 0, 0 0, center top;
+    background-size: 100% 100%, 100% 100%, cover;
+    -webkit-background-size: 100% 100%, 100% 100%, cover;
+    background-repeat: no-repeat;
+    background-attachment: scroll;
+    background-clip: border-box;
+    background-origin: border-box;
+  }
 
   .product-gallery__main { aspect-ratio: 0.78 / 1; }
 

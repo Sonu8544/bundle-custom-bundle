@@ -73,15 +73,10 @@
       transform .3s ease;
   }
 
+  /* No gradient overlay — must stay fully transparent (no tint) */
   .rb-header::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(180deg, rgba(0,0,0,.42) 0%, rgba(0,0,0,.16) 58%, rgba(0,0,0,0) 100%);
-    opacity: 1;
-    pointer-events: none;
-    z-index: 0;
-    transition: opacity .35s ease;
+    content: none !important;
+    display: none !important;
   }
 
   .rb-header .header {
@@ -249,14 +244,9 @@
     box-shadow: none !important;
   }
 
-  .section-header.scrolled-past-header .rb-header::before,
-  .shopify-section-header-sticky .rb-header::before {
-    opacity: 1; /* keep the gradient shadow visible */
-  }
-
   .section-header.scrolled-past-header .rb-header.header-wrapper--border-bottom,
   .shopify-section-header-sticky .rb-header.header-wrapper--border-bottom {
-    border-bottom: 1px solid rgba(255,255,255,.08);
+    border-bottom-color: transparent !important;
   }
 
   .shopify-section-header-hidden {
@@ -311,11 +301,6 @@
     box-shadow: none !important;
   }
 
-  .shopify-section-header-sticky:not(.scrolled-past-header) .rb-header::before {
-    opacity: 1;
-  }
-
-
   /* Force the section wrapper itself to be transparent */
   .section-header,
   .section-header .shopify-section-header-sticky,
@@ -323,6 +308,19 @@
   .header-wrapper.rb-header {
     background: transparent !important;
     background-color: transparent !important;
+  }
+
+  /*
+    Defeat assets/base.css:
+    .header-wrapper { background-color: rgb(var(--color-background)); }
+    (loads after this block and was painting a solid white bar with light color schemes.)
+  */
+  .header-wrapper.rb-header,
+  sticky-header.header-wrapper.rb-header,
+  div.header-wrapper.rb-header {
+    background: transparent !important;
+    background-color: transparent !important;
+    background-image: none !important;
   }
 
   /* Nuke Dawn's color-scheme background on the header section */
@@ -333,13 +331,16 @@
   .section-header.color-inverse {
     background: transparent !important;
     background-color: transparent !important;
+    background-image: none !important;
     --color-background: transparent;
+    --gradient-background: transparent;
   }
 
   /* The sticky-header custom element itself */
   sticky-header {
     background: transparent !important;
     background-color: transparent !important;
+    background-image: none !important;
     display: block;
   }
 
@@ -349,6 +350,13 @@
   .rb-header {
     box-shadow: none !important;
     border-bottom: none !important;
+  }
+
+  /* Shopify section shell: .color-* applies background-color via theme CSS */
+  #shopify-section-{{ section.id }} {
+    background: transparent !important;
+    background-color: transparent !important;
+    background-image: none !important;
   }
 
 
@@ -714,6 +722,8 @@
     {%- if section.settings.logo_position != 'middle-center' -%}
       {%- if request.page_type == 'index' -%}
         <h1 class="header__heading">
+      {%- else -%}
+        <div class="header__heading">
       {%- endif -%}
           <a href="{{ routes.root_url }}" class="header__heading-link link link--text focus-inset">
             {%- if settings.logo != blank -%}
@@ -738,6 +748,8 @@
           </a>
       {%- if request.page_type == 'index' -%}
         </h1>
+      {%- else -%}
+        </div>
       {%- endif -%}
     {%- endif -%}
 
@@ -843,6 +855,8 @@
     {%- if section.settings.logo_position == 'middle-center' -%}
       {%- if request.page_type == 'index' -%}
         <h1 class="header__heading">
+      {%- else -%}
+        <div class="header__heading">
       {%- endif -%}
           <a href="{{ routes.root_url }}" class="header__heading-link link link--text focus-inset">
             {%- if settings.logo != blank -%}
@@ -867,6 +881,8 @@
           </a>
       {%- if request.page_type == 'index' -%}
         </h1>
+      {%- else -%}
+        </div>
       {%- endif -%}
     {%- endif -%}
 
@@ -1254,6 +1270,29 @@
     }
   </script>
 {%- endif -%}
+
+{%- comment -%} Late cascade: wins over base.css .header-wrapper background-color {%- endcomment -%}
+<style>
+  .shopify-section-group-header-group {
+    background: transparent !important;
+    background-color: transparent !important;
+  }
+  #shopify-section-{{ section.id }} {
+    background: transparent !important;
+    background-color: transparent !important;
+    background-image: none !important;
+  }
+  #shopify-section-{{ section.id }} .header-wrapper.rb-header,
+  #shopify-section-{{ section.id }} sticky-header.header-wrapper.rb-header {
+    background: transparent !important;
+    background-color: transparent !important;
+    background-image: none !important;
+  }
+  #shopify-section-{{ section.id }} .rb-header::before {
+    content: none !important;
+    display: none !important;
+  }
+</style>
 
 {% schema %}
 {

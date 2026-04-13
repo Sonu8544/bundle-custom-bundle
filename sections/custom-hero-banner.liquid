@@ -6,7 +6,7 @@
 
 <section
   id="{{ sid }}"
-  class="chs"
+  class="chs{% if section.settings.enable_text_animation %} chs--text-anim{% endif %}"
   data-autoplay="{% if autoplay_enabled %}true{% else %}false{% endif %}"
   data-autoplay-speed="{{ autoplay_speed }}"
   style="
@@ -147,11 +147,11 @@
           <div class="chs__inner page-width">
             <div class="chs__content chs__content--{{ block.settings.content_alignment }}">
               {% if block.settings.eyebrow != blank %}
-                <div class="chs__eyebrow">{{ block.settings.eyebrow }}</div>
+                <div class="chs__eyebrow{% if section.settings.enable_text_animation %} chs-animate chs-animate--eyebrow{% endif %}">{{ block.settings.eyebrow }}</div>
               {% endif %}
 
               {% if block.settings.heading != blank %}
-                <h1 class="chs__heading">
+                <h1 class="chs__heading{% if section.settings.enable_text_animation %} chs-animate chs-animate--heading{% endif %}">
                   {% if block.settings.highlight_text != blank %}
                     <span class="chs__heading-first">{{ block.settings.heading }}</span><span class="chs__highlight">{{ block.settings.highlight_text }}</span>
                   {% else %}
@@ -161,11 +161,11 @@
               {% endif %}
 
               {% if block.settings.subheading != blank %}
-                <div class="chs__subheading rte">{{ block.settings.subheading }}</div>
+                <div class="chs__subheading rte{% if section.settings.enable_text_animation %} chs-animate chs-animate--sub{% endif %}">{{ block.settings.subheading }}</div>
               {% endif %}
 
               {% if block.settings.primary_button_label != blank or block.settings.secondary_button_label != blank %}
-                <div class="chs__buttons">
+                <div class="chs__buttons{% if section.settings.enable_text_animation %} chs-animate chs-animate--buttons{% endif %}">
                   {% if block.settings.primary_button_label != blank %}
                     <a
                       href="{{ block.settings.primary_button_link | default: '#' }}"
@@ -187,7 +187,7 @@
               {% endif %}
 
               {% if block.settings.show_scroll_indicator %}
-                <div class="chs__scroll-wrap">
+                <div class="chs__scroll-wrap{% if section.settings.enable_text_animation %} chs-animate chs-animate--scroll{% endif %}">
                   <button
                     type="button"
                     class="chs__scroll-button"
@@ -394,7 +394,7 @@
     font-size: var(--chs-heading-size-desktop);
     /* line-height: 1.06; */
     font-weight: 400;
-    letter-spacing: -0.02em;
+    /* letter-spacing: -0.02em; */
     font-size: 75px;
     }
 
@@ -645,6 +645,55 @@
       transform: scale(1.15);
     }
 
+    /* Scroll-in text (Rare Biblio heading pattern: fade + slide, staggered) */
+    #{{ sid }}.chs--text-anim:not(.is-visible) .chs__slide.is-active .chs-animate,
+    #{{ sid }}.chs--text-anim.is-visible .chs__slide.is-active:not(.chs-text-reveal) .chs-animate {
+      opacity: 0;
+      transform: translate3d(0, 28px, 0);
+      will-change: transform, opacity;
+    }
+
+    #{{ sid }}.chs--text-anim:not(.is-visible) .chs__slide.is-active .chs-animate--eyebrow,
+    #{{ sid }}.chs--text-anim.is-visible .chs__slide.is-active:not(.chs-text-reveal) .chs-animate--eyebrow {
+      transform: translate3d(0, -18px, 0);
+    }
+
+    #{{ sid }}.chs--text-anim.is-visible .chs__slide.is-active.chs-text-reveal .chs-animate {
+      opacity: 1;
+      transform: translate3d(0, 0, 0);
+      transition:
+        opacity 0.88s cubic-bezier(0.22, 1, 0.36, 1),
+        transform 0.88s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    #{{ sid }}.chs--text-anim.is-visible .chs__slide.is-active.chs-text-reveal .chs-animate--eyebrow {
+      transition-delay: 0ms;
+    }
+
+    #{{ sid }}.chs--text-anim.is-visible .chs__slide.is-active.chs-text-reveal .chs-animate--heading {
+      transition-delay: 0.09s;
+    }
+
+    #{{ sid }}.chs--text-anim.is-visible .chs__slide.is-active.chs-text-reveal .chs-animate--sub {
+      transition-delay: 0.16s;
+    }
+
+    #{{ sid }}.chs--text-anim.is-visible .chs__slide.is-active.chs-text-reveal .chs-animate--buttons {
+      transition-delay: 0.24s;
+    }
+
+    #{{ sid }}.chs--text-anim.is-visible .chs__slide.is-active.chs-text-reveal .chs-animate--scroll {
+      transition-delay: 0.32s;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      #{{ sid }}.chs--text-anim .chs__slide .chs-animate {
+        opacity: 1 !important;
+        transform: none !important;
+        transition: none !important;
+      }
+    }
+
     @keyframes chs-bounce {
       0%, 100% { transform: translateY(0); }
       50% { transform: translateY(8px); }
@@ -679,7 +728,7 @@
 
       #{{ sid }} .chs__heading {
         font-size: var(--chs-heading-size-mobile);
-        line-height: .98;
+        /* line-height: .98; */
       }
 
       #{{ sid }} .chs__subheading {
@@ -760,6 +809,49 @@
 
       if (!slides.length) return;
 
+      function refreshTextReveal() {
+        if (!section.classList.contains('chs--text-anim')) return;
+        slides.forEach(function(s) {
+          s.classList.remove('chs-text-reveal');
+        });
+        requestAnimationFrame(function() {
+          requestAnimationFrame(function() {
+            if (slides[current]) {
+              slides[current].classList.add('chs-text-reveal');
+            }
+          });
+        });
+      }
+
+      function initTextAnim() {
+        if (!section.classList.contains('chs--text-anim')) return;
+        function inView() {
+          var r = section.getBoundingClientRect();
+          var vh = window.innerHeight || document.documentElement.clientHeight;
+          return r.top < vh * 0.92 && r.bottom > 0;
+        }
+        if (inView()) {
+          section.classList.add('is-visible');
+          refreshTextReveal();
+          return;
+        }
+        if ('IntersectionObserver' in window) {
+          var io = new IntersectionObserver(function(entries) {
+            entries.forEach(function(entry) {
+              if (entry.isIntersecting) {
+                section.classList.add('is-visible');
+                refreshTextReveal();
+                io.unobserve(section);
+              }
+            });
+          }, { threshold: 0.12, rootMargin: '0px 0px -6% 0px' });
+          io.observe(section);
+        } else {
+          section.classList.add('is-visible');
+          refreshTextReveal();
+        }
+      }
+
       function pauseAllVideos() {
         slides.forEach((slide) => {
           slide.querySelectorAll('video').forEach((video) => {
@@ -794,6 +886,9 @@
         updateDots();
         pauseAllVideos();
         playActiveVideos();
+        if (section.classList.contains('is-visible')) {
+          refreshTextReveal();
+        }
       }
 
       function nextSlide() {
@@ -876,6 +971,7 @@
 
       playActiveVideos();
       startAutoplay();
+      initTextAnim();
     })();
   </script>
 </section>
@@ -970,6 +1066,17 @@
       "max": 180,
       "step": 4,
       "default": 40
+    },
+    {
+      "type": "header",
+      "content": "Text animation"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_text_animation",
+      "label": "Enable scroll-in text animation",
+      "default": true,
+      "info": "Fades and slides in headline content when the hero enters the viewport. Animates again when switching slides."
     },
     {
       "type": "header",

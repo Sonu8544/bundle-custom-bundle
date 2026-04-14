@@ -103,6 +103,7 @@
         "gradient_end": "#0d0d0b",
         "gradient_angle": 135,
         "bg_image_desktop": "shopify://shop_images/Listing_Page_4.png",
+        "bg_image_mobile": "shopify://shop_images/Option_5.png",
         "badge_text": "EXCLUSIVE",
         "product_title": "Voyage au centre de la terre",
         "product_author": "JK Rowling",

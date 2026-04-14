@@ -1648,7 +1648,14 @@ function applyFilters() {
       font-size: var(--heading-size-desktop);
       line-height: 1;
       font-weight: 400;
-      color: var(--heading-base-color);
+      {% comment %} color: var(--heading-base-color); {% endcomment %}
+       
+    background: linear-gradient(270.6deg, #A87E0A 9.74%, #FFFFFF 71.76%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-fill-color: transparent;
+
       letter-spacing: -0.01em;
     }
 

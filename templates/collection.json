@@ -206,7 +206,7 @@
         "overlay_opacity": 18,
         "content_max_width": 1400,
         "hero_height_desktop": 420,
-        "hero_height_tablet": 460,
+        "hero_height_tablet": 400,
         "hero_height_mobile": 380,
         "heading_size_desktop": 64,
         "heading_size_tablet": 52,

@@ -36,16 +36,7 @@
           <label class="visually-hidden" for="{{ sid }}-search">{{ section.settings.search_placeholder }}</label>
           <input id="{{ sid }}-search" class="ebcp__search" type="search" placeholder="{{ section.settings.search_placeholder }}" data-search-input>
          <button type="button" class="ebcp__search-btn" aria-label="Search" data-search-button>
-          <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32" fill="none">
-<g clip-path="url(#clip0_163_2601)">
-<path d="M31.6089 29.7707L26.1089 24.3957L25.9801 24.2C25.7378 23.961 25.4111 23.827 25.0707 23.827C24.7304 23.827 24.4037 23.961 24.1614 24.2C19.487 28.4882 12.2864 28.7207 7.33135 24.7444C2.37635 20.7682 1.20948 13.8125 4.60135 8.49629C7.99323 3.18004 14.8932 1.14692 20.7264 3.74629C26.5595 6.34567 29.5101 12.7744 27.6251 18.7644C27.5587 18.9777 27.5508 19.205 27.6024 19.4224C27.6539 19.6398 27.763 19.8393 27.9182 20C28.0751 20.1636 28.2716 20.2838 28.4887 20.3488C28.7058 20.4139 28.936 20.4216 29.157 20.3713C29.3768 20.3229 29.5801 20.2177 29.7464 20.0661C29.9128 19.9145 30.0365 19.7219 30.1051 19.5075C32.3551 12.3994 28.9564 4.74942 22.1051 1.50754C15.2539 -1.73433 7.00948 0.40129 2.7026 6.53692C-1.60427 12.6725 -0.679898 20.9632 4.87823 26.0475C10.4364 31.1319 18.9595 31.4813 24.9376 26.875L29.8076 31.6363C30.0521 31.8712 30.3779 32.0024 30.717 32.0024C31.056 32.0024 31.3819 31.8712 31.6264 31.6363C31.7456 31.5195 31.8404 31.3801 31.9051 31.2262C31.9698 31.0723 32.0031 30.907 32.0031 30.74C32.0031 30.5731 31.9698 30.4078 31.9051 30.2539C31.8404 30.1 31.7456 29.9606 31.6264 29.8438L31.6089 29.7707Z" fill="white"/>
-</g>
-<defs>
-<clipPath id="clip0_163_2601">
-<rect width="32" height="32" fill="white"/>
-</clipPath>
-</defs>
-</svg>
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="11" cy="11" r="6.5" stroke="currentColor" stroke-width="1.7"/><path d="M16 16L21 21" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
           </button>
         </div>
 
@@ -226,24 +217,6 @@
       --button-radius: {{ section.settings.button_radius }}px;
       --card-meta: {{ section.settings.meta_text_color }};
       --filter-btn-bg: {% if section.settings.filter_button_bg != blank %}url({{ section.settings.filter_button_bg | image_url: width: 300 }}) center/cover no-repeat{% else %}linear-gradient(180deg, #DDB85F 0%, #8A6210 100%){% endif %};
-            --book-width-1024: {{ section.settings.book_width_1024 }}px;
-      --book-height-1024: {{ section.settings.book_height_1024 }}px;
-      --book-width-768: {{ section.settings.book_width_768 }}px;
-      --book-height-768: {{ section.settings.book_height_768 }}px;
-
-      --book-top-1024: {{ section.settings.book_top_offset_1024 }}px;
-      --book-bottom-1024: {{ section.settings.book_bottom_offset_1024 }}px;
-      --book-top-768: {{ section.settings.book_top_offset_768 }}px;
-      --book-bottom-768: {{ section.settings.book_bottom_offset_768 }}px;
-
-      --gap-1024: {{ section.settings.grid_gap_1024 }}px;
-      --gap-768: {{ section.settings.grid_gap_768 }}px;
-
-      --row-max-width-1024: {{ section.settings.row_max_width_1024 }}px;
-      --row-max-width-768: {{ section.settings.row_max_width_768 }}px;
-
-      --hero-min-height-1024: {{ section.settings.hero_height_1024 }}px;
-      --hero-min-height-768: {{ section.settings.hero_height_768 }}px;
     }
 
     #{{ sid }}.ebcp {
@@ -378,9 +351,11 @@
     #{{ sid }} .ebcp__row { position: relative; width: 100%; display: flex; justify-content: center; }
     #{{ sid }} .ebcp__book-wrap { position: relative; z-index: 2; display: flex; justify-content: center; }
     #{{ sid }} .ebcp__book {
-     width: 100%;
+      width: 100%;
       max-width: var(--book-width-desktop);
-      height: var(--book-height-desktop);
+      height: auto;
+      aspect-ratio: 316 / 400;
+      max-height: none;
       position: relative;
       transition: transform .35s ease;
       transform: translateZ(0);
@@ -390,17 +365,10 @@
     #{{ sid }} .ebcp__book:hover,
     #{{ sid }} .ebcp__book:focus-within { transform: translateY(-{{ section.settings.hover_lift }}px); }
     #{{ sid }} .ebcp__book-link { display: block; line-height: 0; position: relative; z-index: 2; width: 100%; height: 100%; }
-   
-        #{{ sid }} .ebcp__book-image,
+    #{{ sid }} .ebcp__book-image,
     #{{ sid }} .ebcp__placeholder {
-      width: 100%;
-      height: 100%;
-      display: block;
-      object-fit: cover;
-      filter: drop-shadow(0 18px 32px rgba(0,0,0,.55));
+      width: 100%; height: 100%; display: block; object-fit: cover; filter: drop-shadow(0 18px 32px rgba(0,0,0,.55));
     }
-
-
     #{{ sid }} .ebcp__cta {
       position: absolute; left: 50%; bottom: 6%; transform: translateX(-50%) translateY(10px); width: calc(100% - 14px); max-width: 220px; opacity: 0; visibility: hidden; transition: opacity .3s ease, transform .3s ease, visibility .3s ease; z-index: 4;
     }
@@ -452,27 +420,6 @@
     #{{ sid }} .ebcp__secondary-btn { border: 1px solid rgba(255,255,255,.14); background: rgba(255,255,255,.04); color: #fff; }
     #{{ sid }} .ebcp__primary-btn { border: 0; color: var(--button-text); background: {% if section.settings.button_bg != blank %}url({{ section.settings.button_bg | image_url: width: 400 }}) center/cover no-repeat{% else %}linear-gradient(180deg, #DDB85F 0%, #8A6210 100%){% endif %}; }
 
-
-        @media screen and (min-width: 990px) and (max-width: 1199px) {
-      #{{ sid }} .ebcp__hero {
-        min-height: var(--hero-min-height-1024);
-      }
-
-      #{{ sid }} .ebcp__books-row {
-        grid-template-columns: repeat(3, minmax(0, var(--book-width-1024)));
-        column-gap: var(--gap-1024);
-        max-width: var(--row-max-width-1024);
-        padding-top: var(--book-top-1024);
-        margin-bottom: var(--book-bottom-1024);
-      }
-
-      #{{ sid }} .ebcp__book {
-        max-width: var(--book-width-1024);
-        height: var(--book-height-1024);
-      }
-    }
-
-    
     @media screen and (max-width: 989px) {
       #{{ sid }} .ebcp__hero { min-height: var(--hero-min-height-tablet); }
       #{{ sid }} .ebcp__heading { font-size: var(--heading-size-tablet); }

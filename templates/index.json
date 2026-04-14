@@ -63,7 +63,7 @@
         "scroll_text_size_desktop": 14,
         "scroll_text_size_mobile": 12,
         "button_radius": 30,
-        "button_padding_y_desktop": 18,
+        "button_padding_y_desktop": 24,
         "button_padding_x_desktop": 56,
         "button_padding_y_mobile": 16,
         "button_padding_x_mobile": 36,

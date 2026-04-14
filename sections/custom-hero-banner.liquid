@@ -566,22 +566,25 @@
       justify-content: center;
       gap: 14px;
     }
+#{{ sid }} .chs__scroll-button {
+  width: 100px;
+  height: 100px;
+  border-radius: 999px;
+  border: 1.8px solid #FFFFFF66;
 
-    #{{ sid }} .chs__scroll-button {
-      width: 100px;
-      height: 100px;
-      border-radius: 999px;
-      {% comment %} border: 1px solid rgba(255, 255, 255, 0.65); {% endcomment %}
-      border: 1.8px solid #FFFFFF66;
-      background: transparent;
-      color: var(--chs-scroll-color);
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      transition: transform .25s ease, background .25s ease, border-color .25s ease;
-      animation: chs-bounce 2.2s ease-in-out infinite;
-    }
+  /* 👇 ADD THIS */
+  background: rgba(255, 255, 255, 0.08); /* must not be fully transparent */
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+
+  color: var(--chs-scroll-color);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform .25s ease, background .25s ease, border-color .25s ease;
+  animation: chs-bounce 2.2s ease-in-out infinite;
+}
 
     #{{ sid }} .chs__scroll-button:hover {
       transform: translateY(2px);

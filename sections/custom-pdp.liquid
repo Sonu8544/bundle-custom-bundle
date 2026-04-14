@@ -1211,7 +1211,7 @@ height: 39px;
 
 {%- liquid
   assign pdp_bg = section.settings.background_color | default: '#0D0D0B'
-  assign hero_fallback = 'https://cdn.shopify.com/s/files/1/0589/1719/1777/files/arafed-image-round-table-with-light-coming-from-it_1034560-94186_2_1.png?v=1776115204'
+  
   if section.settings.bg_image_desktop != blank
     assign hero_desktop = section.settings.bg_image_desktop | image_url: width: 1920
   else

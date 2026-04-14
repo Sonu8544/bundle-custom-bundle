@@ -1231,6 +1231,9 @@ function applyFilters() {
 
     applyFilters();
   })();
+
+
+  
 </script>
 
 </section>
@@ -1486,7 +1489,7 @@ function applyFilters() {
                       {% endif %}
                     </a>
 
-                    {% comment %}
+                   
                     {% if current_variant != blank %}
                       <div class="ebcp__cta">
                         <button type="button" class="ebcp__cart-btn" data-add-to-cart data-variant-id="{{ current_variant.id }}" {% unless current_variant.available %}disabled{% endunless %}>
@@ -1494,7 +1497,7 @@ function applyFilters() {
                         </button>
                       </div>
                     {% endif %}
-                    {% endcomment %}
+                  
                   </div>
                 </div>
 

@@ -225,7 +225,7 @@
         "book_width_tablet": 140,
         "book_width_mobile": 160,
         "book_overlap_desktop": 28,
-        "book_overlap_tablet": 24,
+        "book_overlap_tablet": 60,
         "book_overlap_mobile": 40,
         "hover_lift": 8,
         "button_radius": 24,

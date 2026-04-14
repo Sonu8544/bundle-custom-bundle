@@ -2192,20 +2192,6 @@ height: 39px;
   }
 
 
-    .qty-input {
-    width: 36px;
-    font-size: 16px;
-  }
-  .cta-btn {
-    flex: 1;
-    min-width: 0;
-    width: auto;
-    min-height: 48px;
-    padding: 12px 14px;
-    font-size: 12px;
-    letter-spacing: 0.1em;
-  }
-
   
   /* show thumbs on mobile — scrollable row */
   .product-gallery__thumbs {
@@ -2302,13 +2288,24 @@ height: 39px;
     min-height: 44px;
   }
 
-  .product-actions {
+  {% comment %} .product-actions {
     flex-direction: row;
     align-items: center;
     justify-content: flex-start;
     gap: 10px;
     flex-wrap: nowrap;
-  }
+  } {% endcomment %}
+
+  .product-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 14px;
+  width: 100%;
+}
+
+
+
   .quantity-control {
     justify-content: flex-start;
     height: auto;

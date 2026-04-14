@@ -42,6 +42,7 @@
       ],
       "name": "Author spotlight editorial",
       "settings": {
+        "background_image_mobile": "shopify://shop_images/Listing_Page_4.png",
         "top_overlay_image_desktop": "shopify://shop_images/Listing_Page_4.png",
         "profile_image": "shopify://shop_images/f1ea3c0bb13f4566239e1e83785c3fcc27581b57.png",
         "background_alt": "Editorial background",
@@ -67,7 +68,7 @@
         "avatar_top_space_mobile": 96,
         "title_gap_mobile": 20,
         "section_gap_mobile": 24,
-        "top_overlay_height_mobile": 176,
+        "top_overlay_height_mobile": 108,
         "avatar_size_desktop": 320,
         "avatar_size_mobile": 180,
         "avatar_border_color": "#d7c7a0",

@@ -1,1 +1,246 @@
-{"sections":{"main":{"type":"main-page","disabled":true,"settings":{"padding_top":28,"padding_bottom":28}},"author_spotlight_editorial_czkHQw":{"type":"author-spotlight-editorial","blocks":{"content_block_DA7VU8":{"type":"content_block","settings":{"heading":"Writing Style, Themes, and Storytelling Approach","body":"<p>Rowling’s writing style balances clarity with imagination. Her prose is accessible yet layered, allowing younger readers to enter the story while offering deeper themes for adults. She structures her narratives around mystery, gradually revealing information through clues, foreshadowing, and emotional turning points.<\/p><p>Recurring themes in her work include friendship, belonging, prejudice, power, and the consequences of choice. At the heart of her stories is the idea that love and loyalty are forces stronger than fear, giving her fantasy a moral and emotional depth.<\/p>"}},"list_block_hDNtNV":{"type":"list_block","settings":{"heading":"J.K. Rowling’s Works in Collector and Leather-Bound Editions","intro":"<p>Spanning from the founding of the empire by Babur in 1526 to its formal dissolution in 1857, the book is organized into six thematic parts:<\/p>","list_items":"Part I — The Foundations: Babur, Humayun, and the Central Asian inheritance\nPart II — The Consolidation: Akbar's administrative and cultural revolution\nPart III — The Imperial Zenith: Jahangir and Shah Jahan — art, architecture, and power\nPart IV — The Orthodoxy and Its Consequences: Aurangzeb and the politics of religion\nPart V — The Long Decline: The later Mughals and the rise of regional powers\nPart VI — The Twilight Empire: From 1803 to the Revolt of 1857"}}},"block_order":["content_block_DA7VU8","list_block_hDNtNV"],"name":"Author spotlight editorial","settings":{"top_overlay_image_desktop":"shopify:\/\/shop_images\/07d0924a81488df7febad074c4a3ddae48b48d67.png","top_overlay_image_mobile":"shopify:\/\/shop_images\/07d0924a81488df7febad074c4a3ddae48b48d67.png","profile_image":"shopify:\/\/shop_images\/f1ea3c0bb13f4566239e1e83785c3fcc27581b57.png","background_alt":"Editorial background","top_overlay_alt":"Top decorative overlay","author_name":"J.K. Rowling","intro_text":"<p>The Mughal Chronicles stands as the most comprehensive single-volume account of the Mughal Empire ever published in the English language. Now in its third revised and expanded edition, this landmark work by Professor R.C. Sharma has been the definitive reference for students, scholars, and enthusiasts of South Asian history for over two decades.<\/p>","title_font_family":"Bethany Elingston","heading_font_family":"Bethany Elingston","body_font_family":"Satoshi","section_max_width":2700,"content_max_width":1300,"section_radius":0,"padding_top_desktop":70,"padding_bottom_desktop":70,"padding_side_desktop":20,"avatar_top_space_desktop":40,"title_gap_desktop":34,"section_gap_desktop":36,"top_overlay_height_desktop":300,"padding_top_mobile":20,"padding_bottom_mobile":40,"padding_side_mobile":20,"avatar_top_space_mobile":96,"title_gap_mobile":20,"section_gap_mobile":24,"top_overlay_height_mobile":176,"avatar_size_desktop":320,"avatar_size_mobile":180,"avatar_border_color":"#d7c7a0","title_size_desktop":100,"title_size_mobile":52,"title_line_height_desktop":100,"title_line_height_mobile":100,"subheading_size_desktop":24,"subheading_size_mobile":20,"body_size_desktop":16,"body_size_mobile":14,"body_line_height_desktop":27,"body_line_height_mobile":24,"background_color":"#060606","overlay_color":"#000000","overlay_opacity":28,"bottom_fade_opacity":92,"text_color":"#fcfcfc","muted_text_color":"#e8e3d8","title_fallback_color":"#ffffff","title_gradient_start":"#a87e0a","title_gradient_middle":"#c9a53d","title_gradient_end":"#ffffff","heading_gradient_start":"#ffffff","heading_gradient_end":"#bb911e"}}},"order":["main","author_spotlight_editorial_czkHQw"]}
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "main": {
+      "type": "main-page",
+      "disabled": true,
+      "settings": {
+        "padding_top": 28,
+        "padding_bottom": 28
+      }
+    },
+    "author_spotlight_editorial_czkHQw": {
+      "type": "author-spotlight-editorial",
+      "blocks": {
+        "content_block_DA7VU8": {
+          "type": "content_block",
+          "settings": {
+            "heading": "Writing Style, Themes, and Storytelling Approach",
+            "body": "<p>Rowling’s writing style balances clarity with imagination. Her prose is accessible yet layered, allowing younger readers to enter the story while offering deeper themes for adults. She structures her narratives around mystery, gradually revealing information through clues, foreshadowing, and emotional turning points.</p><p>Recurring themes in her work include friendship, belonging, prejudice, power, and the consequences of choice. At the heart of her stories is the idea that love and loyalty are forces stronger than fear, giving her fantasy a moral and emotional depth.</p>"
+          }
+        },
+        "list_block_hDNtNV": {
+          "type": "list_block",
+          "settings": {
+            "heading": "J.K. Rowling’s Works in Collector and Leather-Bound Editions",
+            "intro": "<p>Spanning from the founding of the empire by Babur in 1526 to its formal dissolution in 1857, the book is organized into six thematic parts:</p>",
+            "list_items": "Part I — The Foundations: Babur, Humayun, and the Central Asian inheritance\nPart II — The Consolidation: Akbar's administrative and cultural revolution\nPart III — The Imperial Zenith: Jahangir and Shah Jahan — art, architecture, and power\nPart IV — The Orthodoxy and Its Consequences: Aurangzeb and the politics of religion\nPart V — The Long Decline: The later Mughals and the rise of regional powers\nPart VI — The Twilight Empire: From 1803 to the Revolt of 1857"
+          }
+        }
+      },
+      "block_order": [
+        "content_block_DA7VU8",
+        "list_block_hDNtNV"
+      ],
+      "name": "Author spotlight editorial",
+      "settings": {
+        "top_overlay_image_desktop": "shopify://shop_images/07d0924a81488df7febad074c4a3ddae48b48d67.png",
+        "top_overlay_image_mobile": "shopify://shop_images/07d0924a81488df7febad074c4a3ddae48b48d67.png",
+        "profile_image": "shopify://shop_images/f1ea3c0bb13f4566239e1e83785c3fcc27581b57.png",
+        "background_alt": "Editorial background",
+        "top_overlay_alt": "Top decorative overlay",
+        "author_name": "J.K. Rowling",
+        "intro_text": "<p>The Mughal Chronicles stands as the most comprehensive single-volume account of the Mughal Empire ever published in the English language. Now in its third revised and expanded edition, this landmark work by Professor R.C. Sharma has been the definitive reference for students, scholars, and enthusiasts of South Asian history for over two decades.</p>",
+        "title_font_family": "Bethany Elingston",
+        "heading_font_family": "Bethany Elingston",
+        "body_font_family": "Satoshi",
+        "section_max_width": 2700,
+        "content_max_width": 1300,
+        "section_radius": 0,
+        "padding_top_desktop": 70,
+        "padding_bottom_desktop": 70,
+        "padding_side_desktop": 20,
+        "avatar_top_space_desktop": 40,
+        "title_gap_desktop": 34,
+        "section_gap_desktop": 36,
+        "top_overlay_height_desktop": 300,
+        "padding_top_mobile": 20,
+        "padding_bottom_mobile": 40,
+        "padding_side_mobile": 20,
+        "avatar_top_space_mobile": 96,
+        "title_gap_mobile": 20,
+        "section_gap_mobile": 24,
+        "top_overlay_height_mobile": 176,
+        "avatar_size_desktop": 320,
+        "avatar_size_mobile": 180,
+        "avatar_border_color": "#d7c7a0",
+        "title_size_desktop": 100,
+        "title_size_mobile": 52,
+        "title_line_height_desktop": 100,
+        "title_line_height_mobile": 100,
+        "subheading_size_desktop": 24,
+        "subheading_size_mobile": 20,
+        "body_size_desktop": 16,
+        "body_size_mobile": 14,
+        "body_line_height_desktop": 27,
+        "body_line_height_mobile": 24,
+        "background_color": "#060606",
+        "overlay_color": "#000000",
+        "overlay_opacity": 28,
+        "bottom_fade_opacity": 92,
+        "text_color": "#fcfcfc",
+        "muted_text_color": "#e8e3d8",
+        "title_fallback_color": "#ffffff",
+        "title_gradient_start": "#a87e0a",
+        "title_gradient_middle": "#c9a53d",
+        "title_gradient_end": "#ffffff",
+        "heading_gradient_start": "#ffffff",
+        "heading_gradient_end": "#bb911e"
+      }
+    },
+    "book_shelf_hover_cart_BfcNCH": {
+      "type": "book-shelf-hover-cart",
+      "blocks": {
+        "book_KMKiKg": {
+          "type": "book",
+          "settings": {
+            "product": "abc-books",
+            "button_text": "ADD TO CART",
+            "book_width_desktop": 160,
+            "book_width_tablet": 140,
+            "book_width_mobile": 104,
+            "book_offset_y": 0,
+            "book_offset_y_tablet": 0,
+            "book_offset_y_mobile": 0,
+            "book_rotate": 0,
+            "hover_lift": 8,
+            "shadow_width": 76,
+            "shadow_height": 16,
+            "shadow_blur": 14,
+            "shadow_opacity": 45,
+            "shadow_offset_y": 8,
+            "book_z_index": 5
+          }
+        },
+        "book_rLztcw": {
+          "type": "book",
+          "settings": {
+            "product": "abc-books",
+            "button_text": "ADD TO CART",
+            "book_width_desktop": 160,
+            "book_width_tablet": 140,
+            "book_width_mobile": 104,
+            "book_offset_y": 0,
+            "book_offset_y_tablet": 0,
+            "book_offset_y_mobile": 0,
+            "book_rotate": 0,
+            "hover_lift": 8,
+            "shadow_width": 76,
+            "shadow_height": 16,
+            "shadow_blur": 14,
+            "shadow_opacity": 45,
+            "shadow_offset_y": 8,
+            "book_z_index": 5
+          }
+        },
+        "book_9zna3n": {
+          "type": "book",
+          "settings": {
+            "product": "abc-books",
+            "button_text": "ADD TO CART",
+            "book_width_desktop": 160,
+            "book_width_tablet": 140,
+            "book_width_mobile": 104,
+            "book_offset_y": 0,
+            "book_offset_y_tablet": 0,
+            "book_offset_y_mobile": 0,
+            "book_rotate": 0,
+            "hover_lift": 8,
+            "shadow_width": 76,
+            "shadow_height": 16,
+            "shadow_blur": 14,
+            "shadow_opacity": 45,
+            "shadow_offset_y": 8,
+            "book_z_index": 5
+          }
+        }
+      },
+      "block_order": [
+        "book_KMKiKg",
+        "book_rLztcw",
+        "book_9zna3n"
+      ],
+      "name": "Book shelf hover cart",
+      "settings": {
+        "shelf_image": "shopify://shop_images/e949d73a7b001da9a9c51536b1349931024ac76d.png",
+        "show_product_title": false,
+        "load_more_label": "Load more",
+        "initial_books_desktop": 9,
+        "initial_books_mobile": 10,
+        "load_more_desktop": 9,
+        "load_more_mobile": 10,
+        "bg_color": "#050202",
+        "glow_color": "#2a1208",
+        "title_color": "#ffffff",
+        "load_more_bg": "#121212",
+        "load_more_text": "#ffffff",
+        "load_more_border": "#3a3a3a",
+        "content_max_width": 1400,
+        "padding_top_desktop": 40,
+        "padding_bottom_desktop": 28,
+        "padding_top_mobile": 24,
+        "padding_bottom_mobile": 20,
+        "books_gap_desktop": 0,
+        "books_gap_tablet": 24,
+        "books_gap_mobile": 16,
+        "row_gap_desktop": 36,
+        "row_gap_mobile": 44,
+        "books_bottom_desktop": 46,
+        "books_bottom_tablet": 24,
+        "books_bottom_mobile": 18,
+        "button_bg_1": "#a87832",
+        "button_bg_2": "#ecd9a0",
+        "button_text_color": "#ffffff",
+        "button_radius": 24,
+        "button_font_size": 12,
+        "button_padding_y": 12,
+        "button_padding_x": 18
+      }
+    },
+    "how_we_build_video_4LLD9h": {
+      "type": "how-we-build-video",
+      "name": "How we build video",
+      "settings": {
+        "heading": "How we build",
+        "desktop_video": "shopify://files/videos/file_example_MP4_1920_18MG.mp4",
+        "mobile_video": "shopify://files/videos/file_example_MP4_1920_18MG.mp4",
+        "desktop_poster": "shopify://shop_images/arafed-image-round-table-with-light-coming-from-it_1034560-94186_2_1.png",
+        "mobile_poster": "shopify://shop_images/arafed-image-round-table-with-light-coming-from-it_1034560-94186_2_1.png",
+        "enable_click_to_play": true,
+        "autoplay_video": false,
+        "section_height_desktop": 800,
+        "section_height_mobile": 520,
+        "content_top_desktop": 40,
+        "content_top_mobile": 38,
+        "content_gap_desktop": 18,
+        "content_gap_mobile": 12,
+        "heading_size_desktop": 70,
+        "heading_size_mobile": 34,
+        "text_color": "#D9B04C",
+        "play_bg_deep": "#5C4818",
+        "inline_play_size_desktop": 52,
+        "inline_play_size_mobile": 42,
+        "play_bg_start": "#E8CF7A",
+        "play_bg_end": "#F5EDD4",
+        "play_icon_color": "#17120A",
+        "overlay_opacity": 100,
+        "vignette_opacity": 100,
+        "content_fade_on_play": 0
+      }
+    }
+  },
+  "order": [
+    "main",
+    "author_spotlight_editorial_czkHQw",
+    "book_shelf_hover_cart_BfcNCH",
+    "how_we_build_video_4LLD9h"
+  ]
+}

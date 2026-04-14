@@ -1886,8 +1886,8 @@ border-radius: 122.085px;
     #{{ sid }} .ebcp__cart-btn {
       width: 100%;
       min-height: 44px;
-      border: 0;
-      border-radius: var(--button-radius);
+      {% comment %} border: 0;
+      border-radius: var(--button-radius); {% endcomment %}
       cursor: pointer;
       color: var(--button-text);
       font-size: 12px;
@@ -1897,6 +1897,18 @@ border-radius: 122.085px;
       font-weight: 500;
       background: {% if section.settings.button_bg != blank %}url({{ section.settings.button_bg | image_url: width: 400 }}) center/cover no-repeat{% else %}linear-gradient(180deg, #DDB85F 0%, #8A6210 100%){% endif %};
       box-shadow: 0 10px 20px rgba(0,0,0,.32);
+
+          border-radius: 60px;
+    border: 1px solid;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    padding: 10px 60px;
+    gap: 10px;
+    border-image-source: linear-gradient(90deg, #FFFFFF 0%, rgba(255, 255, 255, 0) 100%);
+
+
     }
 
     #{{ sid }} .ebcp__cart-btn[disabled] {

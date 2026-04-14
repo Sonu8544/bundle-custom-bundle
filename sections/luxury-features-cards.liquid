@@ -33,15 +33,11 @@
     --lf-card-width-desktop: {{ section.settings.card_width_desktop }}px;
     --lf-card-width-mobile: {{ section.settings.card_width_mobile }}px;
 
-    --lf-text-size-desktop: {{ section.settings.text_size_desktop }}px;
-    --lf-text-size-mobile: {{ section.settings.text_size_mobile }}px;
-    --lf-text-line-height-desktop: {{ section.settings.text_line_height_desktop }}px;
-    --lf-text-line-height-mobile: {{ section.settings.text_line_height_mobile }}px;
-
     --lf-content-max-width: {{ section.settings.content_max_width }}px;
     --lf-section-radius: {{ section.settings.section_radius }}px;
 
-    --lf-heading-gradient: radial-gradient(84.35% 106.04% at 104.49% 58.65%, {{ section.settings.heading_gradient_start }} 0%, {{ section.settings.heading_gradient_end }} 100%);
+    --rbh-title-color-start: {{ section.settings.heading_gradient_start }};
+    --rbh-title-color-end: {{ section.settings.heading_gradient_end }};
   "
 >
   <div class="luxury-features-section__bg">
@@ -199,16 +195,16 @@
 
     #{{ section_id }} .luxury-features-section__heading {
       margin: 0;
-      font-family: "Bethany Elingston", serif;
+      font-family: 'Bethany Elingston', serif;
       font-weight: 400;
       font-style: normal;
       font-size: var(--lf-heading-size-desktop);
       letter-spacing: 0;
-      background: var(--lf-heading-gradient);
+      background: linear-gradient(165deg, var(--rbh-title-color-end) 0%, var(--rbh-title-color-start) 40%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
-      color: ;
+      color: transparent;
     }
 
     #{{ section_id }} .luxury-features-section__cards-wrap {
@@ -307,8 +303,8 @@
       font-family: "Satoshi", sans-serif;
       font-style: normal;
       font-weight: 400;
-      font-size: var(--lf-text-size-desktop);
-      line-height: var(--lf-text-line-height-desktop);
+      font-size: 16px;
+      line-height: 22px;
       text-align: center;
       letter-spacing: 0;
       color: #ffffff;
@@ -395,8 +391,8 @@
       }
 
       #{{ section_id }} .luxury-features-card__title {
-        font-size: var(--lf-text-size-mobile);
-        line-height: var(--lf-text-line-height-mobile);
+        font-size: 16px;
+        line-height: 22px;
       }
     }
   </style>

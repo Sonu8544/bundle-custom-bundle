@@ -41,6 +41,9 @@
     --ab-body-color: {{ section.settings.body_color }};
     --ab-bg-color: {{ section.settings.section_bg }};
     --ab-section-overlay-opacity: {{ section.settings.texture_opacity | divided_by: 100.0 }};
+
+    --rbh-title-color-start: {{ section.settings.heading_gradient_start }};
+    --rbh-title-color-end: {{ section.settings.heading_gradient_end }};
   "
 >
   <div class="about-book-section__bg"></div>
@@ -147,8 +150,7 @@
       font-family: "Bethany Elingston", serif;
       font-style: normal;
       font-weight: 400;
-     
-      background: radial-gradient(84.35% 106.04% at 104.49% 58.65%, #ffffff 0%, #bb911e 100%);
+      background: linear-gradient(165deg, var(--rbh-title-color-end) 0%, var(--rbh-title-color-start) 40%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
@@ -163,7 +165,7 @@
     }
 
     #{{ sid }} .about-book-section__subheading {
-      font-size: var(--ab-subheading_size-desktop, var(--ab-subheading-size-desktop));
+      font-size: var(--ab-subheading-size-desktop);
       margin-top: 28px;
       margin-bottom: 16px;
     }
@@ -441,6 +443,18 @@
       "id": "body_color",
       "label": "Body text color",
       "default": "#F5F2EB"
+    },
+    {
+      "type": "color",
+      "id": "heading_gradient_start",
+      "label": "Heading & subheading gradient start",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "heading_gradient_end",
+      "label": "Heading & subheading gradient end",
+      "default": "#BB911E"
     },
     {
       "type": "header",

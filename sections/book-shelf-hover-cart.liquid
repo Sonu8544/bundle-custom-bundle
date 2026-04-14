@@ -2287,19 +2287,89 @@
     return data;
   }
 
-  function replaceHtmlFromSection(htmlString, selector, target) {
-    if (!htmlString || !target) return false;
-
-    const parsed = new DOMParser().parseFromString(htmlString, 'text/html');
-    const source = parsed.querySelector(selector);
-
-    if (!source) return false;
-
-    target.innerHTML = source.innerHTML;
-    return true;
+  function parseHTML(htmlString) {
+    return new DOMParser().parseFromString(htmlString, 'text/html');
   }
 
-  function openDrawerFallback() {
+  function replaceDrawerSection(htmlString) {
+    if (!htmlString) return;
+
+    const parsed = parseHTML(htmlString);
+    const sourceDrawer = parsed.querySelector('#CartDrawer');
+    const targetDrawer = document.querySelector('#CartDrawer');
+
+    if (sourceDrawer && targetDrawer) {
+      targetDrawer.innerHTML = sourceDrawer.innerHTML;
+    }
+  }
+
+  function replaceBubbleSection(htmlString) {
+    if (!htmlString) return;
+
+    const parsed = parseHTML(htmlString);
+    const sourceBubble = parsed.querySelector('#cart-icon-bubble');
+    const targetBubble = document.querySelector('#cart-icon-bubble');
+
+    if (sourceBubble && targetBubble) {
+      targetBubble.innerHTML = sourceBubble.innerHTML;
+    }
+  }
+
+  function rebindDrawerOverlay() {
+    const drawer = document.querySelector('cart-drawer');
+    const overlay = document.querySelector('#CartDrawer-Overlay');
+
+    if (!drawer || !overlay) return;
+
+    const newOverlay = overlay.cloneNode(true);
+    overlay.parentNode.replaceChild(newOverlay, overlay);
+
+    newOverlay.addEventListener('click', function() {
+      if (typeof drawer.close === 'function') {
+        drawer.close();
+      } else {
+        drawer.classList.remove('active');
+        document.body.classList.remove('overflow-hidden');
+      }
+    });
+  }
+
+  function rebindCartIconBubble() {
+    const drawer = document.querySelector('cart-drawer');
+    const bubble = document.querySelector('#cart-icon-bubble');
+
+    if (!drawer || !bubble) return;
+
+    const newBubble = bubble.cloneNode(true);
+    bubble.parentNode.replaceChild(newBubble, bubble);
+
+    newBubble.setAttribute('role', 'button');
+    newBubble.setAttribute('aria-haspopup', 'dialog');
+
+    newBubble.addEventListener('click', function(event) {
+      event.preventDefault();
+      if (typeof drawer.open === 'function') {
+        drawer.open(newBubble);
+      } else {
+        drawer.classList.add('animate', 'active');
+        document.body.classList.add('overflow-hidden');
+      }
+    });
+
+    newBubble.addEventListener('keydown', function(event) {
+      if (event.code && event.code.toUpperCase() === 'SPACE') {
+        event.preventDefault();
+        if (typeof drawer.open === 'function') {
+          drawer.open(newBubble);
+        } else {
+          drawer.classList.add('animate', 'active');
+          document.body.classList.add('overflow-hidden');
+        }
+      }
+    });
+  }
+
+  function openDrawer() {
     const drawer = document.querySelector('cart-drawer');
     if (!drawer) return;
 
@@ -2309,59 +2379,48 @@
     if (inner) inner.classList.remove('is-empty');
 
     if (typeof drawer.open === 'function') {
-      drawer.open();
+      drawer.open(section.querySelector('[data-book-add]'));
     } else {
       drawer.classList.add('animate', 'active');
       document.body.classList.add('overflow-hidden');
     }
   }
 
-  async function refreshCartUI(addData, triggerButton) {
-    const drawer = document.querySelector('cart-drawer');
+  async function refreshCartUI(addData) {
     const sections = addData && addData.sections ? addData.sections : null;
+    if (!sections) return;
 
-    if (drawer && sections && typeof drawer.renderContents === 'function') {
-      try {
-        if (typeof drawer.setActiveElement === 'function' && triggerButton) {
-          drawer.setActiveElement(triggerButton);
-        }
-
-        drawer.renderContents({
-          id: addData.id || addData.key || Date.now(),
-          sections: sections
-        });
-
-        return;
-      } catch (error) {
-        console.warn('[Book Shelf] Dawn drawer render failed:', error);
-      }
+    if (sections['cart-drawer']) {
+      replaceDrawerSection(sections['cart-drawer']);
     }
 
-    if (sections) {
-      const cartDrawerTarget = document.querySelector('#CartDrawer');
-      const bubbleTarget = document.querySelector('#cart-icon-bubble');
-
-      if (cartDrawerTarget && sections['cart-drawer']) {
-        replaceHtmlFromSection(sections['cart-drawer'], '#CartDrawer', cartDrawerTarget);
-      }
-
-      if (bubbleTarget && sections['cart-icon-bubble']) {
-        replaceHtmlFromSection(sections['cart-icon-bubble'], '#cart-icon-bubble', bubbleTarget);
-      }
+    if (sections['cart-icon-bubble']) {
+      replaceBubbleSection(sections['cart-icon-bubble']);
     }
 
-    openDrawerFallback();
+    rebindDrawerOverlay();
+    rebindCartIconBubble();
+    openDrawer();
 
     if (typeof publish === 'function' && typeof PUB_SUB_EVENTS !== 'undefined' && PUB_SUB_EVENTS.cartUpdate) {
       publish(PUB_SUB_EVENTS.cartUpdate, {
-        source: 'book-shelf',
-        productVariantId: Number(triggerButton && triggerButton.getAttribute('data-variant-id'))
+        source: 'book-shelf'
       });
     }
 
-    document.dispatchEvent(new CustomEvent('cart:refresh', { bubbles: true, detail: { source: 'book-shelf' } }));
-    document.dispatchEvent(new CustomEvent('cart:updated', { bubbles: true, detail: { source: 'book-shelf' } }));
-    document.dispatchEvent(new CustomEvent('dispatch:cart-update', { bubbles: true }));
+    document.dispatchEvent(new CustomEvent('cart:refresh', {
+      bubbles: true,
+      detail: { source: 'book-shelf' }
+    }));
+
+    document.dispatchEvent(new CustomEvent('cart:updated', {
+      bubbles: true,
+      detail: { source: 'book-shelf' }
+    }));
+
+    document.dispatchEvent(new CustomEvent('dispatch:cart-update', {
+      bubbles: true
+    }));
   }
 
   async function addToCart(variantId, button) {
@@ -2373,7 +2432,7 @@
 
     try {
       const addData = await addItem(variantId);
-      await refreshCartUI(addData, button);
+      await refreshCartUI(addData);
 
       button.textContent = 'Added';
 

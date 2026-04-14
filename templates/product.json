@@ -102,6 +102,7 @@
         "gradient_mid": "#1a1510",
         "gradient_end": "#0d0d0b",
         "gradient_angle": 135,
+        "bg_image_desktop": "shopify://shop_images/Listing_Page_4.png",
         "badge_text": "EXCLUSIVE",
         "product_title": "Voyage au centre de la terre",
         "product_author": "JK Rowling",
@@ -125,7 +126,7 @@
         "feature_93NQTq": {
           "type": "feature",
           "settings": {
-            "icon_image": "shopify://shop_images/Frame_1618870024_1.svg",
+            "icon_image": "shopify://shop_images/Frame_1618870024_5.png",
             "icon_svg": "",
             "title": "Gold Foil Embossings"
           }

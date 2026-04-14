@@ -222,7 +222,7 @@
     {% endstyle %}
 
     {{ 'base.css' | asset_url | stylesheet_tag }}
-{% comment %} 
+
     {%- comment -%} Product pages: body.gradient gets hero image + overlays (overrides Dawn .gradient fill) {%- endcomment -%}
     {%- if template.name == 'product' -%}
       {% style %}
@@ -232,7 +232,7 @@
             linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.65) 68%, #000000 100%),
             linear-gradient(0deg, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1)),
             linear-gradient(180deg, rgba(0, 0, 0, 0.4) 0%, rgba(0, 0, 0, 0) 100%),
-            url('https://cdn.shopify.com/s/files/1/0589/1719/1777/files/arafed-image-round-table-with-light-coming-from-it_1034560-94186_2_1.png?v=1776115204');
+            url('');
           background-size: 100% 100%, 100% 100%, 100% 100%, cover;
           background-position: 0 0, 0 0, 0 0, center top;
           background-repeat: no-repeat;
@@ -242,7 +242,7 @@
           background: transparent;
         }
       {% endstyle %}
-    {%- endif -%} {% endcomment %}
+    {%- endif -%}
 
     {%- unless settings.type_body_font.system? -%}
       <link rel="preload" as="font" href="{{ settings.type_body_font | font_url }}" type="font/woff2" crossorigin>

@@ -332,6 +332,21 @@
       display: block;
     }
 
+    #{{ sid }} .ebcp__bg-image--mobile {
+  display: none;
+}
+
+@media screen and (max-width: 767px) {
+  #{{ sid }} .ebcp__bg-image--desktop {
+    display: none;
+  }
+
+  #{{ sid }} .ebcp__bg-image--mobile {
+    display: block;
+  }
+}
+
+
     #{{ sid }} .ebcp__overlay {
       background: linear-gradient(180deg, rgba(0,0,0,.40) 0%, rgba(0,0,0,.10) 34%, rgba(0,0,0,.92) 100%), rgba(0,0,0,var(--overlay-opacity));
       pointer-events: none;

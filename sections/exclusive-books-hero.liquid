@@ -119,7 +119,7 @@
           {% endif %}
         </div>
 
-        <div class="ebcp__grid" data-books-grid>
+        <div class="ebcp__grid" data-books-grid data-shelf-image="{% if section.settings.shelf_image != blank %}{{ section.settings.shelf_image | image_url: width: 2400 }}{% endif %}">
           {% for product in active_collection.products %}
             {% assign current_variant = product.selected_or_first_available_variant %}
             <article
@@ -151,11 +151,6 @@
                   </div>
                 </div>
 
-                <div class="ebcp__shelf">
-                  {% if section.settings.shelf_image != blank %}
-                    {{ section.settings.shelf_image | image_url: width: 2400 | image_tag: class: 'ebcp__shelf-image', loading: 'lazy', widths: '480,720,960,1200,1600,2000', sizes: '(max-width: 767px) 92vw, 30vw', alt: '' }}
-                  {% endif %}
-                </div>
 
                 {% if section.settings.show_meta %}
                   <div class="ebcp__meta">
@@ -325,15 +320,27 @@
     #{{ sid }} .ebcp__results-count { font-size: 14px; }
 
     #{{ sid }} .ebcp__grid {
+      display: flex;
+      flex-direction: column;
+      gap: var(--row-gap-desktop);
+      align-items: stretch;
+    }
+    #{{ sid }} .ebcp__shelf-row {
+      position: relative;
+      width: 100%;
+    }
+    #{{ sid }} .ebcp__books-row {
+      position: relative;
+      z-index: 2;
       display: grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
       column-gap: {{ section.settings.grid_gap_desktop }}px;
-      row-gap: var(--row-gap-desktop);
-      align-items: start;
+      align-items: end;
+      margin-bottom: -{{ section.settings.book_overlap_desktop }}px;
     }
-    #{{ sid }} .ebcp__item { min-width: 0; }
-    #{{ sid }} .ebcp__row { position: relative; }
-    #{{ sid }} .ebcp__book-wrap { position: relative; z-index: 2; display: flex; justify-content: center; margin-bottom: -{{ section.settings.book_overlap_desktop }}px; }
+    #{{ sid }} .ebcp__item { min-width: 0; display: flex; justify-content: center; }
+    #{{ sid }} .ebcp__row { position: relative; width: 100%; }
+    #{{ sid }} .ebcp__book-wrap { position: relative; z-index: 2; display: flex; justify-content: center; }
     #{{ sid }} .ebcp__book {
       width: min(100%, var(--book-width-desktop));
       position: relative;
@@ -355,7 +362,7 @@
       width: 100%; min-height: 46px; border: 0; border-radius: var(--button-radius); cursor: pointer; color: var(--button-text); font-size: 12px; letter-spacing: .04em; text-transform: uppercase; font-family: var(--body-font), sans-serif; background: {% if section.settings.button_bg != blank %}url({{ section.settings.button_bg | image_url: width: 400 }}) center/cover no-repeat{% else %}linear-gradient(180deg, #DDB85F 0%, #8A6210 100%){% endif %}; box-shadow: 0 10px 20px rgba(0,0,0,.24);
     }
     #{{ sid }} .ebcp__cart-btn[disabled] { opacity: .6; cursor: not-allowed; }
-    #{{ sid }} .ebcp__shelf { position: relative; z-index: 1; }
+    #{{ sid }} .ebcp__shelf { position: relative; z-index: 1; line-height: 0; }
     #{{ sid }} .ebcp__shelf-image { width: 100%; height: auto; display: block; object-fit: contain; }
     #{{ sid }} .ebcp__meta { margin-top: 12px; text-align: center; color: var(--card-meta); font-family: var(--body-font), sans-serif; }
     #{{ sid }} .ebcp__title { margin: 0; font-size: 15px; line-height: 1.3; font-weight: 500; }
@@ -399,8 +406,7 @@
       #{{ sid }} .ebcp__hero { min-height: var(--hero-min-height-tablet); }
       #{{ sid }} .ebcp__heading { font-size: var(--heading-size-tablet); }
       #{{ sid }} .ebcp__subheading { font-size: var(--subheading-size-tablet); }
-      #{{ sid }} .ebcp__grid { grid-template-columns: repeat(3, minmax(0, 1fr)); column-gap: {{ section.settings.grid_gap_tablet }}px; }
-      #{{ sid }} .ebcp__book-wrap { margin-bottom: -{{ section.settings.book_overlap_tablet }}px; }
+      #{{ sid }} .ebcp__books-row { column-gap: {{ section.settings.grid_gap_tablet }}px; margin-bottom: -{{ section.settings.book_overlap_tablet }}px; }
       #{{ sid }} .ebcp__book { width: min(100%, var(--book-width-tablet)); }
       #{{ sid }} .ebcp__cta { opacity: 1; visibility: visible; transform: translateX(-50%); }
     }
@@ -414,8 +420,8 @@
       #{{ sid }} .ebcp__search { font-size: 13px; }
       #{{ sid }} .ebcp__filter-btn { width: 48px; height: 48px; }
       #{{ sid }} .ebcp__results-meta { flex-direction: column; align-items: flex-start; gap: 6px; }
-      #{{ sid }} .ebcp__grid { grid-template-columns: repeat(3, minmax(0, 1fr)); column-gap: {{ section.settings.grid_gap_mobile }}px; row-gap: var(--row-gap-mobile); }
-      #{{ sid }} .ebcp__book-wrap { margin-bottom: -{{ section.settings.book_overlap_mobile }}px; }
+      #{{ sid }} .ebcp__grid { gap: var(--row-gap-mobile); }
+      #{{ sid }} .ebcp__books-row { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: {{ section.settings.grid_gap_mobile }}px; margin-bottom: -{{ section.settings.book_overlap_mobile }}px; }
       #{{ sid }} .ebcp__book { width: min(100%, var(--book-width-mobile)); }
       #{{ sid }} .ebcp__cart-btn { min-height: 34px; font-size: 9px; }
       #{{ sid }} .ebcp__meta { margin-top: 10px; }
@@ -494,6 +500,46 @@
         return arr;
       }
 
+      function hasActiveControls(q, author, min, max, sort) {
+        return !!q || !!author || min !== null || max !== null || sort !== 'featured';
+      }
+
+      function booksPerRow() {
+        return window.innerWidth <= 767 ? 2 : 3;
+      }
+
+      function buildRows(visible) {
+        if (!grid) return;
+
+        const shelfImage = grid.dataset.shelfImage || '';
+        grid.querySelectorAll('.ebcp__shelf-row').forEach(function(row) { row.remove(); });
+
+        for (let i = 0; i < visible.length; i += booksPerRow()) {
+          const chunk = visible.slice(i, i + booksPerRow());
+          const row = document.createElement('div');
+          row.className = 'ebcp__shelf-row';
+
+          const booksRow = document.createElement('div');
+          booksRow.className = 'ebcp__books-row';
+
+          chunk.forEach(function(item) {
+            item.hidden = false;
+            booksRow.appendChild(item);
+          });
+
+          row.appendChild(booksRow);
+
+          if (shelfImage) {
+            const shelf = document.createElement('div');
+            shelf.className = 'ebcp__shelf';
+            shelf.innerHTML = '<img class="ebcp__shelf-image" src="' + shelfImage + '" alt="" loading="lazy">';
+            row.appendChild(shelf);
+          }
+
+          grid.appendChild(row);
+        }
+      }
+
       function applyFilters() {
         if (!grid) return;
 
@@ -502,6 +548,7 @@
         const min = parsePrice(priceMin && priceMin.value);
         const max = parsePrice(priceMax && priceMax.value);
         const sort = sortSelect ? sortSelect.value : 'featured';
+        const hasActive = hasActiveControls(q, author, min, max, sort);
 
         let visible = items.filter(function(item) {
           const title = normalized(item.dataset.title);
@@ -518,17 +565,18 @@
 
         visible = sortItems(visible, sort);
 
-        items.forEach(function(item) { item.hidden = true; });
-        visible.forEach(function(item) {
-          item.hidden = false;
+        items.forEach(function(item) {
+          item.hidden = true;
           grid.appendChild(item);
         });
+
+        buildRows(visible);
 
         if (resultCount) {
           resultCount.textContent = visible.length + (visible.length === 1 ? ' book' : ' books');
         }
         if (emptyState) {
-          emptyState.hidden = visible.length !== 0;
+          emptyState.hidden = !hasActive || visible.length !== 0;
         }
       }
 
@@ -603,6 +651,12 @@
         }
       });
 
+      let resizeTimer;
+      window.addEventListener('resize', function() {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(applyFilters, 120);
+      });
+
       applyFilters();
     })();
   </script>
@@ -610,7 +664,7 @@
 
 {% schema %}
 {
-  "name": "Collection Books",
+  "name": "Exclusive books ",
   "tag": "section",
   "class": "section section-exclusive-books-collection",
   "settings": [

@@ -227,7 +227,7 @@
         "book_top_offset_mobile": 0,
         "book_bottom_offset_desktop": -120,
         "book_bottom_offset_tablet": -22,
-        "book_bottom_offset_mobile": -62,
+        "book_bottom_offset_mobile": -64,
         "grid_gap_desktop": 0,
         "grid_gap_tablet": 24,
         "grid_gap_mobile": 0,

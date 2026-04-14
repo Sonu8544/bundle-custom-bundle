@@ -1211,7 +1211,7 @@ height: 39px;
 
 {%- liquid
   assign pdp_bg = section.settings.background_color | default: '#0D0D0B'
-  assign hero_fallback = ''
+  assign hero_fallback = 'https://cdn.shopify.com/s/files/1/0589/1719/1777/files/arafed-image-round-table-with-light-coming-from-it_1034560-94186_2_1.png?v=1776115204'
   if section.settings.bg_image_desktop != blank
     assign hero_desktop = section.settings.bg_image_desktop | image_url: width: 1920
   else
@@ -1502,7 +1502,7 @@ height: 39px;
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
     </button>
     <div class="lightbox-img-wrap">
-      <img src="" alt="" class="lightbox-img" id="lightboxImg-{{ section.id }}"  >
+      <img src="" alt="" class="lightbox-img" id="lightboxImg-{{ section.id }}">
     </div>
     <div class="lightbox-counter" id="lightboxCounter-{{ section.id }}"></div>
   </div>
@@ -2022,7 +2022,7 @@ height: 39px;
   letter-spacing: 0.14em;
   text-transform: uppercase;
   background-color: transparent;
- 
+  background-image: url('https://cdn.shopify.com/s/files/1/0589/1719/1777/files/f89b1c50a8a368abe48fc6793fd85a8999a3c0ca_7991f07a-d217-4f4e-bd7a-f6113fc84bf9.png?v=1776090622');
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center;

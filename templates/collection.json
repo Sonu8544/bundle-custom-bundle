@@ -233,7 +233,7 @@
         "grid_gap_mobile": 0,
         "row_gap_desktop": 0,
         "row_gap_mobile": 0,
-        "hover_lift": 6,
+        "hover_lift": 10,
         "button_radius": 24,
         "top_padding": 20,
         "top_padding_mobile": 20,

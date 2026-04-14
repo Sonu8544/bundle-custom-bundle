@@ -2316,11 +2316,16 @@
   if (!htmlString) return;
 
   const parsed = parseHTML(htmlString);
-  const sourceBubble = parsed.querySelector('#cart-icon-bubble');
   const targetBubble = document.querySelector('#cart-icon-bubble');
+  if (!targetBubble) return;
 
-  if (sourceBubble && targetBubble) {
-    targetBubble.innerHTML = sourceBubble.innerHTML;
+  const sourceSection =
+    parsed.querySelector('#shopify-section-cart-icon-bubble') ||
+    parsed.querySelector('.shopify-section') ||
+    parsed.body;
+
+  if (sourceSection) {
+    targetBubble.innerHTML = sourceSection.innerHTML;
   }
 }
 

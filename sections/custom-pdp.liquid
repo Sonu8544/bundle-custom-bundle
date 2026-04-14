@@ -2371,7 +2371,7 @@ height: 39px;
 
 
 
-<script>
+{% comment %} <script>
 (function() {
   var sectionId = '{{ section.id }}';
   var section = document.getElementById('exclusive-book-product-' + sectionId);
@@ -2693,7 +2693,10 @@ height: 39px;
     });
   }
 })();
-</script>
+</script> {% endcomment %}
+
+
+
 
 {% schema %}
 {

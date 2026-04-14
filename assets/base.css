@@ -3326,7 +3326,7 @@ details-disclosure > details {
   .header__inline-menu.rb-desktop-nav .list-menu.list-menu--inline {
     display: flex !important;
     align-items: center;
-    gap: 48px;
+    gap: 45px;
     margin: 0;
     padding: 0;
     list-style: none;

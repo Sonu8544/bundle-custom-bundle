@@ -42,7 +42,7 @@
       "settings": {
         "height_desktop": 920,
         "height_mobile": 760,
-        "header_offset_desktop": 36,
+        "header_offset_desktop": 12,
         "header_offset_mobile": 20,
         "content_max_width": 920,
         "content_padding_x_desktop": 40,

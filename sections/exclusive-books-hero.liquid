@@ -9,12 +9,55 @@
 %}
 
 <section id="{{ sid }}" class="ebcp" style="margin-top: -112px;">
-  <div class="ebcp__bg">
+  {% comment %} <div class="ebcp__bg">
     {% if section.settings.hero_bg != blank %}
       {{ section.settings.hero_bg | image_url: width: 2400 | image_tag: class: 'ebcp__bg-image', loading: 'lazy', widths: '768,1200,1600,2000,2400', sizes: '100vw', alt: section.settings.heading | escape }}
     {% endif %}
     <div class="ebcp__overlay"></div>
-  </div>
+  </div> {% endcomment %}
+
+
+  <div class="ebcp__bg">
+  {% if section.settings.hero_bg != blank %}
+    {{
+      section.settings.hero_bg
+      | image_url: width: 2400
+      | image_tag:
+        class: 'ebcp__bg-image ebcp__bg-image--desktop',
+        loading: 'lazy',
+        widths: '768,1200,1600,2000,2400',
+        sizes: '100vw',
+        alt: section.settings.heading | escape
+    }}
+  {% endif %}
+
+  {% if section.settings.hero_bg_mobile != blank %}
+    {{
+      section.settings.hero_bg_mobile
+      | image_url: width: 1200
+      | image_tag:
+        class: 'ebcp__bg-image ebcp__bg-image--mobile',
+        loading: 'lazy',
+        widths: '480,640,768,960,1200',
+        sizes: '100vw',
+        alt: section.settings.heading | escape
+    }}
+  {% elsif section.settings.hero_bg != blank %}
+    {{
+      section.settings.hero_bg
+      | image_url: width: 1200
+      | image_tag:
+        class: 'ebcp__bg-image ebcp__bg-image--mobile',
+        loading: 'lazy',
+        widths: '480,640,768,960,1200',
+        sizes: '100vw',
+        alt: section.settings.heading | escape
+    }}
+  {% endif %}
+
+  <div class="ebcp__overlay"></div>
+</div>
+
 
   <div class="ebcp__inner page-width">
     <div class="ebcp__hero">

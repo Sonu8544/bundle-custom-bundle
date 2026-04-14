@@ -1,1217 +1,8 @@
-{% comment %} 
-
-{{ 'exclusive-book-product.css' | asset_url | stylesheet_tag }}
-
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Satoshi:wght@300;400;500&display=swap" rel="stylesheet">
-
-<section
-  id="exclusive-book-product-{{ section.id }}"
-  class="exclusive-book-product"
-  style="
-    --section-bg: {{ section.settings.background_color }};
-    --gradient-start: {{ section.settings.gradient_start }};
-    --gradient-mid: {{ section.settings.gradient_mid }};
-    --gradient-end: {{ section.settings.gradient_end }};
-    --gradient-angle: {{ section.settings.gradient_angle }}deg;
-    --accent-gold: #C9A885;
-    --accent-gold-deep: #8E7025;
-    --text-primary: #FFFFFF;
-    --text-muted: #A89880;
-  "
->
-  {%- if section.settings.background_type == 'gradient' -%}
-    <div class="section-bg-gradient"></div>
-  {%- elsif section.settings.background_type == 'image' -%}
-    <div class="section-bg-image">
-      {%- if section.settings.bg_image_desktop != blank -%}
-        <img
-          src="{{ section.settings.bg_image_desktop | image_url: width: 1920 }}"
-          alt=""
-          class="bg-img bg-img--desktop"
-          loading="lazy"
-          width="1920"
-          height="1080"
-        >
-      {%- endif -%}
-      {%- if section.settings.bg_image_mobile != blank -%}
-        <img
-          src="{{ section.settings.bg_image_mobile | image_url: width: 768 }}"
-          alt=""
-          class="bg-img bg-img--mobile"
-          loading="lazy"
-          width="768"
-          height="1024"
-        >
-      {%- endif -%}
-    </div>
-  {%- endif -%}
-
-  <div class="exclusive-book-product__inner">
-
-    {%- comment %} LEFT — Product Gallery {%- endcomment %}
-    <div class="product-gallery" id="productGallery-{{ section.id }}">
-      <div class="product-gallery__main">
-        <button class="gallery-zoom-btn" aria-label="Zoom image">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-            <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35M11 8v6M8 11h6"/>
-          </svg>
-        </button>
-
-        {%- if product != blank -%}
-          {%- assign featured_image = product.featured_image -%}
-          {%- for image in product.images limit: 4 -%}
-            <div
-              class="gallery-slide {% if forloop.first %}gallery-slide--active{% endif %}"
-              data-index="{{ forloop.index0 }}"
-            >
-              <img
-                src="{{ image | image_url: width: 700 }}"
-                alt="{{ image.alt | escape }}"
-                loading="{% if forloop.first %}eager{% else %}lazy{% endif %}"
-                width="700"
-                height="900"
-              >
-            </div>
-          {%- endfor -%}
-        {%- else -%}
-          {%- assign image_keys = 'product_image_1,product_image_2,product_image_3,product_image_4' | split: ',' -%}
-          {%- for image_key in image_keys -%}
-            <div class="gallery-slide {% if forloop.first %}gallery-slide--active{% endif %}" data-index="{{ forloop.index0 }}">
-              {%- assign slide_image = section.settings[image_key] -%}
-              {%- if slide_image != blank -%}
-                <img
-                  src="{{ slide_image | image_url: width: 700 }}"
-                  alt="{{ section.settings.product_title | escape }}"
-                  loading="{% if forloop.first %}eager{% else %}lazy{% endif %}"
-                  width="700"
-                  height="900"
-                >
-              {%- else -%}
-                {{ 'product-1' | placeholder_svg_tag: 'placeholder-svg' }}
-              {%- endif -%}
-            </div>
-          {%- endfor -%}
-        {%- endif -%}
-      </div>
-
-      <div class="product-gallery__thumbs" role="list">
-        {%- if product != blank -%}
-          {%- for image in product.images limit: 4 -%}
-            <button
-              class="thumb {% if forloop.first %}thumb--active{% endif %}"
-              data-target="{{ forloop.index0 }}"
-              aria-label="View image {{ forloop.index }}"
-              role="listitem"
-            >
-              <img
-                src="{{ image | image_url: width: 120 }}"
-                alt="{{ image.alt | escape }}"
-                loading="lazy"
-                width="120"
-                height="150"
-              >
-            </button>
-          {%- endfor -%}
-        {%- else -%}
-          {%- assign thumb_keys = 'product_image_1,product_image_2,product_image_3,product_image_4' | split: ',' -%}
-          {%- for thumb_key in thumb_keys -%}
-            <button
-              class="thumb {% if forloop.first %}thumb--active{% endif %}"
-              data-target="{{ forloop.index0 }}"
-              aria-label="View image {{ forloop.index }}"
-              role="listitem"
-            >
-              {%- assign thumb_image = section.settings[thumb_key] -%}
-              {%- if thumb_image != blank -%}
-                <img
-                  src="{{ thumb_image | image_url: width: 120 }}"
-                  alt=""
-                  loading="lazy"
-                  width="120"
-                  height="150"
-                >
-              {%- else -%}
-                {{ 'product-1' | placeholder_svg_tag: 'placeholder-svg thumb-placeholder' }}
-              {%- endif -%}
-            </button>
-          {%- endfor -%}
-        {%- endif -%}
-      </div>
-    </div>
-
-    {%- comment %} RIGHT — Product Info {%- endcomment %}
-    <div class="product-info">
-
-      {%- comment %} Exclusive Badge {%- endcomment %}
-      <div class="exclusive-badge">
-        <span class="exclusive-badge__text">{{ section.settings.badge_text | default: 'EXCLUSIVE' }}</span>
-      </div>
-
-      {%- comment %} Title + Wishlist {%- endcomment %}
-      <div class="product-title-row">
-        <h1 class="product-title">
-          {%- if product != blank -%}
-            {{ product.title }}
-          {%- else -%}
-            {{ section.settings.product_title | default: 'Voyage au centre de la terre' }}
-          {%- endif -%}
-        </h1>
-        {% comment %} <button class="wishlist-btn" aria-label="Add to wishlist">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
-          </svg>
-        </button> {% endcomment %}
-      </div>
-
-      {%- comment %} Author {%- endcomment %}
-      <p class="product-author">
-        {%- if product != blank -%}
-          {{ product.vendor }}
-        {%- else -%}
-          {{ section.settings.product_author | default: 'JK Rowling' | upcase }}
-        {%- endif -%}
-      </p>
-
-      {%- comment %} Signed Copies Badge {%- endcomment %}
-      <div class="signed-copies-badge">
-       <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-<path d="M21.7497 15.75H5.9866C6.23597 15.2587 6.48628 14.7534 6.7366 14.2397C8.14285 14.3944 9.79097 13.4166 11.6735 11.3203C12.1422 12.5822 13.0282 14.22 14.5403 14.25C15.3897 14.2669 16.2382 13.7625 17.111 12.7153C17.7475 13.4766 19.0591 14.25 21.7497 14.25C21.9486 14.25 22.1394 14.171 22.2801 14.0303C22.4207 13.8897 22.4997 13.6989 22.4997 13.5C22.4997 13.3011 22.4207 13.1103 22.2801 12.9697C22.1394 12.829 21.9486 12.75 21.7497 12.75C18.8969 12.75 18.0532 11.7703 17.9997 11.2397C18.0082 11.0787 17.9623 10.9196 17.8695 10.7879C17.7766 10.6561 17.6423 10.5593 17.4878 10.5131C17.3274 10.4649 17.1556 10.4709 16.9989 10.53C16.8422 10.5891 16.7093 10.6982 16.6207 10.8403C15.4891 12.5784 14.8038 12.7556 14.5657 12.75C13.7913 12.735 13.0038 10.92 12.7338 9.61688C12.705 9.47731 12.637 9.34883 12.5378 9.2465C12.4386 9.14417 12.3123 9.07222 12.1737 9.03907C12.0351 9.00592 11.8899 9.01294 11.7552 9.05932C11.6204 9.1057 11.5017 9.18951 11.4128 9.30094C9.5191 11.6766 8.24972 12.4762 7.45941 12.6834C8.25535 10.9144 8.84972 9.36094 9.23035 8.05313C9.86972 5.85563 9.9166 4.31906 9.37191 3.35625C9.09066 2.85187 8.49628 2.25 7.30378 2.25C5.79816 2.25 4.61035 3.67313 4.0441 6.15469C3.70753 7.6275 3.65222 9.26813 3.89222 10.6547C4.13222 12.0413 4.63003 13.05 5.35378 13.6491C5.0041 14.3728 4.64785 15.0797 4.30097 15.75H2.24972C2.05081 15.75 1.86004 15.829 1.71939 15.9697C1.57874 16.1103 1.49972 16.3011 1.49972 16.5C1.49972 16.6989 1.57874 16.8897 1.71939 17.0303C1.86004 17.171 2.05081 17.25 2.24972 17.25H3.50691C2.44566 19.2188 1.62066 20.5913 1.60753 20.6138C1.55406 20.6982 1.51802 20.7925 1.50151 20.8911C1.485 20.9897 1.48837 21.0906 1.51141 21.1878C1.53445 21.2851 1.5767 21.3768 1.63568 21.4575C1.69466 21.5382 1.76918 21.6063 1.85486 21.6578C1.94053 21.7093 2.03564 21.7431 2.13458 21.7573C2.23352 21.7715 2.33431 21.7658 2.43101 21.7405C2.52772 21.7152 2.61839 21.6709 2.6977 21.61C2.77701 21.5492 2.84336 21.4731 2.89285 21.3862C2.90691 21.3619 3.94941 19.6247 5.20847 17.25H21.7497C21.9486 17.25 22.1394 17.171 22.2801 17.0303C22.4207 16.8897 22.4997 16.6989 22.4997 16.5C22.4997 16.3011 22.4207 16.1103 22.2801 15.9697C22.1394 15.829 21.9486 15.75 21.7497 15.75ZM5.5066 6.48844C5.87972 4.85063 6.60253 3.75 7.30378 3.75C7.80347 3.75 7.96941 3.92437 8.06597 4.09406C8.34722 4.59375 8.67722 6.36187 6.03535 12.1931C5.26097 11.1356 4.99753 8.71875 5.5066 6.48844Z" fill="#C9A885"/>
-</svg>
-        <span class="signed-copies-badge__text">{{ section.settings.signed_copies_text | default: 'Only 250 Signed Copies' }}</span>
-      </div>
-
-      {%- comment %} Price {%- endcomment %}
-      <div class="product-price">
-        {%- if product != blank -%}
-          {%- assign selected_variant = product.selected_or_first_available_variant -%}
-          {%- if product.price_varies -%}
-            <span class="price-label">From</span>
-          {%- endif -%}
-          <span
-            class="price-amount"
-            data-unit-price="{{ selected_variant.price }}"
-            data-currency="{{ cart.currency.symbol | default: shop.currency }}"
-          >{{ selected_variant.price | money_with_currency }}</span>
-          {%- if selected_variant.compare_at_price > selected_variant.price -%}
-            <span class="price-compare">{{ selected_variant.compare_at_price | money_with_currency }}</span>
-          {%- endif -%}
-        {%- else -%}
-          <span class="price-amount">{{ section.settings.product_price | default: 'USD 129.00' }}</span>
-        {%- endif -%}
-      </div>
-
-      {%- comment %} Variant Selector {%- endcomment %}
-      {%- if product != blank and product.variants.size > 1 -%}
-        <div class="variant-selector">
-          {%- for option in product.options_with_values -%}
-            <div class="variant-option">
-              <label class="variant-option__label">{{ option.name }}</label>
-              <div class="variant-option__values">
-                {%- for value in option.values -%}
-                  <button
-                    class="variant-value-btn"
-                    data-option-index="{{ forloop.parentloop.index0 }}"
-                    data-value="{{ value | escape }}"
-                  >{{ value }}</button>
-                {%- endfor -%}
-              </div>
-            </div>
-          {%- endfor -%}
-        </div>
-      {%- endif -%}
-
-      {%- comment %} Quantity + CTA {%- endcomment %}
-      <div class="product-actions">
-        <div class="quantity-control">
-          <button class="qty-btn qty-btn--minus" aria-label="Decrease quantity">
-            <svg width="14" height="2" viewBox="0 0 14 2" fill="none"><path d="M1 1H13" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg>
-          </button>
-          <input
-            type="number"
-            class="qty-input"
-            id="qty-{{ section.id }}"
-            name="quantity"
-            value="1"
-            min="1"
-            max="250"
-            aria-label="Quantity"
-          >
-          <button class="qty-btn qty-btn--plus" aria-label="Increase quantity">
-            <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 1V13M1 7H13" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg>
-          </button>
-        </div>
-
-        {%- if product != blank -%}
-          <button
-            type="button"
-            class="cta-btn"
-            id="addToCart-{{ section.id }}"
-            data-product-id="{{ product.id }}"
-            data-variant-id="{{ product.selected_or_first_available_variant.id }}"
-            {% unless product.selected_or_first_available_variant.available %}disabled{% endunless %}
-          >
-            {%- if product.selected_or_first_available_variant.available -%}
-              {{ section.settings.cta_label | default: 'PRE ORDER NOW' }}
-            {%- else -%}
-              Sold Out
-            {%- endif -%}
-          </button>
-        {%- else -%}
-          <a href="{{ section.settings.cta_link | default: '#' }}" class="cta-btn">
-            {{ section.settings.cta_label | default: 'PRE ORDER NOW' }}
-          </a>
-        {%- endif -%}
-      </div>
-
-    </div>
-  </div>
-
-  {%- comment %} Lightbox / Zoom overlay {%- endcomment %}
-  <div class="gallery-lightbox" id="lightbox-{{ section.id }}" aria-hidden="true">
-    <button class="lightbox-close" aria-label="Close zoom">
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
-    </button>
-    <div class="lightbox-img-wrap">
-      <img src="" alt="" class="lightbox-img" id="lightboxImg-{{ section.id }}">
-    </div>
-  </div>
-</section>
-
-<style>
-/* =============================================
-   EXCLUSIVE BOOK PRODUCT — SECTION STYLES
-   ============================================= */
-
-/* Font imports (fallback to serif for Bethany Ellington) */
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Satoshi:wght@300;400;500&display=swap');
-
-/* Custom font declaration - Bethany Ellington must be uploaded to Shopify assets */
-@font-face {
-  font-family: 'Bethany Ellington';
-  src: url('{{ "BethanyEllington.woff2" | asset_url }}') format('woff2'),
-       url('{{ "BethanyEllington.woff" | asset_url }}') format('woff');
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
-
-/* Fallback stack if Bethany Ellington is not uploaded */
-:root {
-  --font-display: 'Bethany Ellington', 'Cormorant Garamond', 'Playfair Display', Georgia, serif;
-  --font-body: 'Satoshi', 'DM Sans', system-ui, sans-serif;
-}
-
-#exclusive-book-product-{{ section.id }} {
-  position: relative;
-  background-color: var(--section-bg, #0D0D0B);
-  min-height: 100vh;
-  overflow: hidden;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-/* Background layers */
-.section-bg-gradient {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    var(--gradient-angle, 135deg),
-    var(--gradient-start, #0D0D0B) 0%,
-    var(--gradient-mid, #1A1510) 50%,
-    var(--gradient-end, #0D0D0B) 100%
-  );
-  pointer-events: none;
-  z-index: 0;
-}
-
-.section-bg-image {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  z-index: 0;
-}
-.section-bg-image .bg-img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center;
-}
-.section-bg-image .bg-img--mobile { display: none; }
-
-/* Inner layout */
-.exclusive-book-product__inner {
-  position: relative;
-  z-index: 1;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 60px;
-  width: 100%;
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 80px 40px;
-  align-items: center;
-}
-
-/* ── Gallery ────────────────── */
-.product-gallery {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-
-.product-gallery__main {
-  position: relative;
-  width: 100%;
-  aspect-ratio: 0.75 / 1;
-  border-radius: 4px;
-  overflow: hidden;
-  background: #111;
-}
-
-.gallery-slide {
-  position: absolute;
-  inset: 0;
-  opacity: 0;
-  transition: opacity 0.4s ease;
-  pointer-events: none;
-}
-.gallery-slide--active {
-  opacity: 1;
-  pointer-events: auto;
-}
-.gallery-slide img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-}
-
-/* Placeholder SVG fill */
-.gallery-slide .placeholder-svg,
-.thumb-placeholder {
-  width: 100%;
-  height: 100%;
-  fill: #2A2520;
-  color: #5A4A3A;
-}
-
-.gallery-zoom-btn {
-  position: absolute;
-  top: 14px;
-  left: 14px;
-  z-index: 2;
-  width: 40px;
-  height: 40px;
-  border-radius: 6px;
-  background: rgba(255,255,255,0.92);
-  border: none;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #222;
-  transition: background 0.2s;
-}
-.gallery-zoom-btn:hover { background: #fff; }
-
-.product-gallery__thumbs {
-  display: flex;
-  gap: 14px;
-}
-
-.thumb {
-  width: 25%;
-  aspect-ratio: 0.78 / 1;
-  border-radius: 3px;
-  overflow: hidden;
-  background: #111;
-  border: 1px solid transparent;
-  cursor: pointer;
-  padding: 0;
-  transition: border-color 0.2s;
-}
-.thumb img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-}
-.thumb--active {
-  border-color: var(--accent-gold);
-}
-.thumb:hover:not(.thumb--active) {
-  border-color: rgba(201, 168, 133, 0.4);
-}
-
-/* ── Product Info ────────────── */
-.product-info {
-  display: flex;
-  flex-direction: column;
-  gap: 0;
-  margin-top: 100px;
-}
-
-/* Exclusive badge */
-.exclusive-badge {
-    margin-bottom:20px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0px;
-gap: 30px;
-  width: 172px;
-height: 39px;
-  padding: 10px 22px;
-  border-radius: 4px;
-  color: #fff8e7;
- background: linear-gradient(270deg, rgba(142, 112, 37, 0) 0%, rgba(142, 112, 37, 0.854796) 78.75%, rgba(142, 112, 37, 0) 100%);
-  box-shadow: 0 10px 32px rgba(0,0,0,.24);
-  font-family: "Bethany Elingston", serif;
-  font-size: 18px;
-  line-height: 1;
-  letter-spacing: 0;
-}
-
-.exclusive-badge__text {
-  font-family: var(--font-display);
-  font-weight: 400;
-  font-style: normal;
-  font-size: 14px;
-  line-height: 22px;
-  letter-spacing: 0.12em;
-  color: #F5E6CF;
-  text-transform: uppercase;
-}
-
-/* Title row */
-.product-title-row {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 16px;
-  margin-bottom: 16px;
-}
-
-.product-title {
-  font-family: var(--font-display);
-  font-weight: 400;
-  font-style: normal;
-  font-size: 60px;
-  line-height: 71px;
-  letter-spacing: 0;
-  color: var(--text-primary);
-  margin: 0;
-  flex: 1;
-  margin-top: 25px;
-}
-{% comment %} 
-.wishlist-btn {
-  flex-shrink: 0;
-  width: 46px;
-  height: 46px;
-  border-radius: 50%;
-  border: 1.5px solid rgba(255,255,255,0.25);
-  background: transparent;
-  color: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  margin-top: 8px;
-  transition: border-color 0.2s, background 0.2s;
-}
-.wishlist-btn:hover {
-  border-color: var(--accent-gold);
-  color: var(--accent-gold);
-}
-.wishlist-btn.active svg { fill: var(--accent-gold); stroke: var(--accent-gold); } {% endcomment %}
-
-/* Author */
-.product-author {
-  font-family: var(--font-body);
-  font-weight: 400;
-  font-size: 16px;
-  line-height: 30px;
-  letter-spacing: 0.20em;
-  text-transform: uppercase;
-  text-decoration: underline;
-  text-underline-offset: 4px;
-  text-decoration-thickness: 1px;
-  color: #C9A885;
-  margin: 0 0 22px 0;
-}
-
-/* Signed copies badge */
-.signed-copies-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  padding: 10px 18px;
-  border: 1px solid #C9A885;
-  border-radius: 4px;
-  width: fit-content;
-  margin-bottom: 32px;
-}
-
-.signed-copies-badge__text {
-  font-family: var(--font-body);
-  font-weight: 400;
-  font-size: 18px;
-  line-height: 1;
-  letter-spacing: 0;
-  color: #C9A885;
-  text-align: center;
-}
-
-/* Price */
-.product-price {
-  display: flex;
-  align-items: baseline;
-  gap: 12px;
-  margin-bottom: 32px;
-}
-
-.price-label {
-  font-family: var(--font-body);
-  font-size: 14px;
-  color: var(--text-muted);
-}
-
-.price-amount {
-  font-family: var(--font-body);
-  font-weight: 400;
-  font-size: 36px;
-  line-height: 1;
-  color: var(--accent-gold);
-  letter-spacing: -0.01em;
-}
-
-.price-compare {
-  font-family: var(--font-body);
-  font-size: 20px;
-  color: var(--text-muted);
-  text-decoration: line-through;
-}
-
-/* Variant selector */
-.variant-selector {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  margin-bottom: 28px;
-}
-.variant-option__label {
-  font-family: var(--font-body);
-  font-size: 13px;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--text-muted);
-  display: block;
-  margin-bottom: 8px;
-}
-.variant-option__values {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-.variant-value-btn {
-  padding: 8px 18px;
-  border: 1px solid rgba(201,168,133,0.35);
-  background: transparent;
-  color: white;
-  font-family: var(--font-body);
-  font-size: 14px;
-  cursor: pointer;
-  border-radius: 3px;
-  transition: border-color 0.2s, background 0.2s;
-}
-.variant-value-btn:hover,
-.variant-value-btn.active {
-  border-color: var(--accent-gold);
-  background: rgba(201,168,133,0.1);
-}
-
-/* Actions row */
-.product-actions {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  flex-wrap: wrap;
-}
-
-/* Quantity control */
-.quantity-control {
-  display: flex;
-  align-items: center;
-  gap: 0;
-  
-  border-radius: 50px;
-  padding: 0 6px;
-  height: 54px;
-}
-
-.qty-btn {
-  width: 60px;
-  height: 60px;
-  border-radius: 80px;
-  filter: drop-shadow(0px 14px 24px rgba(255, 208, 88, 0.2));
-  border: 1px solid;
-  background: rgba(255,255,255,0.08);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  color: white;
-  transition: background 0.2s;
-  flex-shrink: 0;
- 
-}
-.qty-btn:hover { background: rgba(255,255,255,0.14); }
-
-.qty-input {
-  width: 42px;
-  text-align: center;
-  background: transparent;
-  border: none;
-  color: white;
-  font-family: var(--font-body);
-  font-size: 18px;
-  font-weight: 400;
-  -moz-appearance: textfield;
-  outline: none;
-}
-.qty-input::-webkit-inner-spin-button,
-.qty-input::-webkit-outer-spin-button { -webkit-appearance: none; }
-
-/* CTA Button */
-.cta-btn {
-
-
-  
- color:white;
-   position: relative;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 212px;
-  min-height: 60px;
-  padding: 12px 40px;
-  overflow: hidden;
-  border: 1px solid rgba(255,255,255,.24);
-  border-radius: 60px;
-  text-decoration: none;
-  filter: drop-shadow(0px 14px 24px rgba(255, 208, 88, 0.2));
-    font-family: "Satoshi", sans-serif;
-    font-weight:700;
-
-    background-repeat: no-repeat;
-  background-size: cover;
-  background-position: center;
-  background-image: url('https://cdn.shopify.com/s/files/1/0589/1719/1777/files/f89b1c50a8a368abe48fc6793fd85a8999a3c0ca.png?v=1775475634');
-
-}
-.cta-btn:hover {
-  opacity: 0.92;
-  transform: translateY(-1px);
-  box-shadow: 0 8px 32px rgba(184,137,42,0.45);
-}
-.cta-btn:active { transform: translateY(0); }
-.cta-btn:disabled {
-  opacity: 0.45;
-  cursor: not-allowed;
-  transform: none;
-}
-
-/* ── Lightbox ────────────────── */
-.gallery-lightbox {
-  position: fixed;
-  inset: 0;
-  z-index: 9999;
-  background: rgba(0,0,0,0.92);
-  display: none;
-  align-items: center;
-  justify-content: center;
-  padding: 40px;
-}
-.gallery-lightbox.is-open {
-  display: flex;
-}
-.lightbox-close {
-  position: absolute;
-  top: 20px;
-  right: 20px;
-  width: 44px;
-  height: 44px;
-  background: rgba(255,255,255,0.1);
-  border: none;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-}
-.lightbox-img-wrap {
-  max-width: 90vw;
-  max-height: 90vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.lightbox-img {
-  max-width: 100%;
-  max-height: 90vh;
-  object-fit: contain;
-  border-radius: 4px;
-}
-
-/* ── Tablet ────────────────── */
-@media (max-width: 1024px) {
-  .exclusive-book-product__inner {
-    grid-template-columns: 1fr 1fr;
-    gap: 40px;
-    padding: 60px 32px;
-  }
-  .product-title { font-size: 44px; line-height: 54px; }
-}
-
-/* ── Mobile ────────────────── */
-@media (max-width: 768px) {
-  #exclusive-book-product-{{ section.id }} {
-    align-items: flex-start;
-  }
-  .exclusive-book-product__inner {
-    grid-template-columns: 1fr;
-    gap: 32px;
-    padding: 40px 20px 60px;
-  }
-  .section-bg-image .bg-img--desktop { display: none; }
-  .section-bg-image .bg-img--mobile { display: block; }
-
-  .product-gallery__main { aspect-ratio: 0.78 / 1; }
-  .product-title { font-size: 36px; line-height: 44px; }
-  .price-amount { font-size: 28px; }
-  .product-actions { flex-direction: column; align-items: stretch; }
-  .cta-btn { min-width: unset; width: 100%; }
-  .quantity-control { justify-content: left; }
-}
-
-@media (max-width: 480px) {
-  .product-title { font-size: 30px; line-height: 38px; }
-  .exclusive-book-product__inner { padding: 30px 16px 50px; }
-}
-</style>
-
-<script>
-(function() {
-  const sectionId = '{{ section.id }}';
-  const section = document.getElementById('exclusive-book-product-' + sectionId);
-  if (!section) return;
-
-  // ── Gallery Thumbs ──────────────
-  const slides = section.querySelectorAll('.gallery-slide');
-  const thumbs = section.querySelectorAll('.thumb');
-
-  function activateSlide(index) {
-    slides.forEach((s, i) => s.classList.toggle('gallery-slide--active', i === index));
-    thumbs.forEach((t, i) => t.classList.toggle('thumb--active', i === index));
-  }
-
-  thumbs.forEach((thumb, index) => {
-    thumb.addEventListener('click', () => activateSlide(index));
-  });
-
-  // ── Zoom / Lightbox ──────────────
-  const lightbox = document.getElementById('lightbox-' + sectionId);
-  const lightboxImg = document.getElementById('lightboxImg-' + sectionId);
-  const zoomBtn = section.querySelector('.gallery-zoom-btn');
-  const closeBtn = section.querySelector('.lightbox-close');
-
-  function openLightbox() {
-    const activeSlide = section.querySelector('.gallery-slide--active img');
-    if (activeSlide && lightbox && lightboxImg) {
-      lightboxImg.src = activeSlide.src;
-      lightboxImg.alt = activeSlide.alt;
-      lightbox.classList.add('is-open');
-      lightbox.setAttribute('aria-hidden', 'false');
-      document.body.style.overflow = 'hidden';
-    }
-  }
-
-  function closeLightbox() {
-    if (lightbox) {
-      lightbox.classList.remove('is-open');
-      lightbox.setAttribute('aria-hidden', 'true');
-      document.body.style.overflow = '';
-    }
-  }
-
-  if (zoomBtn) zoomBtn.addEventListener('click', openLightbox);
-  if (closeBtn) closeBtn.addEventListener('click', closeLightbox);
-  if (lightbox) {
-    lightbox.addEventListener('click', (e) => { if (e.target === lightbox) closeLightbox(); });
-  }
-  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeLightbox(); });
-
-  // ── Quantity + Live Price Update ──────────────
-  const qtyInput  = section.querySelector('.qty-input');
-  const minusBtn  = section.querySelector('.qty-btn--minus');
-  const plusBtn   = section.querySelector('.qty-btn--plus');
-  const priceEl   = section.querySelector('.price-amount');
-
-  // Store the unit price in cents from the data attribute set in Liquid
-  const unitPriceCents = parseInt(priceEl ? (priceEl.dataset.unitPrice || '0') : '0', 10);
-  const currencySymbol = priceEl ? (priceEl.dataset.currency || '') : '';
-
-  function formatMoney(cents) {
-    // Use Shopify's built-in formatter if available, otherwise format manually
-    if (window.Shopify && typeof window.Shopify.formatMoney === 'function') {
-      return window.Shopify.formatMoney(cents, window.Shopify.money_format || '{{amount}}');
-    }
-    // Fallback: prefix + amount with 2 decimal places
-    const amount = (cents / 100).toFixed(2);
-    return currencySymbol + amount;
-  }
-
-  function updatePrice() {
-    if (!priceEl || !unitPriceCents) return;
-    const qty = parseInt(qtyInput ? qtyInput.value : '1', 10) || 1;
-    priceEl.textContent = formatMoney(unitPriceCents * qty);
-  }
-
-  if (qtyInput) {
-    if (minusBtn) {
-      minusBtn.addEventListener('click', () => {
-        const v = parseInt(qtyInput.value, 10);
-        if (v > 1) { qtyInput.value = v - 1; updatePrice(); }
-      });
-    }
-    if (plusBtn) {
-      plusBtn.addEventListener('click', () => {
-        qtyInput.value = parseInt(qtyInput.value, 10) + 1;
-        updatePrice();
-      });
-    }
-    qtyInput.addEventListener('change', () => {
-      if (parseInt(qtyInput.value, 10) < 1) qtyInput.value = 1;
-      updatePrice();
-    });
-  }
-
-  // ── Wishlist toggle ──────────────
-  const wishlistBtn = section.querySelector('.wishlist-btn');
-  if (wishlistBtn) {
-    wishlistBtn.addEventListener('click', () => wishlistBtn.classList.toggle('active'));
-  }
-
-  // ── Variant selection ──────────────
-  const variantBtns = section.querySelectorAll('.variant-value-btn');
-  variantBtns.forEach(btn => {
-    btn.addEventListener('click', function () {
-      const optionIndex = this.dataset.optionIndex;
-      section.querySelectorAll(`.variant-value-btn[data-option-index="${optionIndex}"]`)
-        .forEach(b => b.classList.remove('active'));
-      this.classList.add('active');
-    });
-  });
-
-  // ── Cart helpers (proven pattern) ──────────────
-  function getCartDrawer()      { return document.querySelector('cart-drawer'); }
-  function getCartDrawerMain()  { return document.getElementById('CartDrawer'); }
-  function getCartBubble()      { return document.getElementById('cart-icon-bubble'); }
-
-  async function addItem(variantId, quantity) {
-    const root = (window.Shopify && window.Shopify.routes && window.Shopify.routes.root)
-      ? window.Shopify.routes.root
-      : '/';
-    const response = await fetch(root + 'cart/add.js', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-        'X-Requested-With': 'XMLHttpRequest'
-      },
-      body: JSON.stringify({ items: [{ id: Number(variantId), quantity: quantity }] })
-    });
-    const data = await response.json();
-    if (!response.ok || data.status) {
-      throw new Error(data.description || 'Failed to add to cart');
-    }
-    return data;
-  }
-
-  async function fetchSection(sectionId) {
-    const root = (window.Shopify && window.Shopify.routes && window.Shopify.routes.root)
-      ? window.Shopify.routes.root
-      : '/';
-    const res = await fetch(root + '?section_id=' + sectionId, {
-      headers: { 'X-Requested-With': 'XMLHttpRequest' }
-    });
-    if (!res.ok) throw new Error('Failed to fetch section: ' + sectionId);
-    return res.text();
-  }
-
-  function replaceDrawerMarkup(html) {
-    const parsed        = new DOMParser().parseFromString(html, 'text/html');
-    const freshMain     = parsed.getElementById('CartDrawer');
-    const currentMain   = getCartDrawerMain();
-    if (currentMain && freshMain) {
-      currentMain.innerHTML = freshMain.innerHTML;
-    }
-    const drawer = getCartDrawer();
-    if (drawer) {
-      drawer.classList.remove('is-empty');
-      const inner = drawer.querySelector('.drawer__inner');
-      if (inner) inner.classList.remove('is-empty');
-    }
-  }
-
-  function replaceBubbleMarkup(html) {
-    const parsed        = new DOMParser().parseFromString(html, 'text/html');
-    const freshBubble   = parsed.getElementById('cart-icon-bubble');
-    const currentBubble = getCartBubble();
-    if (currentBubble && freshBubble) {
-      currentBubble.innerHTML = freshBubble.innerHTML;
-    }
-  }
-
-  function openDrawer() {
-    const drawer = getCartDrawer();
-    if (!drawer) return;
-    drawer.classList.remove('is-empty');
-    const inner = drawer.querySelector('.drawer__inner');
-    if (inner) inner.classList.remove('is-empty');
-    if (typeof drawer.open === 'function') {
-      drawer.open();
-    } else {
-      drawer.classList.add('animate', 'active');
-      document.body.classList.add('overflow-hidden');
-    }
-  }
-
-  async function refreshCartUI() {
-    const [drawerHtml, bubbleHtml] = await Promise.all([
-      fetchSection('cart-drawer'),
-      fetchSection('cart-icon-bubble')
-    ]);
-    replaceDrawerMarkup(drawerHtml);
-    replaceBubbleMarkup(bubbleHtml);
-    setTimeout(openDrawer, 60);
-
-    // Fire Dawn pub/sub if available
-    if (typeof window.publish === 'function' && window.PUB_SUB_EVENTS && window.PUB_SUB_EVENTS.cartUpdate) {
-      window.publish(window.PUB_SUB_EVENTS.cartUpdate, { source: 'exclusive-book-product' });
-    }
-    // Fallback custom events
-    document.dispatchEvent(new CustomEvent('cart:refresh', { detail: { source: 'exclusive-book-product' } }));
-    document.dispatchEvent(new CustomEvent('cart:updated', { detail: { source: 'exclusive-book-product' } }));
-  }
-
-  // ── Add to Cart ──────────────
-  const cartBtn = section.querySelector('#addToCart-' + sectionId);
-
-  if (cartBtn) {
-    cartBtn.addEventListener('click', async function () {
-      const btn         = this;
-      const variantId   = btn.dataset.variantId;
-      const qty         = qtyInput ? parseInt(qtyInput.value, 10) || 1 : 1;
-      const originalText = btn.textContent.trim();
-
-      if (!variantId || btn.disabled) return;
-
-      btn.disabled     = true;
-      btn.textContent  = 'Adding...';
-
-      // Clear any previous error
-      const prevErr = section.querySelector('.atc-error');
-      if (prevErr) prevErr.textContent = '';
-
-      try {
-        await addItem(variantId, qty);
-        await refreshCartUI();
-        btn.textContent = 'Added ✓';
-        setTimeout(() => {
-          btn.textContent = originalText;
-          btn.disabled    = false;
-        }, 1200);
-      } catch (err) {
-        console.error('[Exclusive Book] Add to cart error:', err);
-        // Show error beneath actions row
-        let errEl = section.querySelector('.atc-error');
-        if (!errEl) {
-          errEl = document.createElement('p');
-          errEl.className = 'atc-error';
-          errEl.style.cssText = 'color:#e07070;font-size:13px;margin-top:10px;font-family:var(--font-body)';
-          section.querySelector('.product-actions').after(errEl);
-        }
-        errEl.textContent = err.message || 'Could not add item. Please try again.';
-        btn.textContent = 'Error';
-        setTimeout(() => {
-          btn.textContent = originalText;
-          btn.disabled    = false;
-          if (errEl) errEl.textContent = '';
-        }, 1400);
-      }
-    });
-  }
-})();
-</script>
-
-{% schema %}
-{
-  "name": "Exclusive Book Product",
-  "tag": "section",
-  "class": "exclusive-book-product-section",
-  "settings": [
-    {
-      "type": "header",
-      "content": "Background"
-    },
-    {
-      "type": "select",
-      "id": "background_type",
-      "label": "Background Type",
-      "options": [
-        { "value": "solid", "label": "Solid Color" },
-        { "value": "gradient", "label": "Gradient" },
-        { "value": "image", "label": "Image" }
-      ],
-      "default": "solid"
-    },
-    {
-      "type": "color",
-      "id": "background_color",
-      "label": "Background Color",
-      "default": "#0D0D0B"
-    },
-    {
-      "type": "color",
-      "id": "gradient_start",
-      "label": "Gradient — Start Color",
-      "default": "#0D0D0B"
-    },
-    {
-      "type": "color",
-      "id": "gradient_mid",
-      "label": "Gradient — Mid Color",
-      "default": "#1A1510"
-    },
-    {
-      "type": "color",
-      "id": "gradient_end",
-      "label": "Gradient — End Color",
-      "default": "#0D0D0B"
-    },
-    {
-      "type": "range",
-      "id": "gradient_angle",
-      "min": 0,
-      "max": 360,
-      "step": 5,
-      "unit": "°",
-      "label": "Gradient Angle",
-      "default": 135
-    },
-    {
-      "type": "image_picker",
-      "id": "bg_image_desktop",
-      "label": "Background Image — Desktop"
-    },
-    {
-      "type": "image_picker",
-      "id": "bg_image_mobile",
-      "label": "Background Image — Mobile"
-    },
-    {
-      "type": "header",
-      "content": "Badge"
-    },
-    {
-      "type": "text",
-      "id": "badge_text",
-      "label": "Exclusive Badge Text",
-      "default": "EXCLUSIVE"
-    },
-    {
-      "type": "header",
-      "content": "Product (Static — if not using Shopify product)"
-    },
-    {
-      "type": "text",
-      "id": "product_title",
-      "label": "Product Title",
-      "default": "Voyage au centre de la terre"
-    },
-    {
-      "type": "text",
-      "id": "product_author",
-      "label": "Author / Vendor",
-      "default": "JK Rowling"
-    },
-    {
-      "type": "text",
-      "id": "signed_copies_text",
-      "label": "Signed Copies Label",
-      "default": "Only 250 Signed Copies"
-    },
-    {
-      "type": "text",
-      "id": "product_price",
-      "label": "Price (static display)",
-      "default": "USD 129.00"
-    },
-    {
-      "type": "image_picker",
-      "id": "product_image_1",
-      "label": "Product Image 1 (Main)"
-    },
-    {
-      "type": "image_picker",
-      "id": "product_image_2",
-      "label": "Product Image 2"
-    },
-    {
-      "type": "image_picker",
-      "id": "product_image_3",
-      "label": "Product Image 3"
-    },
-    {
-      "type": "image_picker",
-      "id": "product_image_4",
-      "label": "Product Image 4"
-    },
-    {
-      "type": "header",
-      "content": "CTA Button"
-    },
-    {
-      "type": "text",
-      "id": "cta_label",
-      "label": "Button Label",
-      "default": "PRE ORDER NOW"
-    },
-    {
-      "type": "url",
-      "id": "cta_link",
-      "label": "Button Link (static mode)"
-    }
-  ],
-  "presets": [
-    {
-      "name": "Exclusive Book Product"
-    }
-  ]
-}
-{% endschema %} {% endcomment %}
-
-
-
 
 
 {%- liquid
   assign pdp_bg = section.settings.background_color | default: '#0D0D0B'
-  assign hero_fallback = 'https://cdn.shopify.com/s/files/1/0589/1719/1777/files/arafed-image-round-table-with-light-coming-from-it_1034560-94186_2_1.png?v=1776115204'
+  assign hero_fallback = ''
   if section.settings.bg_image_desktop != blank
     assign hero_desktop = section.settings.bg_image_desktop | image_url: width: 1920
   else
@@ -1224,8 +15,8 @@ height: 39px;
   endif
 -%}
 <section
-  id="exclusive-book-product-{{ section.id }}"
-  class="exclusive-book-product exclusive-book-product--bg-{{ section.settings.background_type }}"
+  id="rb-prime-exclusive-book-product-{{ section.id }}"
+  class="rb-prime-exclusive-book-product rb-prime-exclusive-book-product--bg-{{ section.settings.background_type }}"
   style="
     --section-bg: {{ section.settings.background_color }};
     --gradient-start: {{ section.settings.gradient_start }};
@@ -1241,28 +32,28 @@ height: 39px;
   "
 >
   {%- comment -%} Full-bleed hero: background image only {%- endcomment -%}
-  <div class="section-bg-hero" style="background-color: {{ pdp_bg }};" aria-hidden="true"></div>
+  <div class="rb-prime-section-bg-hero" style="background-color: {{ pdp_bg }};" aria-hidden="true"></div>
 
-  <div class="exclusive-book-product__inner">
+  <div class="rb-prime-exclusive-book-product__inner">
 
     {%- comment %} LEFT — Product Gallery {%- endcomment %}
-    <div class="product-gallery" id="productGallery-{{ section.id }}">
-      <div class="product-gallery__main">
+    <div class="rb-prime-product-gallery" id="productGallery-{{ section.id }}">
+      <div class="rb-prime-product-gallery__main">
 
         {%- comment %} Zoom button {%- endcomment %}
-        <button class="gallery-zoom-btn" aria-label="Zoom image">
+        <button class="rb-prime-gallery-zoom-btn" aria-label="Zoom image">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
             <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35M11 8v6M8 11h6"/>
           </svg>
         </button>
 
         {%- comment %} Prev / Next arrows {%- endcomment %}
-        <button class="gallery-nav gallery-nav--prev" aria-label="Previous image">
+        <button class="rb-prime-gallery-nav rb-prime-gallery-nav--prev" aria-label="Previous image">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <polyline points="15 18 9 12 15 6"/>
           </svg>
         </button>
-        <button class="gallery-nav gallery-nav--next" aria-label="Next image">
+        <button class="rb-prime-gallery-nav rb-prime-gallery-nav--next" aria-label="Next image">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <polyline points="9 18 15 12 9 6"/>
           </svg>
@@ -1271,7 +62,7 @@ height: 39px;
         {%- if product != blank -%}
           {%- for image in product.images limit: 8 -%}
             <div
-              class="gallery-slide {% if forloop.first %}gallery-slide--active{% endif %}"
+              class="rb-prime-gallery-slide {% if forloop.first %}rb-prime-gallery-slide--active{% endif %}"
               data-index="{{ forloop.index0 }}"
             >
               <img
@@ -1288,7 +79,7 @@ height: 39px;
           {%- for image_key in image_keys -%}
             {%- assign slide_image = section.settings[image_key] -%}
             {%- if slide_image != blank -%}
-              <div class="gallery-slide {% if forloop.first %}gallery-slide--active{% endif %}" data-index="{{ forloop.index0 }}">
+              <div class="rb-prime-gallery-slide {% if forloop.first %}rb-prime-gallery-slide--active{% endif %}" data-index="{{ forloop.index0 }}">
                 <img
                   src="{{ slide_image | image_url: width: 700 }}"
                   alt="{{ section.settings.product_title | escape }}"
@@ -1298,18 +89,18 @@ height: 39px;
                 >
               </div>
             {%- elsif forloop.first -%}
-              <div class="gallery-slide gallery-slide--active" data-index="0">
-                {{ 'product-1' | placeholder_svg_tag: 'placeholder-svg' }}
+              <div class="rb-prime-gallery-slide rb-prime-gallery-slide--active" data-index="0">
+                {{ 'product-1' | placeholder_svg_tag: 'rb-prime-placeholder-svg' }}
               </div>
             {%- endif -%}
           {%- endfor -%}
         {%- endif -%}
 
         {%- comment %} Dot indicators (visible on mobile, optional on desktop) {%- endcomment %}
-        <div class="gallery-dots" aria-hidden="true">
+        <div class="rb-prime-gallery-dots" aria-hidden="true">
           {%- if product != blank -%}
             {%- for image in product.images limit: 8 -%}
-              <span class="gallery-dot {% if forloop.first %}gallery-dot--active{% endif %}" data-dot="{{ forloop.index0 }}"></span>
+              <span class="rb-prime-gallery-dot {% if forloop.first %}rb-prime-gallery-dot--active{% endif %}" data-dot="{{ forloop.index0 }}"></span>
             {%- endfor -%}
           {%- else -%}
             {%- assign dot_keys = 'product_image_1,product_image_2,product_image_3,product_image_4,product_image_5,product_image_6,product_image_7,product_image_8' | split: ',' -%}
@@ -1317,23 +108,23 @@ height: 39px;
             {%- for dot_key in dot_keys -%}
               {%- assign dot_img = section.settings[dot_key] -%}
               {%- if dot_img != blank -%}
-                <span class="gallery-dot {% if forloop.first %}gallery-dot--active{% endif %}" data-dot="{{ dot_count }}"></span>
+                <span class="rb-prime-gallery-dot {% if forloop.first %}rb-prime-gallery-dot--active{% endif %}" data-dot="{{ dot_count }}"></span>
                 {%- assign dot_count = dot_count | plus: 1 -%}
               {%- endif -%}
             {%- endfor -%}
             {%- if dot_count == 0 -%}
-              <span class="gallery-dot gallery-dot--active" data-dot="0"></span>
+              <span class="rb-prime-gallery-dot rb-prime-gallery-dot--active" data-dot="0"></span>
             {%- endif -%}
           {%- endif -%}
         </div>
       </div>
 
       {%- comment %} Thumbnails — desktop only {%- endcomment %}
-      <div class="product-gallery__thumbs" role="list">
+      <div class="rb-prime-product-gallery__rb-prime-thumbs" role="list">
         {%- if product != blank -%}
           {%- for image in product.images limit: 8 -%}
             <button
-              class="thumb {% if forloop.first %}thumb--active{% endif %}"
+              class="rb-prime-thumb {% if forloop.first %}rb-prime-thumb--active{% endif %}"
               data-target="{{ forloop.index0 }}"
               aria-label="View image {{ forloop.index }}"
               role="listitem"
@@ -1348,18 +139,18 @@ height: 39px;
             </button>
           {%- endfor -%}
         {%- else -%}
-          {%- assign thumb_keys = 'product_image_1,product_image_2,product_image_3,product_image_4,product_image_5,product_image_6,product_image_7,product_image_8' | split: ',' -%}
-          {%- for thumb_key in thumb_keys -%}
-            {%- assign thumb_image = section.settings[thumb_key] -%}
-            {%- if thumb_image != blank -%}
+          {%- assign rb-prime-thumb_keys = 'product_image_1,product_image_2,product_image_3,product_image_4,product_image_5,product_image_6,product_image_7,product_image_8' | split: ',' -%}
+          {%- for rb-prime-thumb_key in rb-prime-thumb_keys -%}
+            {%- assign rb-prime-thumb_image = section.settings[rb-prime-thumb_key] -%}
+            {%- if rb-prime-thumb_image != blank -%}
               <button
-                class="thumb {% if forloop.first %}thumb--active{% endif %}"
+                class="rb-prime-thumb {% if forloop.first %}rb-prime-thumb--active{% endif %}"
                 data-target="{{ forloop.index0 }}"
                 aria-label="View image {{ forloop.index }}"
                 role="listitem"
               >
                 <img
-                  src="{{ thumb_image | image_url: width: 120 }}"
+                  src="{{ rb-prime-thumb_image | image_url: width: 120 }}"
                   alt=""
                   loading="lazy"
                   width="120"
@@ -1373,14 +164,14 @@ height: 39px;
     </div>
 
     {%- comment %} RIGHT — Product Info {%- endcomment %}
-    <div class="product-info">
+    <div class="rb-prime-product-info">
 
-      <div class="exclusive-badge">
-        <span class="exclusive-badge__text">{{ section.settings.badge_text | default: 'EXCLUSIVE' }}</span>
+      <div class="rb-prime-exclusive-badge">
+        <span class="rb-prime-exclusive-badge__text">{{ section.settings.badge_text | default: 'EXCLUSIVE' }}</span>
       </div>
 
-      <div class="product-title-row">
-        <h1 class="product-title">
+      <div class="rb-prime-product-title-row">
+        <h1 class="rb-prime-product-title">
           {%- if product != blank -%}
             {{ product.title }}
           {%- else -%}
@@ -1398,43 +189,43 @@ height: 39px;
           assign author_display = 'JK Rowling'
         endif
       -%}
-      <p class="product-author">{{ author_display | upcase }}</p>
+      <p class="rb-prime-product-author">{{ author_display | upcase }}</p>
 
-      <div class="signed-copies-badge">
+      <div class="rb-prime-signed-copies-badge">
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
           <path d="M21.7497 15.75H5.9866C6.23597 15.2587 6.48628 14.7534 6.7366 14.2397C8.14285 14.3944 9.79097 13.4166 11.6735 11.3203C12.1422 12.5822 13.0282 14.22 14.5403 14.25C15.3897 14.2669 16.2382 13.7625 17.111 12.7153C17.7475 13.4766 19.0591 14.25 21.7497 14.25C21.9486 14.25 22.1394 14.171 22.2801 14.0303C22.4207 13.8897 22.4997 13.6989 22.4997 13.5C22.4997 13.3011 22.4207 13.1103 22.2801 12.9697C22.1394 12.829 21.9486 12.75 21.7497 12.75C18.8969 12.75 18.0532 11.7703 17.9997 11.2397C18.0082 11.0787 17.9623 10.9196 17.8695 10.7879C17.7766 10.6561 17.6423 10.5593 17.4878 10.5131C17.3274 10.4649 17.1556 10.4709 16.9989 10.53C16.8422 10.5891 16.7093 10.6982 16.6207 10.8403C15.4891 12.5784 14.8038 12.7556 14.5657 12.75C13.7913 12.735 13.0038 10.92 12.7338 9.61688C12.705 9.47731 12.637 9.34883 12.5378 9.2465C12.4386 9.14417 12.3123 9.07222 12.1737 9.03907C12.0351 9.00592 11.8899 9.01294 11.7552 9.05932C11.6204 9.1057 11.5017 9.18951 11.4128 9.30094C9.5191 11.6766 8.24972 12.4762 7.45941 12.6834C8.25535 10.9144 8.84972 9.36094 9.23035 8.05313C9.86972 5.85563 9.9166 4.31906 9.37191 3.35625C9.09066 2.85187 8.49628 2.25 7.30378 2.25C5.79816 2.25 4.61035 3.67313 4.0441 6.15469C3.70753 7.6275 3.65222 9.26813 3.89222 10.6547C4.13222 12.0413 4.63003 13.05 5.35378 13.6491C5.0041 14.3728 4.64785 15.0797 4.30097 15.75H2.24972C2.05081 15.75 1.86004 15.829 1.71939 15.9697C1.57874 16.1103 1.49972 16.3011 1.49972 16.5C1.49972 16.6989 1.57874 16.8897 1.71939 17.0303C1.86004 17.171 2.05081 17.25 2.24972 17.25H3.50691C2.44566 19.2188 1.62066 20.5913 1.60753 20.6138C1.55406 20.6982 1.51802 20.7925 1.50151 20.8911C1.485 20.9897 1.48837 21.0906 1.51141 21.1878C1.53445 21.2851 1.5767 21.3768 1.63568 21.4575C1.69466 21.5382 1.76918 21.6063 1.85486 21.6578C1.94053 21.7093 2.03564 21.7431 2.13458 21.7573C2.23352 21.7715 2.33431 21.7658 2.43101 21.7405C2.52772 21.7152 2.61839 21.6709 2.6977 21.61C2.77701 21.5492 2.84336 21.4731 2.89285 21.3862C2.90691 21.3619 3.94941 19.6247 5.20847 17.25H21.7497C21.9486 17.25 22.1394 17.171 22.2801 17.0303C22.4207 16.8897 22.4997 16.6989 22.4997 16.5C22.4997 16.3011 22.4207 16.1103 22.2801 15.9697C22.1394 15.829 21.9486 15.75 21.7497 15.75ZM5.5066 6.48844C5.87972 4.85063 6.60253 3.75 7.30378 3.75C7.80347 3.75 7.96941 3.92437 8.06597 4.09406C8.34722 4.59375 8.67722 6.36187 6.03535 12.1931C5.26097 11.1356 4.99753 8.71875 5.5066 6.48844Z" fill="#C9A885"/>
         </svg>
-        <span class="signed-copies-badge__text">{{ section.settings.signed_copies_text | default: 'Only 250 Signed Copies' }}</span>
+        <span class="rb-prime-signed-copies-badge__text">{{ section.settings.signed_copies_text | default: 'Only 250 Signed Copies' }}</span>
       </div>
 
-      <div class="product-price">
+      <div class="rb-prime-product-price">
         {%- if product != blank -%}
           {%- assign selected_variant = product.selected_or_first_available_variant -%}
           {%- if product.price_varies -%}
-            <span class="price-label">From</span>
+            <span class="rb-prime-price-label">From</span>
           {%- endif -%}
           <span
-            class="price-amount"
+            class="rb-prime-price-amount"
             data-unit-price="{{ selected_variant.price }}"
             data-currency="{{ cart.currency.symbol | default: shop.currency }}"
           >{{ selected_variant.price | money_with_currency }}</span>
           {%- if selected_variant.compare_at_price > selected_variant.price -%}
-            <span class="price-compare">{{ selected_variant.compare_at_price | money_with_currency }}</span>
+            <span class="rb-prime-price-compare">{{ selected_variant.compare_at_price | money_with_currency }}</span>
           {%- endif -%}
         {%- else -%}
-          <span class="price-amount">{{ section.settings.product_price | default: 'USD 129.00' }}</span>
+          <span class="rb-prime-price-amount">{{ section.settings.product_price | default: 'USD 129.00' }}</span>
         {%- endif -%}
       </div>
 
       {%- if product != blank and product.variants.size > 1 -%}
-        <div class="variant-selector">
+        <div class="rb-prime-variant-selector">
           {%- for option in product.options_with_values -%}
-            <div class="variant-option">
-              <label class="variant-option__label">{{ option.name }}</label>
-              <div class="variant-option__values">
+            <div class="rb-prime-variant-option">
+              <label class="rb-prime-variant-option__label">{{ option.name }}</label>
+              <div class="rb-prime-variant-option__values">
                 {%- for value in option.values -%}
                   <button
-                    class="variant-value-btn"
+                    class="rb-prime-variant-value-btn"
                     data-option-index="{{ forloop.parentloop.index0 }}"
                     data-value="{{ value | escape }}"
                   >{{ value }}</button>
@@ -1445,14 +236,14 @@ height: 39px;
         </div>
       {%- endif -%}
 
-      <div class="product-actions">
-        <div class="quantity-control">
-          <button class="qty-btn qty-btn--minus" aria-label="Decrease quantity">
+      <div class="rb-prime-product-actions">
+        <div class="rb-prime-quantity-control">
+          <button class="rb-prime-qty-btn rb-prime-qty-btn--minus" aria-label="Decrease quantity">
             <svg width="14" height="2" viewBox="0 0 14 2" fill="none"><path d="M1 1H13" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg>
           </button>
           <input
             type="number"
-            class="qty-input"
+            class="rb-prime-qty-input"
             id="qty-{{ section.id }}"
             name="quantity"
             value="1"
@@ -1460,7 +251,7 @@ height: 39px;
             max="250"
             aria-label="Quantity"
           >
-          <button class="qty-btn qty-btn--plus" aria-label="Increase quantity">
+          <button class="rb-prime-qty-btn rb-prime-qty-btn--plus" aria-label="Increase quantity">
             <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 1V13M1 7H13" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg>
           </button>
         </div>
@@ -1468,7 +259,7 @@ height: 39px;
         {%- if product != blank -%}
           <button
             type="button"
-            class="cta-btn"
+            class="rb-prime-cta-btn"
             id="addToCart-{{ section.id }}"
             data-product-id="{{ product.id }}"
             data-variant-id="{{ product.selected_or_first_available_variant.id }}"
@@ -1481,7 +272,7 @@ height: 39px;
             {%- endif -%}
           </button>
         {%- else -%}
-          <a href="{{ section.settings.cta_link | default: '#' }}" class="cta-btn">
+          <a href="{{ section.settings.cta_link | default: '#' }}" class="rb-prime-cta-btn">
             {{ section.settings.cta_label | default: 'PRE ORDER NOW' }}
           </a>
         {%- endif -%}
@@ -1491,20 +282,20 @@ height: 39px;
   </div>
 
   {%- comment %} Lightbox / Zoom overlay {%- endcomment %}
-  <div class="gallery-lightbox" id="lightbox-{{ section.id }}" aria-hidden="true">
-    <button class="lightbox-close" aria-label="Close zoom">
+  <div class="rb-prime-gallery-lightbox" id="lightbox-{{ section.id }}" aria-hidden="true">
+    <button class="rb-prime-lightbox-close" aria-label="Close zoom">
       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
     </button>
-    <button class="lightbox-nav lightbox-nav--prev" aria-label="Previous image">
+    <button class="rb-prime-lightbox-nav rb-prime-lightbox-nav--prev" aria-label="Previous image">
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
     </button>
-    <button class="lightbox-nav lightbox-nav--next" aria-label="Next image">
+    <button class="rb-prime-lightbox-nav rb-prime-lightbox-nav--next" aria-label="Next image">
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
     </button>
-    <div class="lightbox-img-wrap">
-      <img src="" alt="" class="lightbox-img" id="lightboxImg-{{ section.id }}">
+    <div class="rb-prime-lightbox-img-wrap">
+      <img src="" alt="" class="rb-prime-lightbox-img" id="lightboxImg-{{ section.id }}">
     </div>
-    <div class="lightbox-counter" id="lightboxCounter-{{ section.id }}"></div>
+    <div class="rb-prime-lightbox-counter" id="lightboxCounter-{{ section.id }}"></div>
   </div>
 </section>
 
@@ -1531,12 +322,12 @@ height: 39px;
   --font-body: 'Satoshi', 'DM Sans', system-ui, sans-serif;
 }
 
-#shopify-section-{{ section.id }}.shopify-section.exclusive-book-product-section {
+#shopify-section-{{ section.id }}.shopify-section.rb-prime-exclusive-book-product-section {
   background-color: transparent;
   width: 100%;
 }
 
-#exclusive-book-product-{{ section.id }} {
+#rb-prime-exclusive-book-product-{{ section.id }} {
   position: relative;
   width: 100%;
   background-color: transparent;
@@ -1554,7 +345,7 @@ height: 39px;
   Hero: image + atmospheric overlays (matches reference — spotlights up top, readable type, soft fade to next section).
   Layer order (top → bottom): bottom vignette, uniform dim, photo.
 */
-#exclusive-book-product-{{ section.id }} .section-bg-hero {
+#rb-prime-exclusive-book-product-{{ section.id }} .rb-prime-section-bg-hero {
   position: absolute;
   inset: 0;
   width: 100%;
@@ -1580,8 +371,8 @@ height: 39px;
   backface-visibility: hidden;
 }
 
-/* Inner layout — columns top-aligned so .product-info lines up with top of gallery */
-#exclusive-book-product-{{ section.id }} .exclusive-book-product__inner {
+/* Inner layout — columns top-aligned so .rb-prime-product-info lines up with top of gallery */
+#rb-prime-exclusive-book-product-{{ section.id }} .rb-prime-exclusive-book-product__inner {
   position: relative;
   z-index: 2;
   display: grid;
@@ -1596,7 +387,7 @@ height: 39px;
 }
 
 /* ── Gallery ────────────────── */
-.product-gallery {
+.rb-prime-product-gallery {
   display: flex;
   flex-direction: column;
   gap: 20px;
@@ -1604,7 +395,7 @@ height: 39px;
   min-width: 0;
 }
 
-.product-gallery__main {
+.rb-prime-product-gallery__main {
   position: relative;
   width: 100%;
   aspect-ratio: 0.75 / 1;
@@ -1621,18 +412,18 @@ height: 39px;
   -webkit-user-select: none;
 }
 
-.gallery-slide {
+.rb-prime-gallery-slide {
   position: absolute;
   inset: 0;
   opacity: 0;
   transition: opacity 0.4s ease;
   pointer-events: none;
 }
-.gallery-slide--active {
+.rb-prime-gallery-slide--active {
   opacity: 1;
   pointer-events: auto;
 }
-.gallery-slide img {
+.rb-prime-gallery-slide img {
   width: 100%;
   height: 100%;
   object-fit: cover;
@@ -1640,12 +431,12 @@ height: 39px;
   pointer-events: none;
 }
 
-.gallery-slide--active img {
+.rb-prime-gallery-slide--active img {
   filter: drop-shadow(0 18px 36px rgba(52, 28, 6, 0.42));
 }
 
-.gallery-slide .placeholder-svg,
-.thumb-placeholder {
+.rb-prime-gallery-slide .rb-prime-placeholder-svg,
+.rb-prime-thumb-placeholder {
   width: 100%;
   height: 100%;
   fill: #2A2520;
@@ -1653,7 +444,7 @@ height: 39px;
 }
 
 /* ── Zoom button ── */
-.gallery-zoom-btn {
+.rb-prime-gallery-zoom-btn {
   position: absolute;
   top: 14px;
   left: 14px;
@@ -1670,10 +461,10 @@ height: 39px;
   color: #222;
   transition: background 0.2s;
 }
-.gallery-zoom-btn:hover { background: #fff; }
+.rb-prime-gallery-zoom-btn:hover { background: #fff; }
 
 /* ── Prev / Next nav arrows ── */
-.gallery-nav {
+.rb-prime-gallery-nav {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
@@ -1695,30 +486,30 @@ height: 39px;
 }
 
 /* show arrows on hover of the main gallery container */
-.product-gallery__main:hover .gallery-nav,
-.product-gallery__main:focus-within .gallery-nav {
+.rb-prime-product-gallery__main:hover .rb-prime-gallery-nav,
+.rb-prime-product-gallery__main:focus-within .rb-prime-gallery-nav {
   opacity: 1;
 }
 
 /* always show on touch devices (mobile) */
 @media (hover: none) {
-  .gallery-nav { opacity: 1; }
+  .rb-prime-gallery-nav { opacity: 1; }
 }
 
-.gallery-nav:hover {
+.rb-prime-gallery-nav:hover {
   background: rgba(201,168,133,0.25);
   border-color: rgba(201,168,133,0.6);
 }
-.gallery-nav--prev { left: 12px; }
-.gallery-nav--next { right: 12px; }
+.rb-prime-gallery-nav--prev { left: 12px; }
+.rb-prime-gallery-nav--next { right: 12px; }
 
-.gallery-nav:disabled {
+.rb-prime-gallery-nav:disabled {
   opacity: 0.2 !important;
   cursor: default;
 }
 
 /* ── Dot indicators ── */
-.gallery-dots {
+.rb-prime-gallery-dots {
   position: absolute;
   bottom: 14px;
   left: 50%;
@@ -1729,7 +520,7 @@ height: 39px;
   align-items: center;
 }
 
-.gallery-dot {
+.rb-prime-gallery-dot {
   width: 6px;
   height: 6px;
   border-radius: 50%;
@@ -1739,22 +530,22 @@ height: 39px;
   flex-shrink: 0;
 }
 
-.gallery-dot--active {
+.rb-prime-gallery-dot--active {
   background: var(--accent-gold, #C9A885);
   transform: scale(1.4);
 }
 
 /* hide dots when only 1 image */
-.gallery-dots:has(.gallery-dot:only-child) { display: none; }
+.rb-prime-gallery-dots:has(.rb-prime-gallery-dot:only-child) { display: none; }
 
 /* ── Thumbnails ── */
-.product-gallery__thumbs {
+.rb-prime-product-gallery__rb-prime-thumbs {
   display: flex;
   gap: 10px;
   flex-wrap: wrap;
 }
 
-.thumb {
+.rb-prime-thumb {
   width: calc(25% - 8px);
   aspect-ratio: 0.78 / 1;
   border-radius: 12px;
@@ -1766,26 +557,26 @@ height: 39px;
   transition: border-color 0.25s, box-shadow 0.25s;
   flex-shrink: 0;
 }
-.thumb img {
+.rb-prime-thumb img {
   width: 100%;
   height: 100%;
   object-fit: cover;
   display: block;
 }
-.thumb--active {
+.rb-prime-thumb--active {
   border-color: #c9a885;
   box-shadow: 0 0 0 1px rgba(201, 168, 133, 0.45), 0 8px 24px rgba(0, 0, 0, 0.35);
 }
-.thumb:hover:not(.thumb--active) {
+.rb-prime-thumb:hover:not(.rb-prime-thumb--active) {
   border-color: rgba(201, 168, 133, 0.45);
 }
 
-/* when more than 4 thumbs, shrink a bit so they all fit */
-.product-gallery__thumbs:has(.thumb:nth-child(5)) .thumb { width: calc(20% - 8px); }
-.product-gallery__thumbs:has(.thumb:nth-child(7)) .thumb { width: calc(14.28% - 8px); }
+/* when more than 4 rb-prime-thumbs, shrink a bit so they all fit */
+.rb-prime-product-gallery__rb-prime-thumbs:has(.rb-prime-thumb:nth-child(5)) .rb-prime-thumb { width: calc(20% - 8px); }
+.rb-prime-product-gallery__rb-prime-thumbs:has(.rb-prime-thumb:nth-child(7)) .rb-prime-thumb { width: calc(14.28% - 8px); }
 
 /* ── Product Info ────────────── */
-.product-info {
+.rb-prime-product-info {
   display: flex;
   flex-direction: column;
   gap: 0;
@@ -1795,13 +586,13 @@ height: 39px;
 }
 
 @media (min-width: 769px) {
-  .product-info {
+  .rb-prime-product-info {
     margin-top: 100px;
   }
 }
 
 /* Exclusive badge */
-.exclusive-badge {
+.rb-prime-exclusive-badge {
   margin-bottom: 20px;
   display: inline-flex;
   align-items: center;
@@ -1816,7 +607,7 @@ height: 39px;
   box-sizing: border-box;
 }
 
-.exclusive-badge__text {
+.rb-prime-exclusive-badge__text {
   font-family: var(--font-display);
   font-weight: 400;
   font-style: normal;
@@ -1827,7 +618,7 @@ height: 39px;
   text-transform: uppercase;
 }
 
-.product-title-row {
+.rb-prime-product-title-row {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
@@ -1835,7 +626,7 @@ height: 39px;
   margin-bottom: 16px;
 }
 
-.product-title {
+.rb-prime-product-title {
   font-family: var(--font-display);
   font-weight: 400;
   font-style: normal;
@@ -1852,7 +643,7 @@ height: 39px;
   word-break: break-word;
 }
 
-.product-author {
+.rb-prime-product-author {
   font-family: var(--font-body);
   font-weight: 400;
   font-size: 14px;
@@ -1866,7 +657,7 @@ height: 39px;
   margin: 0 0 22px 0;
 }
 
-.signed-copies-badge {
+.rb-prime-signed-copies-badge {
   display: inline-flex;
   align-items: center;
   gap: 8px;
@@ -1880,7 +671,7 @@ height: 39px;
   -webkit-backdrop-filter: blur(8px);
 }
 
-.signed-copies-badge__text {
+.rb-prime-signed-copies-badge__text {
   font-family: var(--font-body);
   font-weight: 400;
   font-size: 15px;
@@ -1888,20 +679,20 @@ height: 39px;
   color: #C9A885;
 }
 
-.product-price {
+.rb-prime-product-price {
   display: flex;
   align-items: baseline;
   gap: 12px;
   margin-bottom: 32px;
 }
 
-.price-label {
+.rb-prime-price-label {
   font-family: var(--font-body);
   font-size: 14px;
   color: var(--text-muted);
 }
 
-.price-amount {
+.rb-prime-price-amount {
   font-family: var(--font-body);
   font-weight: 500;
   font-size: 36px;
@@ -1910,20 +701,20 @@ height: 39px;
   letter-spacing: -0.02em;
 }
 
-.price-compare {
+.rb-prime-price-compare {
   font-family: var(--font-body);
   font-size: 20px;
   color: var(--text-muted);
   text-decoration: line-through;
 }
 
-.variant-selector {
+.rb-prime-variant-selector {
   display: flex;
   flex-direction: column;
   gap: 16px;
   margin-bottom: 28px;
 }
-.variant-option__label {
+.rb-prime-variant-option__label {
   font-family: var(--font-body);
   font-size: 13px;
   letter-spacing: 0.1em;
@@ -1932,12 +723,12 @@ height: 39px;
   display: block;
   margin-bottom: 8px;
 }
-.variant-option__values {
+.rb-prime-variant-option__values {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
 }
-.variant-value-btn {
+.rb-prime-variant-value-btn {
   padding: 8px 18px;
   border: 1px solid rgba(201,168,133,0.35);
   background: transparent;
@@ -1948,13 +739,13 @@ height: 39px;
   border-radius: 3px;
   transition: border-color 0.2s, background 0.2s;
 }
-.variant-value-btn:hover,
-.variant-value-btn.active {
+.rb-prime-variant-value-btn:hover,
+.rb-prime-variant-value-btn.active {
   border-color: var(--accent-gold);
   background: rgba(201,168,133,0.1);
 }
 
-.product-actions {
+.rb-prime-product-actions {
   display: flex;
   align-items: center;
   gap: 22px;
@@ -1962,7 +753,7 @@ height: 39px;
   margin-top: 4px;
 }
 
-.quantity-control {
+.rb-prime-quantity-control {
   display: flex;
   align-items: center;
   gap: 0;
@@ -1971,7 +762,7 @@ height: 39px;
   height: 54px;
 }
 
-.qty-btn {
+.rb-prime-qty-btn {
   width: 60px;
   height: 60px;
   border-radius: 80px;
@@ -1986,9 +777,9 @@ height: 39px;
   transition: background 0.2s;
   flex-shrink: 0;
 }
-.qty-btn:hover { background: #1a1a1a; }
+.rb-prime-qty-btn:hover { background: #1a1a1a; }
 
-.qty-input {
+.rb-prime-qty-input {
   width: 42px;
   text-align: center;
   background: transparent;
@@ -2000,10 +791,10 @@ height: 39px;
   -moz-appearance: textfield;
   outline: none;
 }
-.qty-input::-webkit-inner-spin-button,
-.qty-input::-webkit-outer-spin-button { -webkit-appearance: none; }
+.rb-prime-qty-input::-webkit-inner-spin-button,
+.rb-prime-qty-input::-webkit-outer-spin-button { -webkit-appearance: none; }
 
-.cta-btn {
+.rb-prime-cta-btn {
   color: #ffffff;
   position: relative;
   display: inline-flex;
@@ -2031,21 +822,21 @@ height: 39px;
   transition: opacity 0.2s, transform 0.2s, box-shadow 0.2s, filter 0.2s;
   cursor: pointer;
 }
-.cta-btn:hover {
+.rb-prime-cta-btn:hover {
   opacity: 0.96;
   transform: translateY(-2px);
   box-shadow: 0 18px 44px rgba(52, 28, 6, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.4);
   filter: brightness(1.03);
 }
-.cta-btn:active { transform: translateY(0); }
-.cta-btn:disabled {
+.rb-prime-cta-btn:active { transform: translateY(0); }
+.rb-prime-cta-btn:disabled {
   opacity: 0.45;
   cursor: not-allowed;
   transform: none;
 }
 
 /* ── Lightbox ────────────────── */
-.gallery-lightbox {
+.rb-prime-gallery-lightbox {
   position: fixed;
   inset: 0;
   z-index: 9999;
@@ -2055,10 +846,10 @@ height: 39px;
   justify-content: center;
   padding: 40px;
 }
-.gallery-lightbox.is-open {
+.rb-prime-gallery-lightbox.is-open {
   display: flex;
 }
-.lightbox-close {
+.rb-prime-lightbox-close {
   position: absolute;
   top: 20px;
   right: 20px;
@@ -2074,9 +865,9 @@ height: 39px;
   transition: background 0.2s;
   z-index: 2;
 }
-.lightbox-close:hover { background: rgba(255,255,255,0.2); }
+.rb-prime-lightbox-close:hover { background: rgba(255,255,255,0.2); }
 
-.lightbox-nav {
+.rb-prime-lightbox-nav {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
@@ -2092,19 +883,19 @@ height: 39px;
   transition: background 0.2s;
   z-index: 2;
 }
-.lightbox-nav:hover { background: rgba(255,255,255,0.18); }
-.lightbox-nav--prev { left: 24px; }
-.lightbox-nav--next { right: 24px; }
-.lightbox-nav:disabled { opacity: 0.25; cursor: default; }
+.rb-prime-lightbox-nav:hover { background: rgba(255,255,255,0.18); }
+.rb-prime-lightbox-nav--prev { left: 24px; }
+.rb-prime-lightbox-nav--next { right: 24px; }
+.rb-prime-lightbox-nav:disabled { opacity: 0.25; cursor: default; }
 
-.lightbox-img-wrap {
+.rb-prime-lightbox-img-wrap {
   max-width: 90vw;
   max-height: 90vh;
   display: flex;
   align-items: center;
   justify-content: center;
 }
-.lightbox-img {
+.rb-prime-lightbox-img {
   max-width: 100%;
   max-height: 90vh;
   object-fit: contain;
@@ -2112,7 +903,7 @@ height: 39px;
   transition: opacity 0.2s;
 }
 
-.lightbox-counter {
+.rb-prime-lightbox-counter {
   position: absolute;
   bottom: 24px;
   left: 50%;
@@ -2125,21 +916,21 @@ height: 39px;
 
 /* ── Tablet ────────────────── */
 @media (max-width: 1024px) {
-  #exclusive-book-product-{{ section.id }} .exclusive-book-product__inner {
+  #rb-prime-exclusive-book-product-{{ section.id }} .rb-prime-exclusive-book-product__inner {
     grid-template-columns: 1fr 1fr;
     gap: 40px;
     padding: 60px 28px 72px;
   }
-  .product-title { font-size: 44px; line-height: 54px; }
+  .rb-prime-product-title { font-size: 44px; line-height: 54px; }
 }
 
 /* ── Mobile ────────────────── */
 @media (max-width: 768px) {
-  #exclusive-book-product-{{ section.id }} {
+  #rb-prime-exclusive-book-product-{{ section.id }} {
     align-items: flex-start;
     min-height: auto;
   }
-  #exclusive-book-product-{{ section.id }} .exclusive-book-product__inner {
+  #rb-prime-exclusive-book-product-{{ section.id }} .rb-prime-exclusive-book-product__inner {
     grid-template-columns: 1fr;
     gap: 28px;
     padding-top: clamp(72px, 18vw, 96px);
@@ -2147,7 +938,7 @@ height: 39px;
     padding-left: max(20px, env(safe-area-inset-left, 0px));
     padding-right: max(20px, env(safe-area-inset-right, 0px));
   }
-  #exclusive-book-product-{{ section.id }} .section-bg-hero {
+  #rb-prime-exclusive-book-product-{{ section.id }} .rb-prime-section-bg-hero {
     background-image:
       linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.4) 58%, rgba(0, 0, 0, 0.76) 100%),
       linear-gradient(rgba(0, 0, 0, 0.24), rgba(0, 0, 0, 0.24)),
@@ -2161,7 +952,7 @@ height: 39px;
     background-origin: border-box;
   }
 
-  .product-gallery__main {
+  .rb-prime-product-gallery__main {
     aspect-ratio: 0.78 / 1;
     border-radius: 10px;
     box-shadow:
@@ -2170,29 +961,29 @@ height: 39px;
       0 28px 48px -10px rgba(52, 28, 6, 0.45);
   }
 
-  .gallery-zoom-btn {
+  .rb-prime-gallery-zoom-btn {
     top: 10px;
     left: 10px;
     width: 36px;
     height: 36px;
     border-radius: 10px;
   }
-  .gallery-zoom-btn svg {
+  .rb-prime-gallery-zoom-btn svg {
     width: 18px;
     height: 18px;
   }
 
-  .gallery-dots {
+  .rb-prime-gallery-dots {
     bottom: 12px;
     gap: 7px;
   }
-  .gallery-dot {
+  .rb-prime-gallery-dot {
     width: 7px;
     height: 7px;
   }
 
-  /* show thumbs on mobile — scrollable row */
-  .product-gallery__thumbs {
+  /* show rb-prime-thumbs on mobile — scrollable row */
+  .rb-prime-product-gallery__rb-prime-thumbs {
     display: flex;
     flex-wrap: nowrap;
     overflow-x: auto;
@@ -2203,9 +994,9 @@ height: 39px;
     margin-inline: -2px;
     padding-inline: 2px;
   }
-  .product-gallery__thumbs::-webkit-scrollbar { display: none; }
+  .rb-prime-product-gallery__rb-prime-thumbs::-webkit-scrollbar { display: none; }
 
-  .thumb {
+  .rb-prime-thumb {
     width: 64px;
     min-width: 64px;
     aspect-ratio: 0.78 / 1;
@@ -2213,87 +1004,87 @@ height: 39px;
     border-radius: 10px;
   }
 
-  .gallery-nav { opacity: 1; }
-  .gallery-nav { width: 36px; height: 36px; }
-  .gallery-nav--prev { left: 8px; }
-  .gallery-nav--next { right: 8px; }
+  .rb-prime-gallery-nav { opacity: 1; }
+  .rb-prime-gallery-nav { width: 36px; height: 36px; }
+  .rb-prime-gallery-nav--prev { left: 8px; }
+  .rb-prime-gallery-nav--next { right: 8px; }
 
-  .product-title-row { margin-bottom: 12px; }
-  .product-title {
+  .rb-prime-product-title-row { margin-bottom: 12px; }
+  .rb-prime-product-title {
     font-size: clamp(28px, 8.5vw, 36px);
     line-height: 1.15;
     max-width: none;
     margin-top: 12px;
   }
-  .exclusive-badge {
+  .rb-prime-exclusive-badge {
     max-width: 150px;
     width: auto;
     min-height: 44px;
     padding: 8px 10px;
   }
-  .exclusive-badge__text {
+  .rb-prime-exclusive-badge__text {
     font-size: 16px;
     line-height: 1.2;
     letter-spacing: 0.08em;
   }
-  .product-author {
+  .rb-prime-product-author {
     font-size: 12px;
     line-height: 22px;
     letter-spacing: 0.14em;
     margin-bottom: 18px;
   }
-  .signed-copies-badge {
+  .rb-prime-signed-copies-badge {
     flex-wrap: wrap;
     padding: 9px 14px;
     margin-bottom: 24px;
     max-width: 100%;
   }
-  .signed-copies-badge svg {
+  .rb-prime-signed-copies-badge svg {
     width: 20px;
     height: 20px;
     flex-shrink: 0;
   }
-  .signed-copies-badge__text {
+  .rb-prime-signed-copies-badge__text {
     font-size: 14px;
     line-height: 1.15;
   }
-  .product-price {
+  .rb-prime-product-price {
     flex-wrap: wrap;
     gap: 8px 18px;
     margin-bottom: 24px;
   }
-  .price-amount { font-size: 28px; }
-  .price-compare { font-size: 17px; }
-  .variant-selector { margin-bottom: 22px; }
-  .variant-option__values { gap: 6px; }
-  .variant-value-btn {
+  .rb-prime-price-amount { font-size: 28px; }
+  .rb-prime-price-compare { font-size: 17px; }
+  .rb-prime-variant-selector { margin-bottom: 22px; }
+  .rb-prime-variant-option__values { gap: 6px; }
+  .rb-prime-variant-value-btn {
     padding: 10px 16px;
     font-size: 13px;
     min-height: 44px;
   }
 
-  .product-actions {
+  .rb-prime-product-actions {
     flex-direction: row;
     align-items: center;
     justify-content: flex-start;
     gap: 10px;
     flex-wrap: nowrap;
   }
-  .quantity-control {
+  .rb-prime-quantity-control {
     justify-content: flex-start;
     height: auto;
     padding: 0;
     flex-shrink: 0;
   }
-  .qty-btn {
+  .rb-prime-qty-btn {
     width: 46px;
     height: 46px;
   }
-  .qty-input {
+  .rb-prime-qty-input {
     width: 36px;
     font-size: 16px;
   }
-  .cta-btn {
+  .rb-prime-cta-btn {
     flex: 1;
     min-width: 0;
     width: auto;
@@ -2303,66 +1094,66 @@ height: 39px;
     letter-spacing: 0.1em;
   }
 
-  .gallery-lightbox {
+  .rb-prime-gallery-lightbox {
     padding: 16px;
     padding-left: max(16px, env(safe-area-inset-left, 0px));
     padding-right: max(16px, env(safe-area-inset-right, 0px));
     padding-bottom: max(16px, env(safe-area-inset-bottom, 0px));
   }
-  .lightbox-close {
+  .rb-prime-lightbox-close {
     top: max(12px, env(safe-area-inset-top, 0px));
     right: max(12px, env(safe-area-inset-right, 0px));
     width: 40px;
     height: 40px;
   }
-  .lightbox-nav {
+  .rb-prime-lightbox-nav {
     width: 44px;
     height: 44px;
   }
-  .lightbox-nav--prev { left: 8px; }
-  .lightbox-nav--next { right: 8px; }
-  .lightbox-img-wrap {
+  .rb-prime-lightbox-nav--prev { left: 8px; }
+  .rb-prime-lightbox-nav--next { right: 8px; }
+  .rb-prime-lightbox-img-wrap {
     max-width: 100%;
   }
-  .lightbox-counter {
+  .rb-prime-lightbox-counter {
     bottom: 16px;
     font-size: 12px;
   }
 }
 
 @media (max-width: 480px) {
-  #exclusive-book-product-{{ section.id }} .exclusive-book-product__inner {
+  #rb-prime-exclusive-book-product-{{ section.id }} .rb-prime-exclusive-book-product__inner {
     gap: 22px;
     padding-top: 64px;
     padding-bottom: 48px;
     padding-left: max(16px, env(safe-area-inset-left, 0px));
     padding-right: max(16px, env(safe-area-inset-right, 0px));
   }
-  .product-title {
+  .rb-prime-product-title {
     font-size: clamp(24px, 7.5vw, 30px);
     line-height: 1.18;
   }
-  .price-amount { font-size: 26px; }
-  .thumb {
+  .rb-prime-price-amount { font-size: 26px; }
+  .rb-prime-thumb {
     width: 56px;
     min-width: 56px;
   }
-  .product-gallery__main {
+  .rb-prime-product-gallery__main {
     border-radius: 8px;
   }
 }
 
 @media (max-width: 380px) {
-  #exclusive-book-product-{{ section.id }} .exclusive-book-product__inner {
+  #rb-prime-exclusive-book-product-{{ section.id }} .rb-prime-exclusive-book-product__inner {
     padding-left: max(14px, env(safe-area-inset-left, 0px));
     padding-right: max(14px, env(safe-area-inset-right, 0px));
   }
-  .variant-option__values {
+  .rb-prime-variant-option__values {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 8px;
   }
-  .variant-value-btn {
+  .rb-prime-variant-value-btn {
     min-width: 0;
     text-align: center;
   }
@@ -2374,18 +1165,18 @@ height: 39px;
 <script>
 (function() {
   var sectionId = '{{ section.id }}';
-  var section = document.getElementById('exclusive-book-product-' + sectionId);
+  var section = document.getElementById('rb-prime-exclusive-book-product-' + sectionId);
   if (!section) return;
 
   // ── Gallery state ──────────────
-  var slides = Array.from(section.querySelectorAll('.gallery-slide'));
-  var thumbs = Array.from(section.querySelectorAll('.thumb'));
-  var dots   = Array.from(section.querySelectorAll('.gallery-dot'));
+  var slides = Array.from(section.querySelectorAll('.rb-prime-gallery-slide'));
+  var rb-prime-thumbs = Array.from(section.querySelectorAll('.rb-prime-thumb'));
+  var dots   = Array.from(section.querySelectorAll('.rb-prime-gallery-dot'));
   var total  = slides.length;
   var current = 0;
 
-  var prevBtn = section.querySelector('.gallery-nav--prev');
-  var nextBtn = section.querySelector('.gallery-nav--next');
+  var prevBtn = section.querySelector('.rb-prime-gallery-nav--prev');
+  var nextBtn = section.querySelector('.rb-prime-gallery-nav--next');
 
   function activateSlide(index, wrap) {
     // optional wrapping
@@ -2397,9 +1188,9 @@ height: 39px;
     }
     current = index;
 
-    slides.forEach(function(s, i) { s.classList.toggle('gallery-slide--active', i === index); });
-    thumbs.forEach(function(t, i) { t.classList.toggle('thumb--active', i === index); });
-    dots.forEach(function(d, i) { d.classList.toggle('gallery-dot--active', i === index); });
+    slides.forEach(function(s, i) { s.classList.toggle('rb-prime-gallery-slide--active', i === index); });
+    rb-prime-thumbs.forEach(function(t, i) { t.classList.toggle('rb-prime-thumb--active', i === index); });
+    dots.forEach(function(d, i) { d.classList.toggle('rb-prime-gallery-dot--active', i === index); });
 
     // update nav disabled state (no wrap = disable at ends)
     if (prevBtn) prevBtn.disabled = !wrap && index === 0;
@@ -2410,8 +1201,8 @@ height: 39px;
   activateSlide(0, false);
 
   // Thumb clicks
-  thumbs.forEach(function(thumb, index) {
-    thumb.addEventListener('click', function() { activateSlide(index, false); });
+  rb-prime-thumbs.forEach(function(rb-prime-thumb, index) {
+    rb-prime-thumb.addEventListener('click', function() { activateSlide(index, false); });
   });
 
   // Dot clicks
@@ -2424,7 +1215,7 @@ height: 39px;
   if (nextBtn) nextBtn.addEventListener('click', function() { activateSlide(current + 1, true); });
 
   // ── Swipe / touch ──────────────
-  var mainEl = section.querySelector('.product-gallery__main');
+  var mainEl = section.querySelector('.rb-prime-product-gallery__main');
   var touchStartX = 0;
   var touchStartY = 0;
   var isDragging = false;
@@ -2464,7 +1255,7 @@ height: 39px;
 
   // ── Keyboard navigation ──────────────
   section.addEventListener('keydown', function(e) {
-    if (e.target.closest('.product-gallery')) {
+    if (e.target.closest('.rb-prime-product-gallery')) {
       if (e.key === 'ArrowLeft') activateSlide(current - 1, true);
       if (e.key === 'ArrowRight') activateSlide(current + 1, true);
     }
@@ -2474,10 +1265,10 @@ height: 39px;
   var lightbox = document.getElementById('lightbox-' + sectionId);
   var lightboxImg = document.getElementById('lightboxImg-' + sectionId);
   var lightboxCounter = document.getElementById('lightboxCounter-' + sectionId);
-  var zoomBtn = section.querySelector('.gallery-zoom-btn');
-  var closeBtn = section.querySelector('.lightbox-close');
-  var lbPrev = section.querySelector('.lightbox-nav--prev');
-  var lbNext = section.querySelector('.lightbox-nav--next');
+  var zoomBtn = section.querySelector('.rb-prime-gallery-zoom-btn');
+  var closeBtn = section.querySelector('.rb-prime-lightbox-close');
+  var lbPrev = section.querySelector('.rb-prime-lightbox-nav--prev');
+  var lbNext = section.querySelector('.rb-prime-lightbox-nav--next');
 
   function setLightboxImage(index) {
     var activeImg = slides[index] && slides[index].querySelector('img');
@@ -2526,10 +1317,10 @@ height: 39px;
   });
 
   // ── Quantity + Live Price Update ──────────────
-  var qtyInput  = section.querySelector('.qty-input');
-  var minusBtn  = section.querySelector('.qty-btn--minus');
-  var plusBtn   = section.querySelector('.qty-btn--plus');
-  var priceEl   = section.querySelector('.price-amount');
+  var qtyInput  = section.querySelector('.rb-prime-qty-input');
+  var minusBtn  = section.querySelector('.rb-prime-qty-btn--minus');
+  var plusBtn   = section.querySelector('.rb-prime-qty-btn--plus');
+  var priceEl   = section.querySelector('.rb-prime-price-amount');
 
   var unitPriceCents = parseInt(priceEl ? (priceEl.dataset.unitPrice || '0') : '0', 10);
   var currencySymbol = priceEl ? (priceEl.dataset.currency || '') : '';
@@ -2567,11 +1358,11 @@ height: 39px;
   }
 
   // ── Variant selection ──────────────
-  var variantBtns = section.querySelectorAll('.variant-value-btn');
+  var variantBtns = section.querySelectorAll('.rb-prime-variant-value-btn');
   variantBtns.forEach(function(btn) {
     btn.addEventListener('click', function() {
       var optionIndex = this.dataset.optionIndex;
-      section.querySelectorAll('.variant-value-btn[data-option-index="' + optionIndex + '"]')
+      section.querySelectorAll('.rb-prime-variant-value-btn[data-option-index="' + optionIndex + '"]')
         .forEach(function(b) { b.classList.remove('active'); });
       this.classList.add('active');
     });
@@ -2651,10 +1442,10 @@ height: 39px;
     replaceBubbleMarkup(results[1]);
     setTimeout(openDrawer, 60);
     if (typeof window.publish === 'function' && window.PUB_SUB_EVENTS && window.PUB_SUB_EVENTS.cartUpdate) {
-      window.publish(window.PUB_SUB_EVENTS.cartUpdate, { source: 'exclusive-book-product' });
+      window.publish(window.PUB_SUB_EVENTS.cartUpdate, { source: 'rb-prime-exclusive-book-product' });
     }
-    document.dispatchEvent(new CustomEvent('cart:refresh', { detail: { source: 'exclusive-book-product' } }));
-    document.dispatchEvent(new CustomEvent('cart:updated', { detail: { source: 'exclusive-book-product' } }));
+    document.dispatchEvent(new CustomEvent('cart:refresh', { detail: { source: 'rb-prime-exclusive-book-product' } }));
+    document.dispatchEvent(new CustomEvent('cart:updated', { detail: { source: 'rb-prime-exclusive-book-product' } }));
   }
 
   // ── Add to Cart ──────────────
@@ -2670,7 +1461,7 @@ height: 39px;
       btn.disabled = true;
       btn.textContent = 'Adding...';
 
-      var prevErr = section.querySelector('.atc-error');
+      var prevErr = section.querySelector('.rb-prime-atc-error');
       if (prevErr) prevErr.textContent = '';
 
       try {
@@ -2683,12 +1474,12 @@ height: 39px;
         }, 1200);
       } catch (err) {
         console.error('[Exclusive Book] Add to cart error:', err);
-        var errEl = section.querySelector('.atc-error');
+        var errEl = section.querySelector('.rb-prime-atc-error');
         if (!errEl) {
           errEl = document.createElement('p');
-          errEl.className = 'atc-error';
+          errEl.className = 'rb-prime-atc-error';
           errEl.style.cssText = 'color:#e07070;font-size:13px;margin-top:10px;font-family:var(--font-body)';
-          section.querySelector('.product-actions').after(errEl);
+          section.querySelector('.rb-prime-product-actions').after(errEl);
         }
         errEl.textContent = err.message || 'Could not add item. Please try again.';
         btn.textContent = 'Error';
@@ -2706,7 +1497,7 @@ height: 39px;
 <script>
 (function() {
   var sectionId = '{{ section.id }}';
-  var section = document.getElementById('exclusive-book-product-' + sectionId);
+  var section = document.getElementById('rb-prime-exclusive-book-product-' + sectionId);
   if (!section) return;
 
   var root = (window.Shopify && window.Shopify.routes && window.Shopify.routes.root)
@@ -2717,20 +1508,20 @@ height: 39px;
   var initialVariantId = {{ product.selected_or_first_available_variant.id | json }};
   var buttonDefaultText = {{ section.settings.button_text | default: 'Pre Order Now' | json }};
 
-  var slides = Array.prototype.slice.call(section.querySelectorAll('.gallery-slide'));
-  var thumbs = Array.prototype.slice.call(section.querySelectorAll('.thumb'));
+  var slides = Array.prototype.slice.call(section.querySelectorAll('.rb-prime-gallery-slide'));
+  var rb-prime-thumbs = Array.prototype.slice.call(section.querySelectorAll('.rb-prime-thumb'));
   var lightbox = document.getElementById('lightbox-' + sectionId);
   var lightboxImg = document.getElementById('lightboxImg-' + sectionId);
-  var zoomBtn = section.querySelector('.gallery-zoom-btn');
-  var closeBtn = section.querySelector('.lightbox-close');
+  var zoomBtn = section.querySelector('.rb-prime-gallery-zoom-btn');
+  var closeBtn = section.querySelector('.rb-prime-lightbox-close');
 
-  var qtyInput = section.querySelector('.qty-input');
-  var minusBtn = section.querySelector('.qty-btn--minus');
-  var plusBtn = section.querySelector('.qty-btn--plus');
-  var priceEl = section.querySelector('.price-amount');
-  var compareEl = section.querySelector('.price-compare');
+  var qtyInput = section.querySelector('.rb-prime-qty-input');
+  var minusBtn = section.querySelector('.rb-prime-qty-btn--minus');
+  var plusBtn = section.querySelector('.rb-prime-qty-btn--plus');
+  var priceEl = section.querySelector('.rb-prime-price-amount');
+  var compareEl = section.querySelector('.rb-prime-price-compare');
   var cartBtn = section.querySelector('#addToCart-' + sectionId);
-  var variantBtns = Array.prototype.slice.call(section.querySelectorAll('.variant-value-btn'));
+  var variantBtns = Array.prototype.slice.call(section.querySelectorAll('.rb-prime-variant-value-btn'));
   var productForm = section.querySelector('form[action*="/cart/add"]');
 
   var currentSlide = 0;
@@ -2745,11 +1536,11 @@ height: 39px;
     currentSlide = index;
 
     slides.forEach(function(slide, i) {
-      slide.classList.toggle('gallery-slide--active', i === index);
+      slide.classList.toggle('rb-prime-gallery-slide--active', i === index);
     });
 
-    thumbs.forEach(function(thumb, i) {
-      thumb.classList.toggle('thumb--active', i === index);
+    rb-prime-thumbs.forEach(function(rb-prime-thumb, i) {
+      rb-prime-thumb.classList.toggle('rb-prime-thumb--active', i === index);
     });
 
     if (updateLightbox !== false) {
@@ -2780,8 +1571,8 @@ height: 39px;
     document.body.style.overflow = '';
   }
 
-  thumbs.forEach(function(thumb, index) {
-    thumb.addEventListener('click', function() {
+  rb-prime-thumbs.forEach(function(rb-prime-thumb, index) {
+    rb-prime-thumb.addEventListener('click', function() {
       activateSlide(index, true);
     });
   });
@@ -2838,10 +1629,10 @@ height: 39px;
 
   function getSelectedOptions() {
     var options = [];
-    var groups = section.querySelectorAll('.variant-option__values');
+    var groups = section.querySelectorAll('.rb-prime-variant-option__values');
 
     groups.forEach(function(group) {
-      var active = group.querySelector('.variant-value-btn.active');
+      var active = group.querySelector('.rb-prime-variant-value-btn.active');
       if (active) {
         options.push(active.getAttribute('data-value'));
       }
@@ -2943,7 +1734,7 @@ height: 39px;
       e.preventDefault();
 
       var optionIndex = this.getAttribute('data-option-index');
-      section.querySelectorAll('.variant-value-btn[data-option-index="' + optionIndex + '"]').forEach(function(item) {
+      section.querySelectorAll('.rb-prime-variant-value-btn[data-option-index="' + optionIndex + '"]').forEach(function(item) {
         item.classList.remove('active');
       });
 
@@ -3065,17 +1856,17 @@ height: 39px;
     setTimeout(openDrawer, 60);
 
     if (typeof window.publish === 'function' && window.PUB_SUB_EVENTS && window.PUB_SUB_EVENTS.cartUpdate) {
-      window.publish(window.PUB_SUB_EVENTS.cartUpdate, { source: 'exclusive-book-product' });
+      window.publish(window.PUB_SUB_EVENTS.cartUpdate, { source: 'rb-prime-exclusive-book-product' });
     }
 
     document.dispatchEvent(new CustomEvent('cart:refresh', {
       bubbles: true,
-      detail: { source: 'exclusive-book-product' }
+      detail: { source: 'rb-prime-exclusive-book-product' }
     }));
 
     document.dispatchEvent(new CustomEvent('cart:updated', {
       bubbles: true,
-      detail: { source: 'exclusive-book-product' }
+      detail: { source: 'rb-prime-exclusive-book-product' }
     }));
 
     document.dispatchEvent(new CustomEvent('dispatch:cart-update', {
@@ -3100,7 +1891,7 @@ height: 39px;
     button.disabled = true;
     button.textContent = 'Adding...';
 
-    var prevErr = section.querySelector('.atc-error');
+    var prevErr = section.querySelector('.rb-prime-atc-error');
     if (prevErr) prevErr.textContent = '';
 
     try {
@@ -3116,12 +1907,12 @@ height: 39px;
     } catch (err) {
       console.error('[Exclusive Book] Add to cart error:', err);
 
-      var errEl = section.querySelector('.atc-error');
+      var errEl = section.querySelector('.rb-prime-atc-error');
       if (!errEl) {
         errEl = document.createElement('p');
-        errEl.className = 'atc-error';
+        errEl.className = 'rb-prime-atc-error';
         errEl.style.cssText = 'color:#e07070;font-size:13px;margin-top:10px;font-family:var(--font-body)';
-        var actions = section.querySelector('.product-actions');
+        var actions = section.querySelector('.rb-prime-product-actions');
         if (actions) {
           actions.after(errEl);
         } else if (button.parentNode) {
@@ -3167,7 +1958,7 @@ height: 39px;
 {
   "name": "Exclusive Book Product",
   "tag": "section",
-  "class": "exclusive-book-product-section",
+  "class": "rb-prime-exclusive-book-product-section",
   "settings": [
     {
       "type": "header",

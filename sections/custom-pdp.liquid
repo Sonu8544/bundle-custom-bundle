@@ -1510,6 +1510,7 @@ height: 39px;
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Satoshi:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="preload" href="https://cdn.shopify.com/s/files/1/0589/1719/1777/files/Bethany_Elingston.otf" as="font" type="font/otf" crossorigin>
 
 <style>
 /* =============================================
@@ -1517,16 +1518,15 @@ height: 39px;
    ============================================= */
 
 @font-face {
-  font-family: 'Bethany Ellington';
-  src: url('{{ "BethanyEllington.woff2" | asset_url }}') format('woff2'),
-       url('{{ "BethanyEllington.woff" | asset_url }}') format('woff');
+  font-family: 'Bethany Elingston';
+  src: url('https://cdn.shopify.com/s/files/1/0589/1719/1777/files/Bethany_Elingston.otf') format('opentype');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
 }
 
 :root {
-  --font-display: 'Bethany Ellington', 'Cormorant Garamond', 'Playfair Display', Georgia, serif;
+  --font-display: 'Bethany Elingston', 'Cormorant Garamond', 'Playfair Display', Georgia, serif;
   --font-body: 'Satoshi', 'DM Sans', system-ui, sans-serif;
 }
 

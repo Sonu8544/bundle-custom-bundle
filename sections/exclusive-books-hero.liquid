@@ -1427,7 +1427,7 @@ function applyFilters() {
             </select>
           </div>
 
-          <div class="ebcp__field">
+          {% comment %} <div class="ebcp__field">
             <label for="{{ sid }}-author">Author</label>
             <select id="{{ sid }}-author" data-author-select>
               <option value="">All authors</option>
@@ -1444,7 +1444,7 @@ function applyFilters() {
                 {% endfor %}
               {% endif %}
             </select>
-          </div>
+          </div> {% endcomment %}
 
           <div class="ebcp__field-group">
             <div class="ebcp__field">

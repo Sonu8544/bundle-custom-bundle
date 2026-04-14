@@ -18,87 +18,6 @@
         "color_scheme": "background-1"
       }
     },
-    "exclusive_books_hero_KXRLeH": {
-      "type": "exclusive-books-hero",
-      "blocks": {
-        "filter_group_YDG7YU": {
-          "type": "filter_group",
-          "settings": {
-            "title": "Genres",
-            "item_1": "Fiction",
-            "link_1": "",
-            "item_2": "History",
-            "link_2": "",
-            "item_3": "Poetry",
-            "link_3": "",
-            "item_4": "Rare Finds",
-            "link_4": ""
-          }
-        },
-        "filter_group_9VN7eY": {
-          "type": "filter_group",
-          "settings": {
-            "title": "Genres",
-            "item_1": "Fiction",
-            "link_1": "",
-            "item_2": "History",
-            "link_2": "",
-            "item_3": "Poetry",
-            "link_3": "",
-            "item_4": "Rare Finds",
-            "link_4": ""
-          }
-        }
-      },
-      "block_order": [
-        "filter_group_YDG7YU",
-        "filter_group_9VN7eY"
-      ],
-      "name": "Exclusive books hero",
-      "settings": {
-        "logo_text": "RB",
-        "menu": "",
-        "show_cart": true,
-        "show_account": true,
-        "account_label": "LOGIN/SIGNUP",
-        "account_link": "",
-        "background_image": "shopify://shop_images/arafed-image-round-table-with-light-coming-from-it_1034560-94186_2_1.png",
-        "filter_icon": "shopify://shop_images/filter-vertical.png",
-        "filter_button_bg": "shopify://shop_images/f89b1c50a8a368abe48fc6793fd85a8999a3c0ca_7991f07a-d217-4f4e-bd7a-f6113fc84bf9.png",
-        "heading": "Exclusive Books",
-        "heading_highlight": "Books",
-        "subheading": "<p>Memories that Define our Journey Together</p>",
-        "placeholder": "SEARCH YOUR BEST BOOK",
-        "search_action": "",
-        "filter_modal_heading": "Browse by filters",
-        "empty_filters_text": "Add filter blocks from the theme editor.",
-        "heading_font_family": "Bethany Elingston",
-        "body_font_family": "Satoshi",
-        "text_color": "#FFFFFF",
-        "heading_gradient_start": "#A87E0A",
-        "heading_gradient_end": "#FFFFFF",
-        "search_bg_color": "#171717",
-        "search_border_color": "#8E8E8E",
-        "modal_bg": "#050505",
-        "overlay_opacity": 18,
-        "hero_height_desktop": 720,
-        "content_max_width": 920,
-        "heading_size_desktop": 72,
-        "subheading_size_desktop": 18,
-        "search_width_desktop": 520,
-        "hero_height_tablet": 620,
-        "heading_size_tablet": 58,
-        "subheading_size_tablet": 17,
-        "search_width_tablet": 460,
-        "hero_height_mobile": 500,
-        "heading_size_mobile": 34,
-        "subheading_size_mobile": 14,
-        "search_width_mobile": 270,
-        "search_height": 50,
-        "padding_top": 20,
-        "padding_bottom": 28
-      }
-    },
     "book_shelf_hover_cart_3XBYj6": {
       "type": "book-shelf-hover-cart",
       "blocks": {
@@ -197,6 +116,7 @@
         "book_U9qcfm",
         "book_GBABJr"
       ],
+      "disabled": true,
       "name": "Book shelf hover cart",
       "settings": {
         "shelf_image": "shopify://shop_images/e949d73a7b001da9a9c51536b1349931024ac76d.png",
@@ -252,12 +172,73 @@
         "padding_top": 36,
         "padding_bottom": 36
       }
+    },
+    "exclusive_books_hero_3eFnQp": {
+      "type": "exclusive-books-hero",
+      "name": "Exclusive books collection",
+      "settings": {
+        "fallback_collection": "automated-collection",
+        "hero_bg": "shopify://shop_images/arafed-image-round-table-with-light-coming-from-it_1034560-94186_2_1.png",
+        "shelf_image": "shopify://shop_images/e949d73a7b001da9a9c51536b1349931024ac76d.png",
+        "filter_icon": "shopify://shop_images/filter-vertical.png",
+        "filter_button_bg": "shopify://shop_images/f89b1c50a8a368abe48fc6793fd85a8999a3c0ca_7991f07a-d217-4f4e-bd7a-f6113fc84bf9.png",
+        "button_bg": "shopify://shop_images/f89b1c50a8a368abe48fc6793fd85a8999a3c0ca_7991f07a-d217-4f4e-bd7a-f6113fc84bf9.png",
+        "heading": "Exclusive Books",
+        "highlight_word": "Books",
+        "subheading": "<p>Memories that Define our Journey Together</p>",
+        "search_placeholder": "Search your best book",
+        "filter_heading": "Refine your books",
+        "button_text": "ADD TO CART",
+        "empty_text": "No books matched your search or filters.",
+        "show_meta": false,
+        "heading_font_family": "Bethany Elingston",
+        "body_font_family": "Satoshi",
+        "text_color": "#FFFFFF",
+        "heading_gradient_start": "#A87E0A",
+        "heading_gradient_end": "#FFFFFF",
+        "search_bg": "#171717",
+        "search_border": "#8E8E8E",
+        "modal_bg": "#050505",
+        "section_bg": "#050202",
+        "glow_color": "#2A1208",
+        "button_text_color": "#FFFFFF",
+        "meta_text_color": "#FFFFFF",
+        "overlay_opacity": 18,
+        "content_max_width": 1400,
+        "hero_height_desktop": 520,
+        "hero_height_tablet": 460,
+        "hero_height_mobile": 380,
+        "heading_size_desktop": 64,
+        "heading_size_tablet": 52,
+        "heading_size_mobile": 34,
+        "subheading_size_desktop": 18,
+        "subheading_size_tablet": 17,
+        "subheading_size_mobile": 14,
+        "search_width_desktop": 520,
+        "search_width_mobile": 270,
+        "grid_gap_desktop": 40,
+        "grid_gap_tablet": 24,
+        "grid_gap_mobile": 8,
+        "row_gap_desktop": 72,
+        "row_gap_mobile": 44,
+        "book_width_desktop": 160,
+        "book_width_tablet": 140,
+        "book_width_mobile": 100,
+        "book_overlap_desktop": 28,
+        "book_overlap_tablet": 24,
+        "book_overlap_mobile": 16,
+        "hover_lift": 8,
+        "button_radius": 24,
+        "top_padding": 20,
+        "top_padding_mobile": 16,
+        "bottom_padding": 32
+      }
     }
   },
   "order": [
     "banner",
-    "exclusive_books_hero_KXRLeH",
     "book_shelf_hover_cart_3XBYj6",
-    "product-grid"
+    "product-grid",
+    "exclusive_books_hero_3eFnQp"
   ]
 }

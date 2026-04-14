@@ -173,14 +173,14 @@
         "padding_bottom": 36
       }
     },
-    "exclusive_books_hero_3eFnQp": {
+    "exclusive_books_hero_LpQ4UV": {
       "type": "exclusive-books-hero",
       "name": "Exclusive books collection",
       "settings": {
         "fallback_collection": "frontpage",
         "hero_bg": "shopify://shop_images/arafed-image-round-table-with-light-coming-from-it_1034560-94186_2_1.png",
         "shelf_image": "shopify://shop_images/e949d73a7b001da9a9c51536b1349931024ac76d.png",
-        "filter_icon": "shopify://shop_images/filter-vertical.png",
+        "filter_icon": "shopify://shop_images/Frame_1618870024_1.svg",
         "filter_button_bg": "shopify://shop_images/f89b1c50a8a368abe48fc6793fd85a8999a3c0ca_7991f07a-d217-4f4e-bd7a-f6113fc84bf9.png",
         "button_bg": "shopify://shop_images/f89b1c50a8a368abe48fc6793fd85a8999a3c0ca_7991f07a-d217-4f4e-bd7a-f6113fc84bf9.png",
         "heading": "Exclusive Books",
@@ -193,16 +193,16 @@
         "show_meta": false,
         "heading_font_family": "Bethany Elingston",
         "body_font_family": "Satoshi",
-        "text_color": "#ffffff",
-        "heading_gradient_start": "#a87e0a",
-        "heading_gradient_end": "#ffffff",
+        "text_color": "#FFFFFF",
+        "heading_gradient_start": "#A87E0A",
+        "heading_gradient_end": "#FFFFFF",
         "search_bg": "#171717",
-        "search_border": "#8e8e8e",
+        "search_border": "#8E8E8E",
         "modal_bg": "#050505",
         "section_bg": "#050202",
-        "glow_color": "#2a1208",
-        "button_text_color": "#ffffff",
-        "meta_text_color": "#ffffff",
+        "glow_color": "#2A1208",
+        "button_text_color": "#FFFFFF",
+        "meta_text_color": "#FFFFFF",
         "overlay_opacity": 18,
         "content_max_width": 1400,
         "hero_height_desktop": 520,
@@ -239,6 +239,6 @@
     "banner",
     "book_shelf_hover_cart_3XBYj6",
     "product-grid",
-    "exclusive_books_hero_3eFnQp"
+    "exclusive_books_hero_LpQ4UV"
   ]
 }

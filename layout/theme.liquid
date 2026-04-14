@@ -224,7 +224,7 @@
     {{ 'base.css' | asset_url | stylesheet_tag }}
 
     {%- comment -%} Product pages: body.gradient gets hero image + overlays (overrides Dawn .gradient fill) {%- endcomment -%}
-    {%- if template.name == 'product' -%}
+    {% comment %} {%- if template.name == 'product' -%}
       {% style %}
         body.gradient.product-page--hero-bg {
           background-color: #000000;
@@ -242,7 +242,7 @@
           background: transparent;
         }
       {% endstyle %}
-    {%- endif -%}
+    {%- endif -%} {% endcomment %}
 
     {%- unless settings.type_body_font.system? -%}
       <link rel="preload" as="font" href="{{ settings.type_body_font | font_url }}" type="font/woff2" crossorigin>

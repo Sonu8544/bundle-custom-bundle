@@ -20,9 +20,9 @@
         <h2 class="ebcp__heading">
           {% assign heading_parts = section.settings.heading | split: section.settings.highlight_word %}
           {% if section.settings.highlight_word != blank and heading_parts.size > 1 %}
-            {{ heading_parts[0] }}<span>{{ section.settings.highlight_word }}</span>{{ heading_parts[1] }}
+            <span class="ebcp__heading-base">{{ heading_parts[0] }}</span><span class="ebcp__heading-accent">{{ section.settings.highlight_word }}</span><span class="ebcp__heading-base">{{ heading_parts[1] }}</span>
           {% else %}
-            {{ section.settings.heading }}
+            <span class="ebcp__heading-base">{{ section.settings.heading }}</span>
           {% endif %}
         </h2>
       {% endif %}
@@ -135,7 +135,7 @@
                   <div class="ebcp__book">
                     <a href="{{ product.url }}" class="ebcp__book-link" aria-label="{{ product.title }}">
                       {% if product.featured_image != blank %}
-                        {{ product.featured_image | image_url: width: 1200 | image_tag: class: 'ebcp__book-image', loading: 'lazy', widths: '220,320,420,520,720,920,1200', sizes: '(max-width: 767px) 33vw, (max-width: 989px) 28vw, 22vw', alt: product.title | escape }}
+                        {{ product.featured_image | image_url: width: 1200 | image_tag: class: 'ebcp__book-image', loading: 'lazy', widths: '220,320,420,520,720,920,1200', sizes: '(max-width: 767px) 42vw, (max-width: 989px) 28vw, 22vw', alt: product.title | escape }}
                       {% else %}
                         {{ 'image' | placeholder_svg_tag: 'ebcp__placeholder' }}
                       {% endif %}
@@ -150,7 +150,6 @@
                     {% endif %}
                   </div>
                 </div>
-
 
                 {% if section.settings.show_meta %}
                   <div class="ebcp__meta">
@@ -194,6 +193,7 @@
       --heading-font: {{ section.settings.heading_font_family }};
       --body-font: {{ section.settings.body_font_family }};
       --text-color: {{ section.settings.text_color }};
+      --heading-base-color: {{ section.settings.heading_base_color }};
       --accent-start: {{ section.settings.heading_gradient_start }};
       --accent-end: {{ section.settings.heading_gradient_end }};
       --search-bg: {{ section.settings.search_bg }};
@@ -220,7 +220,7 @@
     #{{ sid }} .ebcp__overlay { position: absolute; inset: 0; }
     #{{ sid }} .ebcp__bg-image { width: 100%; height: 100%; object-fit: cover; display: block; }
     #{{ sid }} .ebcp__overlay {
-      background: linear-gradient(180deg, rgba(0,0,0,.52) 0%, rgba(0,0,0,.16) 34%, rgba(0,0,0,.86) 100%), rgba(0,0,0,var(--overlay-opacity));
+      background: linear-gradient(180deg, rgba(0,0,0,.40) 0%, rgba(0,0,0,.10) 34%, rgba(0,0,0,.92) 100%), rgba(0,0,0,var(--overlay-opacity));
       pointer-events: none;
     }
     #{{ sid }} .ebcp__inner {
@@ -244,16 +244,19 @@
       font-size: var(--heading-size-desktop);
       line-height: 1;
       font-weight: 400;
-      background: linear-gradient(270.6deg, var(--accent-start) 9.74%, var(--accent-end) 71.76%);
-      -webkit-background-clip: text;
-      background-clip: text;
-      -webkit-text-fill-color: transparent;
+      color: var(--heading-base-color);
+      letter-spacing: -0.01em;
     }
-    #{{ sid }} .ebcp__heading span {
-      background: inherit;
+    #{{ sid }} .ebcp__heading-base {
+      color: var(--heading-base-color);
+    }
+    #{{ sid }} .ebcp__heading-accent {
+      background: linear-gradient(180deg, var(--accent-start) 0%, var(--accent-end) 100%);
       -webkit-background-clip: text;
       background-clip: text;
       -webkit-text-fill-color: transparent;
+      color: transparent;
+      padding-left: 0.18em;
     }
     #{{ sid }} .ebcp__subheading {
       margin: 18px auto 0;
@@ -298,7 +301,7 @@
     }
     #{{ sid }} .ebcp__search::placeholder { color: rgba(255,255,255,.74); }
     #{{ sid }} .ebcp__search-btn {
-      width: 42px; height: 42px; border: 0; background: transparent; color: #fff; display: inline-flex; align-items: center; justify-content: center;
+      width: 42px; height: 42px; border: 0; background: transparent; color: #fff; display: inline-flex; align-items: center; justify-content: center; cursor: pointer;
     }
     #{{ sid }} .ebcp__search-btn svg { width: 19px; height: 19px; }
     #{{ sid }} .ebcp__filter-btn {
@@ -351,15 +354,15 @@
     #{{ sid }} .ebcp__book-link { display: block; line-height: 0; position: relative; z-index: 2; }
     #{{ sid }} .ebcp__book-image,
     #{{ sid }} .ebcp__placeholder {
-      width: 100%; height: auto; display: block; object-fit: contain; filter: drop-shadow(0 14px 26px rgba(0,0,0,.28));
+      width: 100%; height: auto; display: block; object-fit: contain; filter: drop-shadow(0 14px 26px rgba(0,0,0,.45));
     }
     #{{ sid }} .ebcp__cta {
-      position: absolute; left: 50%; bottom: 10%; transform: translateX(-50%) translateY(10px); width: calc(100% - 18px); max-width: 220px; opacity: 0; visibility: hidden; transition: opacity .3s ease, transform .3s ease, visibility .3s ease; z-index: 4;
+      position: absolute; left: 50%; bottom: 6%; transform: translateX(-50%) translateY(10px); width: calc(100% - 14px); max-width: 220px; opacity: 0; visibility: hidden; transition: opacity .3s ease, transform .3s ease, visibility .3s ease; z-index: 4;
     }
     #{{ sid }} .ebcp__book:hover .ebcp__cta,
     #{{ sid }} .ebcp__book:focus-within .ebcp__cta { opacity: 1; visibility: visible; transform: translateX(-50%) translateY(0); }
     #{{ sid }} .ebcp__cart-btn {
-      width: 100%; min-height: 46px; border: 0; border-radius: var(--button-radius); cursor: pointer; color: var(--button-text); font-size: 12px; letter-spacing: .04em; text-transform: uppercase; font-family: var(--body-font), sans-serif; background: {% if section.settings.button_bg != blank %}url({{ section.settings.button_bg | image_url: width: 400 }}) center/cover no-repeat{% else %}linear-gradient(180deg, #DDB85F 0%, #8A6210 100%){% endif %}; box-shadow: 0 10px 20px rgba(0,0,0,.24);
+      width: 100%; min-height: 44px; border: 0; border-radius: var(--button-radius); cursor: pointer; color: var(--button-text); font-size: 12px; letter-spacing: .08em; text-transform: uppercase; font-family: var(--body-font), sans-serif; font-weight: 500; background: {% if section.settings.button_bg != blank %}url({{ section.settings.button_bg | image_url: width: 400 }}) center/cover no-repeat{% else %}linear-gradient(180deg, #DDB85F 0%, #8A6210 100%){% endif %}; box-shadow: 0 10px 20px rgba(0,0,0,.32);
     }
     #{{ sid }} .ebcp__cart-btn[disabled] { opacity: .6; cursor: not-allowed; }
     #{{ sid }} .ebcp__shelf { position: relative; z-index: 1; line-height: 0; }
@@ -688,8 +691,9 @@
     { "type": "text", "id": "body_font_family", "label": "Body font family", "default": "Satoshi" },
 
     { "type": "color", "id": "text_color", "label": "Text color", "default": "#FFFFFF" },
-    { "type": "color", "id": "heading_gradient_start", "label": "Heading gradient start", "default": "#A87E0A" },
-    { "type": "color", "id": "heading_gradient_end", "label": "Heading gradient end", "default": "#FFFFFF" },
+    { "type": "color", "id": "heading_base_color", "label": "Heading base color (non-highlighted word)", "default": "#FFFFFF" },
+    { "type": "color", "id": "heading_gradient_start", "label": "Highlight word gradient start", "default": "#E6C77A" },
+    { "type": "color", "id": "heading_gradient_end", "label": "Highlight word gradient end", "default": "#8A6210" },
     { "type": "color", "id": "search_bg", "label": "Search background", "default": "#171717" },
     { "type": "color", "id": "search_border", "label": "Search border", "default": "#8E8E8E" },
     { "type": "color", "id": "modal_bg", "label": "Modal background", "default": "#050505" },
@@ -699,15 +703,15 @@
     { "type": "color", "id": "meta_text_color", "label": "Meta text color", "default": "#FFFFFF" },
 
     { "type": "range", "id": "overlay_opacity", "label": "Overlay opacity", "min": 0, "max": 80, "step": 1, "unit": "%", "default": 18 },
-    { "type": "range", "id": "content_max_width", "label": "Content max width", "min": 900, "max": 1800, "step": 20, "unit": "px", "default": 1400 },
+    { "type": "range", "id": "content_max_width", "label": "Content max width", "min": 900, "max": 1800, "step": 20, "unit": "px", "default": 1280 },
 
-    { "type": "range", "id": "hero_height_desktop", "label": "Hero height desktop", "min": 420, "max": 900, "step": 10, "unit": "px", "default": 520 },
+    { "type": "range", "id": "hero_height_desktop", "label": "Hero height desktop", "min": 420, "max": 900, "step": 10, "unit": "px", "default": 560 },
     { "type": "range", "id": "hero_height_tablet", "label": "Hero height tablet", "min": 360, "max": 760, "step": 10, "unit": "px", "default": 460 },
     { "type": "range", "id": "hero_height_mobile", "label": "Hero height mobile", "min": 300, "max": 640, "step": 10, "unit": "px", "default": 380 },
 
-    { "type": "range", "id": "heading_size_desktop", "label": "Heading size desktop", "min": 36, "max": 90, "step": 2, "unit": "px", "default": 64 },
-    { "type": "range", "id": "heading_size_tablet", "label": "Heading size tablet", "min": 28, "max": 72, "step": 2, "unit": "px", "default": 52 },
-    { "type": "range", "id": "heading_size_mobile", "label": "Heading size mobile", "min": 22, "max": 52, "step": 2, "unit": "px", "default": 34 },
+    { "type": "range", "id": "heading_size_desktop", "label": "Heading size desktop", "min": 36, "max": 120, "step": 2, "unit": "px", "default": 88 },
+    { "type": "range", "id": "heading_size_tablet", "label": "Heading size tablet", "min": 28, "max": 80, "step": 2, "unit": "px", "default": 60 },
+    { "type": "range", "id": "heading_size_mobile", "label": "Heading size mobile", "min": 22, "max": 60, "step": 2, "unit": "px", "default": 40 },
 
     { "type": "range", "id": "subheading_size_desktop", "label": "Subheading size desktop", "min": 14, "max": 28, "step": 1, "unit": "px", "default": 18 },
     { "type": "range", "id": "subheading_size_tablet", "label": "Subheading size tablet", "min": 13, "max": 24, "step": 1, "unit": "px", "default": 17 },
@@ -719,22 +723,22 @@
     { "type": "range", "id": "grid_gap_desktop", "label": "Grid gap desktop", "min": 10, "max": 80, "step": 2, "unit": "px", "default": 40 },
     { "type": "range", "id": "grid_gap_tablet", "label": "Grid gap tablet", "min": 8, "max": 40, "step": 2, "unit": "px", "default": 24 },
     { "type": "range", "id": "grid_gap_mobile", "label": "Grid gap mobile", "min": 4, "max": 20, "step": 2, "unit": "px", "default": 8 },
-    { "type": "range", "id": "row_gap_desktop", "label": "Row gap desktop", "min": 24, "max": 180, "step": 4, "unit": "px", "default": 72 },
-    { "type": "range", "id": "row_gap_mobile", "label": "Row gap mobile", "min": 16, "max": 100, "step": 4, "unit": "px", "default": 44 },
+    { "type": "range", "id": "row_gap_desktop", "label": "Row gap desktop", "min": 24, "max": 180, "step": 4, "unit": "px", "default": 60 },
+    { "type": "range", "id": "row_gap_mobile", "label": "Row gap mobile", "min": 16, "max": 100, "step": 4, "unit": "px", "default": 36 },
 
-    { "type": "range", "id": "book_width_desktop", "label": "Book width desktop", "min": 100, "max": 260, "step": 4, "unit": "px", "default": 160 },
-    { "type": "range", "id": "book_width_tablet", "label": "Book width tablet", "min": 80, "max": 220, "step": 4, "unit": "px", "default": 140 },
-    { "type": "range", "id": "book_width_mobile", "label": "Book width mobile", "min": 70, "max": 160, "step": 2, "unit": "px", "default": 100 },
+    { "type": "range", "id": "book_width_desktop", "label": "Book width desktop", "min": 100, "max": 280, "step": 4, "unit": "px", "default": 200 },
+    { "type": "range", "id": "book_width_tablet", "label": "Book width tablet", "min": 80, "max": 220, "step": 4, "unit": "px", "default": 160 },
+    { "type": "range", "id": "book_width_mobile", "label": "Book width mobile", "min": 70, "max": 180, "step": 2, "unit": "px", "default": 120 },
 
     { "type": "range", "id": "book_overlap_desktop", "label": "Book overlap desktop", "min": 0, "max": 80, "step": 2, "unit": "px", "default": 28 },
-    { "type": "range", "id": "book_overlap_tablet", "label": "Book overlap tablet", "min": 0, "max": 60, "step": 2, "unit": "px", "default": 24 },
+    { "type": "range", "id": "book_overlap_tablet", "label": "Book overlap tablet", "min": 0, "max": 60, "step": 2, "unit": "px", "default": 22 },
     { "type": "range", "id": "book_overlap_mobile", "label": "Book overlap mobile", "min": 0, "max": 40, "step": 2, "unit": "px", "default": 16 },
     { "type": "range", "id": "hover_lift", "label": "Hover lift", "min": 0, "max": 24, "step": 2, "unit": "px", "default": 8 },
-    { "type": "range", "id": "button_radius", "label": "Button radius", "min": 0, "max": 60, "step": 2, "unit": "px", "default": 24 },
+    { "type": "range", "id": "button_radius", "label": "Button radius", "min": 0, "max": 60, "step": 2, "unit": "px", "default": 30 },
 
-    { "type": "range", "id": "top_padding", "label": "Top padding desktop", "min": 0, "max": 120, "step": 4, "unit": "px", "default": 20 },
+    { "type": "range", "id": "top_padding", "label": "Top padding desktop", "min": 0, "max": 120, "step": 4, "unit": "px", "default": 28 },
     { "type": "range", "id": "top_padding_mobile", "label": "Top padding mobile", "min": 0, "max": 80, "step": 4, "unit": "px", "default": 16 },
-    { "type": "range", "id": "bottom_padding", "label": "Bottom padding", "min": 0, "max": 120, "step": 4, "unit": "px", "default": 32 }
+    { "type": "range", "id": "bottom_padding", "label": "Bottom padding", "min": 0, "max": 120, "step": 4, "unit": "px", "default": 40 }
   ],
   "presets": [
     { "name": "Exclusive books collection" }

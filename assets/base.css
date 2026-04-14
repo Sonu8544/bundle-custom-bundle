@@ -3446,3 +3446,7 @@ details-disclosure > details {
     padding: 10px 16px 16px;
   }
 }
+
+.main-section-wrapper--{
+  margin-top: -2px;
+}

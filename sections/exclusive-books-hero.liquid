@@ -35,7 +35,7 @@
         <div class="ebcp__search-wrap">
           <label class="visually-hidden" for="{{ sid }}-search">{{ section.settings.search_placeholder }}</label>
           <input id="{{ sid }}-search" class="ebcp__search" type="search" placeholder="{{ section.settings.search_placeholder }}" data-search-input>
-          <button type="button" class="ebcp__search-btn" aria-label="Search">
+         <button type="button" class="ebcp__search-btn" aria-label="Search" data-search-button>
             <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="11" cy="11" r="6.5" stroke="currentColor" stroke-width="1.7"/><path d="M16 16L21 21" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
           </button>
         </div>
@@ -1072,7 +1072,7 @@
     applyFilters();
   })();
 </script>
-
+ebcp__search
 </section>
 
 {% schema %}

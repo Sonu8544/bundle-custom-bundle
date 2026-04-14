@@ -1,0 +1,1315 @@
+{% liquid
+  assign section_id = 'exclusive-books-' | append: section.id
+  assign hero_menu = section.settings.menu
+  assign search_action = section.settings.search_action
+  if search_action == blank
+    assign search_action = routes.search_url
+  endif
+%}
+
+<section id="{{ section_id }}" class="exclusive-books-hero color-{{ section.settings.color_scheme }}">
+  <div class="exclusive-books-hero__bg">
+    {% if section.settings.background_image != blank %}
+      {{
+        section.settings.background_image
+        | image_url: width: 2400
+        | image_tag:
+          class: 'exclusive-books-hero__bg-image',
+          loading: 'lazy',
+          widths: '768, 1024, 1440, 1800, 2400',
+          sizes: '100vw',
+          alt: section.settings.heading | escape
+      }}
+    {% else %}
+      <div class="exclusive-books-hero__bg-placeholder"></div>
+    {% endif %}
+    <div class="exclusive-books-hero__overlay"></div>
+  </div>
+
+  <div class="exclusive-books-hero__inner page-width">
+    <header class="exclusive-books-hero__header">
+      <div class="exclusive-books-hero__brand">
+        {% if section.settings.logo != blank %}
+          {{
+            section.settings.logo
+            | image_url: width: 240
+            | image_tag:
+              class: 'exclusive-books-hero__logo-image',
+              loading: 'lazy',
+              widths: '80, 120, 160, 240',
+              sizes: '(max-width: 767px) 56px, 72px',
+              alt: shop.name
+          }}
+        {% else %}
+          <a href="{{ routes.root_url }}" class="exclusive-books-hero__logo-text">{{ section.settings.logo_text }}</a>
+        {% endif %}
+      </div>
+
+      <button
+        type="button"
+        class="exclusive-books-hero__mobile-toggle"
+        aria-expanded="false"
+        aria-controls="{{ section_id }}-drawer"
+        data-drawer-toggle
+      >
+        <span></span>
+        <span></span>
+      </button>
+
+      <div id="{{ section_id }}-drawer" class="exclusive-books-hero__nav-wrap" data-drawer>
+        {% if hero_menu != blank %}
+          <nav class="exclusive-books-hero__nav" aria-label="Primary">
+            {% for link in hero_menu.links %}
+              <a href="{{ link.url }}" class="exclusive-books-hero__nav-link">{{ link.title }}</a>
+            {% endfor %}
+          </nav>
+        {% endif %}
+
+        <div class="exclusive-books-hero__actions">
+          {% if section.settings.show_cart %}
+            <a href="{{ routes.cart_url }}" class="exclusive-books-hero__icon-btn" aria-label="Cart">
+              <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M7 7H22L20 14H9L7 4H3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                <circle cx="10" cy="19" r="1.4" fill="currentColor"/>
+                <circle cx="19" cy="19" r="1.4" fill="currentColor"/>
+              </svg>
+            </a>
+          {% endif %}
+
+          {% if section.settings.show_account %}
+            <a href="{{ routes.account_url }}" class="exclusive-books-hero__icon-btn" aria-label="Account">
+              <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <circle cx="12" cy="8" r="4" stroke="currentColor" stroke-width="1.6"/>
+                <path d="M5 20C6.8 16.8 9 15.5 12 15.5C15 15.5 17.2 16.8 19 20" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+              </svg>
+            </a>
+          {% endif %}
+
+          {% if section.settings.account_label != blank %}
+            <a href="{{ section.settings.account_link | default: routes.account_login_url }}" class="exclusive-books-hero__account-btn">
+              {{ section.settings.account_label }}
+            </a>
+          {% endif %}
+        </div>
+      </div>
+    </header>
+
+    <div class="exclusive-books-hero__content">
+      {% if section.settings.heading != blank %}
+        <h2 class="exclusive-books-hero__heading">
+          {% if section.settings.heading_highlight != blank %}
+            {% assign heading_parts = section.settings.heading | split: section.settings.heading_highlight %}
+            {% if heading_parts.size > 1 %}
+              {{ heading_parts[0] }}
+              <span>{{ section.settings.heading_highlight }}</span>
+              {{ heading_parts[1] }}
+            {% else %}
+              {{ section.settings.heading }}
+            {% endif %}
+          {% else %}
+            {{ section.settings.heading }}
+          {% endif %}
+        </h2>
+      {% endif %}
+
+      {% if section.settings.subheading != blank %}
+        <div class="exclusive-books-hero__subheading rte">{{ section.settings.subheading }}</div>
+      {% endif %}
+
+      <div class="exclusive-books-hero__search-row">
+        <form action="{{ search_action }}" method="get" role="search" class="exclusive-books-hero__search-form">
+          <input type="hidden" name="type" value="product">
+          <label class="visually-hidden" for="{{ section_id }}-search">{{ section.settings.placeholder }}</label>
+          <input
+            id="{{ section_id }}-search"
+            class="exclusive-books-hero__search-input"
+            type="search"
+            name="q"
+            value="{{ search.terms | escape }}"
+            placeholder="{{ section.settings.placeholder }}"
+            autocomplete="off"
+          >
+          <button type="submit" class="exclusive-books-hero__search-submit" aria-label="Search">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <circle cx="11" cy="11" r="6.5" stroke="currentColor" stroke-width="1.7"/>
+              <path d="M16 16L21 21" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+            </svg>
+          </button>
+        </form>
+
+        <button
+          type="button"
+          class="exclusive-books-hero__filter-btn"
+          aria-expanded="false"
+          aria-controls="{{ section_id }}-filter-modal"
+          data-filter-open
+        >
+          {% if section.settings.filter_icon != blank %}
+            {{
+              section.settings.filter_icon
+              | image_url: width: 72
+              | image_tag:
+                class: 'exclusive-books-hero__filter-icon',
+                loading: 'lazy',
+                widths: '36, 48, 72',
+                sizes: '48px',
+                alt: 'Open filters'
+            }}
+          {% else %}
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M7 5V19" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+              <path d="M17 5V19" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+              <circle cx="7" cy="9" r="2.6" stroke="currentColor" stroke-width="1.7"/>
+              <circle cx="17" cy="15" r="2.6" stroke="currentColor" stroke-width="1.7"/>
+            </svg>
+          {% endif %}
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div id="{{ section_id }}-filter-modal" class="exclusive-books-hero__modal" hidden data-filter-modal>
+    <div class="exclusive-books-hero__modal-backdrop" data-filter-close></div>
+    <div
+      class="exclusive-books-hero__modal-dialog"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="{{ section_id }}-filter-title"
+    >
+      <div class="exclusive-books-hero__modal-head">
+        <h3 id="{{ section_id }}-filter-title">{{ section.settings.filter_modal_heading }}</h3>
+        <button type="button" class="exclusive-books-hero__modal-close" aria-label="Close filters" data-filter-close>
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M6 6L18 18" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+            <path d="M18 6L6 18" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+          </svg>
+        </button>
+      </div>
+
+      <div class="exclusive-books-hero__modal-body">
+        {% if section.blocks.size > 0 %}
+          {% for block in section.blocks %}
+            <div class="exclusive-books-hero__filter-group" {{ block.shopify_attributes }}>
+              {% if block.settings.title != blank %}
+                <h4>{{ block.settings.title }}</h4>
+              {% endif %}
+
+              {% assign item_1 = block.settings.item_1 %}
+              {% assign item_2 = block.settings.item_2 %}
+              {% assign item_3 = block.settings.item_3 %}
+              {% assign item_4 = block.settings.item_4 %}
+              {% assign link_1 = block.settings.link_1 %}
+              {% assign link_2 = block.settings.link_2 %}
+              {% assign link_3 = block.settings.link_3 %}
+              {% assign link_4 = block.settings.link_4 %}
+
+              <div class="exclusive-books-hero__chips">
+                {% if item_1 != blank %}<a href="{{ link_1 | default: routes.search_url }}" class="exclusive-books-hero__chip">{{ item_1 }}</a>{% endif %}
+                {% if item_2 != blank %}<a href="{{ link_2 | default: routes.search_url }}" class="exclusive-books-hero__chip">{{ item_2 }}</a>{% endif %}
+                {% if item_3 != blank %}<a href="{{ link_3 | default: routes.search_url }}" class="exclusive-books-hero__chip">{{ item_3 }}</a>{% endif %}
+                {% if item_4 != blank %}<a href="{{ link_4 | default: routes.search_url }}" class="exclusive-books-hero__chip">{{ item_4 }}</a>{% endif %}
+              </div>
+            </div>
+          {% endfor %}
+        {% else %}
+          <p class="exclusive-books-hero__empty">{{ section.settings.empty_filters_text }}</p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <style>
+    #{{ section_id }} {
+      --hero-min-height-desktop: {{ section.settings.hero_height_desktop }}px;
+      --hero-min-height-tablet: {{ section.settings.hero_height_tablet }}px;
+      --hero-min-height-mobile: {{ section.settings.hero_height_mobile }}px;
+      --content-max-width: {{ section.settings.content_max_width }}px;
+      --overlay-opacity: {{ section.settings.overlay_opacity | divided_by: 100.0 }};
+      --heading-size-desktop: {{ section.settings.heading_size_desktop }}px;
+      --heading-size-tablet: {{ section.settings.heading_size_tablet }}px;
+      --heading-size-mobile: {{ section.settings.heading_size_mobile }}px;
+      --subheading-size-desktop: {{ section.settings.subheading_size_desktop }}px;
+      --subheading-size-tablet: {{ section.settings.subheading_size_tablet }}px;
+      --subheading-size-mobile: {{ section.settings.subheading_size_mobile }}px;
+      --search-width-desktop: {{ section.settings.search_width_desktop }}px;
+      --search-width-tablet: {{ section.settings.search_width_tablet }}px;
+      --search-width-mobile: {{ section.settings.search_width_mobile }}px;
+      --search-height: {{ section.settings.search_height }}px;
+      --hero-top-space: {{ section.settings.padding_top }}px;
+      --hero-bottom-space: {{ section.settings.padding_bottom }}px;
+      --heading-font: {{ section.settings.heading_font_family }};
+      --body-font: {{ section.settings.body_font_family }};
+      --text-color: {{ section.settings.text_color }};
+      --muted-border: {{ section.settings.search_border_color }};
+      --search-bg: {{ section.settings.search_bg_color }};
+      --modal-bg: {{ section.settings.modal_bg }};
+      --accent-start: {{ section.settings.heading_gradient_start }};
+      --accent-end: {{ section.settings.heading_gradient_end }};
+      --filter-btn-bg: {% if section.settings.filter_button_bg != blank %}url({{ section.settings.filter_button_bg | image_url: width: 300 }}) center/cover no-repeat{% else %}linear-gradient(180deg, #DDB85F 0%, #8A6210 100%){% endif %};
+    }
+
+    #{{ section_id }}.exclusive-books-hero {
+      position: relative;
+      isolation: isolate;
+      min-height: var(--hero-min-height-desktop);
+      color: var(--text-color);
+      overflow: hidden;
+    }
+
+    #{{ section_id }} .exclusive-books-hero__bg,
+    #{{ section_id }} .exclusive-books-hero__overlay {
+      position: absolute;
+      inset: 0;
+    }
+
+    #{{ section_id }} .exclusive-books-hero__bg-image,
+    #{{ section_id }} .exclusive-books-hero__bg-placeholder {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    #{{ section_id }} .exclusive-books-hero__bg-placeholder {
+      background:
+        radial-gradient(circle at center, rgba(219, 181, 111, 0.22), rgba(0, 0, 0, 0.88) 58%),
+        linear-gradient(180deg, rgba(0,0,0,.42) 0%, rgba(0,0,0,.2) 30%, rgba(0,0,0,.82) 100%);
+    }
+
+    #{{ section_id }} .exclusive-books-hero__overlay {
+      background:
+        linear-gradient(180deg, rgba(0, 0, 0, 0.48) 0%, rgba(0, 0, 0, 0.18) 38%, rgba(0, 0, 0, 0.78) 100%),
+        rgba(0, 0, 0, var(--overlay-opacity));
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    #{{ section_id }} .exclusive-books-hero__inner {
+      position: relative;
+      z-index: 2;
+      min-height: var(--hero-min-height-desktop);
+      padding-top: var(--hero-top-space);
+      padding-bottom: var(--hero-bottom-space);
+      display: flex;
+      flex-direction: column;
+    }
+
+    #{{ section_id }} .exclusive-books-hero__header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+    #{{ section_id }} .exclusive-books-hero__brand {
+      flex: 0 0 auto;
+      line-height: 0;
+    }
+
+    #{{ section_id }} .exclusive-books-hero__logo-image {
+      width: auto;
+      height: 62px;
+      max-width: 100%;
+      object-fit: contain;
+    }
+
+    #{{ section_id }} .exclusive-books-hero__logo-text {
+      color: var(--text-color);
+      text-decoration: none;
+      font-family: var(--heading-font), serif;
+      font-size: 28px;
+      line-height: 1;
+      display: inline-block;
+    }
+
+    #{{ section_id }} .exclusive-books-hero__nav-wrap {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      margin-left: auto;
+    }
+
+    #{{ section_id }} .exclusive-books-hero__nav {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      flex-wrap: wrap;
+    }
+
+    #{{ section_id }} .exclusive-books-hero__nav-link {
+      color: rgba(255,255,255,.92);
+      text-decoration: none;
+      font-size: 13px;
+      line-height: 1;
+      font-family: var(--body-font), sans-serif;
+      transition: opacity .25s ease, color .25s ease;
+    }
+
+    #{{ section_id }} .exclusive-books-hero__nav-link:hover,
+    #{{ section_id }} .exclusive-books-hero__nav-link:focus-visible {
+      color: #ffffff;
+      opacity: .86;
+    }
+
+    #{{ section_id }} .exclusive-books-hero__actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    #{{ section_id }} .exclusive-books-hero__icon-btn,
+    #{{ section_id }} .exclusive-books-hero__account-btn {
+      border: 1px solid rgba(255,255,255,.58);
+      color: #fff;
+      text-decoration: none;
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      background: rgba(255,255,255,.02);
+    }
+
+    #{{ section_id }} .exclusive-books-hero__icon-btn {
+      width: 46px;
+      height: 46px;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #{{ section_id }} .exclusive-books-hero__icon-btn svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    #{{ section_id }} .exclusive-books-hero__account-btn {
+      min-height: 46px;
+      padding: 0 20px;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--body-font), sans-serif;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+      white-space: nowrap;
+    }
+
+    #{{ section_id }} .exclusive-books-hero__content {
+      width: 100%;
+      max-width: var(--content-max-width);
+      margin: auto;
+      text-align: center;
+      padding-top: 64px;
+    }
+
+    #{{ section_id }} .exclusive-books-hero__heading {
+      margin: 0;
+      font-family: var(--heading-font), serif;
+      font-size: var(--heading-size-desktop);
+      line-height: 1;
+      font-weight: 400;
+      letter-spacing: 0;
+      color: #fff;
+    }
+
+    #{{ section_id }} .exclusive-books-hero__heading span,
+    #{{ section_id }} .exclusive-books-hero__heading {
+      background: linear-gradient(270.6deg, var(--accent-start) 9.74%, var(--accent-end) 71.76%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    #{{ section_id }} .exclusive-books-hero__subheading {
+      margin: 20px auto 0;
+      max-width: 440px;
+      font-family: var(--body-font), sans-serif;
+      font-size: var(--subheading-size-desktop);
+      line-height: 1.25;
+      font-weight: 400;
+      color: #ffffff;
+    }
+
+    #{{ section_id }} .exclusive-books-hero__subheading p {
+      margin: 0;
+    }
+
+    #{{ section_id }} .exclusive-books-hero__search-row {
+      margin-top: 34px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+    }
+
+    #{{ section_id }} .exclusive-books-hero__search-form {
+      width: min(100%, var(--search-width-desktop));
+      min-height: var(--search-height);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 0 6px 0 20px;
+      border-radius: 122px;
+      border: 1px solid var(--muted-border);
+      background: var(--search-bg);
+      backdrop-filter: blur(9px);
+      -webkit-backdrop-filter: blur(9px);
+      box-sizing: border-box;
+    }
+
+    #{{ section_id }} .exclusive-books-hero__search-input {
+      width: 100%;
+      min-width: 0;
+      border: 0;
+      background: transparent;
+      color: #fff;
+      font-size: 15px;
+      font-family: var(--body-font), sans-serif;
+      line-height: 1;
+      letter-spacing: 0;
+      padding: 14px 0;
+      box-shadow: none;
+      outline: none;
+    }
+
+    #{{ section_id }} .exclusive-books-hero__search-input::placeholder {
+      color: rgba(255,255,255,.74);
+      text-transform: uppercase;
+      opacity: 1;
+    }
+
+    #{{ section_id }} .exclusive-books-hero__search-submit {
+      width: 42px;
+      height: 42px;
+      border: 0;
+      border-radius: 999px;
+      background: transparent;
+      color: #fff;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+
+    #{{ section_id }} .exclusive-books-hero__search-submit svg {
+      width: 19px;
+      height: 19px;
+    }
+
+    #{{ section_id }} .exclusive-books-hero__filter-btn {
+      width: 50px;
+      height: 50px;
+      flex: 0 0 50px;
+      border-radius: 60px;
+      border: 0;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      background: var(--filter-btn-bg);
+      box-shadow: 0 12px 26px rgba(0,0,0,.28);
+      overflow: hidden;
+      padding: 0;
+    }
+
+    #{{ section_id }} .exclusive-books-hero__filter-icon {
+      width: 22px;
+      height: 22px;
+      object-fit: contain;
+      display: block;
+    }
+
+    #{{ section_id }} .exclusive-books-hero__filter-btn svg {
+      width: 21px;
+      height: 21px;
+      color: #fff;
+    }
+
+    #{{ section_id }} .exclusive-books-hero__mobile-toggle {
+      display: none;
+      width: 40px;
+      height: 40px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.35);
+      background: rgba(255,255,255,.04);
+      color: #fff;
+      padding: 0;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    #{{ section_id }} .exclusive-books-hero__mobile-toggle span {
+      width: 16px;
+      height: 1.5px;
+      display: block;
+      background: currentColor;
+    }
+
+    #{{ section_id }} .exclusive-books-hero__modal[hidden] {
+      display: none !important;
+    }
+
+    #{{ section_id }} .exclusive-books-hero__modal {
+      position: fixed;
+      inset: 0;
+      z-index: 35;
+    }
+
+    #{{ section_id }} .exclusive-books-hero__modal-backdrop {
+      position: absolute;
+      inset: 0;
+      background: rgba(0,0,0,.86);
+    }
+
+    #{{ section_id }} .exclusive-books-hero__modal-dialog {
+      position: relative;
+      z-index: 1;
+      width: min(92vw, 760px);
+      max-height: min(84vh, 900px);
+      overflow: auto;
+      margin: 8vh auto 0;
+      border-radius: 28px;
+      background: var(--modal-bg);
+      border: 1px solid rgba(255,255,255,.1);
+      box-shadow: 0 28px 80px rgba(0,0,0,.42);
+      color: #fff;
+    }
+
+    #{{ section_id }} .exclusive-books-hero__modal-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 22px 24px 18px;
+      border-bottom: 1px solid rgba(255,255,255,.08);
+    }
+
+    #{{ section_id }} .exclusive-books-hero__modal-head h3 {
+      margin: 0;
+      font-family: var(--heading-font), serif;
+      font-size: 28px;
+      line-height: 1;
+      font-weight: 400;
+    }
+
+    #{{ section_id }} .exclusive-books-hero__modal-close {
+      width: 42px;
+      height: 42px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.15);
+      background: rgba(255,255,255,.05);
+      color: #fff;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      padding: 0;
+    }
+
+    #{{ section_id }} .exclusive-books-hero__modal-close svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    #{{ section_id }} .exclusive-books-hero__modal-body {
+      padding: 24px;
+      display: grid;
+      gap: 18px;
+    }
+
+    #{{ section_id }} .exclusive-books-hero__filter-group {
+      padding: 18px;
+      border-radius: 22px;
+      background: rgba(255,255,255,.03);
+      border: 1px solid rgba(255,255,255,.08);
+    }
+
+    #{{ section_id }} .exclusive-books-hero__filter-group h4 {
+      margin: 0 0 14px;
+      color: #fff;
+      font-family: var(--body-font), sans-serif;
+      font-size: 15px;
+      font-weight: 600;
+      letter-spacing: .03em;
+      text-transform: uppercase;
+    }
+
+    #{{ section_id }} .exclusive-books-hero__chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    #{{ section_id }} .exclusive-books-hero__chip {
+      min-height: 42px;
+      padding: 10px 16px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.16);
+      background: rgba(255,255,255,.04);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      text-decoration: none;
+      font-family: var(--body-font), sans-serif;
+      font-size: 14px;
+      transition: background .25s ease, border-color .25s ease, transform .25s ease;
+    }
+
+    #{{ section_id }} .exclusive-books-hero__chip:hover,
+    #{{ section_id }} .exclusive-books-hero__chip:focus-visible {
+      background: rgba(255,255,255,.1);
+      border-color: rgba(255,255,255,.28);
+      transform: translateY(-1px);
+    }
+
+    #{{ section_id }} .exclusive-books-hero__empty {
+      margin: 0;
+      color: rgba(255,255,255,.74);
+      font-family: var(--body-font), sans-serif;
+    }
+
+    @media screen and (max-width: 1199px) {
+      #{{ section_id }}.exclusive-books-hero,
+      #{{ section_id }} .exclusive-books-hero__inner {
+        min-height: var(--hero-min-height-tablet);
+      }
+
+      #{{ section_id }} .exclusive-books-hero__content {
+        padding-top: 56px;
+      }
+
+      #{{ section_id }} .exclusive-books-hero__heading {
+        font-size: var(--heading-size-tablet);
+      }
+
+      #{{ section_id }} .exclusive-books-hero__subheading {
+        font-size: var(--subheading-size-tablet);
+      }
+
+      #{{ section_id }} .exclusive-books-hero__search-form {
+        width: min(100%, var(--search-width-tablet));
+      }
+
+      #{{ section_id }} .exclusive-books-hero__nav {
+        gap: 18px;
+      }
+
+      #{{ section_id }} .exclusive-books-hero__logo-image {
+        height: 54px;
+      }
+    }
+
+    @media screen and (max-width: 989px) {
+      #{{ section_id }} .exclusive-books-hero__mobile-toggle {
+        display: inline-flex;
+      }
+
+      #{{ section_id }} .exclusive-books-hero__nav-wrap {
+        position: absolute;
+        top: calc(100% + 10px);
+        right: 0;
+        width: min(84vw, 360px);
+        padding: 18px;
+        border-radius: 18px;
+        background: rgba(8, 8, 8, .94);
+        border: 1px solid rgba(255,255,255,.08);
+        box-shadow: 0 20px 60px rgba(0,0,0,.45);
+        display: none;
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      #{{ section_id }} .exclusive-books-hero__nav-wrap.is-open {
+        display: flex;
+      }
+
+      #{{ section_id }} .exclusive-books-hero__nav {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 14px;
+      }
+
+      #{{ section_id }} .exclusive-books-hero__nav-link {
+        font-size: 15px;
+      }
+
+      #{{ section_id }} .exclusive-books-hero__actions {
+        justify-content: flex-start;
+        flex-wrap: wrap;
+        padding-top: 6px;
+      }
+
+      #{{ section_id }} .exclusive-books-hero__account-btn {
+        min-width: 180px;
+      }
+    }
+
+    @media screen and (max-width: 767px) {
+      #{{ section_id }}.exclusive-books-hero,
+      #{{ section_id }} .exclusive-books-hero__inner {
+        min-height: var(--hero-min-height-mobile);
+      }
+
+      #{{ section_id }} .exclusive-books-hero__inner {
+        padding-top: 12px;
+      }
+
+      #{{ section_id }} .exclusive-books-hero__logo-image {
+        height: 44px;
+      }
+
+      #{{ section_id }} .exclusive-books-hero__content {
+        max-width: 100%;
+        padding-top: 56px;
+      }
+
+      #{{ section_id }} .exclusive-books-hero__heading {
+        font-size: var(--heading-size-mobile);
+        line-height: 1.02;
+      }
+
+      #{{ section_id }} .exclusive-books-hero__subheading {
+        margin-top: 14px;
+        max-width: 240px;
+        font-size: var(--subheading-size-mobile);
+        line-height: 1.35;
+      }
+
+      #{{ section_id }} .exclusive-books-hero__search-row {
+        margin-top: 26px;
+        gap: 10px;
+        align-items: stretch;
+      }
+
+      #{{ section_id }} .exclusive-books-hero__search-form {
+        width: min(100%, var(--search-width-mobile));
+        min-height: 48px;
+        padding-left: 16px;
+      }
+
+      #{{ section_id }} .exclusive-books-hero__search-input {
+        font-size: 13px;
+      }
+
+      #{{ section_id }} .exclusive-books-hero__filter-btn {
+        width: 48px;
+        height: 48px;
+        flex-basis: 48px;
+      }
+
+      #{{ section_id }} .exclusive-books-hero__modal-dialog {
+        width: calc(100vw - 24px);
+        margin-top: 5vh;
+        border-radius: 22px;
+      }
+
+      #{{ section_id }} .exclusive-books-hero__modal-head {
+        padding: 18px 18px 16px;
+      }
+
+      #{{ section_id }} .exclusive-books-hero__modal-head h3 {
+        font-size: 24px;
+      }
+
+      #{{ section_id }} .exclusive-books-hero__modal-body {
+        padding: 18px;
+      }
+
+      #{{ section_id }} .exclusive-books-hero__filter-group {
+        padding: 14px;
+        border-radius: 18px;
+      }
+
+      #{{ section_id }} .exclusive-books-hero__chip {
+        min-height: 38px;
+        padding: 9px 14px;
+        font-size: 13px;
+      }
+    }
+  </style>
+
+  <script>
+    (function() {
+      const section = document.getElementById('{{ section_id }}');
+      if (!section) return;
+
+      const drawerToggle = section.querySelector('[data-drawer-toggle]');
+      const drawer = section.querySelector('[data-drawer]');
+      const modal = section.querySelector('[data-filter-modal]');
+      const openFilter = section.querySelector('[data-filter-open]');
+      const closeButtons = section.querySelectorAll('[data-filter-close]');
+
+      if (drawerToggle && drawer) {
+        drawerToggle.addEventListener('click', function() {
+          const open = drawer.classList.toggle('is-open');
+          drawerToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+        });
+
+        document.addEventListener('click', function(event) {
+          if (!section.contains(event.target)) {
+            drawer.classList.remove('is-open');
+            drawerToggle.setAttribute('aria-expanded', 'false');
+          }
+        });
+      }
+
+      function setModalState(open) {
+        if (!modal) return;
+        if (open) {
+          modal.hidden = false;
+          document.documentElement.style.overflow = 'hidden';
+          openFilter && openFilter.setAttribute('aria-expanded', 'true');
+        } else {
+          modal.hidden = true;
+          document.documentElement.style.overflow = '';
+          openFilter && openFilter.setAttribute('aria-expanded', 'false');
+        }
+      }
+
+      if (openFilter) {
+        openFilter.addEventListener('click', function() {
+          setModalState(true);
+        });
+      }
+
+      closeButtons.forEach(function(button) {
+        button.addEventListener('click', function() {
+          setModalState(false);
+        });
+      });
+
+      document.addEventListener('keydown', function(event) {
+        if (event.key === 'Escape') {
+          setModalState(false);
+        }
+      });
+    })();
+  </script>
+</section>
+
+{% schema %}
+{
+  "name": "Exclusive books hero",
+  "tag": "section",
+  "class": "section section-exclusive-books-hero",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Branding and navigation"
+    },
+    {
+      "type": "image_picker",
+      "id": "logo",
+      "label": "Logo"
+    },
+    {
+      "type": "text",
+      "id": "logo_text",
+      "label": "Fallback logo text",
+      "default": "RB"
+    },
+    {
+      "type": "link_list",
+      "id": "menu",
+      "label": "Navigation menu"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_cart",
+      "label": "Show cart icon",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_account",
+      "label": "Show account icon",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "account_label",
+      "label": "Account button label",
+      "default": "LOGIN/SIGNUP"
+    },
+    {
+      "type": "url",
+      "id": "account_link",
+      "label": "Account button link"
+    },
+    {
+      "type": "header",
+      "content": "Hero content"
+    },
+    {
+      "type": "image_picker",
+      "id": "background_image",
+      "label": "Background image"
+    },
+    {
+      "type": "image_picker",
+      "id": "filter_icon",
+      "label": "Filter icon"
+    },
+    {
+      "type": "image_picker",
+      "id": "filter_button_bg",
+      "label": "Filter button background image"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Exclusive Books"
+    },
+    {
+      "type": "text",
+      "id": "heading_highlight",
+      "label": "Highlighted word",
+      "default": "Books"
+    },
+    {
+      "type": "richtext",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "<p>Memories that Define our Journey Together</p>"
+    },
+    {
+      "type": "text",
+      "id": "placeholder",
+      "label": "Search placeholder",
+      "default": "SEARCH YOUR BEST BOOK"
+    },
+    {
+      "type": "url",
+      "id": "search_action",
+      "label": "Search form action URL"
+    },
+    {
+      "type": "text",
+      "id": "filter_modal_heading",
+      "label": "Filter modal heading",
+      "default": "Browse by filters"
+    },
+    {
+      "type": "text",
+      "id": "empty_filters_text",
+      "label": "Empty filters text",
+      "default": "Add filter blocks from the theme editor."
+    },
+    {
+      "type": "header",
+      "content": "Fonts and colors"
+    },
+    {
+      "type": "text",
+      "id": "heading_font_family",
+      "label": "Heading font family",
+      "default": "Bethany Elingston"
+    },
+    {
+      "type": "text",
+      "id": "body_font_family",
+      "label": "Body font family",
+      "default": "Satoshi"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "heading_gradient_start",
+      "label": "Heading gradient start",
+      "default": "#A87E0A"
+    },
+    {
+      "type": "color",
+      "id": "heading_gradient_end",
+      "label": "Heading gradient end",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "search_bg_color",
+      "label": "Search background",
+      "default": "#171717"
+    },
+    {
+      "type": "color",
+      "id": "search_border_color",
+      "label": "Search border",
+      "default": "#8E8E8E"
+    },
+    {
+      "type": "color",
+      "id": "modal_bg",
+      "label": "Modal background",
+      "default": "#050505"
+    },
+    {
+      "type": "range",
+      "id": "overlay_opacity",
+      "label": "Extra overlay opacity",
+      "min": 0,
+      "max": 80,
+      "step": 1,
+      "unit": "%",
+      "default": 18
+    },
+    {
+      "type": "header",
+      "content": "Desktop"
+    },
+    {
+      "type": "range",
+      "id": "hero_height_desktop",
+      "label": "Hero minimum height",
+      "min": 520,
+      "max": 1000,
+      "step": 10,
+      "unit": "px",
+      "default": 720
+    },
+    {
+      "type": "range",
+      "id": "content_max_width",
+      "label": "Content max width",
+      "min": 500,
+      "max": 1200,
+      "step": 10,
+      "unit": "px",
+      "default": 920
+    },
+    {
+      "type": "range",
+      "id": "heading_size_desktop",
+      "label": "Heading size",
+      "min": 34,
+      "max": 90,
+      "step": 2,
+      "unit": "px",
+      "default": 72
+    },
+    {
+      "type": "range",
+      "id": "subheading_size_desktop",
+      "label": "Subheading size",
+      "min": 14,
+      "max": 34,
+      "step": 1,
+      "unit": "px",
+      "default": 18
+    },
+    {
+      "type": "range",
+      "id": "search_width_desktop",
+      "label": "Search width",
+      "min": 280,
+      "max": 760,
+      "step": 10,
+      "unit": "px",
+      "default": 520
+    },
+    {
+      "type": "header",
+      "content": "Tablet"
+    },
+    {
+      "type": "range",
+      "id": "hero_height_tablet",
+      "label": "Hero minimum height",
+      "min": 460,
+      "max": 900,
+      "step": 10,
+      "unit": "px",
+      "default": 620
+    },
+    {
+      "type": "range",
+      "id": "heading_size_tablet",
+      "label": "Heading size",
+      "min": 28,
+      "max": 72,
+      "step": 2,
+      "unit": "px",
+      "default": 58
+    },
+    {
+      "type": "range",
+      "id": "subheading_size_tablet",
+      "label": "Subheading size",
+      "min": 13,
+      "max": 28,
+      "step": 1,
+      "unit": "px",
+      "default": 17
+    },
+    {
+      "type": "range",
+      "id": "search_width_tablet",
+      "label": "Search width",
+      "min": 260,
+      "max": 640,
+      "step": 10,
+      "unit": "px",
+      "default": 460
+    },
+    {
+      "type": "header",
+      "content": "Mobile"
+    },
+    {
+      "type": "range",
+      "id": "hero_height_mobile",
+      "label": "Hero minimum height",
+      "min": 360,
+      "max": 760,
+      "step": 10,
+      "unit": "px",
+      "default": 500
+    },
+    {
+      "type": "range",
+      "id": "heading_size_mobile",
+      "label": "Heading size",
+      "min": 24,
+      "max": 52,
+      "step": 2,
+      "unit": "px",
+      "default": 34
+    },
+    {
+      "type": "range",
+      "id": "subheading_size_mobile",
+      "label": "Subheading size",
+      "min": 12,
+      "max": 22,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "search_width_mobile",
+      "label": "Search width",
+      "min": 200,
+      "max": 360,
+      "step": 5,
+      "unit": "px",
+      "default": 270
+    },
+    {
+      "type": "range",
+      "id": "search_height",
+      "label": "Search height",
+      "min": 46,
+      "max": 72,
+      "step": 2,
+      "unit": "px",
+      "default": 50
+    },
+    {
+      "type": "header",
+      "content": "Spacing"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Top padding",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Bottom padding",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "default": 28
+    }
+  ],
+  "blocks": [
+    {
+      "type": "filter_group",
+      "name": "Filter group",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Group title",
+          "default": "Genres"
+        },
+        {
+          "type": "text",
+          "id": "item_1",
+          "label": "Item 1",
+          "default": "Fiction"
+        },
+        {
+          "type": "url",
+          "id": "link_1",
+          "label": "Item 1 link"
+        },
+        {
+          "type": "text",
+          "id": "item_2",
+          "label": "Item 2",
+          "default": "History"
+        },
+        {
+          "type": "url",
+          "id": "link_2",
+          "label": "Item 2 link"
+        },
+        {
+          "type": "text",
+          "id": "item_3",
+          "label": "Item 3",
+          "default": "Poetry"
+        },
+        {
+          "type": "url",
+          "id": "link_3",
+          "label": "Item 3 link"
+        },
+        {
+          "type": "text",
+          "id": "item_4",
+          "label": "Item 4",
+          "default": "Rare Finds"
+        },
+        {
+          "type": "url",
+          "id": "link_4",
+          "label": "Item 4 link"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Exclusive books hero",
+      "blocks": [
+        {
+          "type": "filter_group"
+        },
+        {
+          "type": "filter_group"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

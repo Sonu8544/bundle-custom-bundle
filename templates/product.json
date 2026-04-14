@@ -173,6 +173,7 @@
         "feature_gcWCXC",
         "feature_qJf7jC"
       ],
+      "disabled": true,
       "name": "Luxury features cards",
       "settings": {
         "heading": "Features",
@@ -279,6 +280,7 @@
         "meta_card_8EqBey",
         "meta_card_CCwUyb"
       ],
+      "disabled": true,
       "name": "About the book",
       "settings": {
         "heading": "About the book",
@@ -324,6 +326,7 @@
     },
     "how_we_build_video_VVptjE": {
       "type": "how-we-build-video",
+      "disabled": true,
       "name": "How we build video",
       "settings": {
         "heading": "How we build",

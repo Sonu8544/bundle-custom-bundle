@@ -135,7 +135,7 @@
                   <div class="ebcp__book">
                     <a href="{{ product.url }}" class="ebcp__book-link" aria-label="{{ product.title }}">
                       {% if product.featured_image != blank %}
-                        {{ product.featured_image | image_url: width: 1200 | image_tag: class: 'ebcp__book-image', loading: 'lazy', widths: '220,320,420,520,720,920,1200', sizes: '(max-width: 767px) 42vw, (max-width: 989px) 28vw, 22vw', alt: product.title | escape }}
+                        {{ product.featured_image | image_url: width: 1200 | image_tag: class: 'ebcp__book-image', loading: 'lazy', widths: '220,320,420,520,720,920,1200', sizes: '(max-width: 767px) 42vw, (max-width: 989px) 30vw, 24vw', alt: product.title | escape }}
                       {% else %}
                         {{ 'image' | placeholder_svg_tag: 'ebcp__placeholder' }}
                       {% endif %}
@@ -184,9 +184,21 @@
       --content-max-width: {{ section.settings.content_max_width }}px;
       --search-width-desktop: {{ section.settings.search_width_desktop }}px;
       --search-width-mobile: {{ section.settings.search_width_mobile }}px;
+
       --book-width-desktop: {{ section.settings.book_width_desktop }}px;
+      --book-height-desktop: {{ section.settings.book_height_desktop }}px;
       --book-width-tablet: {{ section.settings.book_width_tablet }}px;
+      --book-height-tablet: {{ section.settings.book_height_tablet }}px;
       --book-width-mobile: {{ section.settings.book_width_mobile }}px;
+      --book-height-mobile: {{ section.settings.book_height_mobile }}px;
+
+      --book-top-desktop: {{ section.settings.book_top_offset_desktop }}px;
+      --book-top-tablet: {{ section.settings.book_top_offset_tablet }}px;
+      --book-top-mobile: {{ section.settings.book_top_offset_mobile }}px;
+      --book-bottom-desktop: {{ section.settings.book_bottom_offset_desktop }}px;
+      --book-bottom-tablet: {{ section.settings.book_bottom_offset_tablet }}px;
+      --book-bottom-mobile: {{ section.settings.book_bottom_offset_mobile }}px;
+
       --row-gap-desktop: {{ section.settings.row_gap_desktop }}px;
       --row-gap-mobile: {{ section.settings.row_gap_mobile }}px;
       --overlay-opacity: {{ section.settings.overlay_opacity | divided_by: 100.0 }};
@@ -247,9 +259,7 @@
       color: var(--heading-base-color);
       letter-spacing: -0.01em;
     }
-    #{{ sid }} .ebcp__heading-base {
-      color: var(--heading-base-color);
-    }
+    #{{ sid }} .ebcp__heading-base { color: var(--heading-base-color); }
     #{{ sid }} .ebcp__heading-accent {
       background: linear-gradient(180deg, var(--accent-start) 0%, var(--accent-end) 100%);
       -webkit-background-clip: text;
@@ -339,22 +349,26 @@
       grid-template-columns: repeat(3, minmax(0, 1fr));
       column-gap: {{ section.settings.grid_gap_desktop }}px;
       align-items: end;
-      margin-bottom: -{{ section.settings.book_overlap_desktop }}px;
+      justify-items: center;
+      padding-top: var(--book-top-desktop);
+      margin-bottom: var(--book-bottom-desktop);
     }
-    #{{ sid }} .ebcp__item { min-width: 0; display: flex; justify-content: center; }
-    #{{ sid }} .ebcp__row { position: relative; width: 100%; }
+    #{{ sid }} .ebcp__item { min-width: 0; display: flex; justify-content: center; width: 100%; }
+    #{{ sid }} .ebcp__row { position: relative; width: 100%; display: flex; justify-content: center; }
     #{{ sid }} .ebcp__book-wrap { position: relative; z-index: 2; display: flex; justify-content: center; }
     #{{ sid }} .ebcp__book {
       width: min(100%, var(--book-width-desktop));
+      height: var(--book-height-desktop);
+      max-height: calc((100vw - 40px) * (var(--book-height-desktop) / var(--book-width-desktop)) / 3);
       position: relative;
       transition: transform .35s ease;
     }
     #{{ sid }} .ebcp__book:hover,
     #{{ sid }} .ebcp__book:focus-within { transform: translateY(-{{ section.settings.hover_lift }}px); }
-    #{{ sid }} .ebcp__book-link { display: block; line-height: 0; position: relative; z-index: 2; }
+    #{{ sid }} .ebcp__book-link { display: block; line-height: 0; position: relative; z-index: 2; width: 100%; height: 100%; }
     #{{ sid }} .ebcp__book-image,
     #{{ sid }} .ebcp__placeholder {
-      width: 100%; height: auto; display: block; object-fit: contain; filter: drop-shadow(0 14px 26px rgba(0,0,0,.45));
+      width: 100%; height: 100%; display: block; object-fit: cover; filter: drop-shadow(0 18px 32px rgba(0,0,0,.55));
     }
     #{{ sid }} .ebcp__cta {
       position: absolute; left: 50%; bottom: 6%; transform: translateX(-50%) translateY(10px); width: calc(100% - 14px); max-width: 220px; opacity: 0; visibility: hidden; transition: opacity .3s ease, transform .3s ease, visibility .3s ease; z-index: 4;
@@ -409,8 +423,16 @@
       #{{ sid }} .ebcp__hero { min-height: var(--hero-min-height-tablet); }
       #{{ sid }} .ebcp__heading { font-size: var(--heading-size-tablet); }
       #{{ sid }} .ebcp__subheading { font-size: var(--subheading-size-tablet); }
-      #{{ sid }} .ebcp__books-row { column-gap: {{ section.settings.grid_gap_tablet }}px; margin-bottom: -{{ section.settings.book_overlap_tablet }}px; }
-      #{{ sid }} .ebcp__book { width: min(100%, var(--book-width-tablet)); }
+      #{{ sid }} .ebcp__books-row {
+        column-gap: {{ section.settings.grid_gap_tablet }}px;
+        padding-top: var(--book-top-tablet);
+        margin-bottom: var(--book-bottom-tablet);
+      }
+      #{{ sid }} .ebcp__book {
+        width: min(100%, var(--book-width-tablet));
+        height: var(--book-height-tablet);
+        max-height: calc((100vw - 40px) * (var(--book-height-tablet) / var(--book-width-tablet)) / 3);
+      }
       #{{ sid }} .ebcp__cta { opacity: 1; visibility: visible; transform: translateX(-50%); }
     }
 
@@ -424,8 +446,17 @@
       #{{ sid }} .ebcp__filter-btn { width: 48px; height: 48px; }
       #{{ sid }} .ebcp__results-meta { flex-direction: column; align-items: flex-start; gap: 6px; }
       #{{ sid }} .ebcp__grid { gap: var(--row-gap-mobile); }
-      #{{ sid }} .ebcp__books-row { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: {{ section.settings.grid_gap_mobile }}px; margin-bottom: -{{ section.settings.book_overlap_mobile }}px; }
-      #{{ sid }} .ebcp__book { width: min(100%, var(--book-width-mobile)); }
+      #{{ sid }} .ebcp__books-row {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        column-gap: {{ section.settings.grid_gap_mobile }}px;
+        padding-top: var(--book-top-mobile);
+        margin-bottom: var(--book-bottom-mobile);
+      }
+      #{{ sid }} .ebcp__book {
+        width: min(100%, var(--book-width-mobile));
+        height: var(--book-height-mobile);
+        max-height: calc((100vw - 32px) * (var(--book-height-mobile) / var(--book-width-mobile)) / 2);
+      }
       #{{ sid }} .ebcp__cart-btn { min-height: 34px; font-size: 9px; }
       #{{ sid }} .ebcp__meta { margin-top: 10px; }
       #{{ sid }} .ebcp__title { font-size: 11px; }
@@ -720,19 +751,34 @@
     { "type": "range", "id": "search_width_desktop", "label": "Search width desktop", "min": 280, "max": 760, "step": 10, "unit": "px", "default": 520 },
     { "type": "range", "id": "search_width_mobile", "label": "Search width mobile", "min": 200, "max": 360, "step": 5, "unit": "px", "default": 270 },
 
-    { "type": "range", "id": "grid_gap_desktop", "label": "Grid gap desktop", "min": 10, "max": 80, "step": 2, "unit": "px", "default": 40 },
-    { "type": "range", "id": "grid_gap_tablet", "label": "Grid gap tablet", "min": 8, "max": 40, "step": 2, "unit": "px", "default": 24 },
-    { "type": "range", "id": "grid_gap_mobile", "label": "Grid gap mobile", "min": 4, "max": 20, "step": 2, "unit": "px", "default": 8 },
-    { "type": "range", "id": "row_gap_desktop", "label": "Row gap desktop", "min": 24, "max": 180, "step": 4, "unit": "px", "default": 60 },
-    { "type": "range", "id": "row_gap_mobile", "label": "Row gap mobile", "min": 16, "max": 100, "step": 4, "unit": "px", "default": 36 },
+    { "type": "header", "content": "Book size — Desktop" },
+    { "type": "range", "id": "book_width_desktop", "label": "Book width desktop", "min": 120, "max": 400, "step": 4, "unit": "px", "default": 316 },
+    { "type": "range", "id": "book_height_desktop", "label": "Book height desktop", "min": 160, "max": 520, "step": 4, "unit": "px", "default": 400 },
 
-    { "type": "range", "id": "book_width_desktop", "label": "Book width desktop", "min": 100, "max": 280, "step": 4, "unit": "px", "default": 200 },
-    { "type": "range", "id": "book_width_tablet", "label": "Book width tablet", "min": 80, "max": 220, "step": 4, "unit": "px", "default": 160 },
-    { "type": "range", "id": "book_width_mobile", "label": "Book width mobile", "min": 70, "max": 180, "step": 2, "unit": "px", "default": 120 },
+    { "type": "header", "content": "Book size — Tablet" },
+    { "type": "range", "id": "book_width_tablet", "label": "Book width tablet", "min": 100, "max": 320, "step": 4, "unit": "px", "default": 220 },
+    { "type": "range", "id": "book_height_tablet", "label": "Book height tablet", "min": 140, "max": 420, "step": 4, "unit": "px", "default": 280 },
 
-    { "type": "range", "id": "book_overlap_desktop", "label": "Book overlap desktop", "min": 0, "max": 80, "step": 2, "unit": "px", "default": 28 },
-    { "type": "range", "id": "book_overlap_tablet", "label": "Book overlap tablet", "min": 0, "max": 60, "step": 2, "unit": "px", "default": 22 },
-    { "type": "range", "id": "book_overlap_mobile", "label": "Book overlap mobile", "min": 0, "max": 40, "step": 2, "unit": "px", "default": 16 },
+    { "type": "header", "content": "Book size — Mobile" },
+    { "type": "range", "id": "book_width_mobile", "label": "Book width mobile", "min": 80, "max": 220, "step": 2, "unit": "px", "default": 158 },
+    { "type": "range", "id": "book_height_mobile", "label": "Book height mobile", "min": 100, "max": 300, "step": 2, "unit": "px", "default": 200 },
+
+    { "type": "header", "content": "Book position on shelf" },
+    { "type": "paragraph", "content": "Top offset = empty space ABOVE books in each row. Bottom offset = how books sit on the shelf. NEGATIVE bottom value = books overlap into the shelf. POSITIVE bottom value = books float above the shelf." },
+    { "type": "range", "id": "book_top_offset_desktop", "label": "Top offset — desktop", "min": 0, "max": 200, "step": 2, "unit": "px", "default": 0 },
+    { "type": "range", "id": "book_top_offset_tablet", "label": "Top offset — tablet", "min": 0, "max": 160, "step": 2, "unit": "px", "default": 0 },
+    { "type": "range", "id": "book_top_offset_mobile", "label": "Top offset — mobile", "min": 0, "max": 120, "step": 2, "unit": "px", "default": 0 },
+    { "type": "range", "id": "book_bottom_offset_desktop", "label": "Bottom offset — desktop", "min": -120, "max": 120, "step": 4, "unit": "px", "default": -28 },
+    { "type": "range", "id": "book_bottom_offset_tablet", "label": "Bottom offset — tablet", "min": -100, "max": 100, "step": 2, "unit": "px", "default": -22 },
+    { "type": "range", "id": "book_bottom_offset_mobile", "label": "Bottom offset — mobile", "min": -80, "max": 80, "step": 2, "unit": "px", "default": -16 },
+
+    { "type": "header", "content": "Spacing between books" },
+    { "type": "range", "id": "grid_gap_desktop", "label": "Grid gap desktop", "min": 0, "max": 160, "step": 2, "unit": "px", "default": 60 },
+    { "type": "range", "id": "grid_gap_tablet", "label": "Grid gap tablet", "min": 0, "max": 80, "step": 2, "unit": "px", "default": 30 },
+    { "type": "range", "id": "grid_gap_mobile", "label": "Grid gap mobile", "min": 0, "max": 40, "step": 2, "unit": "px", "default": 12 },
+    { "type": "range", "id": "row_gap_desktop", "label": "Row gap desktop", "min": 0, "max": 200, "step": 4, "unit": "px", "default": 60 },
+    { "type": "range", "id": "row_gap_mobile", "label": "Row gap mobile", "min": 0, "max": 120, "step": 4, "unit": "px", "default": 36 },
+
     { "type": "range", "id": "hover_lift", "label": "Hover lift", "min": 0, "max": 24, "step": 2, "unit": "px", "default": 8 },
     { "type": "range", "id": "button_radius", "label": "Button radius", "min": 0, "max": 60, "step": 2, "unit": "px", "default": 30 },
 

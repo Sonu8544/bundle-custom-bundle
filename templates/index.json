@@ -283,7 +283,7 @@
         "image_top_mobile": 0,
         "image_radius": 0,
         "image_shadow_strength": 2,
-        "animation_speed": "normal",
+        "animation_speed": "fast",
         "background_color": "#060504",
         "bg_start": "#4d3c04",
         "bg_end": "#0a0807",

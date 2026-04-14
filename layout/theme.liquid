@@ -224,7 +224,10 @@
     {{ 'base.css' | asset_url | stylesheet_tag }}
 
     {%- comment -%} Product pages: body.gradient gets hero image + overlays (overrides Dawn .gradient fill) {%- endcomment -%}
-    {%- if template.name == 'product' -%}
+    {%- if template.name == 'product' 
+      or template.name == 'collection' 
+      or template.name == 'blog' 
+      or template.name == 'article' -%}
       {% style %}
         body.gradient.product-page--hero-bg {
           background-color: #000000;

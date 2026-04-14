@@ -42,7 +42,6 @@
       ],
       "name": "Author spotlight editorial",
       "settings": {
-        "background_image_mobile": "shopify://shop_images/Listing_Page_4.png",
         "top_overlay_image_desktop": "shopify://shop_images/Listing_Page_4.png",
         "profile_image": "shopify://shop_images/f1ea3c0bb13f4566239e1e83785c3fcc27581b57.png",
         "background_alt": "Editorial background",

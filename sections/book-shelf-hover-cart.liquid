@@ -2300,7 +2300,7 @@
     }
   }
 
-  function replaceBubbleSection(htmlString) {
+  {% comment %} function replaceBubbleSection(htmlString) {
     if (!htmlString) return;
 
     const parsed = parseHTML(htmlString);
@@ -2310,7 +2310,19 @@
     if (sourceBubble && targetBubble) {
       targetBubble.innerHTML = sourceBubble.innerHTML;
     }
+  } {% endcomment %}
+
+  function replaceBubbleSection(htmlString) {
+  if (!htmlString) return;
+
+  const parsed = parseHTML(htmlString);
+  const sourceBubble = parsed.querySelector('#cart-icon-bubble');
+  const targetBubble = document.querySelector('#cart-icon-bubble');
+
+  if (sourceBubble && targetBubble) {
+    targetBubble.innerHTML = sourceBubble.innerHTML;
   }
+}
 
   function rebindDrawerOverlay() {
     const drawer = document.querySelector('cart-drawer');

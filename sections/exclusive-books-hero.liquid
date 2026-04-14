@@ -353,10 +353,14 @@
     #{{ sid }} .ebcp__book {
       width: 100%;
       max-width: var(--book-width-desktop);
-      height: var(--book-height-desktop);
-      max-height: calc((100vw - 40px) * (var(--book-height-desktop) / var(--book-width-desktop)) / 3);
+      height: auto;
+      aspect-ratio: 316 / 400;
+      max-height: none;
       position: relative;
       transition: transform .35s ease;
+      transform: translateZ(0);
+      backface-visibility: hidden;
+      will-change: transform;
     }
     #{{ sid }} .ebcp__book:hover,
     #{{ sid }} .ebcp__book:focus-within { transform: translateY(-{{ section.settings.hover_lift }}px); }
@@ -429,45 +433,191 @@
       }
       #{{ sid }} .ebcp__book {
         max-width: var(--book-width-tablet);
-        height: var(--book-height-tablet);
-        max-height: calc((100vw - 40px) * (var(--book-height-tablet) / var(--book-width-tablet)) / 3);
+        height: auto;
+        aspect-ratio: 220 / 280;
+        max-height: none;
+        transform: translateZ(0);
+        backface-visibility: hidden;
       }
       #{{ sid }} .ebcp__cta { opacity: 1; visibility: visible; transform: translateX(-50%); }
     }
 
     @media screen and (max-width: 767px) {
-      #{{ sid }} .ebcp__hero { min-height: var(--hero-min-height-mobile); padding: {{ section.settings.top_padding_mobile }}px 0 28px; }
-      #{{ sid }} .ebcp__heading { font-size: var(--heading-size-mobile); line-height: 1.02; }
-      #{{ sid }} .ebcp__subheading { margin-top: 14px; max-width: 240px; font-size: var(--subheading-size-mobile); }
-      #{{ sid }} .ebcp__toolbar { gap: 10px; }
-      #{{ sid }} .ebcp__search-wrap { width: min(100%, var(--search-width-mobile)); min-height: 48px; padding-left: 16px; }
-      #{{ sid }} .ebcp__search { font-size: 13px; }
-      #{{ sid }} .ebcp__filter-btn { width: 48px; height: 48px; }
-      #{{ sid }} .ebcp__grid { gap: var(--row-gap-mobile); }
+      #{{ sid }} .ebcp__hero {
+        min-height: var(--hero-min-height-mobile);
+        padding: {{ section.settings.top_padding_mobile }}px 0 28px;
+      }
+
+      #{{ sid }} .ebcp__heading {
+        font-size: var(--heading-size-mobile);
+        line-height: 1.02;
+      }
+
+      #{{ sid }} .ebcp__subheading {
+        margin-top: 14px;
+        max-width: 240px;
+        font-size: 14px;
+        line-height: 1.35;
+      }
+
+      #{{ sid }} .ebcp__toolbar {
+        gap: 10px;
+      }
+
+      #{{ sid }} .ebcp__search-wrap {
+        width: min(100%, var(--search-width-mobile));
+        min-height: 48px;
+        padding-left: 16px;
+      }
+
+      #{{ sid }} .ebcp__search {
+        font-size: 14px;
+      }
+
+      #{{ sid }} .ebcp__filter-btn {
+        width: 48px;
+        height: 48px;
+        flex: 0 0 48px;
+      }
+
+      #{{ sid }} .ebcp__grid {
+        gap: var(--row-gap-mobile);
+      }
+
+      #{{ sid }} .ebcp__shelf-row {
+        position: relative;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
       #{{ sid }} .ebcp__books-row {
-        grid-template-columns: repeat(2, minmax(0, var(--book-width-mobile)));
-        column-gap: var(--gap-mobile);
-        max-width: var(--row-max-width-mobile);
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        column-gap: 14px;
+        row-gap: 0;
+        width: 100%;
+        max-width: 390px;
+        margin-left: auto;
+        margin-right: auto;
         padding-top: var(--book-top-mobile);
         margin-bottom: var(--book-bottom-mobile);
+        justify-content: center;
+        justify-items: center;
+        align-items: end;
       }
+
+      #{{ sid }} .ebcp__item {
+        width: 100%;
+        min-width: 0;
+        display: flex;
+        justify-content: center;
+        align-items: end;
+      }
+
+      #{{ sid }} .ebcp__row {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: end;
+      }
+
+      #{{ sid }} .ebcp__book-wrap {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: end;
+      }
+
       #{{ sid }} .ebcp__book {
-        max-width: var(--book-width-mobile);
-        height: var(--book-height-mobile);
-        max-height: calc((100vw - 32px) * (var(--book-height-mobile) / var(--book-width-mobile)) / 2);
+        width: 100%;
+        max-width: 150px;
+        height: auto;
+        aspect-ratio: 158 / 200;
+        max-height: none;
+        position: relative;
+        transform: translateZ(0);
+        backface-visibility: hidden;
+        will-change: transform;
       }
-      #{{ sid }} .ebcp__cart-btn { min-height: 34px; font-size: 9px; }
-      #{{ sid }} .ebcp__meta { margin-top: 10px; }
-      #{{ sid }} .ebcp__title { font-size: 11px; }
-      #{{ sid }} .ebcp__author, #{{ sid }} .ebcp__price { font-size: 10px; }
-      #{{ sid }} .ebcp__modal-dialog { width: calc(100vw - 24px); margin-top: 5vh; border-radius: 22px; }
-      #{{ sid }} .ebcp__modal-head { padding: 18px 18px 16px; }
-      #{{ sid }} .ebcp__modal-head h3 { font-size: 24px; }
-      #{{ sid }} .ebcp__modal-body { padding: 18px; }
-      #{{ sid }} .ebcp__field-group { grid-template-columns: 1fr; }
-      #{{ sid }} .ebcp__modal-actions { flex-direction: column-reverse; }
+
+      #{{ sid }} .ebcp__book-link {
+        display: block;
+        width: 100%;
+        height: 100%;
+      }
+
+      #{{ sid }} .ebcp__book-image,
+      #{{ sid }} .ebcp__placeholder {
+        width: 100%;
+        height: 100%;
+        display: block;
+        object-fit: contain;
+        transform: translateZ(0);
+        backface-visibility: hidden;
+      }
+
+      #{{ sid }} .ebcp__shelf {
+        width: 100%;
+        max-width: 430px;
+        margin-left: auto;
+        margin-right: auto;
+      }
+
+      #{{ sid }} .ebcp__shelf-image {
+        width: 100%;
+        height: auto;
+        display: block;
+      }
+
+      #{{ sid }} .ebcp__cart-btn {
+        min-height: 34px;
+        font-size: 9px;
+      }
+
+      #{{ sid }} .ebcp__meta {
+        margin-top: 10px;
+      }
+
+      #{{ sid }} .ebcp__title {
+        font-size: 11px;
+      }
+
+      #{{ sid }} .ebcp__author,
+      #{{ sid }} .ebcp__price {
+        font-size: 10px;
+      }
+
+      #{{ sid }} .ebcp__modal-dialog {
+        width: calc(100vw - 24px);
+        margin-top: 5vh;
+        border-radius: 22px;
+      }
+
+      #{{ sid }} .ebcp__modal-head {
+        padding: 18px 18px 16px;
+      }
+
+      #{{ sid }} .ebcp__modal-head h3 {
+        font-size: 24px;
+      }
+
+      #{{ sid }} .ebcp__modal-body {
+        padding: 18px;
+      }
+
+      #{{ sid }} .ebcp__field-group {
+        grid-template-columns: 1fr;
+      }
+
+      #{{ sid }} .ebcp__modal-actions {
+        flex-direction: column-reverse;
+      }
+
       #{{ sid }} .ebcp__secondary-btn,
-      #{{ sid }} .ebcp__primary-btn { width: 100%; }
+      #{{ sid }} .ebcp__primary-btn {
+        width: 100%;
+      }
     }
   </style>
 
@@ -713,7 +863,7 @@
     const modal = section.querySelector('[data-filter-modal]');
     const filterOpenBtn = section.querySelector('[data-filter-open]');
     const searchInput = section.querySelector('[data-search-input]');
-    const searchBtn = section.querySelector('.ebcp__search-btn');
+    const searchBtn = section.querySelector('[data-search-button]');
     const sortSelect = section.querySelector('[data-sort-select]');
     const authorSelect = section.querySelector('[data-author-select]');
     const priceMin = section.querySelector('[data-price-min]');
@@ -1064,11 +1214,19 @@ function applyFilters() {
     });
 
     let resizeTimer;
+    let lastIsMobile = window.innerWidth <= 767;
+
     window.addEventListener('resize', function() {
       clearTimeout(resizeTimer);
+
       resizeTimer = setTimeout(function() {
-        applyFilters();
-      }, 120);
+        const isMobileNow = window.innerWidth <= 767;
+
+        if (isMobileNow !== lastIsMobile) {
+          lastIsMobile = isMobileNow;
+          applyFilters();
+        }
+      }, 180);
     });
 
     applyFilters();

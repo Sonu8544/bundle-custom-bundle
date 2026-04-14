@@ -229,14 +229,14 @@
         "book_bottom_offset_tablet": -22,
         "book_bottom_offset_mobile": -64,
         "grid_gap_desktop": 0,
-        "grid_gap_tablet": 24,
+        "grid_gap_tablet": 0,
         "grid_gap_mobile": 0,
-        "row_gap_desktop": 36,
+        "row_gap_desktop": 0,
         "row_gap_mobile": 0,
         "hover_lift": 6,
         "button_radius": 24,
         "top_padding": 20,
-        "top_padding_mobile": 16,
+        "top_padding_mobile": 20,
         "bottom_padding": 32
       }
     }

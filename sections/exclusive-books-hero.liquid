@@ -1490,13 +1490,23 @@ function applyFilters() {
                     </a>
 
                    
-                    {% if current_variant != blank %}
-                      <div class="ebcp__cta">
-                        <button type="button" class="ebcp__cart-btn" data-add-to-cart data-variant-id="{{ current_variant.id }}" {% unless current_variant.available %}disabled{% endunless %}>
-                          {% if current_variant.available %}{{ section.settings.button_text }}{% else %}Sold out{% endif %}
-                        </button>
-                      </div>
-                    {% endif %}
+                 {% if current_variant != blank %}
+  <div class="ebcp__cta ebcp__desktop-only">
+    <button
+      type="button"
+      class="ebcp__cart-btn"
+      data-add-to-cart
+      data-variant-id="{{ current_variant.id }}"
+      {% unless current_variant.available %}disabled{% endunless %}
+    >
+      {% if current_variant.available %}
+        {{ section.settings.button_text }}
+      {% else %}
+        Sold out
+      {% endif %}
+    </button>
+  </div>
+{% endif %}
                   
                   </div>
                 </div>

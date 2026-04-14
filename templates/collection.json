@@ -1,1 +1,263 @@
-{"sections":{"banner":{"type":"main-collection-banner","disabled":true,"settings":{"show_collection_description":true,"show_collection_image":false,"color_scheme":"background-1"}},"book_shelf_hover_cart_3XBYj6":{"type":"book-shelf-hover-cart","blocks":{"book_CVhNcP":{"type":"book","settings":{"product":"the-compare-at-price-snowboard","book_image":"shopify:\/\/shop_images\/b00af6fdf620a1be3010ebf744724ae98aa85b08.png","button_text":"ADD TO CART","book_width_desktop":220,"book_width_tablet":180,"book_width_mobile":180,"book_offset_y":0,"book_offset_y_tablet":0,"book_offset_y_mobile":0,"book_rotate":0,"hover_lift":10,"shadow_width":76,"shadow_height":18,"shadow_blur":16,"shadow_opacity":45,"shadow_offset_y":8,"book_z_index":11}},"book_hYTfpE":{"type":"book","settings":{"product":"the-compare-at-price-snowboard","book_image":"shopify:\/\/shop_images\/b00af6fdf620a1be3010ebf744724ae98aa85b08.png","button_text":"ADD TO CART","book_width_desktop":220,"book_width_tablet":180,"book_width_mobile":180,"book_offset_y":0,"book_offset_y_tablet":0,"book_offset_y_mobile":0,"book_rotate":0,"hover_lift":10,"shadow_width":76,"shadow_height":18,"shadow_blur":16,"shadow_opacity":45,"shadow_offset_y":8,"book_z_index":11}},"book_U9qcfm":{"type":"book","settings":{"product":"the-compare-at-price-snowboard","book_image":"shopify:\/\/shop_images\/b00af6fdf620a1be3010ebf744724ae98aa85b08.png","button_text":"ADD TO CART","book_width_desktop":220,"book_width_tablet":180,"book_width_mobile":180,"book_offset_y":0,"book_offset_y_tablet":0,"book_offset_y_mobile":10,"book_rotate":0,"hover_lift":10,"shadow_width":76,"shadow_height":18,"shadow_blur":16,"shadow_opacity":45,"shadow_offset_y":8,"book_z_index":11}},"book_GBABJr":{"type":"book","settings":{"product":"the-compare-at-price-snowboard","book_image":"shopify:\/\/shop_images\/b00af6fdf620a1be3010ebf744724ae98aa85b08.png","button_text":"ADD TO CART","book_width_desktop":220,"book_width_tablet":180,"book_width_mobile":180,"book_offset_y":0,"book_offset_y_tablet":0,"book_offset_y_mobile":0,"book_rotate":0,"hover_lift":10,"shadow_width":76,"shadow_height":18,"shadow_blur":16,"shadow_opacity":45,"shadow_offset_y":8,"book_z_index":11}}},"block_order":["book_CVhNcP","book_hYTfpE","book_U9qcfm","book_GBABJr"],"name":"Book shelf hover cart","settings":{"shelf_image":"shopify:\/\/shop_images\/e949d73a7b001da9a9c51536b1349931024ac76d.png","show_product_title":false,"load_more_label":"Load more","initial_books_desktop":9,"initial_books_mobile":10,"load_more_desktop":9,"load_more_mobile":10,"bg_color":"#050202","glow_color":"#2a1208","title_color":"#ffffff","load_more_bg":"#121212","load_more_text":"#ffffff","load_more_border":"#3a3a3a","content_max_width":1400,"padding_top_desktop":40,"padding_bottom_desktop":20,"padding_top_mobile":24,"padding_bottom_mobile":12,"books_gap_desktop":0,"books_gap_tablet":40,"books_gap_mobile":16,"row_gap_desktop":68,"row_gap_mobile":44,"books_bottom_desktop":72,"books_bottom_tablet":28,"books_bottom_mobile":32,"button_bg_1":"#a87832","button_bg_2":"#ecd9a0","button_text_color":"#ffffff","button_radius":24,"button_font_size":12,"button_padding_y":12,"button_padding_x":18}},"product-grid":{"type":"main-collection-product-grid","disabled":true,"settings":{"products_per_page":16,"columns_desktop":3,"image_ratio":"portrait","show_secondary_image":false,"show_vendor":false,"show_rating":false,"enable_quick_add":false,"enable_filtering":true,"filter_type":"drawer","enable_sorting":true,"columns_mobile":"2","padding_top":36,"padding_bottom":36}}},"order":["banner","book_shelf_hover_cart_3XBYj6","product-grid"]}
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "banner": {
+      "type": "main-collection-banner",
+      "disabled": true,
+      "settings": {
+        "show_collection_description": true,
+        "show_collection_image": false,
+        "color_scheme": "background-1"
+      }
+    },
+    "exclusive_books_hero_KXRLeH": {
+      "type": "exclusive-books-hero",
+      "blocks": {
+        "filter_group_YDG7YU": {
+          "type": "filter_group",
+          "settings": {
+            "title": "Genres",
+            "item_1": "Fiction",
+            "link_1": "",
+            "item_2": "History",
+            "link_2": "",
+            "item_3": "Poetry",
+            "link_3": "",
+            "item_4": "Rare Finds",
+            "link_4": ""
+          }
+        },
+        "filter_group_9VN7eY": {
+          "type": "filter_group",
+          "settings": {
+            "title": "Genres",
+            "item_1": "Fiction",
+            "link_1": "",
+            "item_2": "History",
+            "link_2": "",
+            "item_3": "Poetry",
+            "link_3": "",
+            "item_4": "Rare Finds",
+            "link_4": ""
+          }
+        }
+      },
+      "block_order": [
+        "filter_group_YDG7YU",
+        "filter_group_9VN7eY"
+      ],
+      "name": "Exclusive books hero",
+      "settings": {
+        "logo_text": "RB",
+        "menu": "",
+        "show_cart": true,
+        "show_account": true,
+        "account_label": "LOGIN/SIGNUP",
+        "account_link": "",
+        "background_image": "shopify://shop_images/arafed-image-round-table-with-light-coming-from-it_1034560-94186_2_1.png",
+        "filter_icon": "shopify://shop_images/filter-vertical.png",
+        "filter_button_bg": "shopify://shop_images/f89b1c50a8a368abe48fc6793fd85a8999a3c0ca_7991f07a-d217-4f4e-bd7a-f6113fc84bf9.png",
+        "heading": "Exclusive Books",
+        "heading_highlight": "Books",
+        "subheading": "<p>Memories that Define our Journey Together</p>",
+        "placeholder": "SEARCH YOUR BEST BOOK",
+        "search_action": "",
+        "filter_modal_heading": "Browse by filters",
+        "empty_filters_text": "Add filter blocks from the theme editor.",
+        "heading_font_family": "Bethany Elingston",
+        "body_font_family": "Satoshi",
+        "text_color": "#FFFFFF",
+        "heading_gradient_start": "#A87E0A",
+        "heading_gradient_end": "#FFFFFF",
+        "search_bg_color": "#171717",
+        "search_border_color": "#8E8E8E",
+        "modal_bg": "#050505",
+        "overlay_opacity": 18,
+        "hero_height_desktop": 720,
+        "content_max_width": 920,
+        "heading_size_desktop": 72,
+        "subheading_size_desktop": 18,
+        "search_width_desktop": 520,
+        "hero_height_tablet": 620,
+        "heading_size_tablet": 58,
+        "subheading_size_tablet": 17,
+        "search_width_tablet": 460,
+        "hero_height_mobile": 500,
+        "heading_size_mobile": 34,
+        "subheading_size_mobile": 14,
+        "search_width_mobile": 270,
+        "search_height": 50,
+        "padding_top": 20,
+        "padding_bottom": 28
+      }
+    },
+    "book_shelf_hover_cart_3XBYj6": {
+      "type": "book-shelf-hover-cart",
+      "blocks": {
+        "book_CVhNcP": {
+          "type": "book",
+          "settings": {
+            "product": "the-compare-at-price-snowboard",
+            "book_image": "shopify://shop_images/b00af6fdf620a1be3010ebf744724ae98aa85b08.png",
+            "button_text": "ADD TO CART",
+            "book_width_desktop": 220,
+            "book_width_tablet": 180,
+            "book_width_mobile": 180,
+            "book_offset_y": 0,
+            "book_offset_y_tablet": 0,
+            "book_offset_y_mobile": 0,
+            "book_rotate": 0,
+            "hover_lift": 10,
+            "shadow_width": 76,
+            "shadow_height": 18,
+            "shadow_blur": 16,
+            "shadow_opacity": 45,
+            "shadow_offset_y": 8,
+            "book_z_index": 11
+          }
+        },
+        "book_hYTfpE": {
+          "type": "book",
+          "settings": {
+            "product": "the-compare-at-price-snowboard",
+            "book_image": "shopify://shop_images/b00af6fdf620a1be3010ebf744724ae98aa85b08.png",
+            "button_text": "ADD TO CART",
+            "book_width_desktop": 220,
+            "book_width_tablet": 180,
+            "book_width_mobile": 180,
+            "book_offset_y": 0,
+            "book_offset_y_tablet": 0,
+            "book_offset_y_mobile": 0,
+            "book_rotate": 0,
+            "hover_lift": 10,
+            "shadow_width": 76,
+            "shadow_height": 18,
+            "shadow_blur": 16,
+            "shadow_opacity": 45,
+            "shadow_offset_y": 8,
+            "book_z_index": 11
+          }
+        },
+        "book_U9qcfm": {
+          "type": "book",
+          "settings": {
+            "product": "the-compare-at-price-snowboard",
+            "book_image": "shopify://shop_images/b00af6fdf620a1be3010ebf744724ae98aa85b08.png",
+            "button_text": "ADD TO CART",
+            "book_width_desktop": 220,
+            "book_width_tablet": 180,
+            "book_width_mobile": 180,
+            "book_offset_y": 0,
+            "book_offset_y_tablet": 0,
+            "book_offset_y_mobile": 10,
+            "book_rotate": 0,
+            "hover_lift": 10,
+            "shadow_width": 76,
+            "shadow_height": 18,
+            "shadow_blur": 16,
+            "shadow_opacity": 45,
+            "shadow_offset_y": 8,
+            "book_z_index": 11
+          }
+        },
+        "book_GBABJr": {
+          "type": "book",
+          "settings": {
+            "product": "the-compare-at-price-snowboard",
+            "book_image": "shopify://shop_images/b00af6fdf620a1be3010ebf744724ae98aa85b08.png",
+            "button_text": "ADD TO CART",
+            "book_width_desktop": 220,
+            "book_width_tablet": 180,
+            "book_width_mobile": 180,
+            "book_offset_y": 0,
+            "book_offset_y_tablet": 0,
+            "book_offset_y_mobile": 0,
+            "book_rotate": 0,
+            "hover_lift": 10,
+            "shadow_width": 76,
+            "shadow_height": 18,
+            "shadow_blur": 16,
+            "shadow_opacity": 45,
+            "shadow_offset_y": 8,
+            "book_z_index": 11
+          }
+        }
+      },
+      "block_order": [
+        "book_CVhNcP",
+        "book_hYTfpE",
+        "book_U9qcfm",
+        "book_GBABJr"
+      ],
+      "name": "Book shelf hover cart",
+      "settings": {
+        "shelf_image": "shopify://shop_images/e949d73a7b001da9a9c51536b1349931024ac76d.png",
+        "show_product_title": false,
+        "load_more_label": "Load more",
+        "initial_books_desktop": 9,
+        "initial_books_mobile": 10,
+        "load_more_desktop": 9,
+        "load_more_mobile": 10,
+        "bg_color": "#050202",
+        "glow_color": "#2a1208",
+        "title_color": "#ffffff",
+        "load_more_bg": "#121212",
+        "load_more_text": "#ffffff",
+        "load_more_border": "#3a3a3a",
+        "content_max_width": 1400,
+        "padding_top_desktop": 40,
+        "padding_bottom_desktop": 20,
+        "padding_top_mobile": 24,
+        "padding_bottom_mobile": 12,
+        "books_gap_desktop": 0,
+        "books_gap_tablet": 40,
+        "books_gap_mobile": 16,
+        "row_gap_desktop": 68,
+        "row_gap_mobile": 44,
+        "books_bottom_desktop": 72,
+        "books_bottom_tablet": 28,
+        "books_bottom_mobile": 32,
+        "button_bg_1": "#a87832",
+        "button_bg_2": "#ecd9a0",
+        "button_text_color": "#ffffff",
+        "button_radius": 24,
+        "button_font_size": 12,
+        "button_padding_y": 12,
+        "button_padding_x": 18
+      }
+    },
+    "product-grid": {
+      "type": "main-collection-product-grid",
+      "disabled": true,
+      "settings": {
+        "products_per_page": 16,
+        "columns_desktop": 3,
+        "image_ratio": "portrait",
+        "show_secondary_image": false,
+        "show_vendor": false,
+        "show_rating": false,
+        "enable_quick_add": false,
+        "enable_filtering": true,
+        "filter_type": "drawer",
+        "enable_sorting": true,
+        "columns_mobile": "2",
+        "padding_top": 36,
+        "padding_bottom": 36
+      }
+    }
+  },
+  "order": [
+    "banner",
+    "exclusive_books_hero_KXRLeH",
+    "book_shelf_hover_cart_3XBYj6",
+    "product-grid"
+  ]
+}

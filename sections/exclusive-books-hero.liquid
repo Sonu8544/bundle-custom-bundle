@@ -112,13 +112,6 @@
 
     {% if active_collection != blank %}
       {% paginate active_collection.products by 250 %}
-        <div class="ebcp__results-meta">
-          <div class="ebcp__results-count" data-results-count>{{ active_collection.products_count }} books</div>
-          {% if active_collection.title != blank %}
-            <div class="ebcp__collection-title">{{ active_collection.title }}</div>
-          {% endif %}
-        </div>
-
         <div class="ebcp__grid" data-books-grid data-shelf-image="{% if section.settings.shelf_image != blank %}{{ section.settings.shelf_image | image_url: width: 2400 }}{% endif %}">
           {% for product in active_collection.products %}
             {% assign current_variant = product.selected_or_first_available_variant %}
@@ -163,7 +156,7 @@
           {% endfor %}
         </div>
 
-        <div class="ebcp__empty" hidden data-empty-state>{{ section.settings.empty_text }}</div>
+        <div class="ebcp__empty" hidden style="display:none;" data-empty-state>{{ section.settings.empty_text }}</div>
       {% endpaginate %}
     {% else %}
       <div class="ebcp__empty ebcp__empty--static">Select a collection or use this section on a collection template.</div>
@@ -199,8 +192,15 @@
       --book-bottom-tablet: {{ section.settings.book_bottom_offset_tablet }}px;
       --book-bottom-mobile: {{ section.settings.book_bottom_offset_mobile }}px;
 
+      --gap-desktop: {{ section.settings.grid_gap_desktop }}px;
+      --gap-tablet: {{ section.settings.grid_gap_tablet }}px;
+      --gap-mobile: {{ section.settings.grid_gap_mobile }}px;
       --row-gap-desktop: {{ section.settings.row_gap_desktop }}px;
       --row-gap-mobile: {{ section.settings.row_gap_mobile }}px;
+      --row-max-width-desktop: {{ section.settings.row_max_width_desktop }}px;
+      --row-max-width-tablet: {{ section.settings.row_max_width_tablet }}px;
+      --row-max-width-mobile: {{ section.settings.row_max_width_mobile }}px;
+
       --overlay-opacity: {{ section.settings.overlay_opacity | divided_by: 100.0 }};
       --heading-font: {{ section.settings.heading_font_family }};
       --body-font: {{ section.settings.body_font_family }};
@@ -320,18 +320,6 @@
     #{{ sid }} .ebcp__filter-icon { width: 22px; height: 22px; object-fit: contain; display: block; }
     #{{ sid }} .ebcp__filter-btn svg { width: 21px; height: 21px; color: #fff; }
 
-    #{{ sid }} .ebcp__results-meta {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 16px;
-      padding: 0 0 18px;
-      color: rgba(255,255,255,.86);
-      font-family: var(--body-font), sans-serif;
-    }
-    #{{ sid }} .ebcp__collection-title { font-size: 14px; text-transform: uppercase; letter-spacing: .04em; }
-    #{{ sid }} .ebcp__results-count { font-size: 14px; }
-
     #{{ sid }} .ebcp__grid {
       display: flex;
       flex-direction: column;
@@ -342,14 +330,20 @@
       position: relative;
       width: 100%;
     }
+    /* Books row uses fixed-width columns so column-gap directly = pixel gap between books */
     #{{ sid }} .ebcp__books-row {
       position: relative;
       z-index: 2;
       display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      column-gap: {{ section.settings.grid_gap_desktop }}px;
-      align-items: end;
+      grid-template-columns: repeat(3, minmax(0, var(--book-width-desktop)));
+      column-gap: var(--gap-desktop);
+      justify-content: center;
       justify-items: center;
+      align-items: end;
+      width: 100%;
+      max-width: var(--row-max-width-desktop);
+      margin-left: auto;
+      margin-right: auto;
       padding-top: var(--book-top-desktop);
       margin-bottom: var(--book-bottom-desktop);
     }
@@ -357,7 +351,8 @@
     #{{ sid }} .ebcp__row { position: relative; width: 100%; display: flex; justify-content: center; }
     #{{ sid }} .ebcp__book-wrap { position: relative; z-index: 2; display: flex; justify-content: center; }
     #{{ sid }} .ebcp__book {
-      width: min(100%, var(--book-width-desktop));
+      width: 100%;
+      max-width: var(--book-width-desktop);
       height: var(--book-height-desktop);
       max-height: calc((100vw - 40px) * (var(--book-height-desktop) / var(--book-width-desktop)) / 3);
       position: relative;
@@ -387,6 +382,8 @@
     #{{ sid }} .ebcp__author { margin-top: 4px; font-size: 13px; opacity: .82; }
     #{{ sid }} .ebcp__price { margin-top: 6px; font-size: 14px; }
 
+    /* Empty state — only shown by JS when search/filter has zero results */
+    #{{ sid }} .ebcp__empty[hidden] { display: none !important; }
     #{{ sid }} .ebcp__empty {
       display: flex; align-items: center; justify-content: center; min-height: 160px; margin-top: 12px; border: 1px solid rgba(255,255,255,.1); border-radius: 20px; background: rgba(255,255,255,.03); color: rgba(255,255,255,.76); text-align: center; padding: 24px;
     }
@@ -424,12 +421,14 @@
       #{{ sid }} .ebcp__heading { font-size: var(--heading-size-tablet); }
       #{{ sid }} .ebcp__subheading { font-size: var(--subheading-size-tablet); }
       #{{ sid }} .ebcp__books-row {
-        column-gap: {{ section.settings.grid_gap_tablet }}px;
+        grid-template-columns: repeat(3, minmax(0, var(--book-width-tablet)));
+        column-gap: var(--gap-tablet);
+        max-width: var(--row-max-width-tablet);
         padding-top: var(--book-top-tablet);
         margin-bottom: var(--book-bottom-tablet);
       }
       #{{ sid }} .ebcp__book {
-        width: min(100%, var(--book-width-tablet));
+        max-width: var(--book-width-tablet);
         height: var(--book-height-tablet);
         max-height: calc((100vw - 40px) * (var(--book-height-tablet) / var(--book-width-tablet)) / 3);
       }
@@ -444,16 +443,16 @@
       #{{ sid }} .ebcp__search-wrap { width: min(100%, var(--search-width-mobile)); min-height: 48px; padding-left: 16px; }
       #{{ sid }} .ebcp__search { font-size: 13px; }
       #{{ sid }} .ebcp__filter-btn { width: 48px; height: 48px; }
-      #{{ sid }} .ebcp__results-meta { flex-direction: column; align-items: flex-start; gap: 6px; }
       #{{ sid }} .ebcp__grid { gap: var(--row-gap-mobile); }
       #{{ sid }} .ebcp__books-row {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        column-gap: {{ section.settings.grid_gap_mobile }}px;
+        grid-template-columns: repeat(2, minmax(0, var(--book-width-mobile)));
+        column-gap: var(--gap-mobile);
+        max-width: var(--row-max-width-mobile);
         padding-top: var(--book-top-mobile);
         margin-bottom: var(--book-bottom-mobile);
       }
       #{{ sid }} .ebcp__book {
-        width: min(100%, var(--book-width-mobile));
+        max-width: var(--book-width-mobile);
         height: var(--book-height-mobile);
         max-height: calc((100vw - 32px) * (var(--book-height-mobile) / var(--book-width-mobile)) / 2);
       }
@@ -489,9 +488,20 @@
       const resetBtn = section.querySelector('[data-filter-reset]');
       const grid = section.querySelector('[data-books-grid]');
       const emptyState = section.querySelector('[data-empty-state]');
-      const resultCount = section.querySelector('[data-results-count]');
       const items = grid ? Array.from(grid.querySelectorAll('[data-book-item]')) : [];
       const shopRoot = (window.Shopify && window.Shopify.routes && window.Shopify.routes.root) ? window.Shopify.routes.root : '/';
+
+      function hideEmpty() {
+        if (!emptyState) return;
+        emptyState.hidden = true;
+        emptyState.style.display = 'none';
+      }
+      function showEmpty() {
+        if (!emptyState) return;
+        emptyState.hidden = false;
+        emptyState.style.display = '';
+      }
+      hideEmpty();
 
       function setModal(open) {
         if (!modal) return;
@@ -606,11 +616,11 @@
 
         buildRows(visible);
 
-        if (resultCount) {
-          resultCount.textContent = visible.length + (visible.length === 1 ? ' book' : ' books');
-        }
-        if (emptyState) {
-          emptyState.hidden = !hasActive || visible.length !== 0;
+        // Empty state ONLY appears when user actively searched/filtered AND no results
+        if (hasActive && visible.length === 0) {
+          showEmpty();
+        } else {
+          hideEmpty();
         }
       }
 
@@ -698,7 +708,7 @@
 
 {% schema %}
 {
-  "name": "Exclusive books ",
+  "name": "Exclusivebooks ",
   "tag": "section",
   "class": "section section-exclusive-books-collection",
   "settings": [
@@ -715,7 +725,7 @@
     { "type": "text", "id": "search_placeholder", "label": "Search placeholder", "default": "Search your best book" },
     { "type": "text", "id": "filter_heading", "label": "Filter modal heading", "default": "Refine your books" },
     { "type": "text", "id": "button_text", "label": "Add to cart button text", "default": "ADD TO CART" },
-    { "type": "text", "id": "empty_text", "label": "Empty state text", "default": "No books matched your search or filters." },
+    { "type": "text", "id": "empty_text", "label": "Empty state text (only shown when search/filter returns nothing)", "default": "No books matched your search or filters." },
     { "type": "checkbox", "id": "show_meta", "label": "Show title, author and price", "default": false },
 
     { "type": "text", "id": "heading_font_family", "label": "Heading font family", "default": "Bethany Elingston" },
@@ -751,19 +761,19 @@
     { "type": "range", "id": "search_width_desktop", "label": "Search width desktop", "min": 280, "max": 760, "step": 10, "unit": "px", "default": 520 },
     { "type": "range", "id": "search_width_mobile", "label": "Search width mobile", "min": 200, "max": 360, "step": 5, "unit": "px", "default": 270 },
 
-    { "type": "header", "content": "Book size — Desktop" },
-    { "type": "range", "id": "book_width_desktop", "label": "Book width desktop", "min": 120, "max": 400, "step": 4, "unit": "px", "default": 316 },
-    { "type": "range", "id": "book_height_desktop", "label": "Book height desktop", "min": 160, "max": 520, "step": 4, "unit": "px", "default": 400 },
+    { "type": "header", "content": "Book s Desktop" },
+    { "type": "range", "id": "book_width_desktop", "label": "Book width", "min": 120, "max": 400, "step": 4, "unit": "px", "default": 316 },
+    { "type": "range", "id": "book_height_desktop", "label": "Book height", "min": 160, "max": 520, "step": 4, "unit": "px", "default": 400 },
 
-    { "type": "header", "content": "Book size — Tablet" },
-    { "type": "range", "id": "book_width_tablet", "label": "Book width tablet", "min": 100, "max": 320, "step": 4, "unit": "px", "default": 220 },
-    { "type": "range", "id": "book_height_tablet", "label": "Book height tablet", "min": 140, "max": 420, "step": 4, "unit": "px", "default": 280 },
+    { "type": "header", "content": "Book size—Tablet" },
+    { "type": "range", "id": "book_width_tablet", "label": "Book width", "min": 100, "max": 320, "step": 4, "unit": "px", "default": 220 },
+    { "type": "range", "id": "book_height_tablet", "label": "Book height", "min": 140, "max": 420, "step": 4, "unit": "px", "default": 280 },
 
     { "type": "header", "content": "Book size — Mobile" },
-    { "type": "range", "id": "book_width_mobile", "label": "Book width mobile", "min": 80, "max": 220, "step": 2, "unit": "px", "default": 158 },
-    { "type": "range", "id": "book_height_mobile", "label": "Book height mobile", "min": 100, "max": 300, "step": 2, "unit": "px", "default": 200 },
+    { "type": "range", "id": "book_width_mobile", "label": "Book width", "min": 80, "max": 220, "step": 2, "unit": "px", "default": 158 },
+    { "type": "range", "id": "book_height_mobile", "label": "Book height", "min": 100, "max": 300, "step": 2, "unit": "px", "default": 200 },
 
-    { "type": "header", "content": "Book position on shelf" },
+    { "type": "header", "content": "Book pos on shelf" },
     { "type": "paragraph", "content": "Top offset = empty space ABOVE books in each row. Bottom offset = how books sit on the shelf. NEGATIVE bottom value = books overlap into the shelf. POSITIVE bottom value = books float above the shelf." },
     { "type": "range", "id": "book_top_offset_desktop", "label": "Top offset — desktop", "min": 0, "max": 200, "step": 2, "unit": "px", "default": 0 },
     { "type": "range", "id": "book_top_offset_tablet", "label": "Top offset — tablet", "min": 0, "max": 160, "step": 2, "unit": "px", "default": 0 },
@@ -772,12 +782,21 @@
     { "type": "range", "id": "book_bottom_offset_tablet", "label": "Bottom offset — tablet", "min": -100, "max": 100, "step": 2, "unit": "px", "default": -22 },
     { "type": "range", "id": "book_bottom_offset_mobile", "label": "Bottom offset — mobile", "min": -80, "max": 80, "step": 2, "unit": "px", "default": -16 },
 
-    { "type": "header", "content": "Spacing between books" },
-    { "type": "range", "id": "grid_gap_desktop", "label": "Grid gap desktop", "min": 0, "max": 160, "step": 2, "unit": "px", "default": 60 },
-    { "type": "range", "id": "grid_gap_tablet", "label": "Grid gap tablet", "min": 0, "max": 80, "step": 2, "unit": "px", "default": 30 },
-    { "type": "range", "id": "grid_gap_mobile", "label": "Grid gap mobile", "min": 0, "max": 40, "step": 2, "unit": "px", "default": 12 },
-    { "type": "range", "id": "row_gap_desktop", "label": "Row gap desktop", "min": 0, "max": 200, "step": 4, "unit": "px", "default": 60 },
-    { "type": "range", "id": "row_gap_mobile", "label": "Row gap mobile", "min": 0, "max": 120, "step": 4, "unit": "px", "default": 36 },
+    { "type": "header", "content": "Spacing betweenbooks(Hgap)" },
+    { "type": "paragraph", "content": "0 = books touching. Increase for wider gaps." },
+    { "type": "range", "id": "grid_gap_desktop", "label": "Gap — desktop", "min": 0, "max": 200, "step": 2, "unit": "px", "default": 40 },
+    { "type": "range", "id": "grid_gap_tablet", "label": "Gap — tablet", "min": 0, "max": 100, "step": 2, "unit": "px", "default": 24 },
+    { "type": "range", "id": "grid_gap_mobile", "label": "Gap — mobile", "min": 0, "max": 60, "step": 2, "unit": "px", "default": 12 },
+
+    { "type": "header", "content": "Books r m w(clamps how wide the row spreads)" },
+    { "type": "paragraph", "content": "Smaller value = books cluster tighter / closer together. Larger value = books spread out across the full container." },
+    { "type": "range", "id": "row_max_width_desktop", "label": "Row max width — desktop", "min": 600, "max": 1600, "step": 20, "unit": "px", "default": 1100 },
+    { "type": "range", "id": "row_max_width_tablet", "label": "Row max width — tablet", "min": 480, "max": 1000, "step": 20, "unit": "px", "default": 760 },
+    { "type": "range", "id": "row_max_width_mobile", "label": "Row max width — mobile", "min": 280, "max": 700, "step": 10, "unit": "px", "default": 360 },
+
+    { "type": "header", "content": "Vertical spacing between shelves" },
+    { "type": "range", "id": "row_gap_desktop", "label": "Row gap — desktop", "min": 0, "max": 200, "step": 4, "unit": "px", "default": 60 },
+    { "type": "range", "id": "row_gap_mobile", "label": "Row gap — mobile", "min": 0, "max": 120, "step": 4, "unit": "px", "default": 36 },
 
     { "type": "range", "id": "hover_lift", "label": "Hover lift", "min": 0, "max": 24, "step": 2, "unit": "px", "default": 8 },
     { "type": "range", "id": "button_radius", "label": "Button radius", "min": 0, "max": 60, "step": 2, "unit": "px", "default": 30 },

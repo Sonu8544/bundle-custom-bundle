@@ -2306,12 +2306,22 @@ height: 39px;
 
 
 
-  .quantity-control {
+  {% comment %} .quantity-control {
     justify-content: flex-start;
     height: auto;
     padding: 0;
     flex-shrink: 0;
-  }
+  } {% endcomment %}
+
+
+.quantity-control {
+  justify-content: flex-start;
+  height: auto;
+  padding: 0;
+  flex-shrink: 0;
+}
+
+
   .qty-btn {
     width: 46px;
     height: 46px;
@@ -2320,7 +2330,7 @@ height: 39px;
     width: 36px;
     font-size: 16px;
   }
-  .cta-btn {
+  {% comment %} .cta-btn {
     flex: 1;
     min-width: 0;
     width: auto;
@@ -2328,7 +2338,14 @@ height: 39px;
     padding: 12px 14px;
     font-size: 12px;
     letter-spacing: 0.1em;
-  }
+  } {% endcomment %}
+  .cta-btn {
+  width: 100%;
+  min-width: 100%;
+  min-height: 48px;
+  padding: 12px 18px;
+  justify-content: center;
+}
 
   .gallery-lightbox {
     padding: 16px;

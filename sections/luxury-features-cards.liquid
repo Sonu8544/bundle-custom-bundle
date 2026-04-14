@@ -137,7 +137,7 @@
       padding-top: var(--lf-pt-desktop);
       padding-bottom: var(--lf-pb-desktop);
       border-radius: var(--lf-section-radius);
-      background: #050505;
+      background: #000000;
       isolation: isolate;
     }
 
@@ -182,25 +182,35 @@
     #{{ section_id }} .luxury-features-section__outer {
       position: relative;
       z-index: 2;
+      width: 100%;
+      box-sizing: border-box;
     }
 
     #{{ section_id }} .luxury-features-section__inner {
+      width: 100%;
       max-width: var(--lf-content-max-width);
       margin: 0 auto;
+      box-sizing: border-box;
     }
 
     #{{ section_id }} .luxury-features-section__head {
+      width: 100%;
       margin-bottom: {{ section.settings.heading_bottom_spacing }}px;
+      text-align: left;
     }
 
     #{{ section_id }} .luxury-features-section__heading {
       margin: 0;
+      max-width: 100%;
       font-family: 'Bethany Elingston', serif;
       font-weight: 400;
       font-style: normal;
       font-size: var(--lf-heading-size-desktop);
-      letter-spacing: 0;
-      background: linear-gradient(165deg, var(--rbh-title-color-end) 0%, var(--rbh-title-color-start) 40%);
+      /* line-height: 1.08; */
+      letter-spacing: -0.01em;
+      text-align: left;
+      text-wrap: balance;
+      background: linear-gradient(165deg, var(--rbh-title-color-end) 0%, var(--rbh-title-color-start) 25%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
@@ -209,18 +219,22 @@
 
     #{{ section_id }} .luxury-features-section__cards-wrap {
       position: relative;
+      width: 100%;
     }
 
     #{{ section_id }} .luxury-features-section__cards {
       display: grid;
-      grid-template-columns: repeat({{ section.settings.columns_desktop }}, minmax(0, var(--lf-card-width-desktop)));
+      grid-template-columns: repeat({{ section.settings.columns_desktop }}, minmax(0, 1fr));
       gap: var(--lf-grid-gap);
       align-items: stretch;
-      justify-content: flex-start;
+      justify-content: stretch;
+      width: 100%;
     }
 
     #{{ section_id }} .luxury-features-card {
       box-sizing: border-box;
+      width: 100%;
+      min-width: 0;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -231,7 +245,7 @@
       border-radius: var(--lf-card-radius);
       background: var(--lf-card-bg);
       border: 1px solid rgba(255, 255, 255, var(--lf-card-border-opacity));
-      box-shadow: 0 20px 60px rgba(0, 0, 0, var(--lf-card-shadow-opacity));
+      box-shadow: 0 16px 48px rgba(0, 0, 0, var(--lf-card-shadow-opacity));
       backdrop-filter: blur({{ section.settings.card_blur }}px);
       -webkit-backdrop-filter: blur({{ section.settings.card_blur }}px);
     }
@@ -240,7 +254,8 @@
       width: var(--lf-icon-wrap-size);
       height: var(--lf-icon-wrap-size);
       min-width: var(--lf-icon-wrap-size);
-      border-radius: var(--lf-icon-radius);
+      flex-shrink: 0;
+      border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -251,7 +266,6 @@
       box-shadow:
         inset 0 0 0 1px rgba(255,255,255,0.16),
         0 10px 30px rgba(187, 145, 30, 0.22);
-   
     }
 
     #{{ section_id }} .luxury-features-card__icon-wrap::after {
@@ -264,7 +278,6 @@
       
     }
 
-    #{{ section_id }} .luxury-features-card__icon-image,
     #{{ section_id }} .luxury-features-card__icon-svg,
     #{{ section_id }} .luxury-features-card__icon-placeholder {
       width: var(--lf-icon-size);
@@ -277,9 +290,12 @@
     }
 
     #{{ section_id }} .luxury-features-card__icon-image {
+      position: relative;
+      z-index: 1;
+      display: block;
       object-fit: contain;
-      width:100px;
-      height:100px;
+      width: 100px;
+      height: 100px;
     }
 
     #{{ section_id }} .luxury-features-card__icon-svg svg {
@@ -295,20 +311,26 @@
 
     #{{ section_id }} .luxury-features-card__content {
       width: 100%;
-      max-width: 160px;
+      max-width: 168px;
+      flex: 1 1 auto;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
     }
 
     #{{ section_id }} .luxury-features-card__title {
       margin: 0;
+      width: 100%;
       font-family: "Satoshi", sans-serif;
       font-style: normal;
       font-weight: 400;
       font-size: 16px;
-      line-height: 22px;
+      line-height: 1.375;
       text-align: center;
       letter-spacing: 0;
       color: #ffffff;
       word-break: break-word;
+      overflow-wrap: break-word;
     }
 
     @media screen and (max-width: 1199px) {
@@ -321,10 +343,18 @@
       }
     }
 
+    @media screen and (max-width: 989px) {
+      #{{ section_id }} .luxury-features-section__cards {
+        gap: min(var(--lf-grid-gap), 16px);
+      }
+    }
+
     @media screen and (max-width: 767px) {
       #{{ section_id }} {
         padding-top: var(--lf-pt-mobile);
         padding-bottom: var(--lf-pb-mobile);
+        padding-left: max(0px, env(safe-area-inset-left));
+        padding-right: max(0px, env(safe-area-inset-right));
       }
 
       #{{ section_id }} .luxury-features-section__bg-desktop {
@@ -337,28 +367,33 @@
 
       #{{ section_id }} .luxury-features-section__head {
         margin-bottom: {{ section.settings.heading_bottom_spacing_mobile }}px;
+        padding-right: 0.25rem;
       }
 
       #{{ section_id }} .luxury-features-section__heading {
         font-size: var(--lf-heading-size-mobile);
+        line-height: 1.06;
       }
 
       #{{ section_id }} .luxury-features-section__cards-wrap {
-        margin-right: calc(-1 * {{ section.settings.mobile_peek_right }}px);
+        margin-right: calc(-1 * min({{ section.settings.mobile_peek_right }}px, 1.5rem));
+        width: calc(100% + min({{ section.settings.mobile_peek_right }}px, 1.5rem));
+        max-width: none;
       }
 
       #{{ section_id }} .luxury-features-section__cards {
         display: grid;
         grid-auto-flow: column;
-        grid-auto-columns: var(--lf-card-width-mobile);
+        grid-auto-columns: minmax(172px, min(var(--lf-card-width-mobile), calc(100vw - 4rem)));
         grid-template-columns: none;
         gap: {{ section.settings.mobile_gap }}px;
         overflow-x: auto;
         overflow-y: hidden;
-        padding-bottom: 8px;
-        padding-right: {{ section.settings.mobile_peek_right }}px;
-        scroll-snap-type: x mandatory;
+        padding: 0 min({{ section.settings.mobile_peek_right }}px, 1.5rem) 10px 0;
+        scroll-padding-inline: 0 1.5rem;
+        scroll-snap-type: x proximity;
         -webkit-overflow-scrolling: touch;
+        overscroll-behavior-x: contain;
         scrollbar-width: none;
       }
 
@@ -392,7 +427,7 @@
 
       #{{ section_id }} .luxury-features-card__title {
         font-size: 16px;
-        line-height: 22px;
+        line-height: 1.375;
       }
     }
   </style>
@@ -565,7 +600,7 @@
       "min": 8,
       "max": 40,
       "step": 2,
-      "default": 14
+      "default": 16
     },
     {
       "type": "range",
@@ -688,7 +723,7 @@
       "type": "color",
       "id": "card_bg",
       "label": "Card background",
-      "default": "rgba(255,255,255,0.07)"
+      "default": "#161616"
     },
     {
       "type": "color",

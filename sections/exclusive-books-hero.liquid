@@ -226,6 +226,24 @@
       --button-radius: {{ section.settings.button_radius }}px;
       --card-meta: {{ section.settings.meta_text_color }};
       --filter-btn-bg: {% if section.settings.filter_button_bg != blank %}url({{ section.settings.filter_button_bg | image_url: width: 300 }}) center/cover no-repeat{% else %}linear-gradient(180deg, #DDB85F 0%, #8A6210 100%){% endif %};
+            --book-width-1024: {{ section.settings.book_width_1024 }}px;
+      --book-height-1024: {{ section.settings.book_height_1024 }}px;
+      --book-width-768: {{ section.settings.book_width_768 }}px;
+      --book-height-768: {{ section.settings.book_height_768 }}px;
+
+      --book-top-1024: {{ section.settings.book_top_offset_1024 }}px;
+      --book-bottom-1024: {{ section.settings.book_bottom_offset_1024 }}px;
+      --book-top-768: {{ section.settings.book_top_offset_768 }}px;
+      --book-bottom-768: {{ section.settings.book_bottom_offset_768 }}px;
+
+      --gap-1024: {{ section.settings.grid_gap_1024 }}px;
+      --gap-768: {{ section.settings.grid_gap_768 }}px;
+
+      --row-max-width-1024: {{ section.settings.row_max_width_1024 }}px;
+      --row-max-width-768: {{ section.settings.row_max_width_768 }}px;
+
+      --hero-min-height-1024: {{ section.settings.hero_height_1024 }}px;
+      --hero-min-height-768: {{ section.settings.hero_height_768 }}px;
     }
 
     #{{ sid }}.ebcp {

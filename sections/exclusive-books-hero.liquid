@@ -1034,7 +1034,7 @@ border-radius: 122.085px;
 
   </style>
 
-  <script>
+  {% comment %} <script>
     (function() {
       const section = document.getElementById('{{ sid }}');
       if (!section) return;
@@ -1404,7 +1404,479 @@ border-radius: 122.085px;
 
       applyFilters();
     })();
-  </script>
+  </script> {% endcomment %}
+
+  <script>
+  (function() {
+    const section = document.getElementById('{{ sid }}');
+    if (!section) return;
+
+    const modal = section.querySelector('[data-filter-modal]');
+    const filterOpenBtn = section.querySelector('[data-filter-open]');
+    const searchInput = section.querySelector('[data-search-input]');
+    const searchBtn = section.querySelector('[data-search-button]');
+    const sortSelect = section.querySelector('[data-sort-select]');
+    const authorSelect = section.querySelector('[data-author-select]');
+    const priceMin = section.querySelector('[data-price-min]');
+    const priceMax = section.querySelector('[data-price-max]');
+    const applyBtn = section.querySelector('[data-filter-apply]');
+    const resetBtn = section.querySelector('[data-filter-reset]');
+    const grid = section.querySelector('[data-books-grid]');
+    const emptyState = section.querySelector('[data-empty-state]');
+    const shopRoot =
+      (window.Shopify && window.Shopify.routes && window.Shopify.routes.root)
+        ? window.Shopify.routes.root
+        : '/';
+
+    if (!grid) return;
+
+    const items = Array.from(grid.querySelectorAll('[data-book-item]'));
+    let lastFocusedElement = null;
+
+    function hideEmpty() {
+      if (!emptyState) return;
+      emptyState.hidden = true;
+      emptyState.style.display = 'none';
+    }
+
+    function showEmpty() {
+      if (!emptyState) return;
+      emptyState.hidden = false;
+      emptyState.style.display = '';
+    }
+
+    hideEmpty();
+
+    function normalized(value) {
+      return (value || '').toString().trim().toLowerCase();
+    }
+
+    function parsePrice(value) {
+      if (value === null || value === undefined || value === '') return null;
+      const clean = String(value).replace(/,/g, '').trim();
+      const num = parseFloat(clean);
+      return Number.isFinite(num) ? num : null;
+    }
+
+    function setModalState(isOpen) {
+      if (!modal) return;
+
+      modal.hidden = !isOpen;
+      document.documentElement.style.overflow = isOpen ? 'hidden' : '';
+      document.body.style.overflow = isOpen ? 'hidden' : '';
+
+      if (filterOpenBtn) {
+        filterOpenBtn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+      }
+
+      if (isOpen) {
+        lastFocusedElement = document.activeElement;
+        const closeBtn = modal.querySelector('.ebcp__modal-close');
+        if (closeBtn) closeBtn.focus();
+      } else {
+        if (lastFocusedElement && typeof lastFocusedElement.focus === 'function') {
+          lastFocusedElement.focus();
+        }
+      }
+    }
+
+    function openModal() {
+      setModalState(true);
+    }
+
+    function closeModal() {
+      setModalState(false);
+    }
+
+    function sortItems(list, mode) {
+      const arr = list.slice();
+
+      switch (mode) {
+        case 'title-asc':
+          arr.sort(function(a, b) {
+            return normalized(a.dataset.title).localeCompare(normalized(b.dataset.title));
+          });
+          break;
+
+        case 'title-desc':
+          arr.sort(function(a, b) {
+            return normalized(b.dataset.title).localeCompare(normalized(a.dataset.title));
+          });
+          break;
+
+        case 'price-asc':
+          arr.sort(function(a, b) {
+            return (parsePrice(a.dataset.price) || 0) - (parsePrice(b.dataset.price) || 0);
+          });
+          break;
+
+        case 'price-desc':
+          arr.sort(function(a, b) {
+            return (parsePrice(b.dataset.price) || 0) - (parsePrice(a.dataset.price) || 0);
+          });
+          break;
+
+        default:
+          arr.sort(function(a, b) {
+            return (parseInt(a.dataset.index || '0', 10)) - (parseInt(b.dataset.index || '0', 10));
+          });
+      }
+
+      return arr;
+    }
+
+    function hasActiveControls(q, author, min, max, sort) {
+      return !!q || !!author || min !== null || max !== null || sort !== 'featured';
+    }
+
+    function booksPerRow() {
+      return window.innerWidth <= 767 ? 2 : 3;
+    }
+
+    function buildRows(visibleItems) {
+      if (!grid) return;
+
+      const shelfImage = grid.dataset.shelfImage || '';
+      const perRow = booksPerRow();
+
+      grid.innerHTML = '';
+
+      for (let i = 0; i < visibleItems.length; i += perRow) {
+        const chunk = visibleItems.slice(i, i + perRow);
+
+        const row = document.createElement('div');
+        row.className = 'ebcp__shelf-row';
+
+        const booksRow = document.createElement('div');
+        booksRow.className = 'ebcp__books-row';
+
+        chunk.forEach(function(item) {
+          item.hidden = false;
+          booksRow.appendChild(item);
+        });
+
+        row.appendChild(booksRow);
+
+        if (shelfImage) {
+          const shelf = document.createElement('div');
+          shelf.className = 'ebcp__shelf';
+          shelf.innerHTML = '<img class="ebcp__shelf-image" src="' + shelfImage + '" alt="" loading="lazy">';
+          row.appendChild(shelf);
+        }
+
+        grid.appendChild(row);
+      }
+    }
+
+    function applyFilters() {
+      if (!grid) return;
+
+      const q = normalized(searchInput && searchInput.value);
+      const author = normalized(authorSelect && authorSelect.value);
+      const min = parsePrice(priceMin && priceMin.value);
+      const max = parsePrice(priceMax && priceMax.value);
+      const sort = sortSelect ? sortSelect.value : 'featured';
+      const hasActive = hasActiveControls(q, author, min, max, sort);
+
+      let visible = items.filter(function(item) {
+        const title = normalized(item.dataset.title);
+        const authorName = normalized(item.dataset.author);
+        const price = parsePrice(item.dataset.price) || 0;
+
+        const matchesSearch = !q || title.includes(q) || authorName.includes(q);
+        const matchesAuthor = !author || authorName === author;
+        const matchesMin = min === null || price >= min;
+        const matchesMax = max === null || price <= max;
+
+        return matchesSearch && matchesAuthor && matchesMin && matchesMax;
+      });
+
+      visible = sortItems(visible, sort);
+
+      items.forEach(function(item) {
+        item.hidden = true;
+      });
+
+      buildRows(visible);
+
+      if (hasActive && visible.length === 0) {
+        showEmpty();
+      } else {
+        hideEmpty();
+      }
+    }
+
+    function resetFilters() {
+      if (searchInput) searchInput.value = '';
+      if (sortSelect) sortSelect.value = 'featured';
+      if (authorSelect) authorSelect.value = '';
+      if (priceMin) priceMin.value = '';
+      if (priceMax) priceMax.value = '';
+      applyFilters();
+    }
+
+    if (filterOpenBtn) {
+      filterOpenBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        openModal();
+      });
+    }
+
+    if (modal) {
+      modal.addEventListener('click', function(e) {
+        const closeTrigger = e.target.closest('[data-filter-close]');
+        const dialog = e.target.closest('.ebcp__modal-dialog');
+
+        if (closeTrigger) {
+          e.preventDefault();
+          closeModal();
+          return;
+        }
+
+        if (!dialog) {
+          closeModal();
+        }
+      });
+    }
+
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape' && modal && !modal.hidden) {
+        closeModal();
+      }
+
+      if (e.key === 'Enter' && document.activeElement === searchInput) {
+        e.preventDefault();
+        applyFilters();
+      }
+    });
+
+    if (searchInput) {
+      searchInput.addEventListener('input', function() {
+        applyFilters();
+      });
+    }
+
+    if (searchBtn) {
+      searchBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        applyFilters();
+      });
+    }
+
+    if (sortSelect) {
+      sortSelect.addEventListener('change', applyFilters);
+    }
+
+    if (authorSelect) {
+      authorSelect.addEventListener('change', applyFilters);
+    }
+
+    if (priceMin) {
+      priceMin.addEventListener('input', applyFilters);
+    }
+
+    if (priceMax) {
+      priceMax.addEventListener('input', applyFilters);
+    }
+
+    if (applyBtn) {
+      applyBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        applyFilters();
+        closeModal();
+      });
+    }
+
+    if (resetBtn) {
+      resetBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        resetFilters();
+      });
+    }
+
+    async function addItem(variantId) {
+      const response = await fetch(shopRoot + 'cart/add.js', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'X-Requested-With': 'XMLHttpRequest'
+        },
+        body: JSON.stringify({
+          items: [{ id: Number(variantId), quantity: 1 }],
+          sections: ['cart-drawer', 'cart-icon-bubble'],
+          sections_url: window.location.pathname
+        })
+      });
+
+      const data = await response.json();
+      if (!response.ok || data.status) {
+        throw new Error(data.description || 'Failed to add to cart');
+      }
+
+      return data;
+    }
+
+    function replaceDrawerMarkup(sectionHtml) {
+      if (!sectionHtml) return;
+
+      const parsed = new DOMParser().parseFromString(sectionHtml, 'text/html');
+      const freshMain = parsed.getElementById('CartDrawer');
+      const currentMain = document.getElementById('CartDrawer');
+
+      if (currentMain && freshMain) {
+        currentMain.innerHTML = freshMain.innerHTML;
+      }
+
+      const drawer = document.querySelector('cart-drawer');
+      if (drawer) {
+        drawer.classList.remove('is-empty');
+        const inner = drawer.querySelector('.drawer__inner');
+        if (inner) inner.classList.remove('is-empty');
+      }
+    }
+
+    function replaceBubbleMarkup(sectionHtml) {
+      if (!sectionHtml) return;
+
+      const parsed = new DOMParser().parseFromString(sectionHtml, 'text/html');
+      const freshSection = parsed.querySelector('.shopify-section');
+      const bubble = document.getElementById('cart-icon-bubble');
+
+      if (bubble && freshSection) {
+        bubble.innerHTML = freshSection.innerHTML;
+      }
+    }
+
+    function openDrawer() {
+      const drawer = document.querySelector('cart-drawer');
+      if (!drawer) return;
+
+      drawer.classList.remove('is-empty');
+      const inner = drawer.querySelector('.drawer__inner');
+      if (inner) inner.classList.remove('is-empty');
+
+      if (typeof drawer.open === 'function') {
+        drawer.open();
+      } else {
+        drawer.classList.add('animate', 'active');
+        document.body.classList.add('overflow-hidden');
+      }
+    }
+
+    async function refreshCartUI(addData) {
+      const sections = addData && addData.sections;
+
+      if (sections) {
+        if (sections['cart-icon-bubble']) {
+          replaceBubbleMarkup(sections['cart-icon-bubble']);
+        }
+        if (sections['cart-drawer']) {
+          replaceDrawerMarkup(sections['cart-drawer']);
+        }
+      } else {
+        try {
+          const bubbleResponse = await fetch(shopRoot + '?section_id=cart-icon-bubble', {
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+          });
+          replaceBubbleMarkup(await bubbleResponse.text());
+        } catch (e) {
+          console.warn('[Exclusive Books Collection] bubble fetch failed:', e);
+        }
+
+        try {
+          const drawerResponse = await fetch(shopRoot + '?section_id=cart-drawer', {
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+          });
+          replaceDrawerMarkup(await drawerResponse.text());
+        } catch (e) {
+          console.warn('[Exclusive Books Collection] drawer fetch failed:', e);
+        }
+      }
+
+      setTimeout(openDrawer, 60);
+
+      if (typeof window.publish === 'function' && window.PUB_SUB_EVENTS && window.PUB_SUB_EVENTS.cartUpdate) {
+        window.publish(window.PUB_SUB_EVENTS.cartUpdate, { source: 'exclusive-books-collection' });
+      }
+
+      document.dispatchEvent(new CustomEvent('cart:refresh', {
+        bubbles: true,
+        detail: { source: 'exclusive-books-collection' }
+      }));
+
+      document.dispatchEvent(new CustomEvent('cart:updated', {
+        bubbles: true,
+        detail: { source: 'exclusive-books-collection' }
+      }));
+
+      document.dispatchEvent(new CustomEvent('dispatch:cart-update', {
+        bubbles: true
+      }));
+    }
+
+    async function addToCart(variantId, btn) {
+      if (!variantId || !btn || btn.disabled) return;
+
+      const originalText = btn.textContent;
+      btn.disabled = true;
+      btn.textContent = 'Adding...';
+
+      try {
+        const addData = await addItem(variantId);
+        await refreshCartUI(addData);
+
+        btn.textContent = 'Added';
+
+        setTimeout(function() {
+          btn.textContent = originalText;
+          btn.disabled = false;
+        }, 1200);
+      } catch (error) {
+        console.error('[Exclusive Books Collection] add to cart error:', error);
+        btn.textContent = 'Error';
+
+        setTimeout(function() {
+          btn.textContent = originalText;
+          btn.disabled = false;
+        }, 1400);
+      }
+    }
+
+    section.addEventListener('click', function(event) {
+      const btn = event.target.closest('[data-add-to-cart]');
+      if (!btn) return;
+
+      event.preventDefault();
+      event.stopPropagation();
+
+      const variantId = btn.getAttribute('data-variant-id');
+      if (!variantId) return;
+
+      addToCart(variantId, btn);
+    });
+
+    let resizeTimer;
+    let lastIsMobile = window.innerWidth <= 767;
+
+    window.addEventListener('resize', function() {
+      clearTimeout(resizeTimer);
+
+      resizeTimer = setTimeout(function() {
+        const isMobileNow = window.innerWidth <= 767;
+
+        if (isMobileNow !== lastIsMobile) {
+          lastIsMobile = isMobileNow;
+          applyFilters();
+        }
+      }, 180);
+    });
+
+    applyFilters();
+  })();
+</script>
+
+
 </section>
 
 {% schema %}

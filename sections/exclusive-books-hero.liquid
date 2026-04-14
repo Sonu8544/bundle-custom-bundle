@@ -378,11 +378,9 @@
     #{{ sid }} .ebcp__row { position: relative; width: 100%; display: flex; justify-content: center; }
     #{{ sid }} .ebcp__book-wrap { position: relative; z-index: 2; display: flex; justify-content: center; }
     #{{ sid }} .ebcp__book {
-      width: 100%;
+     width: 100%;
       max-width: var(--book-width-desktop);
-      height: auto;
-      aspect-ratio: 316 / 400;
-      max-height: none;
+      height: var(--book-height-desktop);
       position: relative;
       transition: transform .35s ease;
       transform: translateZ(0);

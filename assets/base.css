@@ -2562,7 +2562,8 @@ product-info .loading-overlay:not(.hidden) ~ *,
 }
 
 .header__icon {
-  color: rgb(var(--color-foreground));
+  /* color: rgb(var(--color-foreground)); */
+  color:white;
 }
 
 .header__icon span {

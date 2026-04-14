@@ -129,7 +129,7 @@
         "footer_text": "",
         "full_screen": true,
         "section_height": 1000,
-        "max_scroll_width": 900,
+        "max_scroll_width": 780,
         "bg_color": "#000000",
         "text_color": "#17130f",
         "heading_color": "#121212",

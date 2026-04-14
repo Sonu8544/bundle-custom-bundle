@@ -1,6 +1,5 @@
 {% liquid
   assign section_id = 'exclusive-books-' | append: section.id
-  assign hero_menu = section.settings.menu
   assign search_action = section.settings.search_action
   if search_action == blank
     assign search_action = routes.search_url
@@ -45,27 +44,7 @@
         {% endif %}
       </div>
 
-      <button
-        type="button"
-        class="exclusive-books-hero__mobile-toggle"
-        aria-expanded="false"
-        aria-controls="{{ section_id }}-drawer"
-        data-drawer-toggle
-      >
-        <span></span>
-        <span></span>
-      </button>
-
-      <div id="{{ section_id }}-drawer" class="exclusive-books-hero__nav-wrap" data-drawer>
-        {% if hero_menu != blank %}
-          <nav class="exclusive-books-hero__nav" aria-label="Primary">
-            {% for link in hero_menu.links %}
-              <a href="{{ link.url }}" class="exclusive-books-hero__nav-link">{{ link.title }}</a>
-            {% endfor %}
-          </nav>
-        {% endif %}
-
-        <div class="exclusive-books-hero__actions">
+      <div class="exclusive-books-hero__actions">
           {% if section.settings.show_cart %}
             <a href="{{ routes.cart_url }}" class="exclusive-books-hero__icon-btn" aria-label="Cart">
               <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
@@ -90,7 +69,6 @@
               {{ section.settings.account_label }}
             </a>
           {% endif %}
-        </div>
       </div>
     </header>
 
@@ -322,39 +300,11 @@
       display: inline-block;
     }
 
-    #{{ section_id }} .exclusive-books-hero__nav-wrap {
-      display: flex;
-      align-items: center;
-      gap: 18px;
-      margin-left: auto;
-    }
-
-    #{{ section_id }} .exclusive-books-hero__nav {
-      display: flex;
-      align-items: center;
-      gap: 24px;
-      flex-wrap: wrap;
-    }
-
-    #{{ section_id }} .exclusive-books-hero__nav-link {
-      color: rgba(255,255,255,.92);
-      text-decoration: none;
-      font-size: 13px;
-      line-height: 1;
-      font-family: var(--body-font), sans-serif;
-      transition: opacity .25s ease, color .25s ease;
-    }
-
-    #{{ section_id }} .exclusive-books-hero__nav-link:hover,
-    #{{ section_id }} .exclusive-books-hero__nav-link:focus-visible {
-      color: #ffffff;
-      opacity: .86;
-    }
-
     #{{ section_id }} .exclusive-books-hero__actions {
       display: flex;
       align-items: center;
       gap: 10px;
+      margin-left: auto;
     }
 
     #{{ section_id }} .exclusive-books-hero__icon-btn,
@@ -527,28 +477,6 @@
       color: #fff;
     }
 
-    #{{ section_id }} .exclusive-books-hero__mobile-toggle {
-      display: none;
-      width: 40px;
-      height: 40px;
-      border-radius: 999px;
-      border: 1px solid rgba(255,255,255,.35);
-      background: rgba(255,255,255,.04);
-      color: #fff;
-      padding: 0;
-      align-items: center;
-      justify-content: center;
-      flex-direction: column;
-      gap: 4px;
-    }
-
-    #{{ section_id }} .exclusive-books-hero__mobile-toggle span {
-      width: 16px;
-      height: 1.5px;
-      display: block;
-      background: currentColor;
-    }
-
     #{{ section_id }} .exclusive-books-hero__modal[hidden] {
       display: none !important;
     }
@@ -695,53 +623,15 @@
         width: min(100%, var(--search-width-tablet));
       }
 
-      #{{ section_id }} .exclusive-books-hero__nav {
-        gap: 18px;
-      }
-
       #{{ section_id }} .exclusive-books-hero__logo-image {
         height: 54px;
       }
     }
 
     @media screen and (max-width: 989px) {
-      #{{ section_id }} .exclusive-books-hero__mobile-toggle {
-        display: inline-flex;
-      }
-
-      #{{ section_id }} .exclusive-books-hero__nav-wrap {
-        position: absolute;
-        top: calc(100% + 10px);
-        right: 0;
-        width: min(84vw, 360px);
-        padding: 18px;
-        border-radius: 18px;
-        background: rgba(8, 8, 8, .94);
-        border: 1px solid rgba(255,255,255,.08);
-        box-shadow: 0 20px 60px rgba(0,0,0,.45);
-        display: none;
-        flex-direction: column;
-        align-items: stretch;
-      }
-
-      #{{ section_id }} .exclusive-books-hero__nav-wrap.is-open {
-        display: flex;
-      }
-
-      #{{ section_id }} .exclusive-books-hero__nav {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 14px;
-      }
-
-      #{{ section_id }} .exclusive-books-hero__nav-link {
-        font-size: 15px;
-      }
-
       #{{ section_id }} .exclusive-books-hero__actions {
-        justify-content: flex-start;
         flex-wrap: wrap;
-        padding-top: 6px;
+        justify-content: flex-end;
       }
 
       #{{ section_id }} .exclusive-books-hero__account-btn {
@@ -838,25 +728,9 @@
       const section = document.getElementById('{{ section_id }}');
       if (!section) return;
 
-      const drawerToggle = section.querySelector('[data-drawer-toggle]');
-      const drawer = section.querySelector('[data-drawer]');
       const modal = section.querySelector('[data-filter-modal]');
       const openFilter = section.querySelector('[data-filter-open]');
       const closeButtons = section.querySelectorAll('[data-filter-close]');
-
-      if (drawerToggle && drawer) {
-        drawerToggle.addEventListener('click', function() {
-          const open = drawer.classList.toggle('is-open');
-          drawerToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
-        });
-
-        document.addEventListener('click', function(event) {
-          if (!section.contains(event.target)) {
-            drawer.classList.remove('is-open');
-            drawerToggle.setAttribute('aria-expanded', 'false');
-          }
-        });
-      }
 
       function setModalState(open) {
         if (!modal) return;
@@ -912,11 +786,6 @@
       "id": "logo_text",
       "label": "Fallback logo text",
       "default": "RB"
-    },
-    {
-      "type": "link_list",
-      "id": "menu",
-      "label": "Navigation menu"
     },
     {
       "type": "checkbox",

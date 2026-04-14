@@ -42,7 +42,7 @@
       ],
       "name": "Author spotlight editorial",
       "settings": {
-        "top_overlay_image_desktop": "shopify://shop_images/Listing_Page_4.png",
+        "background_image_desktop": "shopify://shop_images/Listing_Page_4.png",
         "profile_image": "shopify://shop_images/f1ea3c0bb13f4566239e1e83785c3fcc27581b57.png",
         "background_alt": "Editorial background",
         "top_overlay_alt": "Top decorative overlay",
@@ -240,8 +240,6 @@
         "heading": "How we build",
         "desktop_video": "shopify://files/videos/file_example_MP4_1920_18MG.mp4",
         "mobile_video": "shopify://files/videos/file_example_MP4_1920_18MG.mp4",
-        "desktop_poster": "shopify://shop_images/arafed-image-round-table-with-light-coming-from-it_1034560-94186_2_1.png",
-        "mobile_poster": "shopify://shop_images/arafed-image-round-table-with-light-coming-from-it_1034560-94186_2_1.png",
         "enable_click_to_play": true,
         "autoplay_video": false,
         "section_height_desktop": 800,

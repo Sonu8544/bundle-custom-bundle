@@ -1,0 +1,689 @@
+{% liquid
+  assign sid = 'exclusive-books-collection-' | append: section.id
+  assign active_collection = collection
+  if active_collection == blank and section.settings.fallback_collection != blank
+    assign active_collection = section.settings.fallback_collection
+  endif
+%}
+
+<section id="{{ sid }}" class="ebcp">
+  <div class="ebcp__bg">
+    {% if section.settings.hero_bg != blank %}
+      {{ section.settings.hero_bg | image_url: width: 2400 | image_tag: class: 'ebcp__bg-image', loading: 'lazy', widths: '768,1200,1600,2000,2400', sizes: '100vw', alt: section.settings.heading | escape }}
+    {% endif %}
+    <div class="ebcp__overlay"></div>
+  </div>
+
+  <div class="ebcp__inner page-width">
+    <div class="ebcp__hero">
+      {% if section.settings.heading != blank %}
+        <h2 class="ebcp__heading">
+          {% assign heading_parts = section.settings.heading | split: section.settings.highlight_word %}
+          {% if section.settings.highlight_word != blank and heading_parts.size > 1 %}
+            {{ heading_parts[0] }}<span>{{ section.settings.highlight_word }}</span>{{ heading_parts[1] }}
+          {% else %}
+            {{ section.settings.heading }}
+          {% endif %}
+        </h2>
+      {% endif %}
+
+      {% if section.settings.subheading != blank %}
+        <div class="ebcp__subheading rte">{{ section.settings.subheading }}</div>
+      {% endif %}
+
+      <div class="ebcp__toolbar">
+        <div class="ebcp__search-wrap">
+          <label class="visually-hidden" for="{{ sid }}-search">{{ section.settings.search_placeholder }}</label>
+          <input id="{{ sid }}-search" class="ebcp__search" type="search" placeholder="{{ section.settings.search_placeholder }}" data-search-input>
+          <button type="button" class="ebcp__search-btn" aria-label="Search">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="11" cy="11" r="6.5" stroke="currentColor" stroke-width="1.7"/><path d="M16 16L21 21" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+          </button>
+        </div>
+
+        <button type="button" class="ebcp__filter-btn" data-filter-open aria-controls="{{ sid }}-filters" aria-expanded="false">
+          {% if section.settings.filter_icon != blank %}
+            {{ section.settings.filter_icon | image_url: width: 72 | image_tag: class: 'ebcp__filter-icon', loading: 'lazy', widths: '36,48,72', sizes: '50px', alt: 'Filter' }}
+          {% else %}
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M7 5V19" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M17 5V19" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><circle cx="7" cy="9" r="2.6" stroke="currentColor" stroke-width="1.7"/><circle cx="17" cy="15" r="2.6" stroke="currentColor" stroke-width="1.7"/></svg>
+          {% endif %}
+        </button>
+      </div>
+    </div>
+
+    <div id="{{ sid }}-filters" class="ebcp__modal" hidden data-filter-modal>
+      <div class="ebcp__modal-backdrop" data-filter-close></div>
+      <div class="ebcp__modal-dialog" role="dialog" aria-modal="true" aria-labelledby="{{ sid }}-filter-title">
+        <div class="ebcp__modal-head">
+          <h3 id="{{ sid }}-filter-title">{{ section.settings.filter_heading }}</h3>
+          <button type="button" class="ebcp__modal-close" aria-label="Close" data-filter-close>
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 6L18 18" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M18 6L6 18" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+          </button>
+        </div>
+
+        <div class="ebcp__modal-body">
+          <div class="ebcp__field">
+            <label for="{{ sid }}-sort">Sort by</label>
+            <select id="{{ sid }}-sort" data-sort-select>
+              <option value="featured">Featured</option>
+              <option value="title-asc">Name A-Z</option>
+              <option value="title-desc">Name Z-A</option>
+              <option value="price-asc">Price low to high</option>
+              <option value="price-desc">Price high to low</option>
+            </select>
+          </div>
+
+          <div class="ebcp__field">
+            <label for="{{ sid }}-author">Author</label>
+            <select id="{{ sid }}-author" data-author-select>
+              <option value="">All authors</option>
+              {% if active_collection != blank %}
+                {% assign authors_string = '' %}
+                {% for product in active_collection.products %}
+                  {% if product.vendor != blank %}
+                    {% assign author_key = '|' | append: product.vendor | append: '|' %}
+                    {% unless authors_string contains author_key %}
+                      {% assign authors_string = authors_string | append: author_key %}
+                      <option value="{{ product.vendor | escape }}">{{ product.vendor }}</option>
+                    {% endunless %}
+                  {% endif %}
+                {% endfor %}
+              {% endif %}
+            </select>
+          </div>
+
+          <div class="ebcp__field-group">
+            <div class="ebcp__field">
+              <label for="{{ sid }}-min">Min price</label>
+              <input id="{{ sid }}-min" type="number" min="0" step="1" placeholder="0" data-price-min>
+            </div>
+            <div class="ebcp__field">
+              <label for="{{ sid }}-max">Max price</label>
+              <input id="{{ sid }}-max" type="number" min="0" step="1" placeholder="99999" data-price-max>
+            </div>
+          </div>
+
+          <div class="ebcp__modal-actions">
+            <button type="button" class="ebcp__secondary-btn" data-filter-reset>Reset</button>
+            <button type="button" class="ebcp__primary-btn" data-filter-apply>Apply filters</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    {% if active_collection != blank %}
+      {% paginate active_collection.products by 250 %}
+        <div class="ebcp__results-meta">
+          <div class="ebcp__results-count" data-results-count>{{ active_collection.products_count }} books</div>
+          {% if active_collection.title != blank %}
+            <div class="ebcp__collection-title">{{ active_collection.title }}</div>
+          {% endif %}
+        </div>
+
+        <div class="ebcp__grid" data-books-grid>
+          {% for product in active_collection.products %}
+            {% assign current_variant = product.selected_or_first_available_variant %}
+            <article
+              class="ebcp__item"
+              data-book-item
+              data-title="{{ product.title | downcase | escape }}"
+              data-author="{{ product.vendor | downcase | escape }}"
+              data-price="{{ current_variant.price | default: product.price | money_without_currency | remove: ',' | strip }}"
+              data-index="{{ forloop.index0 }}"
+            >
+              <div class="ebcp__row">
+                <div class="ebcp__book-wrap">
+                  <div class="ebcp__book">
+                    <a href="{{ product.url }}" class="ebcp__book-link" aria-label="{{ product.title }}">
+                      {% if product.featured_image != blank %}
+                        {{ product.featured_image | image_url: width: 1200 | image_tag: class: 'ebcp__book-image', loading: 'lazy', widths: '220,320,420,520,720,920,1200', sizes: '(max-width: 767px) 33vw, (max-width: 989px) 28vw, 22vw', alt: product.title | escape }}
+                      {% else %}
+                        {{ 'image' | placeholder_svg_tag: 'ebcp__placeholder' }}
+                      {% endif %}
+                    </a>
+
+                    {% if current_variant != blank %}
+                      <div class="ebcp__cta">
+                        <button type="button" class="ebcp__cart-btn" data-add-to-cart data-variant-id="{{ current_variant.id }}" {% unless current_variant.available %}disabled{% endunless %}>
+                          {% if current_variant.available %}{{ section.settings.button_text }}{% else %}Sold out{% endif %}
+                        </button>
+                      </div>
+                    {% endif %}
+                  </div>
+                </div>
+
+                <div class="ebcp__shelf">
+                  {% if section.settings.shelf_image != blank %}
+                    {{ section.settings.shelf_image | image_url: width: 2400 | image_tag: class: 'ebcp__shelf-image', loading: 'lazy', widths: '480,720,960,1200,1600,2000', sizes: '(max-width: 767px) 92vw, 30vw', alt: '' }}
+                  {% endif %}
+                </div>
+
+                {% if section.settings.show_meta %}
+                  <div class="ebcp__meta">
+                    <h3 class="ebcp__title"><a href="{{ product.url }}">{{ product.title }}</a></h3>
+                    {% if product.vendor != blank %}<div class="ebcp__author">{{ product.vendor }}</div>{% endif %}
+                    <div class="ebcp__price">{{ current_variant.price | default: product.price | money }}</div>
+                  </div>
+                {% endif %}
+              </div>
+            </article>
+          {% endfor %}
+        </div>
+
+        <div class="ebcp__empty" hidden data-empty-state>{{ section.settings.empty_text }}</div>
+      {% endpaginate %}
+    {% else %}
+      <div class="ebcp__empty ebcp__empty--static">Select a collection or use this section on a collection template.</div>
+    {% endif %}
+  </div>
+
+  <style>
+    #{{ sid }} {
+      --hero-min-height-desktop: {{ section.settings.hero_height_desktop }}px;
+      --hero-min-height-tablet: {{ section.settings.hero_height_tablet }}px;
+      --hero-min-height-mobile: {{ section.settings.hero_height_mobile }}px;
+      --heading-size-desktop: {{ section.settings.heading_size_desktop }}px;
+      --heading-size-tablet: {{ section.settings.heading_size_tablet }}px;
+      --heading-size-mobile: {{ section.settings.heading_size_mobile }}px;
+      --subheading-size-desktop: {{ section.settings.subheading_size_desktop }}px;
+      --subheading-size-tablet: {{ section.settings.subheading_size_tablet }}px;
+      --subheading-size-mobile: {{ section.settings.subheading_size_mobile }}px;
+      --content-max-width: {{ section.settings.content_max_width }}px;
+      --search-width-desktop: {{ section.settings.search_width_desktop }}px;
+      --search-width-mobile: {{ section.settings.search_width_mobile }}px;
+      --book-width-desktop: {{ section.settings.book_width_desktop }}px;
+      --book-width-tablet: {{ section.settings.book_width_tablet }}px;
+      --book-width-mobile: {{ section.settings.book_width_mobile }}px;
+      --row-gap-desktop: {{ section.settings.row_gap_desktop }}px;
+      --row-gap-mobile: {{ section.settings.row_gap_mobile }}px;
+      --overlay-opacity: {{ section.settings.overlay_opacity | divided_by: 100.0 }};
+      --heading-font: {{ section.settings.heading_font_family }};
+      --body-font: {{ section.settings.body_font_family }};
+      --text-color: {{ section.settings.text_color }};
+      --accent-start: {{ section.settings.heading_gradient_start }};
+      --accent-end: {{ section.settings.heading_gradient_end }};
+      --search-bg: {{ section.settings.search_bg }};
+      --search-border: {{ section.settings.search_border }};
+      --modal-bg: {{ section.settings.modal_bg }};
+      --section-bg: {{ section.settings.section_bg }};
+      --glow: {{ section.settings.glow_color }};
+      --button-text: {{ section.settings.button_text_color }};
+      --button-radius: {{ section.settings.button_radius }}px;
+      --card-meta: {{ section.settings.meta_text_color }};
+      --filter-btn-bg: {% if section.settings.filter_button_bg != blank %}url({{ section.settings.filter_button_bg | image_url: width: 300 }}) center/cover no-repeat{% else %}linear-gradient(180deg, #DDB85F 0%, #8A6210 100%){% endif %};
+    }
+
+    #{{ sid }}.ebcp {
+      position: relative;
+      overflow: hidden;
+      background:
+        radial-gradient(circle at 50% 18%, var(--glow) 0%, rgba(0,0,0,0) 26%),
+        var(--section-bg);
+      color: var(--text-color);
+      padding: 0 0 {{ section.settings.bottom_padding }}px;
+    }
+    #{{ sid }} .ebcp__bg,
+    #{{ sid }} .ebcp__overlay { position: absolute; inset: 0; }
+    #{{ sid }} .ebcp__bg-image { width: 100%; height: 100%; object-fit: cover; display: block; }
+    #{{ sid }} .ebcp__overlay {
+      background: linear-gradient(180deg, rgba(0,0,0,.52) 0%, rgba(0,0,0,.16) 34%, rgba(0,0,0,.86) 100%), rgba(0,0,0,var(--overlay-opacity));
+      pointer-events: none;
+    }
+    #{{ sid }} .ebcp__inner {
+      position: relative;
+      z-index: 2;
+      max-width: var(--content-max-width);
+      margin: 0 auto;
+    }
+    #{{ sid }} .ebcp__hero {
+      min-height: var(--hero-min-height-desktop);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: {{ section.settings.top_padding }}px 0 40px;
+    }
+    #{{ sid }} .ebcp__heading {
+      margin: 0;
+      font-family: var(--heading-font), serif;
+      font-size: var(--heading-size-desktop);
+      line-height: 1;
+      font-weight: 400;
+      background: linear-gradient(270.6deg, var(--accent-start) 9.74%, var(--accent-end) 71.76%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    #{{ sid }} .ebcp__heading span {
+      background: inherit;
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    #{{ sid }} .ebcp__subheading {
+      margin: 18px auto 0;
+      max-width: 420px;
+      font-family: var(--body-font), sans-serif;
+      font-size: var(--subheading-size-desktop);
+      line-height: 1.3;
+      color: #fff;
+    }
+    #{{ sid }} .ebcp__subheading p { margin: 0; }
+    #{{ sid }} .ebcp__toolbar {
+      margin-top: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      width: 100%;
+    }
+    #{{ sid }} .ebcp__search-wrap {
+      width: min(100%, var(--search-width-desktop));
+      min-height: 50px;
+      display: flex;
+      align-items: center;
+      padding: 0 6px 0 20px;
+      border-radius: 122px;
+      border: 1px solid var(--search-border);
+      background: var(--search-bg);
+      backdrop-filter: blur(9px);
+      -webkit-backdrop-filter: blur(9px);
+    }
+    #{{ sid }} .ebcp__search {
+      width: 100%;
+      min-width: 0;
+      background: transparent;
+      border: 0;
+      outline: none;
+      color: #fff;
+      font-size: 15px;
+      font-family: var(--body-font), sans-serif;
+      box-shadow: none;
+      padding: 14px 0;
+    }
+    #{{ sid }} .ebcp__search::placeholder { color: rgba(255,255,255,.74); }
+    #{{ sid }} .ebcp__search-btn {
+      width: 42px; height: 42px; border: 0; background: transparent; color: #fff; display: inline-flex; align-items: center; justify-content: center;
+    }
+    #{{ sid }} .ebcp__search-btn svg { width: 19px; height: 19px; }
+    #{{ sid }} .ebcp__filter-btn {
+      width: 50px; height: 50px; border: 0; border-radius: 60px; background: var(--filter-btn-bg); display: inline-flex; align-items: center; justify-content: center; box-shadow: 0 12px 26px rgba(0,0,0,.28); cursor: pointer;
+    }
+    #{{ sid }} .ebcp__filter-icon { width: 22px; height: 22px; object-fit: contain; display: block; }
+    #{{ sid }} .ebcp__filter-btn svg { width: 21px; height: 21px; color: #fff; }
+
+    #{{ sid }} .ebcp__results-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 0 0 18px;
+      color: rgba(255,255,255,.86);
+      font-family: var(--body-font), sans-serif;
+    }
+    #{{ sid }} .ebcp__collection-title { font-size: 14px; text-transform: uppercase; letter-spacing: .04em; }
+    #{{ sid }} .ebcp__results-count { font-size: 14px; }
+
+    #{{ sid }} .ebcp__grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      column-gap: {{ section.settings.grid_gap_desktop }}px;
+      row-gap: var(--row-gap-desktop);
+      align-items: start;
+    }
+    #{{ sid }} .ebcp__item { min-width: 0; }
+    #{{ sid }} .ebcp__row { position: relative; }
+    #{{ sid }} .ebcp__book-wrap { position: relative; z-index: 2; display: flex; justify-content: center; margin-bottom: -{{ section.settings.book_overlap_desktop }}px; }
+    #{{ sid }} .ebcp__book {
+      width: min(100%, var(--book-width-desktop));
+      position: relative;
+      transition: transform .35s ease;
+    }
+    #{{ sid }} .ebcp__book:hover,
+    #{{ sid }} .ebcp__book:focus-within { transform: translateY(-{{ section.settings.hover_lift }}px); }
+    #{{ sid }} .ebcp__book-link { display: block; line-height: 0; position: relative; z-index: 2; }
+    #{{ sid }} .ebcp__book-image,
+    #{{ sid }} .ebcp__placeholder {
+      width: 100%; height: auto; display: block; object-fit: contain; filter: drop-shadow(0 14px 26px rgba(0,0,0,.28));
+    }
+    #{{ sid }} .ebcp__cta {
+      position: absolute; left: 50%; bottom: 10%; transform: translateX(-50%) translateY(10px); width: calc(100% - 18px); max-width: 220px; opacity: 0; visibility: hidden; transition: opacity .3s ease, transform .3s ease, visibility .3s ease; z-index: 4;
+    }
+    #{{ sid }} .ebcp__book:hover .ebcp__cta,
+    #{{ sid }} .ebcp__book:focus-within .ebcp__cta { opacity: 1; visibility: visible; transform: translateX(-50%) translateY(0); }
+    #{{ sid }} .ebcp__cart-btn {
+      width: 100%; min-height: 46px; border: 0; border-radius: var(--button-radius); cursor: pointer; color: var(--button-text); font-size: 12px; letter-spacing: .04em; text-transform: uppercase; font-family: var(--body-font), sans-serif; background: {% if section.settings.button_bg != blank %}url({{ section.settings.button_bg | image_url: width: 400 }}) center/cover no-repeat{% else %}linear-gradient(180deg, #DDB85F 0%, #8A6210 100%){% endif %}; box-shadow: 0 10px 20px rgba(0,0,0,.24);
+    }
+    #{{ sid }} .ebcp__cart-btn[disabled] { opacity: .6; cursor: not-allowed; }
+    #{{ sid }} .ebcp__shelf { position: relative; z-index: 1; }
+    #{{ sid }} .ebcp__shelf-image { width: 100%; height: auto; display: block; object-fit: contain; }
+    #{{ sid }} .ebcp__meta { margin-top: 12px; text-align: center; color: var(--card-meta); font-family: var(--body-font), sans-serif; }
+    #{{ sid }} .ebcp__title { margin: 0; font-size: 15px; line-height: 1.3; font-weight: 500; }
+    #{{ sid }} .ebcp__title a { color: inherit; text-decoration: none; }
+    #{{ sid }} .ebcp__author { margin-top: 4px; font-size: 13px; opacity: .82; }
+    #{{ sid }} .ebcp__price { margin-top: 6px; font-size: 14px; }
+
+    #{{ sid }} .ebcp__empty {
+      display: flex; align-items: center; justify-content: center; min-height: 160px; margin-top: 12px; border: 1px solid rgba(255,255,255,.1); border-radius: 20px; background: rgba(255,255,255,.03); color: rgba(255,255,255,.76); text-align: center; padding: 24px;
+    }
+    #{{ sid }} .ebcp__empty--static { margin-top: 24px; }
+
+    #{{ sid }} .ebcp__modal[hidden] { display: none !important; }
+    #{{ sid }} .ebcp__modal { position: fixed; inset: 0; z-index: 30; }
+    #{{ sid }} .ebcp__modal-backdrop { position: absolute; inset: 0; background: rgba(0,0,0,.86); }
+    #{{ sid }} .ebcp__modal-dialog {
+      position: relative; z-index: 1; width: min(92vw, 640px); margin: 8vh auto 0; max-height: 84vh; overflow: auto; border-radius: 28px; background: var(--modal-bg); border: 1px solid rgba(255,255,255,.08); box-shadow: 0 28px 80px rgba(0,0,0,.42); color: #fff;
+    }
+    #{{ sid }} .ebcp__modal-head { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 22px 24px 18px; border-bottom: 1px solid rgba(255,255,255,.08); }
+    #{{ sid }} .ebcp__modal-head h3 { margin: 0; font-family: var(--heading-font), serif; font-size: 28px; font-weight: 400; }
+    #{{ sid }} .ebcp__modal-close { width: 42px; height: 42px; border: 1px solid rgba(255,255,255,.15); background: rgba(255,255,255,.05); border-radius: 999px; color: #fff; display: inline-flex; align-items: center; justify-content: center; padding: 0; cursor: pointer; }
+    #{{ sid }} .ebcp__modal-close svg { width: 18px; height: 18px; }
+    #{{ sid }} .ebcp__modal-body { padding: 24px; display: grid; gap: 18px; }
+    #{{ sid }} .ebcp__field, #{{ sid }} .ebcp__field-group { display: grid; gap: 8px; }
+    #{{ sid }} .ebcp__field-group { grid-template-columns: repeat(2, minmax(0,1fr)); gap: 14px; }
+    #{{ sid }} .ebcp__field label { font-family: var(--body-font), sans-serif; font-size: 14px; color: rgba(255,255,255,.9); }
+    #{{ sid }} .ebcp__field select,
+    #{{ sid }} .ebcp__field input {
+      min-height: 48px; border-radius: 14px; border: 1px solid rgba(255,255,255,.12); background: rgba(255,255,255,.04); color: #fff; padding: 0 14px; font-family: var(--body-font), sans-serif; box-shadow: none; outline: none;
+    }
+    #{{ sid }} .ebcp__field select option { color: #000; }
+    #{{ sid }} .ebcp__modal-actions { display: flex; justify-content: flex-end; gap: 12px; padding-top: 4px; }
+    #{{ sid }} .ebcp__secondary-btn,
+    #{{ sid }} .ebcp__primary-btn {
+      min-height: 46px; border-radius: 999px; padding: 0 20px; font-family: var(--body-font), sans-serif; cursor: pointer;
+    }
+    #{{ sid }} .ebcp__secondary-btn { border: 1px solid rgba(255,255,255,.14); background: rgba(255,255,255,.04); color: #fff; }
+    #{{ sid }} .ebcp__primary-btn { border: 0; color: var(--button-text); background: {% if section.settings.button_bg != blank %}url({{ section.settings.button_bg | image_url: width: 400 }}) center/cover no-repeat{% else %}linear-gradient(180deg, #DDB85F 0%, #8A6210 100%){% endif %}; }
+
+    @media screen and (max-width: 989px) {
+      #{{ sid }} .ebcp__hero { min-height: var(--hero-min-height-tablet); }
+      #{{ sid }} .ebcp__heading { font-size: var(--heading-size-tablet); }
+      #{{ sid }} .ebcp__subheading { font-size: var(--subheading-size-tablet); }
+      #{{ sid }} .ebcp__grid { grid-template-columns: repeat(3, minmax(0, 1fr)); column-gap: {{ section.settings.grid_gap_tablet }}px; }
+      #{{ sid }} .ebcp__book-wrap { margin-bottom: -{{ section.settings.book_overlap_tablet }}px; }
+      #{{ sid }} .ebcp__book { width: min(100%, var(--book-width-tablet)); }
+      #{{ sid }} .ebcp__cta { opacity: 1; visibility: visible; transform: translateX(-50%); }
+    }
+
+    @media screen and (max-width: 767px) {
+      #{{ sid }} .ebcp__hero { min-height: var(--hero-min-height-mobile); padding: {{ section.settings.top_padding_mobile }}px 0 28px; }
+      #{{ sid }} .ebcp__heading { font-size: var(--heading-size-mobile); line-height: 1.02; }
+      #{{ sid }} .ebcp__subheading { margin-top: 14px; max-width: 240px; font-size: var(--subheading-size-mobile); }
+      #{{ sid }} .ebcp__toolbar { gap: 10px; }
+      #{{ sid }} .ebcp__search-wrap { width: min(100%, var(--search-width-mobile)); min-height: 48px; padding-left: 16px; }
+      #{{ sid }} .ebcp__search { font-size: 13px; }
+      #{{ sid }} .ebcp__filter-btn { width: 48px; height: 48px; }
+      #{{ sid }} .ebcp__results-meta { flex-direction: column; align-items: flex-start; gap: 6px; }
+      #{{ sid }} .ebcp__grid { grid-template-columns: repeat(3, minmax(0, 1fr)); column-gap: {{ section.settings.grid_gap_mobile }}px; row-gap: var(--row-gap-mobile); }
+      #{{ sid }} .ebcp__book-wrap { margin-bottom: -{{ section.settings.book_overlap_mobile }}px; }
+      #{{ sid }} .ebcp__book { width: min(100%, var(--book-width-mobile)); }
+      #{{ sid }} .ebcp__cart-btn { min-height: 34px; font-size: 9px; }
+      #{{ sid }} .ebcp__meta { margin-top: 10px; }
+      #{{ sid }} .ebcp__title { font-size: 11px; }
+      #{{ sid }} .ebcp__author, #{{ sid }} .ebcp__price { font-size: 10px; }
+      #{{ sid }} .ebcp__modal-dialog { width: calc(100vw - 24px); margin-top: 5vh; border-radius: 22px; }
+      #{{ sid }} .ebcp__modal-head { padding: 18px 18px 16px; }
+      #{{ sid }} .ebcp__modal-head h3 { font-size: 24px; }
+      #{{ sid }} .ebcp__modal-body { padding: 18px; }
+      #{{ sid }} .ebcp__field-group { grid-template-columns: 1fr; }
+      #{{ sid }} .ebcp__modal-actions { flex-direction: column-reverse; }
+      #{{ sid }} .ebcp__secondary-btn,
+      #{{ sid }} .ebcp__primary-btn { width: 100%; }
+    }
+  </style>
+
+  <script>
+    (function() {
+      const section = document.getElementById('{{ sid }}');
+      if (!section) return;
+
+      const modal = section.querySelector('[data-filter-modal]');
+      const filterOpen = section.querySelector('[data-filter-open]');
+      const filterClose = section.querySelectorAll('[data-filter-close]');
+      const searchInput = section.querySelector('[data-search-input]');
+      const sortSelect = section.querySelector('[data-sort-select]');
+      const authorSelect = section.querySelector('[data-author-select]');
+      const priceMin = section.querySelector('[data-price-min]');
+      const priceMax = section.querySelector('[data-price-max]');
+      const applyBtn = section.querySelector('[data-filter-apply]');
+      const resetBtn = section.querySelector('[data-filter-reset]');
+      const grid = section.querySelector('[data-books-grid]');
+      const emptyState = section.querySelector('[data-empty-state]');
+      const resultCount = section.querySelector('[data-results-count]');
+      const items = grid ? Array.from(grid.querySelectorAll('[data-book-item]')) : [];
+      const shopRoot = (window.Shopify && window.Shopify.routes && window.Shopify.routes.root) ? window.Shopify.routes.root : '/';
+
+      function setModal(open) {
+        if (!modal) return;
+        modal.hidden = !open;
+        document.documentElement.style.overflow = open ? 'hidden' : '';
+        if (filterOpen) filterOpen.setAttribute('aria-expanded', open ? 'true' : 'false');
+      }
+
+      if (filterOpen) filterOpen.addEventListener('click', function() { setModal(true); });
+      filterClose.forEach(function(btn) { btn.addEventListener('click', function() { setModal(false); }); });
+      document.addEventListener('keydown', function(event) { if (event.key === 'Escape') setModal(false); });
+
+      function normalized(value) {
+        return (value || '').toString().trim().toLowerCase();
+      }
+
+      function parsePrice(value) {
+        const num = parseFloat((value || '').toString().replace(/,/g, '').trim());
+        return Number.isFinite(num) ? num : null;
+      }
+
+      function sortItems(list, mode) {
+        const arr = list.slice();
+        switch (mode) {
+          case 'title-asc':
+            arr.sort((a, b) => normalized(a.dataset.title).localeCompare(normalized(b.dataset.title)));
+            break;
+          case 'title-desc':
+            arr.sort((a, b) => normalized(b.dataset.title).localeCompare(normalized(a.dataset.title)));
+            break;
+          case 'price-asc':
+            arr.sort((a, b) => (parsePrice(a.dataset.price) || 0) - (parsePrice(b.dataset.price) || 0));
+            break;
+          case 'price-desc':
+            arr.sort((a, b) => (parsePrice(b.dataset.price) || 0) - (parsePrice(a.dataset.price) || 0));
+            break;
+          default:
+            arr.sort((a, b) => (parseInt(a.dataset.index || '0', 10)) - (parseInt(b.dataset.index || '0', 10)));
+        }
+        return arr;
+      }
+
+      function applyFilters() {
+        if (!grid) return;
+
+        const q = normalized(searchInput && searchInput.value);
+        const author = normalized(authorSelect && authorSelect.value);
+        const min = parsePrice(priceMin && priceMin.value);
+        const max = parsePrice(priceMax && priceMax.value);
+        const sort = sortSelect ? sortSelect.value : 'featured';
+
+        let visible = items.filter(function(item) {
+          const title = normalized(item.dataset.title);
+          const authorName = normalized(item.dataset.author);
+          const price = parsePrice(item.dataset.price) || 0;
+
+          const matchesSearch = !q || title.includes(q) || authorName.includes(q);
+          const matchesAuthor = !author || authorName === author;
+          const matchesMin = min === null || price >= min;
+          const matchesMax = max === null || price <= max;
+
+          return matchesSearch && matchesAuthor && matchesMin && matchesMax;
+        });
+
+        visible = sortItems(visible, sort);
+
+        items.forEach(function(item) { item.hidden = true; });
+        visible.forEach(function(item) {
+          item.hidden = false;
+          grid.appendChild(item);
+        });
+
+        if (resultCount) {
+          resultCount.textContent = visible.length + (visible.length === 1 ? ' book' : ' books');
+        }
+        if (emptyState) {
+          emptyState.hidden = visible.length !== 0;
+        }
+      }
+
+      if (searchInput) {
+        searchInput.addEventListener('input', applyFilters);
+      }
+      if (applyBtn) {
+        applyBtn.addEventListener('click', function() {
+          applyFilters();
+          setModal(false);
+        });
+      }
+      if (resetBtn) {
+        resetBtn.addEventListener('click', function() {
+          if (searchInput) searchInput.value = '';
+          if (sortSelect) sortSelect.value = 'featured';
+          if (authorSelect) authorSelect.value = '';
+          if (priceMin) priceMin.value = '';
+          if (priceMax) priceMax.value = '';
+          applyFilters();
+        });
+      }
+
+      section.addEventListener('click', async function(event) {
+        const btn = event.target.closest('[data-add-to-cart]');
+        if (!btn || btn.disabled) return;
+        event.preventDefault();
+        const variantId = btn.getAttribute('data-variant-id');
+        if (!variantId) return;
+
+        const originalText = btn.textContent;
+        btn.disabled = true;
+        btn.textContent = 'Adding...';
+
+        try {
+          const response = await fetch(shopRoot + 'cart/add.js', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': 'application/json',
+              'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: JSON.stringify({
+              items: [{ id: Number(variantId), quantity: 1 }],
+              sections: ['cart-drawer', 'cart-icon-bubble'],
+              sections_url: window.location.pathname
+            })
+          });
+
+          const data = await response.json();
+          if (!response.ok || data.status) throw new Error(data.description || 'Add to cart failed');
+
+          if (typeof window.publish === 'function' && window.PUB_SUB_EVENTS && window.PUB_SUB_EVENTS.cartUpdate) {
+            window.publish(window.PUB_SUB_EVENTS.cartUpdate, { source: 'exclusive-books-collection' });
+          }
+
+          document.dispatchEvent(new CustomEvent('cart:refresh', { bubbles: true, detail: { source: 'exclusive-books-collection' } }));
+          document.dispatchEvent(new CustomEvent('cart:updated', { bubbles: true, detail: { source: 'exclusive-books-collection' } }));
+
+          btn.textContent = 'Added';
+          setTimeout(function() {
+            btn.textContent = originalText;
+            btn.disabled = false;
+          }, 1200);
+        } catch (error) {
+          console.error('[Exclusive Books Collection] add to cart error', error);
+          btn.textContent = 'Error';
+          setTimeout(function() {
+            btn.textContent = originalText;
+            btn.disabled = false;
+          }, 1200);
+        }
+      });
+
+      applyFilters();
+    })();
+  </script>
+</section>
+
+{% schema %}
+{
+  "name": "Collection Books",
+  "tag": "section",
+  "class": "section section-exclusive-books-collection",
+  "settings": [
+    { "type": "collection", "id": "fallback_collection", "label": "Fallback collection" },
+    { "type": "image_picker", "id": "hero_bg", "label": "Hero background image" },
+    { "type": "image_picker", "id": "shelf_image", "label": "Shelf image" },
+    { "type": "image_picker", "id": "filter_icon", "label": "Filter icon" },
+    { "type": "image_picker", "id": "filter_button_bg", "label": "Filter button background image" },
+    { "type": "image_picker", "id": "button_bg", "label": "Add to cart button background image" },
+
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Exclusive Books" },
+    { "type": "text", "id": "highlight_word", "label": "Highlight word", "default": "Books" },
+    { "type": "richtext", "id": "subheading", "label": "Subheading", "default": "<p>Memories that Define our Journey Together</p>" },
+    { "type": "text", "id": "search_placeholder", "label": "Search placeholder", "default": "Search your best book" },
+    { "type": "text", "id": "filter_heading", "label": "Filter modal heading", "default": "Refine your books" },
+    { "type": "text", "id": "button_text", "label": "Add to cart button text", "default": "ADD TO CART" },
+    { "type": "text", "id": "empty_text", "label": "Empty state text", "default": "No books matched your search or filters." },
+    { "type": "checkbox", "id": "show_meta", "label": "Show title, author and price", "default": false },
+
+    { "type": "text", "id": "heading_font_family", "label": "Heading font family", "default": "Bethany Elingston" },
+    { "type": "text", "id": "body_font_family", "label": "Body font family", "default": "Satoshi" },
+
+    { "type": "color", "id": "text_color", "label": "Text color", "default": "#FFFFFF" },
+    { "type": "color", "id": "heading_gradient_start", "label": "Heading gradient start", "default": "#A87E0A" },
+    { "type": "color", "id": "heading_gradient_end", "label": "Heading gradient end", "default": "#FFFFFF" },
+    { "type": "color", "id": "search_bg", "label": "Search background", "default": "#171717" },
+    { "type": "color", "id": "search_border", "label": "Search border", "default": "#8E8E8E" },
+    { "type": "color", "id": "modal_bg", "label": "Modal background", "default": "#050505" },
+    { "type": "color", "id": "section_bg", "label": "Section background", "default": "#050202" },
+    { "type": "color", "id": "glow_color", "label": "Glow color", "default": "#2A1208" },
+    { "type": "color", "id": "button_text_color", "label": "Button text color", "default": "#FFFFFF" },
+    { "type": "color", "id": "meta_text_color", "label": "Meta text color", "default": "#FFFFFF" },
+
+    { "type": "range", "id": "overlay_opacity", "label": "Overlay opacity", "min": 0, "max": 80, "step": 1, "unit": "%", "default": 18 },
+    { "type": "range", "id": "content_max_width", "label": "Content max width", "min": 900, "max": 1800, "step": 20, "unit": "px", "default": 1400 },
+
+    { "type": "range", "id": "hero_height_desktop", "label": "Hero height desktop", "min": 420, "max": 900, "step": 10, "unit": "px", "default": 520 },
+    { "type": "range", "id": "hero_height_tablet", "label": "Hero height tablet", "min": 360, "max": 760, "step": 10, "unit": "px", "default": 460 },
+    { "type": "range", "id": "hero_height_mobile", "label": "Hero height mobile", "min": 300, "max": 640, "step": 10, "unit": "px", "default": 380 },
+
+    { "type": "range", "id": "heading_size_desktop", "label": "Heading size desktop", "min": 36, "max": 90, "step": 2, "unit": "px", "default": 64 },
+    { "type": "range", "id": "heading_size_tablet", "label": "Heading size tablet", "min": 28, "max": 72, "step": 2, "unit": "px", "default": 52 },
+    { "type": "range", "id": "heading_size_mobile", "label": "Heading size mobile", "min": 22, "max": 52, "step": 2, "unit": "px", "default": 34 },
+
+    { "type": "range", "id": "subheading_size_desktop", "label": "Subheading size desktop", "min": 14, "max": 28, "step": 1, "unit": "px", "default": 18 },
+    { "type": "range", "id": "subheading_size_tablet", "label": "Subheading size tablet", "min": 13, "max": 24, "step": 1, "unit": "px", "default": 17 },
+    { "type": "range", "id": "subheading_size_mobile", "label": "Subheading size mobile", "min": 12, "max": 20, "step": 1, "unit": "px", "default": 14 },
+
+    { "type": "range", "id": "search_width_desktop", "label": "Search width desktop", "min": 280, "max": 760, "step": 10, "unit": "px", "default": 520 },
+    { "type": "range", "id": "search_width_mobile", "label": "Search width mobile", "min": 200, "max": 360, "step": 5, "unit": "px", "default": 270 },
+
+    { "type": "range", "id": "grid_gap_desktop", "label": "Grid gap desktop", "min": 10, "max": 80, "step": 2, "unit": "px", "default": 40 },
+    { "type": "range", "id": "grid_gap_tablet", "label": "Grid gap tablet", "min": 8, "max": 40, "step": 2, "unit": "px", "default": 24 },
+    { "type": "range", "id": "grid_gap_mobile", "label": "Grid gap mobile", "min": 4, "max": 20, "step": 2, "unit": "px", "default": 8 },
+    { "type": "range", "id": "row_gap_desktop", "label": "Row gap desktop", "min": 24, "max": 180, "step": 4, "unit": "px", "default": 72 },
+    { "type": "range", "id": "row_gap_mobile", "label": "Row gap mobile", "min": 16, "max": 100, "step": 4, "unit": "px", "default": 44 },
+
+    { "type": "range", "id": "book_width_desktop", "label": "Book width desktop", "min": 100, "max": 260, "step": 4, "unit": "px", "default": 160 },
+    { "type": "range", "id": "book_width_tablet", "label": "Book width tablet", "min": 80, "max": 220, "step": 4, "unit": "px", "default": 140 },
+    { "type": "range", "id": "book_width_mobile", "label": "Book width mobile", "min": 70, "max": 160, "step": 2, "unit": "px", "default": 100 },
+
+    { "type": "range", "id": "book_overlap_desktop", "label": "Book overlap desktop", "min": 0, "max": 80, "step": 2, "unit": "px", "default": 28 },
+    { "type": "range", "id": "book_overlap_tablet", "label": "Book overlap tablet", "min": 0, "max": 60, "step": 2, "unit": "px", "default": 24 },
+    { "type": "range", "id": "book_overlap_mobile", "label": "Book overlap mobile", "min": 0, "max": 40, "step": 2, "unit": "px", "default": 16 },
+    { "type": "range", "id": "hover_lift", "label": "Hover lift", "min": 0, "max": 24, "step": 2, "unit": "px", "default": 8 },
+    { "type": "range", "id": "button_radius", "label": "Button radius", "min": 0, "max": 60, "step": 2, "unit": "px", "default": 24 },
+
+    { "type": "range", "id": "top_padding", "label": "Top padding desktop", "min": 0, "max": 120, "step": 4, "unit": "px", "default": 20 },
+    { "type": "range", "id": "top_padding_mobile", "label": "Top padding mobile", "min": 0, "max": 80, "step": 4, "unit": "px", "default": 16 },
+    { "type": "range", "id": "bottom_padding", "label": "Bottom padding", "min": 0, "max": 120, "step": 4, "unit": "px", "default": 32 }
+  ],
+  "presets": [
+    { "name": "Exclusive books collection" }
+  ]
+}
+{% endschema %}

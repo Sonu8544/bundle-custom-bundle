@@ -96,7 +96,7 @@
       "type": "custom-pdp",
       "name": "Exclusive Book Product",
       "settings": {
-        "background_type": "solid",
+        "background_type": "image",
         "background_color": "#0d0d0b",
         "gradient_start": "#0d0d0b",
         "gradient_mid": "#1a1510",

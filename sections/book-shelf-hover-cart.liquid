@@ -2111,8 +2111,7 @@
 
   function perRow() {
     const bucket = viewportBucket();
-    if (bucket === 'desktop' || bucket === '1024') return 3;
-    return 1;
+    return (bucket === 'desktop' || bucket === '1024') ? 3 : 1;
   }
 
   function hiddenClass() {
@@ -2127,7 +2126,6 @@
     if (bucket === '425') return parseInt(grid.dataset.initial425 || '4', 10);
     if (bucket === '768') return parseInt(grid.dataset.initial768 || '6', 10);
     if (bucket === '1024') return parseInt(grid.dataset.initial1024 || '9', 10);
-
     return parseInt(grid.dataset.initialDesktop || '9', 10);
   }
 
@@ -2139,7 +2137,6 @@
     if (bucket === '425') return parseInt(grid.dataset.load425 || '2', 10);
     if (bucket === '768') return parseInt(grid.dataset.load768 || '2', 10);
     if (bucket === '1024') return parseInt(grid.dataset.load1024 || '3', 10);
-
     return parseInt(grid.dataset.loadDesktop || '9', 10);
   }
 
@@ -2369,7 +2366,7 @@
     });
   }
 
-  function openDrawer() {
+  function openDrawer(triggerEl) {
     const drawer = document.querySelector('cart-drawer');
     if (!drawer) return;
 
@@ -2379,14 +2376,14 @@
     if (inner) inner.classList.remove('is-empty');
 
     if (typeof drawer.open === 'function') {
-      drawer.open(section.querySelector('[data-book-add]'));
+      drawer.open(triggerEl || section.querySelector('[data-book-add]'));
     } else {
       drawer.classList.add('animate', 'active');
       document.body.classList.add('overflow-hidden');
     }
   }
 
-  async function refreshCartUI(addData) {
+  async function refreshCartUI(addData, triggerButton) {
     const sections = addData && addData.sections ? addData.sections : null;
     if (!sections) return;
 
@@ -2400,27 +2397,12 @@
 
     rebindDrawerOverlay();
     rebindCartIconBubble();
-    openDrawer();
+    openDrawer(triggerButton);
 
-    if (typeof publish === 'function' && typeof PUB_SUB_EVENTS !== 'undefined' && PUB_SUB_EVENTS.cartUpdate) {
-      publish(PUB_SUB_EVENTS.cartUpdate, {
-        source: 'book-shelf'
-      });
+    const drawer = document.querySelector('cart-drawer');
+    if (drawer) {
+      drawer.classList.remove('is-empty');
     }
-
-    document.dispatchEvent(new CustomEvent('cart:refresh', {
-      bubbles: true,
-      detail: { source: 'book-shelf' }
-    }));
-
-    document.dispatchEvent(new CustomEvent('cart:updated', {
-      bubbles: true,
-      detail: { source: 'book-shelf' }
-    }));
-
-    document.dispatchEvent(new CustomEvent('dispatch:cart-update', {
-      bubbles: true
-    }));
   }
 
   async function addToCart(variantId, button) {
@@ -2432,7 +2414,7 @@
 
     try {
       const addData = await addItem(variantId);
-      await refreshCartUI(addData);
+      await refreshCartUI(addData, button);
 
       button.textContent = 'Added';
 

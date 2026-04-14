@@ -6,7 +6,7 @@
   endif
 %}
 
-<section id="{{ sid }}" class="ebcp">
+<section id="{{ sid }}" class="ebcp" style="margin-top: -112px;">
   <div class="ebcp__bg">
     {% if section.settings.hero_bg != blank %}
       {{ section.settings.hero_bg | image_url: width: 2400 | image_tag: class: 'ebcp__bg-image', loading: 'lazy', widths: '768,1200,1600,2000,2400', sizes: '100vw', alt: section.settings.heading | escape }}

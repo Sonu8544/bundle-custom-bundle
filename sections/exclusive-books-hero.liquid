@@ -1646,7 +1646,7 @@ function applyFilters() {
       margin: 0;
       font-family: var(--heading-font), serif;
       font-size: var(--heading-size-desktop);
-      line-height: 1;
+    
       font-weight: 400;
       {% comment %} color: var(--heading-base-color); {% endcomment %}
        
@@ -1696,9 +1696,13 @@ function applyFilters() {
       display: flex;
       align-items: center;
       padding: 0 6px 0 20px;
-      border-radius: 122px;
-      border: 1px solid var(--search-border);
+    
+      {% comment %} border: 1px solid var(--search-border);
       background: rgba(255, 255, 255, 0.06);
+        border-radius: 122px; {% endcomment %}
+
+      border: 1.8px solid rgba(255, 255, 255, 0.4);
+border-radius: 122.085px;
       backdrop-filter: blur(9px);
       -webkit-backdrop-filter: blur(9px);
     }

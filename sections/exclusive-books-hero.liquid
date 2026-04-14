@@ -838,77 +838,79 @@
       });
     }
 
+    
     function buildRows(visibleItems) {
-      clearRenderedRows();
+  if (!grid) return;
 
-      const shelfImage = grid.dataset.shelfImage || '';
-      const perRow = booksPerRow();
+  const shelfImage = grid.dataset.shelfImage || '';
+  const perRow = booksPerRow();
 
-      for (let i = 0; i < visibleItems.length; i += perRow) {
-        const chunk = visibleItems.slice(i, i + perRow);
+  grid.innerHTML = '';
 
-        const row = document.createElement('div');
-        row.className = 'ebcp__shelf-row';
+  for (let i = 0; i < visibleItems.length; i += perRow) {
+    const chunk = visibleItems.slice(i, i + perRow);
 
-        const booksRow = document.createElement('div');
-        booksRow.className = 'ebcp__books-row';
+    const row = document.createElement('div');
+    row.className = 'ebcp__shelf-row';
 
-        chunk.forEach(function(item) {
-          item.hidden = false;
-          booksRow.appendChild(item);
-        });
+    const booksRow = document.createElement('div');
+    booksRow.className = 'ebcp__books-row';
 
-        row.appendChild(booksRow);
+    chunk.forEach(function(item) {
+      item.hidden = false;
+      booksRow.appendChild(item);
+    });
 
-        if (shelfImage) {
-          const shelf = document.createElement('div');
-          shelf.className = 'ebcp__shelf';
-          shelf.innerHTML = '<img class="ebcp__shelf-image" src="' + shelfImage + '" alt="" loading="lazy">';
-          row.appendChild(shelf);
-        }
+    row.appendChild(booksRow);
 
-        grid.appendChild(row);
-      }
+    if (shelfImage) {
+      const shelf = document.createElement('div');
+      shelf.className = 'ebcp__shelf';
+      shelf.innerHTML = '<img class="ebcp__shelf-image" src="' + shelfImage + '" alt="" loading="lazy">';
+      row.appendChild(shelf);
     }
 
-    function applyFilters() {
-      const q = normalized(searchInput ? searchInput.value : '');
-      const author = normalized(authorSelect ? authorSelect.value : '');
-      const min = parsePrice(priceMin ? priceMin.value : '');
-      const max = parsePrice(priceMax ? priceMax.value : '');
-      const sort = sortSelect ? sortSelect.value : 'featured';
+    grid.appendChild(row);
+  }
+}
 
-      const hasActive = hasActiveControls(q, author, min, max, sort);
+function applyFilters() {
+  if (!grid) return;
 
-      let visible = items.filter(function(item) {
-        const title = normalized(item.dataset.title);
-        const authorName = normalized(item.dataset.author);
-        const price = parsePrice(item.dataset.price) || 0;
+  const q = normalized(searchInput && searchInput.value);
+  const author = normalized(authorSelect && authorSelect.value);
+  const min = parsePrice(priceMin && priceMin.value);
+  const max = parsePrice(priceMax && priceMax.value);
+  const sort = sortSelect ? sortSelect.value : 'featured';
+  const hasActive = hasActiveControls(q, author, min, max, sort);
 
-        const matchesSearch = !q || title.includes(q) || authorName.includes(q);
-        const matchesAuthor = !author || authorName === author;
-        const matchesMin = min === null || price >= min;
-        const matchesMax = max === null || price <= max;
+  let visible = items.filter(function(item) {
+    const title = normalized(item.dataset.title);
+    const authorName = normalized(item.dataset.author);
+    const price = parsePrice(item.dataset.price) || 0;
 
-        return matchesSearch && matchesAuthor && matchesMin && matchesMax;
-      });
+    const matchesSearch = !q || title.includes(q) || authorName.includes(q);
+    const matchesAuthor = !author || authorName === author;
+    const matchesMin = min === null || price >= min;
+    const matchesMax = max === null || price <= max;
 
-      visible = sortItems(visible, sort);
+    return matchesSearch && matchesAuthor && matchesMin && matchesMax;
+  });
 
-      items.forEach(function(item) {
-        item.hidden = true;
-        grid.appendChild(item);
-      });
+  visible = sortItems(visible, sort);
 
-      buildRows(visible);
+  items.forEach(function(item) {
+    item.hidden = true;
+  });
 
-      if (hasActive && visible.length === 0) {
-        showEmpty();
-      } else {
-        hideEmpty();
-      }
-    }
+  buildRows(visible);
 
+  if (hasActive && visible.length === 0) {
+    showEmpty();
+  } else {
+    hideEmpty();
+  }
+}
     function resetFilters() {
       if (searchInput) searchInput.value = '';
       if (sortSelect) sortSelect.value = 'featured';

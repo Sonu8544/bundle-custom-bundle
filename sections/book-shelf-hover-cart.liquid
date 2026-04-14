@@ -1,4 +1,1225 @@
-{% comment %} 
+{% comment %} {% liquid
+  assign sid = 'book-shelf-' | append: section.id
+%}
+
+<section id="{{ sid }}" class="bshelf">
+  <div class="bshelf__outer page-width">
+    <div class="bshelf__inner">
+      <div
+        class="bshelf__grid"
+        data-books-grid
+        data-initial-desktop="{{ section.settings.initial_books_desktop }}"
+        data-initial-mobile="{{ section.settings.initial_books_mobile }}"
+        data-load-desktop="{{ section.settings.load_more_desktop }}"
+        data-load-mobile="{{ section.settings.load_more_mobile }}"
+        data-shelf-image="{% if section.settings.shelf_image != blank %}{{ section.settings.shelf_image | image_url: width: 2400 }}{% endif %}"
+      >
+        {% for block in section.blocks %}
+          {% liquid
+            assign product = block.settings.product
+            assign current_variant = blank
+            if product != blank
+              assign current_variant = product.selected_or_first_available_variant
+            endif
+          %}
+
+          <div
+            class="bshelf__item{% if forloop.index > section.settings.initial_books_desktop %} is-hidden-desktop{% endif %}{% if forloop.index > section.settings.initial_books_mobile %} is-hidden-mobile{% endif %}"
+            data-book-item
+            data-index="{{ forloop.index }}"
+            {{ block.shopify_attributes }}
+          >
+            <div
+              class="bshelf__book bshelf__book--{{ forloop.index }}"
+              style="
+                --book-width-desktop: {{ block.settings.book_width_desktop }}px;
+                --book-width-tablet: {{ block.settings.book_width_tablet }}px;
+                --book-width-mobile: {{ block.settings.book_width_mobile }}px;
+                --book-offset-y: {{ block.settings.book_offset_y }}px;
+                --book-offset-y-tablet: {{ block.settings.book_offset_y_tablet }}px;
+                --book-offset-y-mobile: {{ block.settings.book_offset_y_mobile }}px;
+                --book-rotate: {{ block.settings.book_rotate }}deg;
+                --book-hover-lift: {{ block.settings.hover_lift }}px;
+                --shadow-width: {{ block.settings.shadow_width }}%;
+                --shadow-height: {{ block.settings.shadow_height }}px;
+                --shadow-blur: {{ block.settings.shadow_blur }}px;
+                --shadow-opacity: {{ block.settings.shadow_opacity | divided_by: 100.0 }};
+                --shadow-offset-y: {{ block.settings.shadow_offset_y }}px;
+                --book-z: {{ block.settings.book_z_index }};
+              "
+            >
+              <div class="bshelf__book-wrap">
+                <div class="bshelf__shadow"></div>
+
+                <div class="bshelf__media">
+                  {% if block.settings.book_image != blank %}
+                    {{
+                      block.settings.book_image
+                      | image_url: width: 1200
+                      | image_tag:
+                        class: 'bshelf__img',
+                        loading: 'lazy',
+                        widths: '240,360,480,720,960,1200'
+                    }}
+                  {% elsif product != blank and product.featured_image != blank %}
+                    {{
+                      product.featured_image
+                      | image_url: width: 1200
+                      | image_tag:
+                        class: 'bshelf__img',
+                        loading: 'lazy',
+                        widths: '240,360,480,720,960,1200'
+                    }}
+                  {% else %}
+                    {{ 'image' | placeholder_svg_tag: 'bshelf__placeholder' }}
+                  {% endif %}
+
+                  {% if product != blank and current_variant != blank %}
+                    <div class="bshelf__cta">
+                      <button
+                        type="button"
+                        class="bshelf__btn"
+                        data-book-add
+                        data-variant-id="{{ current_variant.id }}"
+                        {% unless current_variant.available %}disabled{% endunless %}
+                      >
+                        {% if current_variant.available %}
+                          {{ block.settings.button_text }}
+                        {% else %}
+                          SOLD OUT
+                        {% endif %}
+                      </button>
+                    </div>
+                  {% endif %}
+                </div>
+
+                {% if section.settings.show_product_title and product != blank %}
+                  <div class="bshelf__meta">
+                    <div class="bshelf__title">{{ product.title }}</div>
+                  </div>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+
+      {% if section.blocks.size > 0 %}
+        <div class="bshelf__loadmore-wrap">
+          <button type="button" class="bshelf__loadmore" data-load-more>
+            {{ section.settings.load_more_label }}
+          </button>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+
+  <style>
+    #{{ sid }} {
+      --bg-color: {{ section.settings.bg_color }};
+      --glow-color: {{ section.settings.glow_color }};
+      --content-max-width: {{ section.settings.content_max_width }}px;
+      --section-pad-top-desktop: {{ section.settings.padding_top_desktop }}px;
+      --section-pad-bottom-desktop: {{ section.settings.padding_bottom_desktop }}px;
+      --section-pad-top-mobile: {{ section.settings.padding_top_mobile }}px;
+      --section-pad-bottom-mobile: {{ section.settings.padding_bottom_mobile }}px;
+      --books-gap-desktop: {{ section.settings.books_gap_desktop }}px;
+      --books-gap-tablet: {{ section.settings.books_gap_tablet }}px;
+      --books-gap-mobile: {{ section.settings.books_gap_mobile }}px;
+      --row-gap-desktop: {{ section.settings.row_gap_desktop }}px;
+      --row-gap-mobile: {{ section.settings.row_gap_mobile }}px;
+      --books-bottom-desktop: {{ section.settings.books_bottom_desktop }}px;
+      --books-bottom-tablet: {{ section.settings.books_bottom_tablet }}px;
+      --books-bottom-mobile: {{ section.settings.books_bottom_mobile }}px;
+      --btn-bg-1: {{ section.settings.button_bg_1 }};
+      --btn-bg-2: {{ section.settings.button_bg_2 }};
+      --btn-text: {{ section.settings.button_text_color }};
+      --btn-radius: {{ section.settings.button_radius }}px;
+      --btn-font-size: {{ section.settings.button_font_size }}px;
+      --btn-py: {{ section.settings.button_padding_y }}px;
+      --btn-px: {{ section.settings.button_padding_x }}px;
+      --title-color: {{ section.settings.title_color }};
+      --loadmore-bg: {{ section.settings.load_more_bg }};
+      --loadmore-text: {{ section.settings.load_more_text }};
+      --loadmore-border: {{ section.settings.load_more_border }};
+    }
+
+    #{{ sid }}.bshelf {
+      position: relative;
+      overflow: hidden;
+      background:
+        radial-gradient(circle at 50% 35%, var(--glow-color) 0%, rgba(0, 0, 0, 0) 38%),
+        var(--bg-color);
+      padding-top: var(--section-pad-top-desktop);
+      padding-bottom: var(--section-pad-bottom-desktop);
+    }
+
+    #{{ sid }} .bshelf__outer {
+      max-width: var(--content-max-width);
+      margin: 0 auto;
+    }
+
+    #{{ sid }} .bshelf__inner {
+      position: relative;
+    }
+
+    #{{ sid }} .bshelf__grid {
+      display: flex;
+      flex-direction: column;
+      gap: var(--row-gap-desktop);
+    }
+
+    #{{ sid }} .bshelf__shelf-row {
+      position: relative;
+      width: 100%;
+    }
+
+    #{{ sid }} .bshelf__books-row {
+      position: relative;
+      z-index: 5;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      column-gap: var(--books-gap-desktop);
+      align-items: end;
+      margin-bottom: calc(var(--books-bottom-desktop) * -1);
+      min-height: 120px;
+    }
+
+    #{{ sid }} .bshelf__shelf-row-image {
+      position: relative;
+      z-index: 2;
+      line-height: 0;
+      width: 100%;
+    }
+
+    #{{ sid }} .bshelf__shelf-row-image img {
+      display: block;
+      width: 100%;
+      height: auto;
+      object-fit: contain;
+      user-select: none;
+      pointer-events: none;
+    }
+
+    #{{ sid }} .bshelf__item {
+      min-width: 0;
+      display: flex;
+      justify-content: center;
+    }
+
+    #{{ sid }} .bshelf__item.is-hidden-desktop,
+    #{{ sid }} .bshelf__item.is-hidden-mobile {
+      display: none;
+    }
+
+    #{{ sid }} .bshelf__book {
+      position: relative;
+      width: var(--book-width-desktop);
+      max-width: 100%;
+      flex: 0 0 auto;
+      transform: translateY(var(--book-offset-y)) rotate(var(--book-rotate));
+      transition: transform 0.35s ease, z-index 0.2s ease;
+      z-index: var(--book-z);
+    }
+
+    #{{ sid }} .bshelf__book:hover,
+    #{{ sid }} .bshelf__book:focus-within {
+      transform: translateY(calc(var(--book-offset-y) - var(--book-hover-lift))) rotate(var(--book-rotate));
+      z-index: 30;
+    }
+
+    #{{ sid }} .bshelf__book-wrap {
+      position: relative;
+      overflow: visible;
+    }
+
+    #{{ sid }} .bshelf__shadow {
+      position: absolute;
+      left: 50%;
+      bottom: calc(var(--shadow-offset-y) * -1);
+      width: var(--shadow-width);
+      height: var(--shadow-height);
+      transform: translateX(-50%);
+      border-radius: 999px;
+      background: rgba(0, 0, 0, var(--shadow-opacity));
+      filter: blur(var(--shadow-blur));
+      z-index: 1;
+      pointer-events: none;
+      transition: all 0.35s ease;
+    }
+
+    #{{ sid }} .bshelf__book:hover .bshelf__shadow,
+    #{{ sid }} .bshelf__book:focus-within .bshelf__shadow {
+      transform: translateX(-50%) scale(1.08);
+    }
+
+    #{{ sid }} .bshelf__media {
+      position: relative;
+      z-index: 3;
+      overflow: visible;
+    }
+
+    #{{ sid }} .bshelf__img,
+    #{{ sid }} .bshelf__placeholder {
+      display: block;
+      width: 100%;
+      height: auto;
+      object-fit: contain;
+      filter: drop-shadow(0 12px 22px rgba(0, 0, 0, 0.26));
+    }
+
+    #{{ sid }} .bshelf__cta {
+      position: absolute;
+      left: 50%;
+      bottom: 10%;
+      transform: translateX(-50%) translateY(12px);
+      width: calc(100% - 16px);
+      max-width: 220px;
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      z-index: 50;
+      transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s ease;
+    }
+
+    #{{ sid }} .bshelf__book:hover .bshelf__cta,
+    #{{ sid }} .bshelf__book:focus-within .bshelf__cta {
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    #{{ sid }} .bshelf__btn {
+      width: 100%;
+      border: 0;
+      height:50px;
+      appearance: none;
+      cursor: pointer;
+      border-radius: var(--btn-radius);
+      padding: var(--btn-py) var(--btn-px);
+      
+       background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+  background-image: url('https://cdn.shopify.com/s/files/1/0589/1719/1777/files/f89b1c50a8a368abe48fc6793fd85a8999a3c0ca.png?v=1775475634');
+
+
+
+      color: var(--btn-text);
+      font-size: var(--btn-font-size);
+      line-height: 1;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      font-family: inherit;
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.24);
+      transition: transform 0.25s ease, opacity 0.25s ease;
+
+
+      
+    }
+
+    #{{ sid }} .bshelf__btn:hover {
+      transform: translateY(-1px);
+    }
+
+    #{{ sid }} .bshelf__btn[disabled] {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    #{{ sid }} .bshelf__meta {
+      margin-top: 10px;
+      text-align: center;
+    }
+
+    #{{ sid }} .bshelf__title {
+      color: var(--title-color);
+      font-size: 14px;
+      line-height: 1.35;
+    }
+
+    #{{ sid }} .bshelf__loadmore-wrap {
+      margin-top: 40px;
+      text-align: center;
+    }
+
+    #{{ sid }} .bshelf__loadmore {
+      appearance: none;
+      border: 1px solid var(--loadmore-border);
+      background: var(--loadmore-bg);
+      color: var(--loadmore-text);
+      border-radius: 999px;
+      padding: 14px 28px;
+      cursor: pointer;
+      line-height: 1;
+      font-family: inherit;
+      transition: transform 0.25s ease, opacity 0.25s ease;
+    }
+
+    #{{ sid }} .bshelf__loadmore:hover {
+      transform: translateY(-1px);
+    }
+
+    #{{ sid }} .bshelf__loadmore.is-hidden {
+      display: none;
+    }
+
+    @media screen and (max-width: 989px) {
+      #{{ sid }}.bshelf {
+        padding-top: var(--section-pad-top-mobile);
+        padding-bottom: var(--section-pad-bottom-mobile);
+      }
+
+      #{{ sid }} .bshelf__books-row {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        column-gap: var(--books-gap-tablet);
+        margin-bottom: calc(var(--books-bottom-tablet) * -1);
+      }
+
+      #{{ sid }} .bshelf__book {
+        width: var(--book-width-tablet);
+        transform: translateY(var(--book-offset-y-tablet)) rotate(var(--book-rotate));
+      }
+
+      #{{ sid }} .bshelf__book:hover,
+      #{{ sid }} .bshelf__book:focus-within {
+        transform: translateY(calc(var(--book-offset-y-tablet) - var(--book-hover-lift))) rotate(var(--book-rotate));
+      }
+
+      #{{ sid }} .bshelf__cta {
+        opacity: 1;
+        visibility: visible;
+        pointer-events: auto;
+        transform: translateX(-50%) translateY(0);
+        bottom: 8%;
+        width: calc(100% - 12px);
+      }
+    }
+
+    @media screen and (max-width: 749px) {
+      #{{ sid }} .bshelf__grid {
+        gap: var(--row-gap-mobile);
+      }
+
+    #{{ sid }} .bshelf__books-row {
+  grid-template-columns: repeat(1, minmax(0, 1fr));
+  column-gap: 0;
+  margin-bottom: calc(var(--books-bottom-mobile) * -1);
+}
+
+
+      #{{ sid }} .bshelf__item.is-hidden-mobile {
+        display: none;
+      }
+
+      #{{ sid }} .bshelf__item.is-hidden-desktop {
+        display: flex;
+      }
+
+      #{{ sid }} .bshelf__book {
+        width: var(--book-width-mobile);
+        transform: translateY(var(--book-offset-y-mobile)) rotate(var(--book-rotate));
+      }
+
+      #{{ sid }} .bshelf__book:hover,
+      #{{ sid }} .bshelf__book:focus-within {
+        transform: translateY(calc(var(--book-offset-y-mobile) - var(--book-hover-lift))) rotate(var(--book-rotate));
+      }
+
+      #{{ sid }} .bshelf__cta {
+        bottom: 6%;
+        width: calc(100% - 8px);
+      }
+
+      #{{ sid }} .bshelf__btn {
+        font-size: 10px;
+        padding: 9px 8px;
+      }
+
+      #{{ sid }} .bshelf__title {
+        font-size: 12px;
+      }
+    }
+  </style>
+
+ 
+
+<script>
+  (function() {
+    const section = document.getElementById('{{ sid }}');
+    if (!section) return;
+
+    const grid = section.querySelector('[data-books-grid]');
+    const loadMoreBtn = section.querySelector('[data-load-more]');
+    const items = grid ? Array.from(grid.querySelectorAll('[data-book-item]')) : [];
+    const shelfImage = grid ? (grid.dataset.shelfImage || '') : '';
+
+    function isMobile() {
+      return window.innerWidth <= 749;
+    }
+
+    function perRow() {
+      return isMobile() ? 1 : 3;
+    }
+
+    function getLoadCount() {
+      if (!grid) return 0;
+      return isMobile()
+        ? parseInt(grid.dataset.loadMobile || '10', 10)
+        : parseInt(grid.dataset.loadDesktop || '9', 10);
+    }
+
+    function hiddenClass() {
+      return isMobile() ? 'is-hidden-mobile' : 'is-hidden-desktop';
+    }
+
+    function visibleItems() {
+      const cls = hiddenClass();
+      return items.filter((item) => !item.classList.contains(cls));
+    }
+
+    function setInitialVisibility() {
+      if (!grid) return;
+
+      const desktopInitial = parseInt(grid.dataset.initialDesktop || '9', 10);
+      const mobileInitial = parseInt(grid.dataset.initialMobile || '10', 10);
+
+      items.forEach((item, index) => {
+        item.classList.toggle('is-hidden-desktop', index >= desktopInitial);
+        item.classList.toggle('is-hidden-mobile', index >= mobileInitial);
+      });
+    }
+
+    function buildRows() {
+      if (!grid) return;
+
+      const currentVisible = visibleItems();
+      const columns = perRow();
+
+      grid.querySelectorAll('.bshelf__shelf-row').forEach((row) => row.remove());
+
+      for (let i = 0; i < currentVisible.length; i += columns) {
+        const chunk = currentVisible.slice(i, i + columns);
+
+        const row = document.createElement('div');
+        row.className = 'bshelf__shelf-row';
+
+        const booksRow = document.createElement('div');
+        booksRow.className = 'bshelf__books-row';
+
+        chunk.forEach((item) => {
+          booksRow.appendChild(item);
+        });
+
+        row.appendChild(booksRow);
+
+        if (shelfImage) {
+          const shelf = document.createElement('div');
+          shelf.className = 'bshelf__shelf-row-image';
+          shelf.innerHTML = '<img src="' + shelfImage + '" alt="" loading="lazy">';
+          row.appendChild(shelf);
+        }
+
+        grid.appendChild(row);
+      }
+
+      if (loadMoreBtn) {
+        const cls = hiddenClass();
+        const stillHidden = items.some((item) => item.classList.contains(cls));
+        loadMoreBtn.classList.toggle('is-hidden', !stillHidden);
+      }
+    }
+
+    if (loadMoreBtn) {
+      loadMoreBtn.addEventListener('click', function() {
+        const cls = hiddenClass();
+        const count = getLoadCount();
+        let revealed = 0;
+
+        items.forEach((item) => {
+          if (item.classList.contains(cls) && revealed < count) {
+            item.classList.remove(cls);
+            revealed += 1;
+          }
+        });
+
+        buildRows();
+      });
+    }
+
+    let resizeTimer;
+    function onResize() {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(function() {
+        buildRows();
+      }, 120);
+    }
+
+    setInitialVisibility();
+    buildRows();
+    window.addEventListener('resize', onResize);
+
+    function getCartDrawer() {
+      return document.querySelector('cart-drawer');
+    }
+
+    function getCartDrawerInner() {
+      const drawer = getCartDrawer();
+      return drawer ? drawer.querySelector('.drawer__inner') : null;
+    }
+
+    function getCartDrawerMain() {
+      return document.getElementById('CartDrawer');
+    }
+
+    function getCartBubble() {
+      return document.getElementById('cart-icon-bubble');
+    }
+
+    async function addItem(variantId) {
+      const response = await fetch(window.Shopify.routes.root + 'cart/add.js', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'X-Requested-With': 'XMLHttpRequest'
+        },
+        body: JSON.stringify({
+          items: [
+            {
+              id: Number(variantId),
+              quantity: 1
+            }
+          ]
+        })
+      });
+
+      const data = await response.json();
+
+      if (!response.ok || data.status) {
+        throw new Error(data.description || 'Failed to add to cart');
+      }
+
+      return data;
+    }
+
+    async function fetchFreshCartDrawerSection() {
+      const response = await fetch(window.Shopify.routes.root + '?section_id=cart-drawer', {
+        method: 'GET',
+        headers: {
+          'X-Requested-With': 'XMLHttpRequest'
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch cart drawer section');
+      }
+
+      return await response.text();
+    }
+
+    async function fetchFreshCartBubbleSection() {
+      const response = await fetch(window.Shopify.routes.root + '?section_id=cart-icon-bubble', {
+        method: 'GET',
+        headers: {
+          'X-Requested-With': 'XMLHttpRequest'
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch cart bubble section');
+      }
+
+      return await response.text();
+    }
+
+    function replaceDrawerWithFreshMarkup(drawerHtmlText) {
+      const parsed = new DOMParser().parseFromString(drawerHtmlText, 'text/html');
+      const currentDrawerMain = getCartDrawerMain();
+      const currentDrawerInner = getCartDrawerInner();
+
+      const freshDrawerMain = parsed.getElementById('CartDrawer');
+      const freshDrawerInner = freshDrawerMain
+        ? freshDrawerMain.querySelector('.drawer__inner')
+        : null;
+
+      if (currentDrawerMain && freshDrawerMain) {
+        currentDrawerMain.innerHTML = freshDrawerMain.innerHTML;
+      }
+
+      const drawer = getCartDrawer();
+      if (drawer) {
+        drawer.classList.remove('is-empty');
+      }
+
+      const updatedInner = getCartDrawerInner();
+      if (updatedInner) {
+        updatedInner.classList.remove('is-empty');
+      }
+
+      if (currentDrawerInner && freshDrawerInner && currentDrawerMain) {
+        currentDrawerMain.innerHTML = freshDrawerMain.innerHTML;
+      }
+    }
+
+    function replaceBubbleWithFreshMarkup(bubbleHtmlText) {
+      const parsed = new DOMParser().parseFromString(bubbleHtmlText, 'text/html');
+      const currentBubble = getCartBubble();
+      const freshBubble = parsed.getElementById('cart-icon-bubble');
+
+      if (currentBubble && freshBubble) {
+        currentBubble.innerHTML = freshBubble.innerHTML;
+      }
+    }
+
+    function openDrawer() {
+      const drawer = getCartDrawer();
+      if (!drawer) return;
+
+      drawer.classList.remove('is-empty');
+
+      const drawerInner = drawer.querySelector('.drawer__inner');
+      if (drawerInner) {
+        drawerInner.classList.remove('is-empty');
+      }
+
+      if (typeof drawer.open === 'function') {
+        drawer.open();
+      } else {
+        drawer.classList.add('animate', 'active');
+        document.body.classList.add('overflow-hidden');
+      }
+    }
+
+    async function refreshCartUI() {
+      const [drawerHtml, bubbleHtml] = await Promise.all([
+        fetchFreshCartDrawerSection(),
+        fetchFreshCartBubbleSection()
+      ]);
+
+      replaceDrawerWithFreshMarkup(drawerHtml);
+      replaceBubbleWithFreshMarkup(bubbleHtml);
+
+      setTimeout(function() {
+        openDrawer();
+      }, 60);
+
+      if (typeof window.publish === 'function' && window.PUB_SUB_EVENTS && window.PUB_SUB_EVENTS.cartUpdate) {
+        window.publish(window.PUB_SUB_EVENTS.cartUpdate, {
+          source: 'book-shelf'
+        });
+      }
+
+      document.dispatchEvent(new CustomEvent('cart:refresh', {
+        detail: { source: 'book-shelf' }
+      }));
+
+      document.dispatchEvent(new CustomEvent('cart:updated', {
+        detail: { source: 'book-shelf' }
+      }));
+    }
+
+    async function addToCart(variantId, button) {
+      if (!variantId || !button || button.disabled) return;
+
+      const originalText = button.textContent;
+      button.disabled = true;
+      button.textContent = 'Adding...';
+
+      try {
+        await addItem(variantId);
+        await refreshCartUI();
+
+        button.textContent = 'Added';
+
+        setTimeout(function() {
+          button.textContent = originalText;
+          button.disabled = false;
+        }, 1200);
+      } catch (error) {
+        console.error('Book shelf add to cart error:', error);
+        button.textContent = 'Error';
+
+        setTimeout(function() {
+          button.textContent = originalText;
+          button.disabled = false;
+        }, 1400);
+      }
+    }
+
+    section.addEventListener('click', function(event) {
+      const btn = event.target.closest('[data-book-add]');
+      if (!btn) return;
+
+      event.preventDefault();
+      event.stopPropagation();
+
+      const variantId = btn.getAttribute('data-variant-id');
+      addToCart(variantId, btn);
+    });
+  })();
+</script>
+
+
+
+</section>
+
+{% schema %}
+{
+  "name": "Book shelf hover cart",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "shelf_image",
+      "label": "Shelf image"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_product_title",
+      "label": "Show product title",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "load_more_label",
+      "label": "Load more button label",
+      "default": "Load more"
+    },
+    {
+      "type": "range",
+      "id": "initial_books_desktop",
+      "min": 3,
+      "max": 30,
+      "step": 3,
+      "label": "Initial books desktop",
+      "default": 9
+    },
+    {
+      "type": "range",
+      "id": "initial_books_mobile",
+      "min": 2,
+      "max": 30,
+      "step": 2,
+      "label": "Initial books mobile",
+      "default": 10
+    },
+    {
+      "type": "range",
+      "id": "load_more_desktop",
+      "min": 3,
+      "max": 30,
+      "step": 3,
+      "label": "Load more count desktop",
+      "default": 9
+    },
+    {
+      "type": "range",
+      "id": "load_more_mobile",
+      "min": 2,
+      "max": 30,
+      "step": 2,
+      "label": "Load more count mobile",
+      "default": 10
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Background color",
+      "default": "#050202"
+    },
+    {
+      "type": "color",
+      "id": "glow_color",
+      "label": "Center glow color",
+      "default": "#2a1208"
+    },
+    {
+      "type": "color",
+      "id": "title_color",
+      "label": "Title color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "load_more_bg",
+      "label": "Load more background",
+      "default": "#121212"
+    },
+    {
+      "type": "color",
+      "id": "load_more_text",
+      "label": "Load more text",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "load_more_border",
+      "label": "Load more border",
+      "default": "#3a3a3a"
+    },
+    {
+      "type": "range",
+      "id": "content_max_width",
+      "min": 1000,
+      "max": 1800,
+      "step": 20,
+      "unit": "px",
+      "label": "Content max width",
+      "default": 1400
+    },
+    {
+      "type": "range",
+      "id": "padding_top_desktop",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "label": "Top padding desktop",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_desktop",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "label": "Bottom padding desktop",
+      "default": 28
+    },
+    {
+      "type": "range",
+      "id": "padding_top_mobile",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Top padding mobile",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_mobile",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Bottom padding mobile",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "books_gap_desktop",
+      "min": 0,
+      "max": 120,
+      "step": 2,
+      "unit": "px",
+      "label": "Books gap desktop",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "books_gap_tablet",
+      "min": 0,
+      "max": 80,
+      "step": 2,
+      "unit": "px",
+      "label": "Books gap tablet",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "books_gap_mobile",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "label": "Books gap mobile",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "row_gap_desktop",
+      "min": 20,
+      "max": 180,
+      "step": 4,
+      "unit": "px",
+      "label": "Shelf row gap desktop",
+      "default": 68
+    },
+    {
+      "type": "range",
+      "id": "row_gap_mobile",
+      "min": 16,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Shelf row gap mobile",
+      "default": 44
+    },
+    {
+      "type": "range",
+      "id": "books_bottom_desktop",
+      "min": 0,
+      "max": 120,
+      "step": 2,
+      "unit": "px",
+      "label": "Books overlap on shelf desktop",
+      "default": 28
+    },
+    {
+      "type": "range",
+      "id": "books_bottom_tablet",
+      "min": 0,
+      "max": 100,
+      "step": 2,
+      "unit": "px",
+      "label": "Books overlap on shelf tablet",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "books_bottom_mobile",
+      "min": 0,
+      "max": 80,
+      "step": 2,
+      "unit": "px",
+      "label": "Books overlap on shelf mobile",
+      "default": 18
+    },
+    {
+      "type": "color",
+      "id": "button_bg_1",
+      "label": "Button gradient color 1",
+      "default": "#a87832"
+    },
+    {
+      "type": "color",
+      "id": "button_bg_2",
+      "label": "Button gradient color 2",
+      "default": "#ecd9a0"
+    },
+    {
+      "type": "color",
+      "id": "button_text_color",
+      "label": "Button text color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "button_radius",
+      "min": 0,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "label": "Button radius",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "button_font_size",
+      "min": 10,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "label": "Button font size",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "button_padding_y",
+      "min": 8,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "label": "Button vertical padding",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "button_padding_x",
+      "min": 10,
+      "max": 40,
+      "step": 1,
+      "unit": "px",
+      "label": "Button horizontal padding",
+      "default": 18
+    }
+  ],
+  "blocks": [
+    {
+      "type": "book",
+      "name": "Book",
+      "settings": [
+        {
+          "type": "product",
+          "id": "product",
+          "label": "Product"
+        },
+        {
+          "type": "image_picker",
+          "id": "book_image",
+          "label": "Book image"
+        },
+        {
+          "type": "text",
+          "id": "button_text",
+          "label": "Button text",
+          "default": "ADD TO CART"
+        },
+        {
+          "type": "range",
+          "id": "book_width_desktop",
+          "min": 100,
+          "max": 260,
+          "step": 4,
+          "unit": "px",
+          "label": "Book width desktop",
+          "default": 160
+        },
+        {
+          "type": "range",
+          "id": "book_width_tablet",
+          "min": 80,
+          "max": 220,
+          "step": 4,
+          "unit": "px",
+          "label": "Book width tablet",
+          "default": 140
+        },
+        {
+          "type": "range",
+          "id": "book_width_mobile",
+          "min": 70,
+          "max": 180,
+          "step": 2,
+          "unit": "px",
+          "label": "Book width mobile",
+          "default": 104
+        },
+        {
+          "type": "range",
+          "id": "book_offset_y",
+          "min": -40,
+          "max": 40,
+          "step": 2,
+          "unit": "px",
+          "label": "Book vertical offset desktop",
+          "default": 0
+        },
+        {
+          "type": "range",
+          "id": "book_offset_y_tablet",
+          "min": -40,
+          "max": 40,
+          "step": 2,
+          "unit": "px",
+          "label": "Book vertical offset tablet",
+          "default": 0
+        },
+        {
+          "type": "range",
+          "id": "book_offset_y_mobile",
+          "min": -40,
+          "max": 40,
+          "step": 2,
+          "unit": "px",
+          "label": "Book vertical offset mobile",
+          "default": 0
+        },
+        {
+          "type": "range",
+          "id": "book_rotate",
+          "min": -10,
+          "max": 10,
+          "step": 1,
+          "unit": "deg",
+          "label": "Book rotation",
+          "default": 0
+        },
+        {
+          "type": "range",
+          "id": "hover_lift",
+          "min": 0,
+          "max": 30,
+          "step": 2,
+          "unit": "px",
+          "label": "Hover lift",
+          "default": 8
+        },
+        {
+          "type": "range",
+          "id": "shadow_width",
+          "min": 40,
+          "max": 120,
+          "step": 2,
+          "unit": "%",
+          "label": "Shadow width",
+          "default": 76
+        },
+        {
+          "type": "range",
+          "id": "shadow_height",
+          "min": 6,
+          "max": 32,
+          "step": 2,
+          "unit": "px",
+          "label": "Shadow height",
+          "default": 16
+        },
+        {
+          "type": "range",
+          "id": "shadow_blur",
+          "min": 0,
+          "max": 30,
+          "step": 2,
+          "unit": "px",
+          "label": "Shadow blur",
+          "default": 14
+        },
+        {
+          "type": "range",
+          "id": "shadow_opacity",
+          "min": 10,
+          "max": 100,
+          "step": 5,
+          "unit": "%",
+          "label": "Shadow opacity",
+          "default": 45
+        },
+        {
+          "type": "range",
+          "id": "shadow_offset_y",
+          "min": -10,
+          "max": 20,
+          "step": 2,
+          "unit": "px",
+          "label": "Shadow vertical offset",
+          "default": 8
+        },
+        {
+          "type": "range",
+          "id": "book_z_index",
+          "min": 1,
+          "max": 20,
+          "step": 1,
+          "label": "Book layer order",
+          "default": 5
+        }
+      ]
+    }
+  ],
+  "max_blocks": 500,
+  "presets": [
+    {
+      "name": "Book shelf hover cart"
+    }
+  ]
+}
+{% endschema %} {% endcomment %}
 
 {% liquid
   assign sid = 'book-shelf-' | append: section.id
@@ -468,7 +1689,322 @@
       }
     }
   </style>
+{% comment %} 
+<script>
+  (function() {
+    const section = document.getElementById('{{ sid }}');
+    if (!section) return;
 
+    const grid = section.querySelector('[data-books-grid]');
+    const loadMoreBtn = section.querySelector('[data-load-more]');
+    const items = grid ? Array.from(grid.querySelectorAll('[data-book-item]')) : [];
+    const shelfImage = grid ? (grid.dataset.shelfImage || '') : '';
+
+    function isMobile() {
+      return window.innerWidth <= 749;
+    }
+
+    function perRow() {
+      return isMobile() ? 1 : 3;
+    }
+
+    function getLoadCount() {
+      if (!grid) return 0;
+      return isMobile()
+        ? parseInt(grid.dataset.loadMobile || '10', 10)
+        : parseInt(grid.dataset.loadDesktop || '9', 10);
+    }
+
+    function hiddenClass() {
+      return isMobile() ? 'is-hidden-mobile' : 'is-hidden-desktop';
+    }
+
+    function visibleItems() {
+      const cls = hiddenClass();
+      return items.filter((item) => !item.classList.contains(cls));
+    }
+
+    function setInitialVisibility() {
+      if (!grid) return;
+
+      const desktopInitial = parseInt(grid.dataset.initialDesktop || '9', 10);
+      const mobileInitial = parseInt(grid.dataset.initialMobile || '10', 10);
+
+      items.forEach((item, index) => {
+        item.classList.toggle('is-hidden-desktop', index >= desktopInitial);
+        item.classList.toggle('is-hidden-mobile', index >= mobileInitial);
+      });
+    }
+
+    function buildRows() {
+      if (!grid) return;
+
+      const currentVisible = visibleItems();
+      const columns = perRow();
+
+      grid.querySelectorAll('.bshelf__shelf-row').forEach((row) => row.remove());
+
+      for (let i = 0; i < currentVisible.length; i += columns) {
+        const chunk = currentVisible.slice(i, i + columns);
+
+        const row = document.createElement('div');
+        row.className = 'bshelf__shelf-row';
+
+        const booksRow = document.createElement('div');
+        booksRow.className = 'bshelf__books-row';
+
+        chunk.forEach((item) => {
+          booksRow.appendChild(item);
+        });
+
+        row.appendChild(booksRow);
+
+        if (shelfImage) {
+          const shelf = document.createElement('div');
+          shelf.className = 'bshelf__shelf-row-image';
+          shelf.innerHTML = '<img src="' + shelfImage + '" alt="" loading="lazy">';
+          row.appendChild(shelf);
+        }
+
+        grid.appendChild(row);
+      }
+
+      if (loadMoreBtn) {
+        const cls = hiddenClass();
+        const stillHidden = items.some((item) => item.classList.contains(cls));
+        loadMoreBtn.classList.toggle('is-hidden', !stillHidden);
+      }
+    }
+
+    if (loadMoreBtn) {
+      loadMoreBtn.addEventListener('click', function() {
+        const cls = hiddenClass();
+        const count = getLoadCount();
+        let revealed = 0;
+
+        items.forEach((item) => {
+          if (item.classList.contains(cls) && revealed < count) {
+            item.classList.remove(cls);
+            revealed += 1;
+          }
+        });
+
+        buildRows();
+      });
+    }
+
+    let resizeTimer;
+    function onResize() {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(function() {
+        buildRows();
+      }, 120);
+    }
+
+    setInitialVisibility();
+    buildRows();
+    window.addEventListener('resize', onResize);
+
+    function getCartDrawer() {
+      return document.querySelector('cart-drawer');
+    }
+
+    function getCartDrawerInner() {
+      const drawer = getCartDrawer();
+      return drawer ? drawer.querySelector('.drawer__inner') : null;
+    }
+
+    function getCartDrawerMain() {
+      return document.getElementById('CartDrawer');
+    }
+
+    function getCartBubble() {
+      return document.getElementById('cart-icon-bubble');
+    }
+
+    async function addItem(variantId) {
+      const response = await fetch(window.Shopify.routes.root + 'cart/add.js', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'X-Requested-With': 'XMLHttpRequest'
+        },
+        body: JSON.stringify({
+          items: [
+            {
+              id: Number(variantId),
+              quantity: 1
+            }
+          ]
+        })
+      });
+
+      const data = await response.json();
+
+      if (!response.ok || data.status) {
+        throw new Error(data.description || 'Failed to add to cart');
+      }
+
+      return data;
+    }
+
+    async function fetchFreshCartDrawerSection() {
+      const response = await fetch(window.Shopify.routes.root + '?section_id=cart-drawer', {
+        method: 'GET',
+        headers: {
+          'X-Requested-With': 'XMLHttpRequest'
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch cart drawer section');
+      }
+
+      return await response.text();
+    }
+
+    async function fetchFreshCartBubbleSection() {
+      const response = await fetch(window.Shopify.routes.root + '?section_id=cart-icon-bubble', {
+        method: 'GET',
+        headers: {
+          'X-Requested-With': 'XMLHttpRequest'
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch cart bubble section');
+      }
+
+      return await response.text();
+    }
+
+    function replaceDrawerWithFreshMarkup(drawerHtmlText) {
+      const parsed = new DOMParser().parseFromString(drawerHtmlText, 'text/html');
+      const currentDrawerMain = getCartDrawerMain();
+      const currentDrawerInner = getCartDrawerInner();
+
+      const freshDrawerMain = parsed.getElementById('CartDrawer');
+      const freshDrawerInner = freshDrawerMain
+        ? freshDrawerMain.querySelector('.drawer__inner')
+        : null;
+
+      if (currentDrawerMain && freshDrawerMain) {
+        currentDrawerMain.innerHTML = freshDrawerMain.innerHTML;
+      }
+
+      const drawer = getCartDrawer();
+      if (drawer) {
+        drawer.classList.remove('is-empty');
+      }
+
+      const updatedInner = getCartDrawerInner();
+      if (updatedInner) {
+        updatedInner.classList.remove('is-empty');
+      }
+
+      if (currentDrawerInner && freshDrawerInner && currentDrawerMain) {
+        currentDrawerMain.innerHTML = freshDrawerMain.innerHTML;
+      }
+    }
+
+    function replaceBubbleWithFreshMarkup(bubbleHtmlText) {
+      const parsed = new DOMParser().parseFromString(bubbleHtmlText, 'text/html');
+      const currentBubble = getCartBubble();
+      const freshBubble = parsed.getElementById('cart-icon-bubble');
+
+      if (currentBubble && freshBubble) {
+        currentBubble.innerHTML = freshBubble.innerHTML;
+      }
+    }
+
+    function openDrawer() {
+      const drawer = getCartDrawer();
+      if (!drawer) return;
+
+      drawer.classList.remove('is-empty');
+
+      const drawerInner = drawer.querySelector('.drawer__inner');
+      if (drawerInner) {
+        drawerInner.classList.remove('is-empty');
+      }
+
+      if (typeof drawer.open === 'function') {
+        drawer.open();
+      } else {
+        drawer.classList.add('animate', 'active');
+        document.body.classList.add('overflow-hidden');
+      }
+    }
+
+    async function refreshCartUI() {
+      const [drawerHtml, bubbleHtml] = await Promise.all([
+        fetchFreshCartDrawerSection(),
+        fetchFreshCartBubbleSection()
+      ]);
+
+      replaceDrawerWithFreshMarkup(drawerHtml);
+      replaceBubbleWithFreshMarkup(bubbleHtml);
+
+      setTimeout(function() {
+        openDrawer();
+      }, 60);
+
+      if (typeof window.publish === 'function' && window.PUB_SUB_EVENTS && window.PUB_SUB_EVENTS.cartUpdate) {
+        window.publish(window.PUB_SUB_EVENTS.cartUpdate, {
+          source: 'book-shelf'
+        });
+      }
+
+      document.dispatchEvent(new CustomEvent('cart:refresh', {
+        detail: { source: 'book-shelf' }
+      }));
+
+      document.dispatchEvent(new CustomEvent('cart:updated', {
+        detail: { source: 'book-shelf' }
+      }));
+    }
+
+    async function addToCart(variantId, button) {
+      if (!variantId || !button || button.disabled) return;
+
+      const originalText = button.textContent;
+      button.disabled = true;
+      button.textContent = 'Adding...';
+
+      try {
+        await addItem(variantId);
+        await refreshCartUI();
+
+        button.textContent = 'Added';
+
+        setTimeout(function() {
+          button.textContent = originalText;
+          button.disabled = false;
+        }, 1200);
+      } catch (error) {
+        console.error('Book shelf add to cart error:', error);
+        button.textContent = 'Error';
+
+        setTimeout(function() {
+          button.textContent = originalText;
+          button.disabled = false;
+        }, 1400);
+      }
+    }
+
+    section.addEventListener('click', function(event) {
+      const btn = event.target.closest('[data-book-add]');
+      if (!btn) return;
+
+      event.preventDefault();
+      event.stopPropagation();
+
+      const variantId = btn.getAttribute('data-variant-id');
+      addToCart(variantId, btn);
+    });
+  })();
+</script> {% endcomment %}
 
 
 <script>
@@ -1068,1571 +2604,6 @@
           "label": "Book vertical offset mobile",
           "default": 0
         },
-        {
-          "type": "range",
-          "id": "book_rotate",
-          "min": -10,
-          "max": 10,
-          "step": 1,
-          "unit": "deg",
-          "label": "Book rotation",
-          "default": 0
-        },
-        {
-          "type": "range",
-          "id": "hover_lift",
-          "min": 0,
-          "max": 30,
-          "step": 2,
-          "unit": "px",
-          "label": "Hover lift",
-          "default": 8
-        },
-        {
-          "type": "range",
-          "id": "shadow_width",
-          "min": 40,
-          "max": 120,
-          "step": 2,
-          "unit": "%",
-          "label": "Shadow width",
-          "default": 76
-        },
-        {
-          "type": "range",
-          "id": "shadow_height",
-          "min": 6,
-          "max": 32,
-          "step": 2,
-          "unit": "px",
-          "label": "Shadow height",
-          "default": 16
-        },
-        {
-          "type": "range",
-          "id": "shadow_blur",
-          "min": 0,
-          "max": 30,
-          "step": 2,
-          "unit": "px",
-          "label": "Shadow blur",
-          "default": 14
-        },
-        {
-          "type": "range",
-          "id": "shadow_opacity",
-          "min": 10,
-          "max": 100,
-          "step": 5,
-          "unit": "%",
-          "label": "Shadow opacity",
-          "default": 45
-        },
-        {
-          "type": "range",
-          "id": "shadow_offset_y",
-          "min": -10,
-          "max": 20,
-          "step": 2,
-          "unit": "px",
-          "label": "Shadow vertical offset",
-          "default": 8
-        },
-        {
-          "type": "range",
-          "id": "book_z_index",
-          "min": 1,
-          "max": 20,
-          "step": 1,
-          "label": "Book layer order",
-          "default": 5
-        }
-      ]
-    }
-  ],
-  "max_blocks": 500,
-  "presets": [
-    {
-      "name": "Book shelf hover cart"
-    }
-  ]
-}
-{% endschema %} {% endcomment %}
-
-
-{% liquid
-  assign sid = 'book-shelf-' | append: section.id
-%}
-
-<section id="{{ sid }}" class="bshelf">
-  <div class="bshelf__outer page-width">
-    <div class="bshelf__inner">
-      <div
-        class="bshelf__grid"
-        data-books-grid
-        data-initial-desktop="{{ section.settings.initial_books_desktop }}"
-        data-initial-1024="{{ section.settings.initial_books_1024 }}"
-        data-initial-768="{{ section.settings.initial_books_768 }}"
-        data-initial-425="{{ section.settings.initial_books_425 }}"
-        data-initial-375="{{ section.settings.initial_books_375 }}"
-        data-load-desktop="{{ section.settings.load_more_desktop }}"
-        data-load-1024="{{ section.settings.load_more_1024 }}"
-        data-load-768="{{ section.settings.load_more_768 }}"
-        data-load-425="{{ section.settings.load_more_425 }}"
-        data-load-375="{{ section.settings.load_more_375 }}"
-        data-shelf-image="{% if section.settings.shelf_image != blank %}{{ section.settings.shelf_image | image_url: width: 2400 }}{% endif %}"
-      >
-        {% for block in section.blocks %}
-          {% liquid
-            assign product = block.settings.product
-            assign current_variant = blank
-            if product != blank
-              assign current_variant = product.selected_or_first_available_variant
-            endif
-          %}
-
-          <div
-            class="bshelf__item{% if forloop.index > section.settings.initial_books_desktop %} is-hidden-desktop{% endif %}{% if forloop.index > section.settings.initial_books_1024 %} is-hidden-1024{% endif %}{% if forloop.index > section.settings.initial_books_768 %} is-hidden-768{% endif %}{% if forloop.index > section.settings.initial_books_425 %} is-hidden-425{% endif %}{% if forloop.index > section.settings.initial_books_375 %} is-hidden-375{% endif %}"
-            data-book-item
-            data-index="{{ forloop.index }}"
-            {{ block.shopify_attributes }}
-          >
-            <div
-              class="bshelf__book bshelf__book--{{ forloop.index }}"
-              style="
-                --book-width-desktop: {{ block.settings.book_width_desktop }}px;
-                --book-width-1024: {{ block.settings.book_width_1024 }}px;
-                --book-width-768: {{ block.settings.book_width_768 }}px;
-                --book-width-425: {{ block.settings.book_width_425 }}px;
-                --book-width-375: {{ block.settings.book_width_375 }}px;
-
-                --book-offset-y: {{ block.settings.book_offset_y }}px;
-                --book-offset-y-1024: {{ block.settings.book_offset_y_1024 }}px;
-                --book-offset-y-768: {{ block.settings.book_offset_y_768 }}px;
-                --book-offset-y-425: {{ block.settings.book_offset_y_425 }}px;
-                --book-offset-y-375: {{ block.settings.book_offset_y_375 }}px;
-
-                --book-rotate: {{ block.settings.book_rotate }}deg;
-                --book-hover-lift: {{ block.settings.hover_lift }}px;
-                --shadow-width: {{ block.settings.shadow_width }}%;
-                --shadow-height: {{ block.settings.shadow_height }}px;
-                --shadow-blur: {{ block.settings.shadow_blur }}px;
-                --shadow-opacity: {{ block.settings.shadow_opacity | divided_by: 100.0 }};
-                --shadow-offset-y: {{ block.settings.shadow_offset_y }}px;
-                --book-z: {{ block.settings.book_z_index }};
-              "
-            >
-              <div class="bshelf__book-wrap">
-                <div class="bshelf__shadow"></div>
-
-                <div class="bshelf__media">
-                  {% if product != blank %}
-                    <a href="{{ product.url }}" class="bshelf__link" aria-label="{{ product.title | escape }}">
-                  {% endif %}
-
-                  {% if block.settings.book_image != blank %}
-                    {{
-                      block.settings.book_image
-                      | image_url: width: 1200
-                      | image_tag:
-                        class: 'bshelf__img',
-                        loading: 'lazy',
-                        widths: '240,360,480,720,960,1200'
-                    }}
-                  {% elsif product != blank and product.featured_image != blank %}
-                    {{
-                      product.featured_image
-                      | image_url: width: 1200
-                      | image_tag:
-                        class: 'bshelf__img',
-                        loading: 'lazy',
-                        widths: '240,360,480,720,960,1200'
-                    }}
-                  {% else %}
-                    {{ 'image' | placeholder_svg_tag: 'bshelf__placeholder' }}
-                  {% endif %}
-
-                  {% if product != blank %}
-                    </a>
-                  {% endif %}
-
-                  {% if product != blank and current_variant != blank %}
-                    <div class="bshelf__cta">
-                      <button
-                        type="button"
-                        class="bshelf__btn"
-                        data-book-add
-                        data-variant-id="{{ current_variant.id }}"
-                        {% unless current_variant.available %}disabled{% endunless %}
-                      >
-                        {% if current_variant.available %}
-                          {{ block.settings.button_text }}
-                        {% else %}
-                          SOLD OUT
-                        {% endif %}
-                      </button>
-                    </div>
-                  {% endif %}
-                </div>
-
-                {% if section.settings.show_product_title and product != blank %}
-                  <div class="bshelf__meta">
-                    <a href="{{ product.url }}" class="bshelf__title-link">
-                      <div class="bshelf__title">{{ product.title }}</div>
-                    </a>
-                  </div>
-                {% endif %}
-              </div>
-            </div>
-          </div>
-        {% endfor %}
-      </div>
-
-      {% if section.blocks.size > 0 %}
-        <div class="bshelf__loadmore-wrap">
-          <button type="button" class="bshelf__loadmore" data-load-more>
-            {{ section.settings.load_more_label }}
-          </button>
-        </div>
-      {% endif %}
-    </div>
-  </div>
-
-  <style>
-    #{{ sid }} {
-      --bg-color: {{ section.settings.bg_color }};
-      --glow-color: {{ section.settings.glow_color }};
-      --content-max-width: {{ section.settings.content_max_width }}px;
-
-      --section-pad-top-desktop: {{ section.settings.padding_top_desktop }}px;
-      --section-pad-bottom-desktop: {{ section.settings.padding_bottom_desktop }}px;
-
-      --section-pad-top-1024: {{ section.settings.padding_top_1024 }}px;
-      --section-pad-bottom-1024: {{ section.settings.padding_bottom_1024 }}px;
-
-      --section-pad-top-768: {{ section.settings.padding_top_768 }}px;
-      --section-pad-bottom-768: {{ section.settings.padding_bottom_768 }}px;
-
-      --section-pad-top-425: {{ section.settings.padding_top_425 }}px;
-      --section-pad-bottom-425: {{ section.settings.padding_bottom_425 }}px;
-
-      --section-pad-top-375: {{ section.settings.padding_top_375 }}px;
-      --section-pad-bottom-375: {{ section.settings.padding_bottom_375 }}px;
-
-      --books-gap-desktop: {{ section.settings.books_gap_desktop }}px;
-      --books-gap-1024: {{ section.settings.books_gap_1024 }}px;
-      --books-gap-768: {{ section.settings.books_gap_768 }}px;
-      --books-gap-425: {{ section.settings.books_gap_425 }}px;
-      --books-gap-375: {{ section.settings.books_gap_375 }}px;
-
-      --row-gap-desktop: {{ section.settings.row_gap_desktop }}px;
-      --row-gap-1024: {{ section.settings.row_gap_1024 }}px;
-      --row-gap-768: {{ section.settings.row_gap_768 }}px;
-      --row-gap-425: {{ section.settings.row_gap_425 }}px;
-      --row-gap-375: {{ section.settings.row_gap_375 }}px;
-
-      --books-bottom-desktop: {{ section.settings.books_bottom_desktop }}px;
-      --books-bottom-1024: {{ section.settings.books_bottom_1024 }}px;
-      --books-bottom-768: {{ section.settings.books_bottom_768 }}px;
-      --books-bottom-425: {{ section.settings.books_bottom_425 }}px;
-      --books-bottom-375: {{ section.settings.books_bottom_375 }}px;
-
-      --btn-text: {{ section.settings.button_text_color }};
-      --btn-radius: {{ section.settings.button_radius }}px;
-      --btn-font-size: {{ section.settings.button_font_size }}px;
-      --btn-py: {{ section.settings.button_padding_y }}px;
-      --btn-px: {{ section.settings.button_padding_x }}px;
-
-      --title-color: {{ section.settings.title_color }};
-      --loadmore-bg: {{ section.settings.load_more_bg }};
-      --loadmore-text: {{ section.settings.load_more_text }};
-      --loadmore-border: {{ section.settings.load_more_border }};
-    }
-
-    #{{ sid }}.bshelf {
-      position: relative;
-      overflow: hidden;
-      background:
-        radial-gradient(circle at 50% 35%, var(--glow-color) 0%, rgba(0, 0, 0, 0) 38%),
-        var(--bg-color);
-      padding-top: var(--section-pad-top-desktop);
-      padding-bottom: var(--section-pad-bottom-desktop);
-    }
-
-    #{{ sid }} .bshelf__outer {
-      max-width: var(--content-max-width);
-      margin: 0 auto;
-    }
-
-    #{{ sid }} .bshelf__inner {
-      position: relative;
-    }
-
-    #{{ sid }} .bshelf__grid {
-      display: flex;
-      flex-direction: column;
-      gap: var(--row-gap-desktop);
-    }
-
-    #{{ sid }} .bshelf__shelf-row {
-      position: relative;
-      width: 100%;
-    }
-
-    #{{ sid }} .bshelf__books-row {
-      position: relative;
-      z-index: 5;
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      column-gap: var(--books-gap-desktop);
-      align-items: end;
-      margin-bottom: calc(var(--books-bottom-desktop) * -1);
-      min-height: 120px;
-    }
-
-    #{{ sid }} .bshelf__shelf-row-image {
-      position: relative;
-      z-index: 2;
-      line-height: 0;
-      width: 100%;
-    }
-
-    #{{ sid }} .bshelf__shelf-row-image img {
-      display: block;
-      width: 100%;
-      height: auto;
-      object-fit: contain;
-      user-select: none;
-      pointer-events: none;
-    }
-
-    #{{ sid }} .bshelf__item {
-      min-width: 0;
-      display: flex;
-      justify-content: center;
-    }
-
-    #{{ sid }} .bshelf__item.is-hidden-desktop,
-    #{{ sid }} .bshelf__item.is-hidden-1024,
-    #{{ sid }} .bshelf__item.is-hidden-768,
-    #{{ sid }} .bshelf__item.is-hidden-425,
-    #{{ sid }} .bshelf__item.is-hidden-375 {
-      display: none;
-    }
-
-    #{{ sid }} .bshelf__book {
-      position: relative;
-      width: var(--book-width-desktop);
-      max-width: 100%;
-      flex: 0 0 auto;
-      transform: translateY(var(--book-offset-y)) rotate(var(--book-rotate));
-      transition: transform 0.35s ease, z-index 0.2s ease;
-      z-index: var(--book-z);
-    }
-
-    #{{ sid }} .bshelf__book:hover,
-    #{{ sid }} .bshelf__book:focus-within {
-      transform: translateY(calc(var(--book-offset-y) - var(--book-hover-lift))) rotate(var(--book-rotate));
-      z-index: 30;
-    }
-
-    #{{ sid }} .bshelf__book-wrap {
-      position: relative;
-      overflow: visible;
-    }
-
-    #{{ sid }} .bshelf__shadow {
-      position: absolute;
-      left: 50%;
-      bottom: calc(var(--shadow-offset-y) * -1);
-      width: var(--shadow-width);
-      height: var(--shadow-height);
-      transform: translateX(-50%);
-      border-radius: 999px;
-      background: rgba(0, 0, 0, var(--shadow-opacity));
-      filter: blur(var(--shadow-blur));
-      z-index: 1;
-      pointer-events: none;
-      transition: all 0.35s ease;
-    }
-
-    #{{ sid }} .bshelf__book:hover .bshelf__shadow,
-    #{{ sid }} .bshelf__book:focus-within .bshelf__shadow {
-      transform: translateX(-50%) scale(1.08);
-    }
-
-    #{{ sid }} .bshelf__media {
-      position: relative;
-      z-index: 3;
-      overflow: visible;
-    }
-
-    #{{ sid }} .bshelf__link {
-      display: block;
-      position: relative;
-      z-index: 2;
-      line-height: 0;
-    }
-
-    #{{ sid }} .bshelf__img,
-    #{{ sid }} .bshelf__placeholder {
-      display: block;
-      width: 100%;
-      height: auto;
-      object-fit: contain;
-      filter: drop-shadow(0 12px 22px rgba(0, 0, 0, 0.26));
-    }
-
-    #{{ sid }} .bshelf__cta {
-      position: absolute;
-      left: 50%;
-      bottom: 10%;
-      transform: translateX(-50%) translateY(12px);
-      width: calc(100% - 16px);
-      max-width: 220px;
-      opacity: 0;
-      visibility: hidden;
-      pointer-events: none;
-      z-index: 50;
-      transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s ease;
-    }
-
-    #{{ sid }} .bshelf__book:hover .bshelf__cta,
-    #{{ sid }} .bshelf__book:focus-within .bshelf__cta {
-      opacity: 1;
-      visibility: visible;
-      pointer-events: auto;
-      transform: translateX(-50%) translateY(0);
-    }
-
-    #{{ sid }} .bshelf__btn {
-      width: 100%;
-      border: 0;
-      height: 50px;
-      appearance: none;
-      cursor: pointer;
-      border-radius: var(--btn-radius);
-      padding: var(--btn-py) var(--btn-px);
-      background-repeat: no-repeat;
-      background-size: cover;
-      background-position: center;
-      background-image: url('https://cdn.shopify.com/s/files/1/0589/1719/1777/files/f89b1c50a8a368abe48fc6793fd85a8999a3c0ca.png?v=1775475634');
-      color: var(--btn-text);
-      font-size: var(--btn-font-size);
-      line-height: 1;
-      letter-spacing: 0.04em;
-      text-transform: uppercase;
-      font-family: inherit;
-      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.24);
-      transition: transform 0.25s ease, opacity 0.25s ease;
-    }
-
-    #{{ sid }} .bshelf__btn:hover {
-      transform: translateY(-1px);
-    }
-
-    #{{ sid }} .bshelf__btn[disabled] {
-      opacity: 0.6;
-      cursor: not-allowed;
-    }
-
-    #{{ sid }} .bshelf__meta {
-      margin-top: 10px;
-      text-align: center;
-    }
-
-    #{{ sid }} .bshelf__title-link {
-      display: block;
-      text-decoration: none;
-    }
-
-    #{{ sid }} .bshelf__title-link:hover .bshelf__title {
-      text-decoration: underline;
-      text-underline-offset: 3px;
-    }
-
-    #{{ sid }} .bshelf__title {
-      color: var(--title-color);
-      font-size: 14px;
-      line-height: 1.35;
-    }
-
-    #{{ sid }} .bshelf__loadmore-wrap {
-      margin-top: 40px;
-      text-align: center;
-    }
-
-    #{{ sid }} .bshelf__loadmore {
-      appearance: none;
-      border: 1px solid var(--loadmore-border);
-      background: var(--loadmore-bg);
-      color: var(--loadmore-text);
-      border-radius: 999px;
-      padding: 14px 28px;
-      cursor: pointer;
-      line-height: 1;
-      font-family: inherit;
-      transition: transform 0.25s ease, opacity 0.25s ease;
-    }
-
-    #{{ sid }} .bshelf__loadmore:hover {
-      transform: translateY(-1px);
-    }
-
-    #{{ sid }} .bshelf__loadmore.is-hidden {
-      display: none;
-    }
-
-    @media screen and (max-width: 1024px) {
-      #{{ sid }}.bshelf {
-        padding-top: var(--section-pad-top-1024);
-        padding-bottom: var(--section-pad-bottom-1024);
-      }
-
-      #{{ sid }} .bshelf__grid {
-        gap: var(--row-gap-1024);
-      }
-
-      #{{ sid }} .bshelf__books-row {
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-        column-gap: var(--books-gap-1024);
-        margin-bottom: calc(var(--books-bottom-1024) * -1);
-      }
-
-      #{{ sid }} .bshelf__book {
-        width: var(--book-width-1024);
-        transform: translateY(var(--book-offset-y-1024)) rotate(var(--book-rotate));
-      }
-
-      #{{ sid }} .bshelf__book:hover,
-      #{{ sid }} .bshelf__book:focus-within {
-        transform: translateY(calc(var(--book-offset-y-1024) - var(--book-hover-lift))) rotate(var(--book-rotate));
-      }
-
-      #{{ sid }} .bshelf__cta {
-        opacity: 1;
-        visibility: visible;
-        pointer-events: auto;
-        transform: translateX(-50%) translateY(0);
-        bottom: 8%;
-        width: calc(100% - 12px);
-      }
-    }
-
-    @media screen and (max-width: 768px) {
-      #{{ sid }}.bshelf {
-        padding-top: var(--section-pad-top-768);
-        padding-bottom: var(--section-pad-bottom-768);
-      }
-
-      #{{ sid }} .bshelf__grid {
-        gap: var(--row-gap-768);
-      }
-
-      #{{ sid }} .bshelf__books-row {
-        grid-template-columns: repeat(1, minmax(0, 1fr));
-        column-gap: 0;
-        margin-bottom: calc(var(--books-bottom-768) * -1);
-      }
-
-      #{{ sid }} .bshelf__book {
-        width: var(--book-width-768);
-        transform: translateY(var(--book-offset-y-768)) rotate(var(--book-rotate));
-      }
-
-      #{{ sid }} .bshelf__book:hover,
-      #{{ sid }} .bshelf__book:focus-within {
-        transform: translateY(calc(var(--book-offset-y-768) - var(--book-hover-lift))) rotate(var(--book-rotate));
-      }
-
-      #{{ sid }} .bshelf__title {
-        font-size: 13px;
-      }
-    }
-
-    @media screen and (max-width: 425px) {
-      #{{ sid }}.bshelf {
-        padding-top: var(--section-pad-top-425);
-        padding-bottom: var(--section-pad-bottom-425);
-      }
-
-      #{{ sid }} .bshelf__grid {
-        gap: var(--row-gap-425);
-      }
-
-      #{{ sid }} .bshelf__books-row {
-        margin-bottom: calc(var(--books-bottom-425) * -1);
-      }
-
-      #{{ sid }} .bshelf__book {
-        width: var(--book-width-425);
-        transform: translateY(var(--book-offset-y-425)) rotate(var(--book-rotate));
-      }
-
-      #{{ sid }} .bshelf__book:hover,
-      #{{ sid }} .bshelf__book:focus-within {
-        transform: translateY(calc(var(--book-offset-y-425) - var(--book-hover-lift))) rotate(var(--book-rotate));
-      }
-
-      #{{ sid }} .bshelf__cta {
-        bottom: 6%;
-        width: calc(100% - 10px);
-      }
-
-      #{{ sid }} .bshelf__btn {
-        font-size: 10px;
-        padding: 9px 8px;
-        height: 44px;
-      }
-
-      #{{ sid }} .bshelf__title {
-        font-size: 12px;
-      }
-    }
-
-    @media screen and (max-width: 375px) {
-      #{{ sid }}.bshelf {
-        padding-top: var(--section-pad-top-375);
-        padding-bottom: var(--section-pad-bottom-375);
-      }
-
-      #{{ sid }} .bshelf__grid {
-        gap: var(--row-gap-375);
-      }
-
-      #{{ sid }} .bshelf__books-row {
-        margin-bottom: calc(var(--books-bottom-375) * -1);
-      }
-
-      #{{ sid }} .bshelf__book {
-        width: var(--book-width-375);
-        transform: translateY(var(--book-offset-y-375)) rotate(var(--book-rotate));
-      }
-
-      #{{ sid }} .bshelf__book:hover,
-      #{{ sid }} .bshelf__book:focus-within {
-        transform: translateY(calc(var(--book-offset-y-375) - var(--book-hover-lift))) rotate(var(--book-rotate));
-      }
-
-      #{{ sid }} .bshelf__cta {
-        bottom: 5%;
-        width: calc(100% - 8px);
-      }
-
-      #{{ sid }} .bshelf__btn {
-        font-size: 9px;
-        height: 42px;
-      }
-
-      #{{ sid }} .bshelf__title {
-        font-size: 11px;
-      }
-    }
-  </style>
-
-
-  <script>
-(function() {
-  const section = document.getElementById('{{ sid }}');
-  if (!section) return;
-
-  const root = (window.Shopify && window.Shopify.routes && window.Shopify.routes.root)
-    ? window.Shopify.routes.root
-    : '/';
-
-  const grid = section.querySelector('[data-books-grid]');
-  const loadMoreBtn = section.querySelector('[data-load-more]');
-  const items = grid ? Array.from(grid.querySelectorAll('[data-book-item]')) : [];
-  const shelfImage = grid ? (grid.dataset.shelfImage || '') : '';
-
-  function viewportBucket() {
-    const width = window.innerWidth;
-    if (width <= 375) return '375';
-    if (width <= 425) return '425';
-    if (width <= 768) return '768';
-    if (width <= 1024) return '1024';
-    return 'desktop';
-  }
-
-  function perRow() {
-    const bucket = viewportBucket();
-    return (bucket === 'desktop' || bucket === '1024') ? 3 : 1;
-  }
-
-  function hiddenClass() {
-    return 'is-hidden-' + viewportBucket();
-  }
-
-  function getInitialCount() {
-    if (!grid) return 0;
-    const bucket = viewportBucket();
-
-    if (bucket === '375') return parseInt(grid.dataset.initial375 || '4', 10);
-    if (bucket === '425') return parseInt(grid.dataset.initial425 || '4', 10);
-    if (bucket === '768') return parseInt(grid.dataset.initial768 || '6', 10);
-    if (bucket === '1024') return parseInt(grid.dataset.initial1024 || '9', 10);
-    return parseInt(grid.dataset.initialDesktop || '9', 10);
-  }
-
-  function getLoadCount() {
-    if (!grid) return 0;
-    const bucket = viewportBucket();
-
-    if (bucket === '375') return parseInt(grid.dataset.load375 || '2', 10);
-    if (bucket === '425') return parseInt(grid.dataset.load425 || '2', 10);
-    if (bucket === '768') return parseInt(grid.dataset.load768 || '2', 10);
-    if (bucket === '1024') return parseInt(grid.dataset.load1024 || '3', 10);
-    return parseInt(grid.dataset.loadDesktop || '9', 10);
-  }
-
-  function visibleItems() {
-    const cls = hiddenClass();
-    return items.filter((item) => !item.classList.contains(cls));
-  }
-
-  function resetVisibilityClasses() {
-    items.forEach((item) => {
-      item.classList.remove(
-        'is-hidden-desktop',
-        'is-hidden-1024',
-        'is-hidden-768',
-        'is-hidden-425',
-        'is-hidden-375'
-      );
-    });
-  }
-
-  function setInitialVisibility() {
-    if (!grid) return;
-    const cls = hiddenClass();
-    const initialCount = getInitialCount();
-
-    resetVisibilityClasses();
-
-    items.forEach((item, index) => {
-      if (index >= initialCount) item.classList.add(cls);
-    });
-  }
-
-  function buildRows() {
-    if (!grid) return;
-
-    const currentVisible = visibleItems();
-    const columns = perRow();
-
-    grid.querySelectorAll('.bshelf__shelf-row').forEach((row) => row.remove());
-
-    for (let i = 0; i < currentVisible.length; i += columns) {
-      const chunk = currentVisible.slice(i, i + columns);
-      const row = document.createElement('div');
-      row.className = 'bshelf__shelf-row';
-
-      const booksRow = document.createElement('div');
-      booksRow.className = 'bshelf__books-row';
-
-      chunk.forEach((item) => booksRow.appendChild(item));
-      row.appendChild(booksRow);
-
-      if (shelfImage) {
-        const shelf = document.createElement('div');
-        shelf.className = 'bshelf__shelf-row-image';
-        shelf.innerHTML = '<img src="' + shelfImage + '" alt="" loading="lazy">';
-        row.appendChild(shelf);
-      }
-
-      grid.appendChild(row);
-    }
-
-    if (loadMoreBtn) {
-      const cls = hiddenClass();
-      const stillHidden = items.some((item) => item.classList.contains(cls));
-      loadMoreBtn.classList.toggle('is-hidden', !stillHidden);
-    }
-  }
-
-  if (loadMoreBtn) {
-    loadMoreBtn.addEventListener('click', function() {
-      const cls = hiddenClass();
-      const count = getLoadCount();
-      let revealed = 0;
-
-      items.forEach((item) => {
-        if (item.classList.contains(cls) && revealed < count) {
-          item.classList.remove(cls);
-          revealed += 1;
-        }
-      });
-
-      buildRows();
-    });
-  }
-
-  let resizeTimer;
-  let lastBucket = viewportBucket();
-
-  window.addEventListener('resize', function() {
-    clearTimeout(resizeTimer);
-    resizeTimer = setTimeout(function() {
-      const currentBucket = viewportBucket();
-      if (currentBucket !== lastBucket) {
-        lastBucket = currentBucket;
-        setInitialVisibility();
-      }
-      buildRows();
-    }, 120);
-  });
-
-  setInitialVisibility();
-  buildRows();
-
-  function getDrawer() {
-    return document.querySelector('cart-drawer');
-  }
-
-  function getSectionsToRender() {
-    const drawer = getDrawer();
-    if (drawer && typeof drawer.getSectionsToRender === 'function') {
-      return drawer.getSectionsToRender().map((section) => section.id);
-    }
-    return ['cart-drawer', 'cart-icon-bubble'];
-  }
-
-  async function addItem(variantId) {
-    const response = await fetch(root + 'cart/add.js', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-        'X-Requested-With': 'XMLHttpRequest'
-      },
-      body: JSON.stringify({
-        items: [{ id: Number(variantId), quantity: 1 }],
-        sections: getSectionsToRender(),
-        sections_url: window.location.pathname
-      })
-    });
-
-    const data = await response.json();
-
-    if (!response.ok || data.status) {
-      throw new Error(data.description || 'Failed to add to cart');
-    }
-
-    return data;
-  }
-
-  async function fallbackRefresh() {
-    const response = await fetch(root + 'cart?view=drawer', {
-      headers: {
-        'X-Requested-With': 'XMLHttpRequest'
-      }
-    });
-    return await response.text();
-  }
-
-  async function refreshCartUI(addData, button) {
-    const drawer = getDrawer();
-
-    if (drawer && typeof drawer.renderContents === 'function') {
-      drawer.renderContents(addData);
-      if (typeof drawer.setActiveElement === 'function') {
-        drawer.setActiveElement(button);
-      }
-    } else {
-      const html = await fallbackRefresh();
-      const temp = document.createElement('div');
-      temp.innerHTML = html;
-
-      const freshDrawer = temp.querySelector('cart-drawer');
-      const currentDrawer = document.querySelector('cart-drawer');
-
-      if (freshDrawer && currentDrawer) {
-        currentDrawer.innerHTML = freshDrawer.innerHTML;
-      }
-    }
-
-    if (typeof publish === 'function' && typeof PUB_SUB_EVENTS !== 'undefined' && PUB_SUB_EVENTS.cartUpdate) {
-      publish(PUB_SUB_EVENTS.cartUpdate, {
-        source: 'book-shelf',
-        productVariantId: Number(button.getAttribute('data-variant-id'))
-      });
-    }
-
-    document.dispatchEvent(new CustomEvent('cart:refresh', {
-      bubbles: true,
-      detail: { source: 'book-shelf' }
-    }));
-  }
-
-  async function addToCart(variantId, button) {
-    if (!variantId || !button || button.disabled) return;
-
-    const originalText = button.textContent;
-    button.disabled = true;
-    button.textContent = 'Adding...';
-
-    try {
-      const addData = await addItem(variantId);
-      await refreshCartUI(addData, button);
-
-      button.textContent = 'Added';
-      setTimeout(function() {
-        button.textContent = originalText;
-        button.disabled = false;
-      }, 1200);
-    } catch (error) {
-      console.error('[Book Shelf] Add to cart error:', error);
-      button.textContent = 'Error';
-      setTimeout(function() {
-        button.textContent = originalText;
-        button.disabled = false;
-      }, 1400);
-    }
-  }
-
-  section.addEventListener('click', function(event) {
-    const btn = event.target.closest('[data-book-add]');
-    if (!btn) return;
-
-    event.preventDefault();
-    event.stopPropagation();
-
-    addToCart(btn.getAttribute('data-variant-id'), btn);
-  });
-})();
-</script>
-
-
-</section>
-
-{% schema %}
-{
-  "name": "Book shelf hover cart",
-  "tag": "section",
-  "class": "section",
-  "settings": [
-    {
-      "type": "image_picker",
-      "id": "shelf_image",
-      "label": "Shelf image"
-    },
-    {
-      "type": "checkbox",
-      "id": "show_product_title",
-      "label": "Show product title",
-      "default": false
-    },
-    {
-      "type": "text",
-      "id": "load_more_label",
-      "label": "Load more button label",
-      "default": "Load more"
-    },
-
-    {
-      "type": "header",
-      "content": "Initial books / load more"
-    },
-    {
-      "type": "range",
-      "id": "initial_books_desktop",
-      "min": 3,
-      "max": 30,
-      "step": 3,
-      "label": "Initial books desktop",
-      "default": 9
-    },
-    {
-      "type": "range",
-      "id": "initial_books_1024",
-      "min": 3,
-      "max": 30,
-      "step": 3,
-      "label": "Initial books 1024",
-      "default": 9
-    },
-    {
-      "type": "range",
-      "id": "initial_books_768",
-      "min": 1,
-      "max": 20,
-      "step": 1,
-      "label": "Initial books 768",
-      "default": 6
-    },
-    {
-      "type": "range",
-      "id": "initial_books_425",
-      "min": 1,
-      "max": 20,
-      "step": 1,
-      "label": "Initial books 425",
-      "default": 4
-    },
-    {
-      "type": "range",
-      "id": "initial_books_375",
-      "min": 1,
-      "max": 20,
-      "step": 1,
-      "label": "Initial books 375",
-      "default": 4
-    },
-    {
-      "type": "range",
-      "id": "load_more_desktop",
-      "min": 3,
-      "max": 30,
-      "step": 3,
-      "label": "Load more desktop",
-      "default": 9
-    },
-    {
-      "type": "range",
-      "id": "load_more_1024",
-      "min": 3,
-      "max": 30,
-      "step": 3,
-      "label": "Load more 1024",
-      "default": 3
-    },
-    {
-      "type": "range",
-      "id": "load_more_768",
-      "min": 1,
-      "max": 10,
-      "step": 1,
-      "label": "Load more 768",
-      "default": 2
-    },
-    {
-      "type": "range",
-      "id": "load_more_425",
-      "min": 1,
-      "max": 10,
-      "step": 1,
-      "label": "Load more 425",
-      "default": 2
-    },
-    {
-      "type": "range",
-      "id": "load_more_375",
-      "min": 1,
-      "max": 10,
-      "step": 1,
-      "label": "Load more 375",
-      "default": 2
-    },
-
-    {
-      "type": "header",
-      "content": "Colors"
-    },
-    {
-      "type": "color",
-      "id": "bg_color",
-      "label": "Background color",
-      "default": "#050202"
-    },
-    {
-      "type": "color",
-      "id": "glow_color",
-      "label": "Center glow color",
-      "default": "#2a1208"
-    },
-    {
-      "type": "color",
-      "id": "title_color",
-      "label": "Title color",
-      "default": "#ffffff"
-    },
-    {
-      "type": "color",
-      "id": "load_more_bg",
-      "label": "Load more background",
-      "default": "#121212"
-    },
-    {
-      "type": "color",
-      "id": "load_more_text",
-      "label": "Load more text",
-      "default": "#ffffff"
-    },
-    {
-      "type": "color",
-      "id": "load_more_border",
-      "label": "Load more border",
-      "default": "#3a3a3a"
-    },
-    {
-      "type": "color",
-      "id": "button_text_color",
-      "label": "Button text color",
-      "default": "#ffffff"
-    },
-
-    {
-      "type": "header",
-      "content": "Container"
-    },
-    {
-      "type": "range",
-      "id": "content_max_width",
-      "min": 1000,
-      "max": 1800,
-      "step": 20,
-      "unit": "px",
-      "label": "Content max width",
-      "default": 1400
-    },
-
-    {
-      "type": "header",
-      "content": "Section padding"
-    },
-    {
-      "type": "range",
-      "id": "padding_top_desktop",
-      "min": 0,
-      "max": 200,
-      "step": 4,
-      "unit": "px",
-      "label": "Top padding desktop",
-      "default": 40
-    },
-    {
-      "type": "range",
-      "id": "padding_bottom_desktop",
-      "min": 0,
-      "max": 200,
-      "step": 4,
-      "unit": "px",
-      "label": "Bottom padding desktop",
-      "default": 28
-    },
-    {
-      "type": "range",
-      "id": "padding_top_1024",
-      "min": 0,
-      "max": 160,
-      "step": 4,
-      "unit": "px",
-      "label": "Top padding 1024",
-      "default": 36
-    },
-    {
-      "type": "range",
-      "id": "padding_bottom_1024",
-      "min": 0,
-      "max": 160,
-      "step": 4,
-      "unit": "px",
-      "label": "Bottom padding 1024",
-      "default": 24
-    },
-    {
-      "type": "range",
-      "id": "padding_top_768",
-      "min": 0,
-      "max": 140,
-      "step": 4,
-      "unit": "px",
-      "label": "Top padding 768",
-      "default": 28
-    },
-    {
-      "type": "range",
-      "id": "padding_bottom_768",
-      "min": 0,
-      "max": 140,
-      "step": 4,
-      "unit": "px",
-      "label": "Bottom padding 768",
-      "default": 24
-    },
-    {
-      "type": "range",
-      "id": "padding_top_425",
-      "min": 0,
-      "max": 120,
-      "step": 4,
-      "unit": "px",
-      "label": "Top padding 425",
-      "default": 20
-    },
-    {
-      "type": "range",
-      "id": "padding_bottom_425",
-      "min": 0,
-      "max": 120,
-      "step": 4,
-      "unit": "px",
-      "label": "Bottom padding 425",
-      "default": 20
-    },
-    {
-      "type": "range",
-      "id": "padding_top_375",
-      "min": 0,
-      "max": 120,
-      "step": 4,
-      "unit": "px",
-      "label": "Top padding 375",
-      "default": 20
-    },
-    {
-      "type": "range",
-      "id": "padding_bottom_375",
-      "min": 0,
-      "max": 120,
-      "step": 4,
-      "unit": "px",
-      "label": "Bottom padding 375",
-      "default": 16
-    },
-
-    {
-      "type": "header",
-      "content": "Books gap"
-    },
-    {
-      "type": "range",
-      "id": "books_gap_desktop",
-      "min": 0,
-      "max": 120,
-      "step": 2,
-      "unit": "px",
-      "label": "Books gap desktop",
-      "default": 40
-    },
-    {
-      "type": "range",
-      "id": "books_gap_1024",
-      "min": 0,
-      "max": 100,
-      "step": 2,
-      "unit": "px",
-      "label": "Books gap 1024",
-      "default": 26
-    },
-    {
-      "type": "range",
-      "id": "books_gap_768",
-      "min": 0,
-      "max": 60,
-      "step": 2,
-      "unit": "px",
-      "label": "Books gap 768",
-      "default": 0
-    },
-    {
-      "type": "range",
-      "id": "books_gap_425",
-      "min": 0,
-      "max": 40,
-      "step": 2,
-      "unit": "px",
-      "label": "Books gap 425",
-      "default": 0
-    },
-    {
-      "type": "range",
-      "id": "books_gap_375",
-      "min": 0,
-      "max": 40,
-      "step": 2,
-      "unit": "px",
-      "label": "Books gap 375",
-      "default": 0
-    },
-
-    {
-      "type": "header",
-      "content": "Row gap"
-    },
-    {
-      "type": "range",
-      "id": "row_gap_desktop",
-      "min": 20,
-      "max": 180,
-      "step": 4,
-      "unit": "px",
-      "label": "Shelf row gap desktop",
-      "default": 68
-    },
-    {
-      "type": "range",
-      "id": "row_gap_1024",
-      "min": 20,
-      "max": 180,
-      "step": 4,
-      "unit": "px",
-      "label": "Shelf row gap 1024",
-      "default": 60
-    },
-    {
-      "type": "range",
-      "id": "row_gap_768",
-      "min": 16,
-      "max": 140,
-      "step": 4,
-      "unit": "px",
-      "label": "Shelf row gap 768",
-      "default": 44
-    },
-    {
-      "type": "range",
-      "id": "row_gap_425",
-      "min": 16,
-      "max": 120,
-      "step": 4,
-      "unit": "px",
-      "label": "Shelf row gap 425",
-      "default": 36
-    },
-    {
-      "type": "range",
-      "id": "row_gap_375",
-      "min": 16,
-      "max": 120,
-      "step": 4,
-      "unit": "px",
-      "label": "Shelf row gap 375",
-      "default": 32
-    },
-
-    {
-      "type": "header",
-      "content": "Books overlap on shelf"
-    },
-    {
-      "type": "range",
-      "id": "books_bottom_desktop",
-      "min": 0,
-      "max": 120,
-      "step": 2,
-      "unit": "px",
-      "label": "Books overlap desktop",
-      "default": 28
-    },
-    {
-      "type": "range",
-      "id": "books_bottom_1024",
-      "min": 0,
-      "max": 120,
-      "step": 2,
-      "unit": "px",
-      "label": "Books overlap 1024",
-      "default": 24
-    },
-    {
-      "type": "range",
-      "id": "books_bottom_768",
-      "min": 0,
-      "max": 100,
-      "step": 2,
-      "unit": "px",
-      "label": "Books overlap 768",
-      "default": 18
-    },
-    {
-      "type": "range",
-      "id": "books_bottom_425",
-      "min": 0,
-      "max": 80,
-      "step": 2,
-      "unit": "px",
-      "label": "Books overlap 425",
-      "default": 16
-    },
-    {
-      "type": "range",
-      "id": "books_bottom_375",
-      "min": 0,
-      "max": 80,
-      "step": 2,
-      "unit": "px",
-      "label": "Books overlap 375",
-      "default": 14
-    },
-
-    {
-      "type": "header",
-      "content": "Button"
-    },
-    {
-      "type": "range",
-      "id": "button_radius",
-      "min": 0,
-      "max": 60,
-      "step": 2,
-      "unit": "px",
-      "label": "Button radius",
-      "default": 24
-    },
-    {
-      "type": "range",
-      "id": "button_font_size",
-      "min": 10,
-      "max": 20,
-      "step": 1,
-      "unit": "px",
-      "label": "Button font size",
-      "default": 12
-    },
-    {
-      "type": "range",
-      "id": "button_padding_y",
-      "min": 8,
-      "max": 24,
-      "step": 1,
-      "unit": "px",
-      "label": "Button vertical padding",
-      "default": 12
-    },
-    {
-      "type": "range",
-      "id": "button_padding_x",
-      "min": 10,
-      "max": 40,
-      "step": 1,
-      "unit": "px",
-      "label": "Button horizontal padding",
-      "default": 18
-    }
-  ],
-  "blocks": [
-    {
-      "type": "book",
-      "name": "Book",
-      "settings": [
-        {
-          "type": "product",
-          "id": "product",
-          "label": "Product"
-        },
-        {
-          "type": "image_picker",
-          "id": "book_image",
-          "label": "Book image"
-        },
-        {
-          "type": "text",
-          "id": "button_text",
-          "label": "Button text",
-          "default": "ADD TO CART"
-        },
-
-        {
-          "type": "header",
-          "content": "Book width"
-        },
-        {
-          "type": "range",
-          "id": "book_width_desktop",
-          "min": 100,
-          "max": 260,
-          "step": 4,
-          "unit": "px",
-          "label": "Book width desktop",
-          "default": 160
-        },
-        {
-          "type": "range",
-          "id": "book_width_1024",
-          "min": 100,
-          "max": 240,
-          "step": 4,
-          "unit": "px",
-          "label": "Book width 1024",
-          "default": 144
-        },
-        {
-          "type": "range",
-          "id": "book_width_768",
-          "min": 80,
-          "max": 220,
-          "step": 4,
-          "unit": "px",
-          "label": "Book width 768",
-          "default": 140
-        },
-        {
-          "type": "range",
-          "id": "book_width_425",
-          "min": 70,
-          "max": 180,
-          "step": 2,
-          "unit": "px",
-          "label": "Book width 425",
-          "default": 110
-        },
-        {
-          "type": "range",
-          "id": "book_width_375",
-          "min": 70,
-          "max": 180,
-          "step": 2,
-          "unit": "px",
-          "label": "Book width 375",
-          "default": 100
-        },
-
-        {
-          "type": "header",
-          "content": "Book vertical offset"
-        },
-        {
-          "type": "range",
-          "id": "book_offset_y",
-          "min": -40,
-          "max": 40,
-          "step": 2,
-          "unit": "px",
-          "label": "Book offset desktop",
-          "default": 0
-        },
-        {
-          "type": "range",
-          "id": "book_offset_y_1024",
-          "min": -40,
-          "max": 40,
-          "step": 2,
-          "unit": "px",
-          "label": "Book offset 1024",
-          "default": 0
-        },
-        {
-          "type": "range",
-          "id": "book_offset_y_768",
-          "min": -40,
-          "max": 40,
-          "step": 2,
-          "unit": "px",
-          "label": "Book offset 768",
-          "default": 0
-        },
-        {
-          "type": "range",
-          "id": "book_offset_y_425",
-          "min": -40,
-          "max": 40,
-          "step": 2,
-          "unit": "px",
-          "label": "Book offset 425",
-          "default": 0
-        },
-        {
-          "type": "range",
-          "id": "book_offset_y_375",
-          "min": -40,
-          "max": 40,
-          "step": 2,
-          "unit": "px",
-          "label": "Book offset 375",
-          "default": 0
-        },
-
         {
           "type": "range",
           "id": "book_rotate",

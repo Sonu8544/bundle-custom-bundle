@@ -145,7 +145,7 @@
       "settings": {
         "full_width": false,
         "heading": "Forthcoming Exclusive",
-        "description": "<p>Welcome to Rare Biblio, the premier destination for bibliophiles and book lovers who<br>appreciate the art of bookmaking.</p>",
+        "description": "<p>Welcome to Rare Biblio, the premier destination for bibliophiles and book lovers who<br/>appreciate the art of bookmaking.</p>",
         "section_bg": "#000000",
         "title_gradient_start": "#e8dcc8",
         "title_gradient_end": "#b8941e",
@@ -162,7 +162,7 @@
         "padding_bottom_mobile": 40,
         "title_size_desktop": 56,
         "title_size_tablet": 48,
-        "title_size_mobile": 34,
+        "title_size_mobile": 36,
         "text_size_desktop": 26,
         "text_line_height_desktop": 40,
         "text_size_tablet": 21,

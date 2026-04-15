@@ -124,18 +124,18 @@
             "book_z_index": 5
           }
         },
-        "book_rLztcw": {
+        "book_6fXatR": {
           "type": "book",
           "settings": {
             "product": "abc-books",
             "button_text": "ADD TO CART",
             "book_width_desktop": 260,
             "book_width_1024": 144,
-            "book_width_768": 140,
-            "book_width_425": 110,
-            "book_width_375": 100,
+            "book_width_768": 120,
+            "book_width_425": 100,
+            "book_width_375": 80,
             "book_offset_y": 0,
-            "book_offset_y_1024": 0,
+            "book_offset_y_1024": 20,
             "book_offset_y_768": 0,
             "book_offset_y_425": 0,
             "book_offset_y_375": 0,
@@ -149,18 +149,18 @@
             "book_z_index": 5
           }
         },
-        "book_9zna3n": {
+        "book_ga8a6F": {
           "type": "book",
           "settings": {
             "product": "abc-books",
             "button_text": "ADD TO CART",
             "book_width_desktop": 260,
             "book_width_1024": 144,
-            "book_width_768": 140,
-            "book_width_425": 110,
-            "book_width_375": 100,
+            "book_width_768": 120,
+            "book_width_425": 100,
+            "book_width_375": 80,
             "book_offset_y": 0,
-            "book_offset_y_1024": 0,
+            "book_offset_y_1024": 20,
             "book_offset_y_768": 0,
             "book_offset_y_425": 0,
             "book_offset_y_375": 0,
@@ -177,8 +177,8 @@
       },
       "block_order": [
         "book_KMKiKg",
-        "book_rLztcw",
-        "book_9zna3n"
+        "book_6fXatR",
+        "book_ga8a6F"
       ],
       "name": "Book shelf hover cart",
       "settings": {

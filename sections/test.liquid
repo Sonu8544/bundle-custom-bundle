@@ -1645,16 +1645,22 @@
   #{{ sid }} .ppbs__title {
     max-width: min(640px, 100%);
     margin: 0;
-    color: var(--ppbs-text);
     font-family: "Bethany Elingston", var(--font-heading-family), Georgia, serif;
     font-weight: 400;
+    font-style: normal;
     font-synthesis: none;
-    font-size: clamp(36px, 4.5vw, 58px);
-    line-height: 1.22;
-    letter-spacing: 0.02em;
+    font-size: 70px;
+    line-height: 1;
+    letter-spacing: 0;
+    text-align: center;
     text-wrap: balance;
     text-rendering: optimizeLegibility;
-    text-shadow: 0 2px 28px rgba(0,0,0,.4);
+    background: linear-gradient(270.6deg, #A87E0A 9.74%, #000000 71.76%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+    text-shadow: none;
   }
 
   #{{ sid }} .ppbs__desc {

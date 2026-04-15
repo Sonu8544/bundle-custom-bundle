@@ -163,22 +163,54 @@
 
                 <div class="ppbs__media" data-ppbs-media>
                   <div class="ppbs__media-inner" data-ppbs-tilt>
-                    {%- if block.settings.image != blank -%}
-                      {{
-                        block.settings.image
-                        | image_url: width: 1400
-                        | image_tag:
-                          loading: 'lazy',
-                          class: 'ppbs__img',
-                          widths: '400, 600, 800, 1000, 1200, 1400',
-                          sizes: '(min-width: 1200px) 40vw, (min-width: 750px) 50vw, 70vw',
-                          alt: block.settings.image.alt | default: block.settings.title
-                      }}
-                    {%- else -%}
-                      <div class="ppbs__placeholder">
-                        {{ 'product-1' | placeholder_svg_tag }}
-                      </div>
-                    {%- endif -%}
+                  
+                    {%- assign desktop_image = block.settings.image -%}
+{%- assign mobile_image = block.settings.image_mobile | default: block.settings.image -%}
+
+{%- if desktop_image != blank or mobile_image != blank -%}
+  <picture>
+    {%- if mobile_image != blank -%}
+      <source
+        media="(max-width: 767px)"
+        srcset="
+          {{ mobile_image | image_url: width: 400 }} 400w,
+          {{ mobile_image | image_url: width: 600 }} 600w,
+          {{ mobile_image | image_url: width: 800 }} 800w
+        "
+        sizes="70vw"
+      >
+    {%- endif -%}
+
+    {%- if desktop_image != blank -%}
+      {{
+        desktop_image
+        | image_url: width: 1400
+        | image_tag:
+          loading: 'lazy',
+          class: 'ppbs__img',
+          widths: '400, 600, 800, 1000, 1200, 1400',
+          sizes: '(min-width: 1200px) 40vw, (min-width: 750px) 50vw, 70vw',
+          alt: desktop_image.alt | default: block.settings.title
+      }}
+    {%- else -%}
+      {{
+        mobile_image
+        | image_url: width: 800
+        | image_tag:
+          loading: 'lazy',
+          class: 'ppbs__img',
+          widths: '400, 600, 800',
+          sizes: '70vw',
+          alt: mobile_image.alt | default: block.settings.title
+      }}
+    {%- endif -%}
+  </picture>
+{%- else -%}
+  <div class="ppbs__placeholder">
+    {{ 'product-1' | placeholder_svg_tag }}
+  </div>
+{%- endif -%}
+
                   </div>
                 </div>
               </div>

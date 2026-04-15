@@ -5835,7 +5835,7 @@
     }
   }
 
-  function queueUnlockBuy() {
+  {% comment %} function queueUnlockBuy() {
     queueGranted = true;
     queueHideOverlay();
     queueSetProgress(null);
@@ -5846,8 +5846,20 @@
       cartBtn.classList.add('flq-buy-granted');
       cartBtn.removeAttribute('data-flq-locked');
     }
-  }
+  } {% endcomment %}
 
+
+  function queueUnlockBuy() {
+  queueGranted = true;
+  hideOverlay();
+
+  if (cartBtn) {
+    cartBtn.disabled = false;
+    cartBtn.classList.remove('flq-buy-locked');
+    cartBtn.classList.add('flq-buy-granted');
+    cartBtn.removeAttribute('data-flq-locked');
+  }
+}
   function queueFormatRemaining(ms) {
     var totalSeconds = Math.max(0, Math.floor(ms / 1000));
     var minutes = Math.floor(totalSeconds / 60);

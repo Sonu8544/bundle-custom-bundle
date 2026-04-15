@@ -266,7 +266,7 @@
         "autoplay_seconds": 0,
         "height_desktop": 110,
         "height_tablet": 100,
-        "height_mobile": 100,
+        "height_mobile": 110,
         "transition_style": "cinematic",
         "parallax_intensity": 50,
         "content_stagger": 80,

@@ -3203,7 +3203,7 @@
 
 
 
- {% liquid
+{% liquid
   assign section_id = 'rb-parallax-slider-' | append: section.id
 %}
 
@@ -3263,16 +3263,16 @@
 
         <div class="rbps__inner">
           <div class="rbps__slide-grid">
-            <div class="rbps__media-wrap">
+            <div class="rbps__media-wrap" data-rbps-media-wrap>
               <div class="rbps__media" data-rbps-media>
                 {% if block.settings.image != blank %}
                   {{
                     block.settings.image
-                    | image_url: width: 1600
+                    | image_url: width: 1800
                     | image_tag:
                       loading: rbps_img_loading,
-                      widths: '400, 600, 800, 1000, 1200, 1400, 1600',
-                      sizes: '(max-width: 749px) 86vw, 532px',
+                      widths: '400, 600, 800, 1000, 1200, 1400, 1600, 1800',
+                      sizes: '(max-width: 749px) 88vw, 560px',
                       class: 'rbps__image',
                       alt: block.settings.heading | escape
                   }}
@@ -3330,21 +3330,25 @@
 
   #{{ section_id }} .rbps__slide {
     position: relative;
-    min-height: var(--rbps-slide-min-height-desktop);
+    min-height: max(92vh, var(--rbps-slide-min-height-desktop));
     display: flex;
     align-items: center;
+    overflow: hidden;
   }
 
   #{{ section_id }} .rbps__slide + .rbps__slide {
-    margin-top: 24px;
+    margin-top: 0;
   }
 
   #{{ section_id }} .rbps__slide-bg {
     position: absolute;
     inset: 0;
-    pointer-events: none;
     z-index: 0;
-    opacity: 0.9;
+    pointer-events: none;
+    opacity: 0.96;
+    background:
+      radial-gradient(77.47% 561.61% at 127.29% 73.12%, rgba(39, 29, 14, 0) 0%, #050504 100%),
+      linear-gradient(180deg, var(--rbps-bg-start) 0%, var(--rbps-bg-end) 100%);
   }
 
   #{{ section_id }} .rbps__inner {
@@ -3360,8 +3364,8 @@
     grid-template-columns: 1fr 1fr;
     align-items: center;
     gap: var(--rbps-gap-desktop);
-    padding: 72px 32px;
-    min-height: var(--rbps-slide-min-height-desktop);
+    padding: 56px 32px;
+    min-height: max(92vh, var(--rbps-slide-min-height-desktop));
   }
 
   #{{ section_id }} .rbps__slide--image-left .rbps__media-wrap { order: 1; }
@@ -3374,6 +3378,8 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    min-height: 100%;
+    will-change: transform, opacity;
   }
 
   #{{ section_id }} .rbps__media {
@@ -3384,22 +3390,21 @@
     border-radius: var(--rbps-image-radius);
     overflow: hidden;
     background: #0a0907;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.35);
+    box-shadow: 0 16px 50px rgba(0, 0, 0, 0.35);
     will-change: transform, opacity;
     transform: translate3d(0, 0, 0);
-    opacity: 0.96;
   }
 
   #{{ section_id }} .rbps__image {
     position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
+    inset: -10%;
+    width: 120%;
+    height: 120%;
     display: block;
     object-fit: cover;
     object-position: center center;
-    transform: scale(1.06);
     will-change: transform;
+    transform: translate3d(0, 0, 0) scale(1.08);
   }
 
   #{{ section_id }} .rbps__image-overlay {
@@ -3413,14 +3418,14 @@
       rgba(0, 0, 0, 0) 0%,
       rgba(0, 0, 0, var(--rbps-overlay-opacity)) 100%
     );
-    opacity: 0.82;
-    transition: opacity 0.3s ease;
+    opacity: 0.8;
   }
 
   #{{ section_id }} .rbps__content-wrap {
     position: relative;
     display: flex;
     align-items: center;
+    min-height: 100%;
   }
 
   #{{ section_id }} .rbps__slide--image-left .rbps__content-wrap {
@@ -3464,7 +3469,7 @@
     max-width: var(--rbps-content-width);
     will-change: transform, opacity;
     transform: translate3d(0, 0, 0);
-    opacity: 0.92;
+    opacity: 0.94;
   }
 
   #{{ section_id }} .rbps__heading {
@@ -3480,7 +3485,7 @@
   #{{ section_id }} .rbps__text p {
     margin: 0;
     color: var(--rbps-text-color);
-    opacity: 0.7;
+    opacity: 0.72;
     font-family: "Satoshi", sans-serif;
     font-weight: 400;
     font-size: var(--rbps-text-size-desktop);
@@ -3517,18 +3522,14 @@
 
   @media screen and (max-width: 749px) {
     #{{ section_id }} .rbps__slide {
-      min-height: var(--rbps-slide-min-height-mobile);
-    }
-
-    #{{ section_id }} .rbps__slide + .rbps__slide {
-      margin-top: 12px;
+      min-height: max(88vh, var(--rbps-slide-min-height-mobile));
     }
 
     #{{ section_id }} .rbps__slide-grid {
       grid-template-columns: 1fr;
       gap: var(--rbps-gap-mobile);
       padding: 32px 18px;
-      min-height: var(--rbps-slide-min-height-mobile);
+      min-height: max(88vh, var(--rbps-slide-min-height-mobile));
     }
 
     #{{ section_id }} .rbps__slide--image-left .rbps__content-wrap,
@@ -3579,52 +3580,86 @@
       }
     });
 
-    gsap.killTweensOf(section.querySelectorAll('[data-rbps-media], [data-rbps-content], .rbps__image'));
-
     const slides = section.querySelectorAll('[data-rbps-slide]');
 
     slides.forEach((slide) => {
+      const mediaWrap = slide.querySelector('[data-rbps-media-wrap]');
       const media = slide.querySelector('[data-rbps-media]');
-      const content = slide.querySelector('[data-rbps-content]');
       const image = slide.querySelector('.rbps__image');
+      const content = slide.querySelector('[data-rbps-content]');
+      const heading = slide.querySelector('[data-rbps-heading]');
+      const text = slide.querySelector('[data-rbps-text]');
+      const button = slide.querySelector('[data-rbps-button]');
 
-      if (!media || !content) return;
+      if (!mediaWrap || !media || !content) return;
 
-      gsap.set(media, { y: 0, opacity: 0.96 });
-      gsap.set(content, { y: 0, opacity: 0.92 });
-      if (image) gsap.set(image, { y: 0, scale: 1.06 });
+      gsap.set(mediaWrap, { y: 80, opacity: 0.88 });
+      gsap.set(media, { y: 0, opacity: 1 });
+      gsap.set(content, { y: 56, opacity: 0.84 });
+      if (heading) gsap.set(heading, { y: 0, opacity: 1 });
+      if (text) gsap.set(text, { y: 0, opacity: 1 });
+      if (button) gsap.set(button, { y: 0, opacity: 1 });
+      if (image) gsap.set(image, { y: 80, scale: 1.12 });
 
       const tl = gsap.timeline({
         scrollTrigger: {
           trigger: slide,
-          start: 'top bottom',
+          start: 'top 88%',
           end: 'bottom top',
-          scrub: 1.2,
+          scrub: 1.15,
           invalidateOnRefresh: true
         }
       });
 
-      tl.fromTo(
-        media,
-        { y: 70, opacity: 0.9 },
-        { y: -70, opacity: 1, ease: 'none' },
-        0
-      );
+      tl.to(mediaWrap, {
+        y: -120,
+        opacity: 1,
+        ease: 'none'
+      }, 0);
 
-      tl.fromTo(
-        content,
-        { y: 36, opacity: 0.86 },
-        { y: -36, opacity: 1, ease: 'none' },
-        0
-      );
+      tl.to(image, {
+        y: -140,
+        scale: 1.03,
+        ease: 'none'
+      }, 0);
 
-      if (image) {
-        tl.fromTo(
-          image,
-          { y: 28, scale: 1.12 },
-          { y: -28, scale: 1.04, ease: 'none' },
-          0
-        );
+      tl.to(content, {
+        y: -52,
+        opacity: 1,
+        ease: 'none'
+      }, 0);
+
+      if (heading) {
+        tl.fromTo(heading, {
+          y: 28,
+          opacity: 0.75
+        }, {
+          y: -10,
+          opacity: 1,
+          ease: 'none'
+        }, 0);
+      }
+
+      if (text) {
+        tl.fromTo(text, {
+          y: 22,
+          opacity: 0.72
+        }, {
+          y: -8,
+          opacity: 1,
+          ease: 'none'
+        }, 0.02);
+      }
+
+      if (button) {
+        tl.fromTo(button, {
+          y: 18,
+          opacity: 0.7
+        }, {
+          y: -6,
+          opacity: 1,
+          ease: 'none'
+        }, 0.04);
       }
     });
 

@@ -1683,8 +1683,6 @@
 {%- liquid
   assign sid = section.id
   assign heading = section.settings.heading
-  assign heading_lead = section.settings.heading_lead
-  assign heading_accent = section.settings.heading_accent
   assign subtitle = section.settings.subtitle | strip
   if subtitle == '-'
     assign subtitle = ''
@@ -1871,27 +1869,20 @@
   }
 
   #scroll-{{ sid }} .ps-title {
-    font-family: 'Cormorant Garamond', 'Georgia', serif;
-    font-weight: 600;
     margin: 0;
-    line-height: 1.04;
+    font-family: "Bethany Elingston", var(--font-heading-family), Georgia, serif;
+    font-weight: 400;
+    font-style: normal;
+    line-height: 1;
     letter-spacing: 0;
+    text-align: center;
     text-wrap: balance;
-    color: var(--ps-head);
-    font-size: var(--ps-title-d);
-  }
-
-  #scroll-{{ sid }} .ps-title--plain {
-    color: var(--ps-head);
-  }
-
-  #scroll-{{ sid }} .ps-title__lead {
-    color: var(--ps-head);
-  }
-
-  #scroll-{{ sid }} .ps-title__accent {
-    color: var(--ps-accent);
-    margin-left: 0.1em;
+    font-size: 70px;
+    background: linear-gradient(270.6deg, #A87E0A 9.74%, #000000 71.76%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
   }
 
   #scroll-{{ sid }} .ps-ornament {
@@ -2091,8 +2082,10 @@
     }
 
     #scroll-{{ sid }} .ps-title {
-      font-size: var(--ps-title-m);
-      line-height: 1.1;
+      font-size: 36px;
+      line-height: 1;
+      letter-spacing: 0;
+      text-align: center;
     }
 
     #scroll-{{ sid }} .ps-ornament {

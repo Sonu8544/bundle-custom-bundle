@@ -1,4 +1,4 @@
-{% comment %} {% liquid
+{% comment %} {% comment %} {% liquid
   assign sid = 'ppbs-' | append: section.id
   assign speed = section.settings.animation_speed
   if speed == 'slow'
@@ -2733,4 +2733,753 @@
     }
   ]
 }
+{% endschema %} {% endcomment %}
+
+
+{%- comment -%}
+  ============================================================
+  RARE BOOK SHOWCASE
+  Parallax slider section with countdown timer
+  Place this file in: /sections/rare-book-showcase.liquid
+  ============================================================
+{%- endcomment -%}
+
+<section
+  class="rb-showcase"
+  id="rb-{{ section.id }}"
+  data-rb-root
+  style="
+    --rb-bg: {{ section.settings.bg_color }};
+    --rb-glow: {{ section.settings.glow_color }};
+    --rb-text: {{ section.settings.text_color }};
+    --rb-muted: {{ section.settings.muted_color }};
+    --rb-accent-1: {{ section.settings.accent_color_1 }};
+    --rb-accent-2: {{ section.settings.accent_color_2 }};
+    --rb-min-height: {{ section.settings.min_height }}vh;
+  "
+>
+  <div class="rb-showcase__glow" aria-hidden="true"></div>
+
+  <div class="rb-showcase__track" data-rb-track>
+    {%- for block in section.blocks -%}
+      <article
+        class="rb-slide{% if forloop.first %} is-active{% endif %}"
+        data-rb-slide
+        data-rb-index="{{ forloop.index0 }}"
+        {% if block.settings.end_date != blank %}data-rb-end="{{ block.settings.end_date }}"{% endif %}
+        {{ block.shopify_attributes }}
+      >
+        <div class="rb-slide__content">
+          {%- if block.settings.badge != blank -%}
+            <span class="rb-badge">{{ block.settings.badge }}</span>
+          {%- endif -%}
+
+          {%- if block.settings.title != blank -%}
+            <h2 class="rb-title">{{ block.settings.title }}</h2>
+          {%- endif -%}
+
+          {%- if block.settings.description != blank -%}
+            <p class="rb-description">{{ block.settings.description }}</p>
+          {%- endif -%}
+
+          {%- if block.settings.year != blank or block.settings.binding != blank -%}
+            <dl class="rb-meta">
+              {%- if block.settings.year != blank -%}
+                <div class="rb-meta__item">
+                  <dt class="rb-meta__label">{{ block.settings.year_label }}</dt>
+                  <dd class="rb-meta__value">{{ block.settings.year }}</dd>
+                </div>
+              {%- endif -%}
+              {%- if block.settings.binding != blank -%}
+                <div class="rb-meta__item">
+                  <dt class="rb-meta__label">{{ block.settings.binding_label }}</dt>
+                  <dd class="rb-meta__value">{{ block.settings.binding }}</dd>
+                </div>
+              {%- endif -%}
+            </dl>
+          {%- endif -%}
+
+          {%- if block.settings.end_date != blank -%}
+            <div class="rb-countdown" data-rb-countdown>
+              <span class="rb-countdown__label">{{ block.settings.countdown_label }}</span>
+              <div class="rb-countdown__timer" role="timer" aria-live="polite">
+                <div class="rb-countdown__unit">
+                  <span class="rb-countdown__value" data-rb-hours>00</span>
+                  <span class="rb-countdown__name">Hours</span>
+                </div>
+                <span class="rb-countdown__sep" aria-hidden="true">:</span>
+                <div class="rb-countdown__unit">
+                  <span class="rb-countdown__value" data-rb-minutes>00</span>
+                  <span class="rb-countdown__name">Minutes</span>
+                </div>
+                <span class="rb-countdown__sep" aria-hidden="true">:</span>
+                <div class="rb-countdown__unit">
+                  <span class="rb-countdown__value" data-rb-seconds>00</span>
+                  <span class="rb-countdown__name">Seconds</span>
+                </div>
+              </div>
+            </div>
+          {%- endif -%}
+
+          {%- if block.settings.button_text != blank -%}
+            <a
+              href="{{ block.settings.button_link | default: '#' }}"
+              class="rb-button"
+            >
+              <span>{{ block.settings.button_text }}</span>
+            </a>
+          {%- endif -%}
+        </div>
+
+        <div class="rb-slide__visual" data-rb-parallax>
+          <div class="rb-slide__visual-inner" data-rb-tilt>
+            {%- if block.settings.image != blank -%}
+              {{
+                block.settings.image
+                | image_url: width: 1400
+                | image_tag:
+                  loading: 'lazy',
+                  class: 'rb-slide__image',
+                  widths: '400, 600, 800, 1000, 1200, 1400',
+                  sizes: '(min-width: 750px) 50vw, 90vw',
+                  alt: block.settings.image.alt | default: block.settings.title
+              }}
+            {%- else -%}
+              <div class="rb-slide__placeholder">
+                {{ 'lifestyle-1' | placeholder_svg_tag: 'rb-slide__placeholder-svg' }}
+              </div>
+            {%- endif -%}
+          </div>
+        </div>
+      </article>
+    {%- else -%}
+      <div class="rb-empty">Add a slide block from the theme editor to get started.</div>
+    {%- endfor -%}
+  </div>
+
+  {%- if section.blocks.size > 0 -%}
+    <div class="rb-controls">
+      <span class="rb-counter" aria-hidden="true">
+        <span data-rb-current>1</span> / <span data-rb-total>{{ section.blocks.size }}</span>
+      </span>
+      <div class="rb-progress" aria-hidden="true">
+        <span class="rb-progress__bar" data-rb-progress></span>
+      </div>
+      <div class="rb-nav">
+        <button class="rb-nav__btn" data-rb-prev aria-label="Previous slide">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M19 12H5M5 12l6-6M5 12l6 6"/></svg>
+        </button>
+        <button class="rb-nav__btn" data-rb-next aria-label="Next slide">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M14 6l6 6M14 18l6-6"/></svg>
+        </button>
+      </div>
+    </div>
+  {%- endif -%}
+</section>
+
+<style>
+  #rb-{{ section.id }} {
+    --rb-spacing: clamp(1.5rem, 4vw, 4rem);
+    --rb-radius: 999px;
+
+    position: relative;
+    overflow: hidden;
+    background: var(--rb-bg);
+    color: var(--rb-text);
+    min-height: var(--rb-min-height);
+    padding: var(--rb-spacing);
+    font-family: var(--font-body-family, 'Inter', system-ui, sans-serif);
+  }
+
+  #rb-{{ section.id }} *,
+  #rb-{{ section.id }} *::before,
+  #rb-{{ section.id }} *::after { box-sizing: border-box; }
+
+  #rb-{{ section.id }} .rb-showcase__glow {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse 60% 70% at 70% 50%, var(--rb-glow) 0%, transparent 60%);
+    pointer-events: none;
+    z-index: 0;
+    opacity: .9;
+    transition: opacity .6s ease;
+  }
+
+  #rb-{{ section.id }} .rb-showcase__track {
+    position: relative;
+    z-index: 1;
+    display: grid;
+  }
+
+  #rb-{{ section.id }} .rb-slide {
+    grid-column: 1;
+    grid-row: 1;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--rb-spacing);
+    align-items: center;
+    min-height: calc(var(--rb-min-height) - var(--rb-spacing) * 2);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(20px);
+    transition: opacity .8s ease, transform .8s ease, visibility .8s;
+    pointer-events: none;
+  }
+  #rb-{{ section.id }} .rb-slide.is-active {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+    pointer-events: auto;
+  }
+
+  #rb-{{ section.id }} .rb-slide__content {
+    display: flex;
+    flex-direction: column;
+    gap: 1.75rem;
+    max-width: 540px;
+    padding: 1rem 0;
+  }
+
+  #rb-{{ section.id }} .rb-badge {
+    display: inline-block;
+    align-self: flex-start;
+    padding: .55rem 1.25rem;
+    font-size: .72rem;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    font-weight: 500;
+    color: var(--rb-text);
+    background: linear-gradient(135deg, color-mix(in srgb, var(--rb-accent-1) 35%, transparent), color-mix(in srgb, var(--rb-accent-2) 25%, transparent));
+    border: 1px solid color-mix(in srgb, var(--rb-accent-1) 50%, transparent);
+    border-radius: 4px;
+  }
+
+  #rb-{{ section.id }} .rb-title {
+    margin: 0;
+    font-family: var(--font-heading-family, 'Playfair Display', Georgia, serif);
+    font-weight: 400;
+    font-size: clamp(2.25rem, 4.8vw, 4.25rem);
+    line-height: 1.05;
+    letter-spacing: -.01em;
+    color: var(--rb-text);
+  }
+
+  #rb-{{ section.id }} .rb-description {
+    margin: 0;
+    font-size: clamp(.95rem, 1.1vw, 1.05rem);
+    line-height: 1.6;
+    color: var(--rb-muted);
+    max-width: 480px;
+  }
+
+  #rb-{{ section.id }} .rb-meta {
+    display: flex;
+    gap: 3rem;
+    margin: 0;
+  }
+  #rb-{{ section.id }} .rb-meta__item { display: flex; flex-direction: column; gap: .35rem; }
+  #rb-{{ section.id }} .rb-meta__label {
+    font-size: .8rem;
+    color: var(--rb-muted);
+    font-weight: 400;
+    margin: 0;
+  }
+  #rb-{{ section.id }} .rb-meta__value {
+    font-size: 1.05rem;
+    color: var(--rb-text);
+    margin: 0;
+  }
+
+  #rb-{{ section.id }} .rb-countdown { display: flex; flex-direction: column; gap: .65rem; }
+  #rb-{{ section.id }} .rb-countdown__label {
+    font-size: .8rem;
+    color: var(--rb-muted);
+  }
+  #rb-{{ section.id }} .rb-countdown__timer {
+    display: flex;
+    align-items: flex-start;
+    gap: .65rem;
+    font-variant-numeric: tabular-nums;
+  }
+  #rb-{{ section.id }} .rb-countdown__unit { display: flex; flex-direction: column; align-items: flex-start; gap: .25rem; }
+  #rb-{{ section.id }} .rb-countdown__value {
+    font-family: var(--font-heading-family, 'Playfair Display', Georgia, serif);
+    font-size: clamp(2rem, 3.5vw, 3rem);
+    font-weight: 400;
+    line-height: 1;
+    color: var(--rb-accent-2);
+    letter-spacing: -.02em;
+  }
+  #rb-{{ section.id }} .rb-countdown__name {
+    font-size: .7rem;
+    letter-spacing: .15em;
+    text-transform: uppercase;
+    color: var(--rb-text);
+  }
+  #rb-{{ section.id }} .rb-countdown__sep {
+    font-family: var(--font-heading-family, 'Playfair Display', Georgia, serif);
+    font-size: clamp(2rem, 3.5vw, 3rem);
+    color: var(--rb-accent-2);
+    line-height: 1;
+    padding-top: .05em;
+  }
+
+  #rb-{{ section.id }} .rb-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    align-self: flex-start;
+    padding: 1.05rem 2.75rem;
+    min-width: 220px;
+    font-size: .8rem;
+    font-weight: 700;
+    letter-spacing: .15em;
+    text-transform: uppercase;
+    color: #1a1a1a;
+    text-decoration: none;
+    border-radius: var(--rb-radius);
+    background: linear-gradient(180deg, var(--rb-accent-1) 0%, var(--rb-accent-2) 50%, var(--rb-accent-1) 100%);
+    box-shadow: 0 1px 0 rgba(255,255,255,.4) inset, 0 -1px 0 rgba(0,0,0,.2) inset, 0 8px 24px -8px color-mix(in srgb, var(--rb-accent-2) 50%, transparent);
+    transition: transform .3s ease, box-shadow .3s ease;
+    cursor: pointer;
+  }
+  #rb-{{ section.id }} .rb-button:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 1px 0 rgba(255,255,255,.5) inset, 0 -1px 0 rgba(0,0,0,.2) inset, 0 12px 32px -8px color-mix(in srgb, var(--rb-accent-2) 60%, transparent);
+  }
+
+  #rb-{{ section.id }} .rb-slide__visual {
+    position: relative;
+    height: 100%;
+    min-height: 500px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    perspective: 1500px;
+  }
+  #rb-{{ section.id }} .rb-slide__visual-inner {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transform-style: preserve-3d;
+    transition: transform .4s cubic-bezier(.2, .9, .3, 1);
+    will-change: transform;
+  }
+  #rb-{{ section.id }} .rb-slide__image {
+    max-width: 100%;
+    max-height: 80vh;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    filter: drop-shadow(0 40px 60px rgba(0,0,0,.5));
+    transform: rotate(8deg);
+  }
+  #rb-{{ section.id }} .rb-slide__placeholder { width: 70%; opacity: .3; }
+
+  #rb-{{ section.id }} .rb-controls {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    margin-top: 2rem;
+  }
+  #rb-{{ section.id }} .rb-counter {
+    font-size: .85rem;
+    color: var(--rb-text);
+    font-variant-numeric: tabular-nums;
+    min-width: 2.5rem;
+  }
+  #rb-{{ section.id }} .rb-progress {
+    width: 90px;
+    height: 1px;
+    background: color-mix(in srgb, var(--rb-text) 25%, transparent);
+    overflow: hidden;
+  }
+  #rb-{{ section.id }} .rb-progress__bar {
+    display: block;
+    height: 100%;
+    width: 25%;
+    background: var(--rb-text);
+    transition: width .6s cubic-bezier(.2, .9, .3, 1);
+  }
+  #rb-{{ section.id }} .rb-nav { display: flex; gap: .25rem; margin-left: .5rem; }
+  #rb-{{ section.id }} .rb-nav__btn {
+    width: 36px; height: 36px;
+    display: inline-flex; align-items: center; justify-content: center;
+    background: transparent;
+    border: none;
+    color: var(--rb-text);
+    cursor: pointer;
+    transition: opacity .2s ease, transform .2s ease;
+    opacity: .65;
+    padding: 0;
+  }
+  #rb-{{ section.id }} .rb-nav__btn:hover { opacity: 1; transform: translateX(2px); }
+  #rb-{{ section.id }} .rb-nav__btn[data-rb-prev]:hover { transform: translateX(-2px); }
+  #rb-{{ section.id }} .rb-nav__btn svg { width: 22px; height: 22px; }
+
+  #rb-{{ section.id }} .rb-empty {
+    padding: 4rem;
+    text-align: center;
+    color: var(--rb-muted);
+    border: 1px dashed color-mix(in srgb, var(--rb-text) 20%, transparent);
+    border-radius: 8px;
+  }
+
+  /* ============ MOBILE ============ */
+  @media (max-width: 749px) {
+    #rb-{{ section.id }} {
+      padding: 1.25rem;
+    }
+    #rb-{{ section.id }} .rb-showcase__glow {
+      background: radial-gradient(ellipse 80% 50% at 50% 25%, var(--rb-glow) 0%, transparent 60%);
+    }
+    #rb-{{ section.id }} .rb-slide {
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+      min-height: 0;
+    }
+    #rb-{{ section.id }} .rb-slide__visual {
+      order: -1;
+      min-height: 0;
+      padding: 1rem 0;
+    }
+    #rb-{{ section.id }} .rb-slide__image {
+      max-height: 50vh;
+      transform: rotate(0deg);
+    }
+    #rb-{{ section.id }} .rb-slide__content {
+      gap: 1.25rem;
+      padding: 0;
+    }
+    #rb-{{ section.id }} .rb-meta { gap: 2.5rem; }
+    #rb-{{ section.id }} .rb-button { width: 100%; min-width: 0; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    #rb-{{ section.id }} .rb-slide,
+    #rb-{{ section.id }} .rb-slide__visual-inner,
+    #rb-{{ section.id }} .rb-progress__bar { transition: none !important; }
+  }
+</style>
+
+<script>
+(function() {
+  const root = document.getElementById('rb-{{ section.id }}');
+  if (!root) return;
+
+  const track = root.querySelector('[data-rb-track]');
+  const slides = Array.from(root.querySelectorAll('[data-rb-slide]'));
+  const prevBtn = root.querySelector('[data-rb-prev]');
+  const nextBtn = root.querySelector('[data-rb-next]');
+  const currentEl = root.querySelector('[data-rb-current]');
+  const totalEl = root.querySelector('[data-rb-total]');
+  const progressEl = root.querySelector('[data-rb-progress]');
+  const total = slides.length;
+  if (total === 0) return;
+
+  let activeIndex = 0;
+  let countdownTimer = null;
+  let autoplayTimer = null;
+  const AUTOPLAY_MS = {{ section.settings.autoplay_seconds | times: 1000 | default: 0 }};
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // ---------- Slide change ----------
+  function goTo(index) {
+    activeIndex = ((index % total) + total) % total;
+    slides.forEach((s, i) => s.classList.toggle('is-active', i === activeIndex));
+    if (currentEl) currentEl.textContent = activeIndex + 1;
+    if (progressEl) progressEl.style.width = ((activeIndex + 1) / total * 100) + '%';
+    startCountdown();
+  }
+  function next() { goTo(activeIndex + 1); }
+  function prev() { goTo(activeIndex - 1); }
+
+  prevBtn && prevBtn.addEventListener('click', () => { prev(); resetAutoplay(); });
+  nextBtn && nextBtn.addEventListener('click', () => { next(); resetAutoplay(); });
+
+  // Keyboard
+  root.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowLeft') { prev(); resetAutoplay(); }
+    if (e.key === 'ArrowRight') { next(); resetAutoplay(); }
+  });
+  root.tabIndex = 0;
+
+  // Touch swipe
+  let touchStartX = 0;
+  root.addEventListener('touchstart', (e) => { touchStartX = e.touches[0].clientX; }, { passive: true });
+  root.addEventListener('touchend', (e) => {
+    const diff = e.changedTouches[0].clientX - touchStartX;
+    if (Math.abs(diff) > 50) { diff > 0 ? prev() : next(); resetAutoplay(); }
+  }, { passive: true });
+
+  // ---------- Countdown ----------
+  function startCountdown() {
+    if (countdownTimer) clearInterval(countdownTimer);
+    const slide = slides[activeIndex];
+    const endRaw = slide.getAttribute('data-rb-end');
+    if (!endRaw) return;
+    const end = new Date(endRaw).getTime();
+    if (isNaN(end)) return;
+
+    const hEl = slide.querySelector('[data-rb-hours]');
+    const mEl = slide.querySelector('[data-rb-minutes]');
+    const sEl = slide.querySelector('[data-rb-seconds]');
+    if (!hEl || !mEl || !sEl) return;
+
+    function tick() {
+      const diff = end - Date.now();
+      if (diff <= 0) {
+        hEl.textContent = mEl.textContent = sEl.textContent = '00';
+        clearInterval(countdownTimer);
+        return;
+      }
+      const totalHours = Math.floor(diff / 3600000);
+      const minutes = Math.floor((diff % 3600000) / 60000);
+      const seconds = Math.floor((diff % 60000) / 1000);
+      hEl.textContent = String(totalHours).padStart(2, '0');
+      mEl.textContent = String(minutes).padStart(2, '0');
+      sEl.textContent = String(seconds).padStart(2, '0');
+    }
+    tick();
+    countdownTimer = setInterval(tick, 1000);
+  }
+
+  // ---------- Autoplay ----------
+  function startAutoplay() {
+    if (AUTOPLAY_MS > 0 && total > 1) {
+      autoplayTimer = setInterval(next, AUTOPLAY_MS);
+    }
+  }
+  function resetAutoplay() {
+    if (autoplayTimer) clearInterval(autoplayTimer);
+    startAutoplay();
+  }
+  root.addEventListener('mouseenter', () => autoplayTimer && clearInterval(autoplayTimer));
+  root.addEventListener('mouseleave', startAutoplay);
+
+  // ---------- Parallax (mouse tilt + scroll) ----------
+  if (!reducedMotion) {
+    const tilters = root.querySelectorAll('[data-rb-tilt]');
+    const isDesktop = window.matchMedia('(min-width: 750px)').matches;
+
+    if (isDesktop) {
+      root.addEventListener('mousemove', (e) => {
+        const rect = root.getBoundingClientRect();
+        const x = (e.clientX - rect.left) / rect.width - 0.5;
+        const y = (e.clientY - rect.top) / rect.height - 0.5;
+        tilters.forEach(t => {
+          t.style.transform = `rotateY(${x * 6}deg) rotateX(${-y * 6}deg) translateZ(0)`;
+        });
+      });
+      root.addEventListener('mouseleave', () => {
+        tilters.forEach(t => { t.style.transform = ''; });
+      });
+    }
+
+    // Scroll parallax
+    const parallaxEls = root.querySelectorAll('[data-rb-parallax]');
+    let ticking = false;
+    function onScroll() {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(() => {
+        const rect = root.getBoundingClientRect();
+        const vh = window.innerHeight;
+        const progress = (vh - rect.top) / (vh + rect.height);
+        const offset = (progress - 0.5) * 60;
+        parallaxEls.forEach(el => {
+          el.style.transform = `translate3d(0, ${offset}px, 0)`;
+        });
+        ticking = false;
+      });
+    }
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+  }
+
+  // Init
+  goTo(0);
+  startAutoplay();
+})();
+</script>
+
+{% schema %}
+{
+  "name": "Rare Book Showcase",
+  "tag": "section",
+  "class": "section-rare-book",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "min_height",
+      "label": "Section min height (vh)",
+      "min": 60,
+      "max": 100,
+      "step": 5,
+      "default": 90,
+      "unit": "vh"
+    },
+    {
+      "type": "range",
+      "id": "autoplay_seconds",
+      "label": "Autoplay (0 = off)",
+      "min": 0,
+      "max": 15,
+      "step": 1,
+      "default": 0,
+      "unit": "s"
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Background",
+      "default": "#0A0A05"
+    },
+    {
+      "type": "color",
+      "id": "glow_color",
+      "label": "Glow color",
+      "default": "#5A4E10"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "muted_color",
+      "label": "Muted text",
+      "default": "#A8A89C"
+    },
+    {
+      "type": "color",
+      "id": "accent_color_1",
+      "label": "Accent 1 (gold light)",
+      "default": "#E8D08A"
+    },
+    {
+      "type": "color",
+      "id": "accent_color_2",
+      "label": "Accent 2 (gold dark)",
+      "default": "#A88A3F"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "slide",
+      "name": "Slide",
+      "limit": 12,
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Book image (transparent PNG works best)"
+        },
+        {
+          "type": "text",
+          "id": "badge",
+          "label": "Badge",
+          "default": "Exclusive"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "default": "Voyage au centre de la terre"
+        },
+        {
+          "type": "textarea",
+          "id": "description",
+          "label": "Description",
+          "default": "Welcome to Rare Biblio, the premier destination for bibliophiles and book lovers who appreciate."
+        },
+        {
+          "type": "header",
+          "content": "Metadata"
+        },
+        {
+          "type": "text",
+          "id": "year_label",
+          "label": "Year label",
+          "default": "Year"
+        },
+        {
+          "type": "text",
+          "id": "year",
+          "label": "Year value",
+          "default": "1962, First Print"
+        },
+        {
+          "type": "text",
+          "id": "binding_label",
+          "label": "Binding label",
+          "default": "Binding"
+        },
+        {
+          "type": "text",
+          "id": "binding",
+          "label": "Binding value",
+          "default": "Quarter Leather"
+        },
+        {
+          "type": "header",
+          "content": "Countdown"
+        },
+        {
+          "type": "text",
+          "id": "countdown_label",
+          "label": "Countdown label",
+          "default": "Reveals In"
+        },
+        {
+          "type": "text",
+          "id": "end_date",
+          "label": "End date/time",
+          "info": "Format: YYYY-MM-DDTHH:MM:SS (e.g. 2026-05-01T12:00:00). Leave blank to hide."
+        },
+        {
+          "type": "header",
+          "content": "Button"
+        },
+        {
+          "type": "text",
+          "id": "button_text",
+          "label": "Button text",
+          "default": "Notify Me"
+        },
+        {
+          "type": "url",
+          "id": "button_link",
+          "label": "Button link"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Rare Book Showcase",
+      "blocks": [
+        { "type": "slide" },
+        { "type": "slide" },
+        { "type": "slide" },
+        { "type": "slide" }
+      ]
+    }
+  ]
+}
 {% endschema %}
+

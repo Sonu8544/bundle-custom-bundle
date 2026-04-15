@@ -175,6 +175,131 @@
         "anim_duration": 800
       }
     },
+    "test_C3UTRH": {
+      "type": "test",
+      "blocks": {
+        "slide_qBiKkC": {
+          "type": "slide",
+          "settings": {
+            "image": "shopify://shop_images/b00af6fdf620a1be3010ebf744724ae98aa85b08_1.png",
+            "image_scale": 100,
+            "tilt_desktop": 0,
+            "tilt_tablet": 0,
+            "tilt_mobile": 0,
+            "badge": "Exclusive",
+            "title": "Voyage au centre de la terre",
+            "description": "Welcome to Rare Biblio, the premier destination for bibliophiles and book lovers who appreciate.",
+            "year_label": "Year",
+            "year": "1962, First Print",
+            "binding_label": "Binding",
+            "binding": "Quarter Leather",
+            "show_countdown": true,
+            "countdown_label": "Reveals In",
+            "end_date": "2026-05--01T12:00:00",
+            "placeholder_hours": "12",
+            "placeholder_minutes": "25",
+            "placeholder_seconds": "45",
+            "button_text": "Notify Me",
+            "button_link": ""
+          }
+        },
+        "slide_dgtt7f": {
+          "type": "slide",
+          "settings": {
+            "image": "shopify://shop_images/b00af6fdf620a1be3010ebf744724ae98aa85b08_1.png",
+            "image_scale": 100,
+            "tilt_desktop": 0,
+            "tilt_tablet": 0,
+            "tilt_mobile": 0,
+            "badge": "Exclusive",
+            "title": "Voyage au centre de la terre",
+            "description": "Welcome to Rare Biblio, the premier destination for bibliophiles and book lovers who appreciate.",
+            "year_label": "Year",
+            "year": "1962, First Print",
+            "binding_label": "Binding",
+            "binding": "Quarter Leather",
+            "show_countdown": true,
+            "countdown_label": "Reveals In",
+            "end_date": "2026-05--01T12:00:00",
+            "placeholder_hours": "12",
+            "placeholder_minutes": "25",
+            "placeholder_seconds": "45",
+            "button_text": "Notify Me",
+            "button_link": ""
+          }
+        },
+        "slide_UERDLd": {
+          "type": "slide",
+          "settings": {
+            "image": "shopify://shop_images/b00af6fdf620a1be3010ebf744724ae98aa85b08_1.png",
+            "image_scale": 100,
+            "tilt_desktop": 0,
+            "tilt_tablet": 0,
+            "tilt_mobile": 0,
+            "badge": "Exclusive",
+            "title": "Voyage au centre de la terre",
+            "description": "Welcome to Rare Biblio, the premier destination for bibliophiles and book lovers who appreciate.",
+            "year_label": "Year",
+            "year": "1962, First Print",
+            "binding_label": "Binding",
+            "binding": "Quarter Leather",
+            "show_countdown": false,
+            "countdown_label": "Reveals In",
+            "end_date": "2026-05--01T12:00:00",
+            "placeholder_hours": "12",
+            "placeholder_minutes": "25",
+            "placeholder_seconds": "45",
+            "button_text": "Notify Me",
+            "button_link": ""
+          }
+        }
+      },
+      "block_order": [
+        "slide_qBiKkC",
+        "slide_dgtt7f",
+        "slide_UERDLd"
+      ],
+      "name": "testing slider",
+      "settings": {
+        "scroll_driven": true,
+        "show_controls": true,
+        "autoplay_seconds": 0,
+        "height_desktop": 100,
+        "height_tablet": 100,
+        "height_mobile": 110,
+        "transition_style": "cinematic",
+        "parallax_intensity": 50,
+        "content_stagger": 80,
+        "enable_mouse_tilt": true,
+        "mouse_tilt_intensity": 60,
+        "shadow_strength": 1,
+        "media_x_desk": 52,
+        "media_w_desk": 42,
+        "media_top_desk": 5,
+        "media_x_tab": 50,
+        "media_w_tab": 48,
+        "media_top_tab": 8,
+        "media_w_mob": 60,
+        "media_top_mob": 80,
+        "bg_color": "#0a0a05",
+        "radial_start": "#4d3c04",
+        "radial_end": "#0a0807",
+        "radial_x": 72,
+        "radial_y": 59,
+        "linear_start": "#060504",
+        "linear_mid": "#14110c",
+        "linear_angle": 168,
+        "show_vignette": true,
+        "show_noise": true,
+        "show_beams": true,
+        "show_halo": true,
+        "glow_opacity": 0.7,
+        "text_color": "#ffffff",
+        "accent_color": "#bb911f",
+        "content_max_width": 580,
+        "button_image": "shopify://shop_images/f89b1c50a8a368abe48fc6793fd85a8999a3c0ca_7991f07a-d217-4f4e-bd7a-f6113fc84bf9.png"
+      }
+    },
     "premium_parallax_book_slider_A7wTcq": {
       "type": "premium-parallax-book-slider",
       "blocks": {
@@ -443,131 +568,6 @@
         "vignette_opacity": 100,
         "content_fade_on_play": 0
       }
-    },
-    "test_C3UTRH": {
-      "type": "test",
-      "blocks": {
-        "slide_qBiKkC": {
-          "type": "slide",
-          "settings": {
-            "image": "shopify://shop_images/b00af6fdf620a1be3010ebf744724ae98aa85b08_1.png",
-            "image_scale": 100,
-            "tilt_desktop": 0,
-            "tilt_tablet": 0,
-            "tilt_mobile": 0,
-            "badge": "Exclusive",
-            "title": "Voyage au centre de la terre",
-            "description": "Welcome to Rare Biblio, the premier destination for bibliophiles and book lovers who appreciate.",
-            "year_label": "Year",
-            "year": "1962, First Print",
-            "binding_label": "Binding",
-            "binding": "Quarter Leather",
-            "show_countdown": true,
-            "countdown_label": "Reveals In",
-            "end_date": "2026-05--01T12:00:00",
-            "placeholder_hours": "12",
-            "placeholder_minutes": "25",
-            "placeholder_seconds": "45",
-            "button_text": "Notify Me",
-            "button_link": ""
-          }
-        },
-        "slide_dgtt7f": {
-          "type": "slide",
-          "settings": {
-            "image": "shopify://shop_images/b00af6fdf620a1be3010ebf744724ae98aa85b08_1.png",
-            "image_scale": 100,
-            "tilt_desktop": 0,
-            "tilt_tablet": 6,
-            "tilt_mobile": 0,
-            "badge": "Exclusive",
-            "title": "Voyage au centre de la terre",
-            "description": "Welcome to Rare Biblio, the premier destination for bibliophiles and book lovers who appreciate.",
-            "year_label": "Year",
-            "year": "1962, First Print",
-            "binding_label": "Binding",
-            "binding": "Quarter Leather",
-            "show_countdown": true,
-            "countdown_label": "Reveals In",
-            "end_date": "2026-05--01T12:00:00",
-            "placeholder_hours": "12",
-            "placeholder_minutes": "25",
-            "placeholder_seconds": "45",
-            "button_text": "Notify Me",
-            "button_link": ""
-          }
-        },
-        "slide_UERDLd": {
-          "type": "slide",
-          "settings": {
-            "image": "shopify://shop_images/b00af6fdf620a1be3010ebf744724ae98aa85b08_1.png",
-            "image_scale": 100,
-            "tilt_desktop": 0,
-            "tilt_tablet": 0,
-            "tilt_mobile": 0,
-            "badge": "Exclusive",
-            "title": "Voyage au centre de la terre",
-            "description": "Welcome to Rare Biblio, the premier destination for bibliophiles and book lovers who appreciate.",
-            "year_label": "Year",
-            "year": "1962, First Print",
-            "binding_label": "Binding",
-            "binding": "Quarter Leather",
-            "show_countdown": true,
-            "countdown_label": "Reveals In",
-            "end_date": "2026-05--01T12:00:00",
-            "placeholder_hours": "12",
-            "placeholder_minutes": "25",
-            "placeholder_seconds": "45",
-            "button_text": "Notify Me",
-            "button_link": ""
-          }
-        }
-      },
-      "block_order": [
-        "slide_qBiKkC",
-        "slide_dgtt7f",
-        "slide_UERDLd"
-      ],
-      "name": "testing slider",
-      "settings": {
-        "scroll_driven": true,
-        "show_controls": true,
-        "autoplay_seconds": 0,
-        "height_desktop": 100,
-        "height_tablet": 100,
-        "height_mobile": 110,
-        "transition_style": "cinematic",
-        "parallax_intensity": 50,
-        "content_stagger": 80,
-        "enable_mouse_tilt": true,
-        "mouse_tilt_intensity": 60,
-        "shadow_strength": 1,
-        "media_x_desk": 52,
-        "media_w_desk": 42,
-        "media_top_desk": 5,
-        "media_x_tab": 50,
-        "media_w_tab": 48,
-        "media_top_tab": 8,
-        "media_w_mob": 60,
-        "media_top_mob": 80,
-        "bg_color": "#0a0a05",
-        "radial_start": "#4d3c04",
-        "radial_end": "#0a0807",
-        "radial_x": 72,
-        "radial_y": 59,
-        "linear_start": "#060504",
-        "linear_mid": "#14110c",
-        "linear_angle": 168,
-        "show_vignette": true,
-        "show_noise": true,
-        "show_beams": true,
-        "show_halo": true,
-        "glow_opacity": 0.7,
-        "text_color": "#ffffff",
-        "accent_color": "#bb911f",
-        "content_max_width": 580,
-        "button_image": "shopify://shop_images/f89b1c50a8a368abe48fc6793fd85a8999a3c0ca_7991f07a-d217-4f4e-bd7a-f6113fc84bf9.png"
-      }
     }
   },
   "order": [
@@ -575,10 +575,10 @@
     "scroll_letter_reveal_ybcf4p",
     "rare_biblio_scroll_zwaez3",
     "rare_biblio_heading_H4fFNk",
+    "test_C3UTRH",
     "premium_parallax_book_slider_A7wTcq",
     "behind_the_book_CkGUTT",
     "rare_biblio_parallax_showcase_njT6NY",
-    "how_we_build_video_VVptjE",
-    "test_C3UTRH"
+    "how_we_build_video_VVptjE"
   ]
 }

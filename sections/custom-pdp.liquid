@@ -1676,7 +1676,7 @@
     });
   }
 
-  
+
   var sectionId = '{{ section.id }}';
   var section = document.getElementById('exclusive-book-product-' + sectionId);
   if (!section) return;
@@ -2073,7 +2073,7 @@
       }
     }
   }
-
+{% comment %} temp
   function syncVariantState() {
     var variant = findVariantByOptions();
     if (!variant) return;
@@ -2081,6 +2081,31 @@
     if (cartBtn) {
       cartBtn.setAttribute('data-variant-id', variant.id);
       cartBtn.disabled = !variant.available || isAdding;
+      cartBtn.textContent = variant.available ? buttonDefaultText : 'Sold out';
+      cartBtn.setAttribute('type', 'button');
+    }
+
+    if (productForm) {
+      var idInput = productForm.querySelector('input[name="id"]');
+      if (idInput) idInput.value = variant.id;
+    }
+
+    updateDisplayedPrice(variant);
+  } {% endcomment %}
+
+    function syncVariantState() {
+    var variant = findVariantByOptions();
+    if (!variant) return;
+
+    if (cartBtn) {
+      cartBtn.setAttribute('data-variant-id', variant.id);
+
+      if (queueEnabled && !queueGranted) {
+        cartBtn.disabled = true;
+      } else {
+        cartBtn.disabled = !variant.available || isAdding;
+      }
+
       cartBtn.textContent = variant.available ? buttonDefaultText : 'Sold out';
       cartBtn.setAttribute('type', 'button');
     }

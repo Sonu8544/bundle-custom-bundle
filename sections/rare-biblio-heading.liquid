@@ -80,10 +80,11 @@
     margin: 0;
     max-width: var(--rbh-title-max-width);
     width: 100%;
-    font-family: 'Playfair Display', 'Bethany Elingston', var(--font-heading-family), Georgia, serif;
-    font-style: normal;
-    font-weight: 600;
-    font-size: var(--rbh-title-size);
+    font-family: 'Playfair Display', 'Bethany Elingston', var(--font-heading-family), Georgia, serif !important;
+    font-style: normal !important;
+    font-weight: 600 !important;
+    font-size: var(--rbh-title-size) !important;
+    line-height: 1.12 !important;
     text-align: center;
     letter-spacing: 1px;
     text-wrap: balance;
@@ -97,6 +98,21 @@
     -webkit-text-fill-color: transparent;
     background-clip: text;
     color: transparent;
+  }
+
+  #{{ section_id }} .rbh-section__title *,
+  #{{ section_id }} .rbh-section__title strong,
+  #{{ section_id }} .rbh-section__title em,
+  #{{ section_id }} .rbh-section__title span,
+  #{{ section_id }} .rbh-section__title a,
+  #{{ section_id }} .rbh-section__title br {
+    font-family: inherit !important;
+    font-size: inherit !important;
+    line-height: inherit !important;
+    font-weight: inherit !important;
+    font-style: inherit !important;
+    letter-spacing: inherit !important;
+    color: inherit !important;
   }
 
   #{{ section_id }} .rbh-section__description {

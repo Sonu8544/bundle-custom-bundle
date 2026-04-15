@@ -1,15 +1,16 @@
 {% liquid
-  assign launch_product_id = 7527275135073
+  assign launch_product_handle = 'abc-books'
   assign launch_limit = 250
   assign launch_window_minutes = 5
   assign queue_applies = false
 
-  if product and product.id == launch_product_id
+  if product and product.handle == launch_product_handle
     assign queue_applies = true
   endif
 
   assign current_variant = product.selected_or_first_available_variant
 %}
+
 
 {% if queue_applies %}
 <section id="firebase-launch-queue-{{ section.id }}" class="flq">

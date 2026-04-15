@@ -3202,7 +3202,6 @@
  {% endcomment %}
 
 
-
 {% liquid
   assign section_id = 'rb-parallax-slider-' | append: section.id
 %}
@@ -3238,7 +3237,7 @@
   "
   data-rbps-section
 >
-  <div class="rbps__container">
+  <div class="rbps__stack">
     {% for block in section.blocks %}
       {% liquid
         assign idx_mod = forloop.index0 | modulo: 2
@@ -3257,6 +3256,7 @@
       <article
         class="rbps__slide {% if image_left %}rbps__slide--image-left{% else %}rbps__slide--image-right{% endif %}"
         data-rbps-slide
+        style="z-index: {{ forloop.index }};"
         {{ block.shopify_attributes }}
       >
         <div class="rbps__slide-bg"></div>
@@ -3316,7 +3316,7 @@
 <style>
   #{{ section_id }} {
     position: relative;
-    overflow: hidden;
+    overflow: visible;
     background:
       radial-gradient(77.47% 561.61% at 127.29% 73.12%, rgba(39, 29, 14, 0) 0%, #050504 100%),
       linear-gradient(180deg, var(--rbps-bg-start) 0%, var(--rbps-bg-end) 100%);
@@ -3324,20 +3324,17 @@
     padding-bottom: var(--rbps-padding-bottom);
   }
 
-  #{{ section_id }} .rbps__container {
+  #{{ section_id }} .rbps__stack {
     position: relative;
   }
 
   #{{ section_id }} .rbps__slide {
-    position: relative;
-    min-height: max(92vh, var(--rbps-slide-min-height-desktop));
+    position: sticky;
+    top: 0;
+    min-height: 100vh;
     display: flex;
     align-items: center;
     overflow: hidden;
-  }
-
-  #{{ section_id }} .rbps__slide + .rbps__slide {
-    margin-top: 0;
   }
 
   #{{ section_id }} .rbps__slide-bg {
@@ -3345,10 +3342,10 @@
     inset: 0;
     z-index: 0;
     pointer-events: none;
-    opacity: 0.96;
     background:
       radial-gradient(77.47% 561.61% at 127.29% 73.12%, rgba(39, 29, 14, 0) 0%, #050504 100%),
       linear-gradient(180deg, var(--rbps-bg-start) 0%, var(--rbps-bg-end) 100%);
+    opacity: 1;
   }
 
   #{{ section_id }} .rbps__inner {
@@ -3356,6 +3353,9 @@
     margin: 0 auto;
     position: relative;
     z-index: 1;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
   }
 
   #{{ section_id }} .rbps__slide-grid {
@@ -3365,7 +3365,8 @@
     align-items: center;
     gap: var(--rbps-gap-desktop);
     padding: 56px 32px;
-    min-height: max(92vh, var(--rbps-slide-min-height-desktop));
+    width: 100%;
+    min-height: 100vh;
   }
 
   #{{ section_id }} .rbps__slide--image-left .rbps__media-wrap { order: 1; }
@@ -3397,9 +3398,9 @@
 
   #{{ section_id }} .rbps__image {
     position: absolute;
-    inset: -10%;
-    width: 120%;
-    height: 120%;
+    inset: -12%;
+    width: 124%;
+    height: 124%;
     display: block;
     object-fit: cover;
     object-position: center center;
@@ -3469,7 +3470,7 @@
     max-width: var(--rbps-content-width);
     will-change: transform, opacity;
     transform: translate3d(0, 0, 0);
-    opacity: 0.94;
+    opacity: 0.96;
   }
 
   #{{ section_id }} .rbps__heading {
@@ -3521,15 +3522,16 @@
   }
 
   @media screen and (max-width: 749px) {
-    #{{ section_id }} .rbps__slide {
-      min-height: max(88vh, var(--rbps-slide-min-height-mobile));
+    #{{ section_id }} .rbps__slide,
+    #{{ section_id }} .rbps__inner,
+    #{{ section_id }} .rbps__slide-grid {
+      min-height: 100svh;
     }
 
     #{{ section_id }} .rbps__slide-grid {
       grid-template-columns: 1fr;
       gap: var(--rbps-gap-mobile);
       padding: 32px 18px;
-      min-height: max(88vh, var(--rbps-slide-min-height-mobile));
     }
 
     #{{ section_id }} .rbps__slide--image-left .rbps__content-wrap,
@@ -3593,46 +3595,47 @@
 
       if (!mediaWrap || !media || !content) return;
 
-      gsap.set(mediaWrap, { y: 80, opacity: 0.88 });
-      gsap.set(media, { y: 0, opacity: 1 });
-      gsap.set(content, { y: 56, opacity: 0.84 });
+      gsap.set(mediaWrap, { y: 110, opacity: 0.9 });
+      gsap.set(content, { y: 70, opacity: 0.86 });
       if (heading) gsap.set(heading, { y: 0, opacity: 1 });
       if (text) gsap.set(text, { y: 0, opacity: 1 });
       if (button) gsap.set(button, { y: 0, opacity: 1 });
-      if (image) gsap.set(image, { y: 80, scale: 1.12 });
+      if (image) gsap.set(image, { y: 100, scale: 1.14 });
 
       const tl = gsap.timeline({
         scrollTrigger: {
           trigger: slide,
-          start: 'top 88%',
+          start: 'top bottom',
           end: 'bottom top',
-          scrub: 1.15,
+          scrub: 1,
           invalidateOnRefresh: true
         }
       });
 
       tl.to(mediaWrap, {
-        y: -120,
+        y: -130,
         opacity: 1,
         ease: 'none'
       }, 0);
 
-      tl.to(image, {
-        y: -140,
-        scale: 1.03,
-        ease: 'none'
-      }, 0);
+      if (image) {
+        tl.to(image, {
+          y: -170,
+          scale: 1.03,
+          ease: 'none'
+        }, 0);
+      }
 
       tl.to(content, {
-        y: -52,
+        y: -65,
         opacity: 1,
         ease: 'none'
       }, 0);
 
       if (heading) {
         tl.fromTo(heading, {
-          y: 28,
-          opacity: 0.75
+          y: 24,
+          opacity: 0.82
         }, {
           y: -10,
           opacity: 1,
@@ -3642,8 +3645,8 @@
 
       if (text) {
         tl.fromTo(text, {
-          y: 22,
-          opacity: 0.72
+          y: 20,
+          opacity: 0.75
         }, {
           y: -8,
           opacity: 1,
@@ -3654,7 +3657,7 @@
       if (button) {
         tl.fromTo(button, {
           y: 18,
-          opacity: 0.7
+          opacity: 0.75
         }, {
           y: -6,
           opacity: 1,

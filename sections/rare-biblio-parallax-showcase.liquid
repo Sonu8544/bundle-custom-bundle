@@ -3409,7 +3409,7 @@
     will-change: transform;
   }
 
-  #{{ section_id }} .rbps__image-overlay {
+  {% comment %} #{{ section_id }} .rbps__image-overlay {
     position: absolute;
     inset: 0;
     z-index: 1;
@@ -3421,7 +3421,18 @@
       rgba(0, 0, 0, var(--rbps-overlay-opacity)) 100%
     );
     opacity: 0.8;
-  }
+  } {% endcomment %}
+
+  #{{ section_id }} .rbps__image-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  border-radius: inherit;
+  opacity: 1;
+  background:
+    radial-gradient(circle at center, rgba(5, 5, 4, 0) 52%, rgba(5, 5, 4, 0.18) 68%, rgba(5, 5, 4, 0.52) 82%, #050504 100%);
+}
 
   #{{ section_id }} .rbps__content-wrap {
     position: relative;

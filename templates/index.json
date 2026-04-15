@@ -533,8 +533,8 @@
         "media_x_tab": 50,
         "media_w_tab": 48,
         "media_top_tab": 8,
-        "media_w_mob": 68,
-        "media_top_mob": 0,
+        "media_w_mob": 60,
+        "media_top_mob": 80,
         "bg_color": "#0a0a05",
         "radial_start": "#4d3c04",
         "radial_end": "#0a0807",
@@ -550,7 +550,8 @@
         "glow_opacity": 0.7,
         "text_color": "#ffffff",
         "accent_color": "#bb911f",
-        "content_max_width": 580
+        "content_max_width": 580,
+        "button_image": "shopify://shop_images/f89b1c50a8a368abe48fc6793fd85a8999a3c0ca_7991f07a-d217-4f4e-bd7a-f6113fc84bf9.png"
       }
     }
   },

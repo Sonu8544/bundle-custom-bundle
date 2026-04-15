@@ -2837,6 +2837,7 @@
                 --slide-tilt-desktop: {{ block.settings.tilt_desktop }}deg;
                 --slide-tilt-tablet:  {{ block.settings.tilt_tablet }}deg;
                 --slide-tilt-mobile:  {{ block.settings.tilt_mobile }}deg;
+                --slide-base-scale: {{ block.settings.image_scale | times: 0.01 }};
               "
               {{ block.shopify_attributes }}
             >
@@ -2875,22 +2876,22 @@
                     </div>
                   {%- endif -%}
 
-                  {%- if block.settings.end_date != blank -%}
+                  {%- if block.settings.show_countdown -%}
                     <div class="ppbs__timer-wrap" data-ppbs-reveal="4">
                       <div class="ppbs__timer-label">{{ block.settings.countdown_label }}</div>
                       <div class="ppbs__timer" role="timer" aria-live="polite">
                         <div class="ppbs__t-part">
-                          <span class="ppbs__t-val" data-ppbs-hours>00</span>
+                          <span class="ppbs__t-val" data-ppbs-hours>{{ block.settings.placeholder_hours | default: '12' }}</span>
                           <span class="ppbs__t-unit">Hours</span>
                         </div>
                         <span class="ppbs__t-sep" aria-hidden="true">:</span>
                         <div class="ppbs__t-part">
-                          <span class="ppbs__t-val" data-ppbs-minutes>00</span>
+                          <span class="ppbs__t-val" data-ppbs-minutes>{{ block.settings.placeholder_minutes | default: '25' }}</span>
                           <span class="ppbs__t-unit">Minutes</span>
                         </div>
                         <span class="ppbs__t-sep" aria-hidden="true">:</span>
                         <div class="ppbs__t-part">
-                          <span class="ppbs__t-val" data-ppbs-seconds>00</span>
+                          <span class="ppbs__t-val" data-ppbs-seconds>{{ block.settings.placeholder_seconds | default: '45' }}</span>
                           <span class="ppbs__t-unit">Seconds</span>
                         </div>
                       </div>
@@ -3132,7 +3133,7 @@
     height: 100%;
     transform-origin: center center;
     filter: drop-shadow(0 20px calc(60px * var(--ppbs-shadow-strength)) rgba(0,0,0,.52));
-    transform: translateY(var(--slide-y, 0px)) scale(var(--slide-scale, 1)) rotate(var(--slide-tilt-desktop, 0deg));
+    transform: translateY(var(--slide-y, 0px)) scale(calc(var(--slide-base-scale, 1) * var(--slide-scale, 1))) rotate(var(--slide-tilt-desktop, 0deg));
     transition: transform .5s cubic-bezier(.22, 1, .36, 1);
     will-change: transform;
   }
@@ -3299,7 +3300,7 @@
       width: var(--ppbs-media-w-tab);
     }
     #{{ sid }} .ppbs__media-inner {
-      transform: translateY(var(--slide-y, 0px)) scale(var(--slide-scale, 1)) rotate(var(--slide-tilt-tablet, 0deg));
+      transform: translateY(var(--slide-y, 0px)) scale(calc(var(--slide-base-scale, 1) * var(--slide-scale, 1))) rotate(var(--slide-tilt-tablet, 0deg));
     }
     #{{ sid }} .ppbs__meta { gap: 18px 28px; }
     #{{ sid }} .ppbs__t-part { min-width: 64px; }
@@ -3397,7 +3398,7 @@
     }
     #{{ sid }} .ppbs__slides { height: auto; min-height: 100%; }
     #{{ sid }} .ppbs__media-inner {
-      transform: translateY(var(--slide-y, 0px)) scale(var(--slide-scale, 1)) rotate(var(--slide-tilt-mobile, 0deg));
+      transform: translateY(var(--slide-y, 0px)) scale(calc(var(--slide-base-scale, 1) * var(--slide-scale, 1))) rotate(var(--slide-tilt-mobile, 0deg));
     }
     #{{ sid }} .ppbs__track { --ppbs-rad-x: 52%; --ppbs-rad-y: 36%; }
     #{{ sid }} .ppbs__bg-halo { width: 88vw; height: 88vw; left: 50%; bottom: 26%; }
@@ -3669,8 +3670,9 @@
         const baseRot = parseFloat(getComputedStyle(activeInner).getPropertyValue('--slide-tilt-desktop')) || 0;
         const slideY = parseFloat(getComputedStyle(activeInner).getPropertyValue('--slide-y')) || 0;
         const slideScale = parseFloat(getComputedStyle(activeInner).getPropertyValue('--slide-scale')) || 1;
+        const baseScale = parseFloat(getComputedStyle(activeInner).getPropertyValue('--slide-base-scale')) || 1;
         activeInner.style.transform =
-          `translateY(${slideY}px) scale(${slideScale}) ` +
+          `translateY(${slideY}px) scale(${slideScale * baseScale}) ` +
           `rotateY(${x * intensity}deg) rotateX(${-y * intensity}deg) ` +
           `rotate(${baseRot}deg)`;
       });
@@ -3815,7 +3817,8 @@
       "settings": [
         { "type": "image_picker", "id": "image", "label": "Book image (transparent PNG)" },
 
-        { "type": "header", "content": "Per-Slide Tilt" },
+        { "type": "header", "content": "Book Size & Tilt" },
+        { "type": "range", "id": "image_scale", "label": "Book size",         "min": 50, "max": 150, "step": 5, "default": 100, "unit": "%" },
         { "type": "range", "id": "tilt_desktop", "label": "Desktop rotation", "min": -25, "max": 25, "step": 1, "default": 8,  "unit": "°" },
         { "type": "range", "id": "tilt_tablet",  "label": "Tablet rotation",  "min": -25, "max": 25, "step": 1, "default": 6,  "unit": "°" },
         { "type": "range", "id": "tilt_mobile",  "label": "Mobile rotation",  "min": -25, "max": 25, "step": 1, "default": 0,  "unit": "°" },
@@ -3831,12 +3834,16 @@
         { "type": "text", "id": "binding_label", "label": "Binding label", "default": "Binding" },
         { "type": "text", "id": "binding",       "label": "Binding value", "default": "Quarter Leather" },
 
-        { "type": "header", "content": "Countdown" },
-        { "type": "text", "id": "countdown_label", "label": "Countdown label", "default": "Reveals In" },
+        { "type": "header", "content": "Countdown Timer" },
+        { "type": "checkbox", "id": "show_countdown", "label": "Show timer", "default": true },
+        { "type": "text", "id": "countdown_label", "label": "Timer label", "default": "Reveals In" },
         {
           "type": "text", "id": "end_date", "label": "End date/time",
-          "info": "Format: YYYY-MM-DDTHH:MM:SS (e.g. 2026-05-01T12:00:00). Leave blank to hide."
+          "info": "Format: YYYY-MM-DDTHH:MM:SS (e.g. 2026-05-01T12:00:00). If blank, placeholder values below are shown."
         },
+        { "type": "text", "id": "placeholder_hours",   "label": "Placeholder hours",   "default": "12" },
+        { "type": "text", "id": "placeholder_minutes", "label": "Placeholder minutes", "default": "25" },
+        { "type": "text", "id": "placeholder_seconds", "label": "Placeholder seconds", "default": "45" },
 
         { "type": "header", "content": "Button" },
         { "type": "text", "id": "button_text", "label": "Button text", "default": "Notify Me" },

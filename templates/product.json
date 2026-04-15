@@ -362,6 +362,7 @@
     },
     "firebase_launch_queue_EwiaTp": {
       "type": "firebase-launch-queue",
+      "disabled": true,
       "name": "Firebase launch queue",
       "settings": {}
     }

@@ -1645,22 +1645,16 @@
   #{{ sid }} .ppbs__title {
     max-width: min(640px, 100%);
     margin: 0;
+    color: var(--ppbs-text);
     font-family: "Bethany Elingston", var(--font-heading-family), Georgia, serif;
     font-weight: 400;
-    font-style: normal;
     font-synthesis: none;
-    font-size: 70px;
-    line-height: 1;
-    letter-spacing: 0;
-    text-align: center;
+    font-size: clamp(36px, 4.5vw, 58px);
+    line-height: 1.22;
+    letter-spacing: 0.02em;
     text-wrap: balance;
     text-rendering: optimizeLegibility;
-    background: linear-gradient(270.6deg, #A87E0A 9.74%, #000000 71.76%);
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-    color: transparent;
-    text-shadow: none;
+    text-shadow: 0 2px 28px rgba(0,0,0,.4);
   }
 
   #{{ sid }} .ppbs__desc {
@@ -1897,13 +1891,7 @@
     #{{ sid }} .ppbs__track { --ppbs-rad-x: 52%; --ppbs-rad-y: 36%; }
     #{{ sid }} .ppbs__bg-halo { width: 88vw; height: 88vw; left: 50%; bottom: 26%; }
     #{{ sid }} .ppbs__eyebrow { min-height: 38px; min-width: 160px; padding: 10px 22px; font-size: 12px; letter-spacing: 2px; }
-    #{{ sid }} .ppbs__title {
-      max-width: 100%;
-      font-size: 36px;
-      line-height: 1;
-      letter-spacing: 0;
-      text-align: center;
-    }
+    #{{ sid }} .ppbs__title { max-width: 100%; font-size: clamp(30px, 7.5vw, 40px); line-height: 1.2; letter-spacing: .015em; }
     #{{ sid }} .ppbs__desc { max-width: 100%; margin-top: 12px; font-size: 16px; line-height: 1.5; }
     #{{ sid }} .ppbs__desc p,
     #{{ sid }} .ppbs__desc li { font-size: 16px; line-height: 1.5; }

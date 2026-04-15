@@ -4090,8 +4090,6 @@
 
 
 
-
-
  {% liquid
   assign launch_product_handle = 'abc-books'
   assign launch_limit = 250
@@ -4349,6 +4347,8 @@
               <button type="button" class="flq-overlay__btn" data-flq-join>Enter the queue</button>
               <button type="button" class="flq-overlay__btn flq-overlay__btn--secondary" data-flq-refresh>Refresh status</button>
             </div>
+
+            <div class="flq-overlay__loading" data-flq-loading hidden><span class="flq-overlay__spinner"></span><span data-flq-loading-text>Checking access…</span></div>
 
             <div class="flq-overlay__status" data-flq-status></div>
           </div>
@@ -5641,6 +5641,31 @@
   color: #fff;
 }
 
+
+.flq-overlay__loading {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 22px;
+  margin-bottom: 10px;
+  font-size: 13px;
+  color: rgba(255,255,255,.78);
+}
+
+.flq-overlay__spinner {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 2px solid rgba(201,168,133,.24);
+  border-top-color: #c9a885;
+  animation: flq-spin .8s linear infinite;
+}
+
+@keyframes flq-spin {
+  to { transform: rotate(360deg); }
+}
+
 .flq-overlay__status {
   min-height: 20px;
   font-size: 13px;
@@ -5734,6 +5759,8 @@
   var progressWrap = queueWrap ? queueWrap.querySelector('[data-flq-progress-wrap]') : null;
   var progressBar = queueWrap ? queueWrap.querySelector('[data-flq-progress-bar]') : null;
   var statusEl = queueWrap ? queueWrap.querySelector('[data-flq-status]') : null;
+  var loadingEl = queueWrap ? queueWrap.querySelector('[data-flq-loading]') : null;
+  var loadingTextEl = queueWrap ? queueWrap.querySelector('[data-flq-loading-text]') : null;
   var joinBtn = queueWrap ? queueWrap.querySelector('[data-flq-join]') : null;
   var refreshBtn = queueWrap ? queueWrap.querySelector('[data-flq-refresh]') : null;
   var timerWrap = queueWrap ? queueWrap.querySelector('[data-flq-timer]') : null;
@@ -5763,6 +5790,12 @@
 
   function queueSetMessage(text) { if (messageEl) messageEl.textContent = text; }
   function queueSetStatus(text) { if (statusEl) statusEl.textContent = text || ''; }
+  function queueSetLoading(isLoading, text) {
+    if (loadingEl) loadingEl.hidden = !isLoading;
+    if (loadingTextEl && text) loadingTextEl.textContent = text;
+    if (joinBtn) joinBtn.disabled = !!isLoading;
+    if (refreshBtn) refreshBtn.disabled = !!isLoading;
+  }
 
   function queueShowOverlay() {
     if (overlay) {
@@ -5813,6 +5846,7 @@
     queueSetMessage('This launch is currently sold out for the selected edition.');
     queueSetStatus('Queue full / sold out');
     queueSetPosition('—');
+    queueSetLoading(false);
     queueSetProgress(null);
     if (timerWrap) timerWrap.hidden = true;
     if (limitEl) limitEl.textContent = String(getAvailableInventoryForQueue(variant));
@@ -5826,6 +5860,7 @@
 
   function queueLockBuy() {
     queueGranted = false;
+    queueSetLoading(false);
     queueShowOverlay();
     if (cartBtn) {
       cartBtn.disabled = true;
@@ -5835,8 +5870,9 @@
     }
   }
 
-  {% comment %} function queueUnlockBuy() {
+  function queueUnlockBuy() {
     queueGranted = true;
+    queueSetLoading(false);
     queueHideOverlay();
     queueSetProgress(null);
     queueSetPosition('—');
@@ -5846,20 +5882,8 @@
       cartBtn.classList.add('flq-buy-granted');
       cartBtn.removeAttribute('data-flq-locked');
     }
-  } {% endcomment %}
-
-
-  function queueUnlockBuy() {
-  queueGranted = true;
-  hideOverlay();
-
-  if (cartBtn) {
-    cartBtn.disabled = false;
-    cartBtn.classList.remove('flq-buy-locked');
-    cartBtn.classList.add('flq-buy-granted');
-    cartBtn.removeAttribute('data-flq-locked');
   }
-}
+
   function queueFormatRemaining(ms) {
     var totalSeconds = Math.max(0, Math.floor(ms / 1000));
     var minutes = Math.floor(totalSeconds / 60);
@@ -5896,6 +5920,7 @@
 
   async function queueInitFirebase() {
     if (!queueEnabled) return;
+    queueSetLoading(true, 'Connecting to virtual room…');
     var firebaseConfig = {
       apiKey: "AIzaSyAXqNmSizbKKSb8lYYHA59g0tFM5sQyi_c",
       authDomain: "rare-biblio-493418.firebaseapp.com",
@@ -5907,6 +5932,7 @@
     };
     if (!window.firebase || !firebase.apps) {
       queueSetStatus('Firebase SDK failed to load.');
+      queueSetLoading(false);
       return;
     }
     if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
@@ -5914,6 +5940,7 @@
     sessionId = queueGetSessionId();
     launchRef = firebaseDb.collection('launches').doc(productIdForQueue);
     sessionRef = launchRef.collection('sessions').doc(sessionId);
+    queueSetLoading(false);
   }
 
   function updateNavState() {
@@ -6012,17 +6039,6 @@
     }
     return null;
   }
-
-  function showOverlay() {
-  if (overlay) overlay.classList.add('is-active');
-  document.body.style.overflow = 'hidden';
-}
-
-function hideOverlay() {
-  if (overlay) overlay.classList.remove('is-active');
-  document.body.style.overflow = '';
-}
-
   function updateDisplayedPrice(variant) {
     if (!priceEl || !variant) return;
     var qty = getQty(); var unitPrice = Number(variant.price || 0); var comparePrice = Number(variant.compare_at_price || 0);
@@ -6128,6 +6144,7 @@ function hideOverlay() {
     if (!queueEnabled || !firebaseDb || !joinBtn) return;
     joinBtn.disabled = true; queueSetStatus('Joining virtual queue...');
     try {
+      queueSetLoading(true, 'Joining queue…');
       await queueEnsureLaunchDoc();
       await firebaseDb.runTransaction(async function(tx) {
         var launchSnap = await tx.get(launchRef); var sessionSnap = await tx.get(sessionRef);
@@ -6154,6 +6171,7 @@ function hideOverlay() {
   async function queueRefreshStatus() {
     if (!queueEnabled || !firebaseDb) return;
     try {
+      queueSetLoading(true, 'Checking access…');
       var launchSnap = await launchRef.get(); var sessionSnap = await sessionRef.get();
       if (launchSnap.exists) {
         var launchData = launchSnap.data() || {};
@@ -6173,6 +6191,7 @@ function hideOverlay() {
       if (activeVariant && getAvailableInventoryForQueue(activeVariant) <= 0) { queueShowSoldOutState(activeVariant); return; }
       queueLockBuy(); if (timerWrap) timerWrap.hidden = true; queueSetPosition('—'); queueSetProgress(null); queueSetMessage('Join the queue to check launch access.'); queueSetStatus('');
     } catch (e) { console.error(e); queueSetStatus('Could not refresh queue status.'); }
+    finally { queueSetLoading(false); }
   }
 
   function queueBindRealtime() {
@@ -6184,7 +6203,7 @@ function hideOverlay() {
       if (limitEl) limitEl.textContent = String(data.limit || launchLimit);
       if ((data.grantedCount || 0) >= (data.limit || launchLimit) && !queueGranted) queueSetStatus('Launch allocation is currently full.');
     });
-    {% comment %} sessionRef.onSnapshot(function(docSnap) {
+    sessionRef.onSnapshot(function(docSnap) {
       if (!docSnap.exists) return;
       var data = docSnap.data() || {};
       if (data.status === 'granted') {
@@ -6192,28 +6211,7 @@ function hideOverlay() {
       } else if (data.status === 'waiting') {
         queueLockBuy(); queueSetMessage('You are in queue. Waiting for availability.'); queueSetPosition(data.position || '—'); queueSetProgress(null); queueSetStatus('Queue joined successfully.'); if (timerWrap) timerWrap.hidden = true;
       }
-    }); {% endcomment %}
-
-    sessionRef.onSnapshot(function(docSnap) {
-  if (!docSnap.exists) return;
-
-  var data = docSnap.data() || {};
-
-  if (data.status === 'granted') {
-    queueUnlockBuy();
-    queueSetMessage('Access granted. Complete checkout before your timer ends.');
-    queueStartCountdown(Number(data.expiresAtMillis || 0));
-    queueSetStatus('You have purchase access.');
-  } else if (data.status === 'waiting') {
-    queueLockBuy();
-    queueSetMessage('You are in queue. Waiting for availability.');
-    queueSetStatus('Queue joined successfully.');
-    if (timerWrap) timerWrap.hidden = true;
-  } else {
-    queueLockBuy();
-  }
-});
-
+    });
   }
 
   async function handleAddToCart(button) {
@@ -6262,7 +6260,6 @@ function hideOverlay() {
     });
   }
 })();
-
 </script>
 
 {% schema %}

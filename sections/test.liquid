@@ -2743,138 +2743,178 @@
   Place this file in: /sections/rare-book-showcase.liquid
   ============================================================
 {%- endcomment -%}
+{%- comment -%}
+  ============================================================
+  RARE BOOK SHOWCASE — v2 (Scroll-driven Parallax)
+  - Section pins while scrolling, slides cross-fade with parallax
+  - All animation knobs exposed in theme editor
+  - Falls back to click/swipe nav if scroll-driven is disabled
+  Place at: /sections/rare-book-showcase.liquid
+  ============================================================
+{%- endcomment -%}
+
+{%- liquid
+  assign s = section.settings
+  assign slide_count = section.blocks.size
+  if slide_count < 1
+    assign slide_count = 1
+  endif
+  assign total_scroll_vh = s.scroll_length_per_slide | times: slide_count
+-%}
 
 <section
-  class="rb-showcase"
+  class="rb-showcase rb-style--{{ s.transition_style }} {% if s.scroll_driven %}is-scroll-driven{% else %}is-click-driven{% endif %}"
   id="rb-{{ section.id }}"
   data-rb-root
+  data-rb-scroll-driven="{{ s.scroll_driven }}"
+  data-rb-style="{{ s.transition_style }}"
+  data-rb-parallax-intensity="{{ s.parallax_intensity }}"
+  data-rb-image-rotation="{{ s.image_rotation }}"
+  data-rb-image-scale="{{ s.image_scale }}"
+  data-rb-content-stagger="{{ s.content_stagger }}"
+  data-rb-mouse-tilt="{{ s.enable_mouse_tilt }}"
+  data-rb-tilt-intensity="{{ s.mouse_tilt_intensity }}"
+  data-rb-autoplay="{{ s.autoplay_seconds }}"
   style="
-    --rb-bg: {{ section.settings.bg_color }};
-    --rb-glow: {{ section.settings.glow_color }};
-    --rb-text: {{ section.settings.text_color }};
-    --rb-muted: {{ section.settings.muted_color }};
-    --rb-accent-1: {{ section.settings.accent_color_1 }};
-    --rb-accent-2: {{ section.settings.accent_color_2 }};
-    --rb-min-height: {{ section.settings.min_height }}vh;
+    --rb-bg: {{ s.bg_color }};
+    --rb-glow: {{ s.glow_color }};
+    --rb-text: {{ s.text_color }};
+    --rb-muted: {{ s.muted_color }};
+    --rb-accent-1: {{ s.accent_color_1 }};
+    --rb-accent-2: {{ s.accent_color_2 }};
+    --rb-easing: {{ s.easing }};
+    --rb-transition-ms: {{ s.transition_duration }}ms;
+    {% if s.scroll_driven %}
+    --rb-total-height: {{ total_scroll_vh }}vh;
+    {% else %}
+    --rb-total-height: {{ s.min_height }}vh;
+    {% endif %}
   "
 >
-  <div class="rb-showcase__glow" aria-hidden="true"></div>
+  <div class="rb-showcase__sticky" data-rb-sticky>
+    {%- if s.enable_glow -%}
+      <div class="rb-showcase__glow" data-rb-glow aria-hidden="true"></div>
+    {%- endif -%}
 
-  <div class="rb-showcase__track" data-rb-track>
-    {%- for block in section.blocks -%}
-      <article
-        class="rb-slide{% if forloop.first %} is-active{% endif %}"
-        data-rb-slide
-        data-rb-index="{{ forloop.index0 }}"
-        {% if block.settings.end_date != blank %}data-rb-end="{{ block.settings.end_date }}"{% endif %}
-        {{ block.shopify_attributes }}
-      >
-        <div class="rb-slide__content">
-          {%- if block.settings.badge != blank -%}
-            <span class="rb-badge">{{ block.settings.badge }}</span>
-          {%- endif -%}
+    <div class="rb-showcase__inner">
+      <div class="rb-showcase__track" data-rb-track>
+        {%- for block in section.blocks -%}
+          <article
+            class="rb-slide{% if forloop.first %} is-active is-entered{% endif %}"
+            data-rb-slide
+            data-rb-index="{{ forloop.index0 }}"
+            {% if block.settings.end_date != blank %}data-rb-end="{{ block.settings.end_date }}"{% endif %}
+            {{ block.shopify_attributes }}
+          >
+            <div class="rb-slide__content" data-rb-content>
+              {%- if block.settings.badge != blank -%}
+                <span class="rb-badge" data-rb-reveal="0">{{ block.settings.badge }}</span>
+              {%- endif -%}
 
-          {%- if block.settings.title != blank -%}
-            <h2 class="rb-title">{{ block.settings.title }}</h2>
-          {%- endif -%}
+              {%- if block.settings.title != blank -%}
+                <h2 class="rb-title" data-rb-reveal="1">{{ block.settings.title }}</h2>
+              {%- endif -%}
 
-          {%- if block.settings.description != blank -%}
-            <p class="rb-description">{{ block.settings.description }}</p>
-          {%- endif -%}
+              {%- if block.settings.description != blank -%}
+                <p class="rb-description" data-rb-reveal="2">{{ block.settings.description }}</p>
+              {%- endif -%}
 
-          {%- if block.settings.year != blank or block.settings.binding != blank -%}
-            <dl class="rb-meta">
-              {%- if block.settings.year != blank -%}
-                <div class="rb-meta__item">
-                  <dt class="rb-meta__label">{{ block.settings.year_label }}</dt>
-                  <dd class="rb-meta__value">{{ block.settings.year }}</dd>
+              {%- if block.settings.year != blank or block.settings.binding != blank -%}
+                <dl class="rb-meta" data-rb-reveal="3">
+                  {%- if block.settings.year != blank -%}
+                    <div class="rb-meta__item">
+                      <dt class="rb-meta__label">{{ block.settings.year_label }}</dt>
+                      <dd class="rb-meta__value">{{ block.settings.year }}</dd>
+                    </div>
+                  {%- endif -%}
+                  {%- if block.settings.binding != blank -%}
+                    <div class="rb-meta__item">
+                      <dt class="rb-meta__label">{{ block.settings.binding_label }}</dt>
+                      <dd class="rb-meta__value">{{ block.settings.binding }}</dd>
+                    </div>
+                  {%- endif -%}
+                </dl>
+              {%- endif -%}
+
+              {%- if block.settings.end_date != blank -%}
+                <div class="rb-countdown" data-rb-countdown data-rb-reveal="4">
+                  <span class="rb-countdown__label">{{ block.settings.countdown_label }}</span>
+                  <div class="rb-countdown__timer" role="timer" aria-live="polite">
+                    <div class="rb-countdown__unit">
+                      <span class="rb-countdown__value" data-rb-hours>00</span>
+                      <span class="rb-countdown__name">Hours</span>
+                    </div>
+                    <span class="rb-countdown__sep" aria-hidden="true">:</span>
+                    <div class="rb-countdown__unit">
+                      <span class="rb-countdown__value" data-rb-minutes>00</span>
+                      <span class="rb-countdown__name">Minutes</span>
+                    </div>
+                    <span class="rb-countdown__sep" aria-hidden="true">:</span>
+                    <div class="rb-countdown__unit">
+                      <span class="rb-countdown__value" data-rb-seconds>00</span>
+                      <span class="rb-countdown__name">Seconds</span>
+                    </div>
+                  </div>
                 </div>
               {%- endif -%}
-              {%- if block.settings.binding != blank -%}
-                <div class="rb-meta__item">
-                  <dt class="rb-meta__label">{{ block.settings.binding_label }}</dt>
-                  <dd class="rb-meta__value">{{ block.settings.binding }}</dd>
-                </div>
-              {%- endif -%}
-            </dl>
-          {%- endif -%}
 
-          {%- if block.settings.end_date != blank -%}
-            <div class="rb-countdown" data-rb-countdown>
-              <span class="rb-countdown__label">{{ block.settings.countdown_label }}</span>
-              <div class="rb-countdown__timer" role="timer" aria-live="polite">
-                <div class="rb-countdown__unit">
-                  <span class="rb-countdown__value" data-rb-hours>00</span>
-                  <span class="rb-countdown__name">Hours</span>
-                </div>
-                <span class="rb-countdown__sep" aria-hidden="true">:</span>
-                <div class="rb-countdown__unit">
-                  <span class="rb-countdown__value" data-rb-minutes>00</span>
-                  <span class="rb-countdown__name">Minutes</span>
-                </div>
-                <span class="rb-countdown__sep" aria-hidden="true">:</span>
-                <div class="rb-countdown__unit">
-                  <span class="rb-countdown__value" data-rb-seconds>00</span>
-                  <span class="rb-countdown__name">Seconds</span>
-                </div>
+              {%- if block.settings.button_text != blank -%}
+                <a
+                  href="{{ block.settings.button_link | default: '#' }}"
+                  class="rb-button"
+                  data-rb-reveal="5"
+                >
+                  <span>{{ block.settings.button_text }}</span>
+                </a>
+              {%- endif -%}
+            </div>
+
+            <div class="rb-slide__visual" data-rb-visual>
+              <div class="rb-slide__visual-inner" data-rb-tilt>
+                {%- if block.settings.image != blank -%}
+                  {{
+                    block.settings.image
+                    | image_url: width: 1400
+                    | image_tag:
+                      loading: 'lazy',
+                      class: 'rb-slide__image',
+                      widths: '400, 600, 800, 1000, 1200, 1400',
+                      sizes: '(min-width: 750px) 50vw, 90vw',
+                      alt: block.settings.image.alt | default: block.settings.title
+                  }}
+                {%- else -%}
+                  <div class="rb-slide__placeholder">
+                    {{ 'lifestyle-1' | placeholder_svg_tag: 'rb-slide__placeholder-svg' }}
+                  </div>
+                {%- endif -%}
               </div>
             </div>
-          {%- endif -%}
+          </article>
+        {%- else -%}
+          <div class="rb-empty">Add a slide block from the theme editor to get started.</div>
+        {%- endfor -%}
+      </div>
 
-          {%- if block.settings.button_text != blank -%}
-            <a
-              href="{{ block.settings.button_link | default: '#' }}"
-              class="rb-button"
-            >
-              <span>{{ block.settings.button_text }}</span>
-            </a>
-          {%- endif -%}
-        </div>
-
-        <div class="rb-slide__visual" data-rb-parallax>
-          <div class="rb-slide__visual-inner" data-rb-tilt>
-            {%- if block.settings.image != blank -%}
-              {{
-                block.settings.image
-                | image_url: width: 1400
-                | image_tag:
-                  loading: 'lazy',
-                  class: 'rb-slide__image',
-                  widths: '400, 600, 800, 1000, 1200, 1400',
-                  sizes: '(min-width: 750px) 50vw, 90vw',
-                  alt: block.settings.image.alt | default: block.settings.title
-              }}
-            {%- else -%}
-              <div class="rb-slide__placeholder">
-                {{ 'lifestyle-1' | placeholder_svg_tag: 'rb-slide__placeholder-svg' }}
-              </div>
-            {%- endif -%}
+      {%- if section.blocks.size > 0 and s.show_controls -%}
+        <div class="rb-controls">
+          <span class="rb-counter" aria-hidden="true">
+            <span data-rb-current>1</span> / <span data-rb-total>{{ section.blocks.size }}</span>
+          </span>
+          <div class="rb-progress" aria-hidden="true">
+            <span class="rb-progress__bar" data-rb-progress></span>
+          </div>
+          <div class="rb-nav">
+            <button class="rb-nav__btn" data-rb-prev aria-label="Previous slide">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M19 12H5M5 12l6-6M5 12l6 6"/></svg>
+            </button>
+            <button class="rb-nav__btn" data-rb-next aria-label="Next slide">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M14 6l6 6M14 18l6-6"/></svg>
+            </button>
           </div>
         </div>
-      </article>
-    {%- else -%}
-      <div class="rb-empty">Add a slide block from the theme editor to get started.</div>
-    {%- endfor -%}
-  </div>
-
-  {%- if section.blocks.size > 0 -%}
-    <div class="rb-controls">
-      <span class="rb-counter" aria-hidden="true">
-        <span data-rb-current>1</span> / <span data-rb-total>{{ section.blocks.size }}</span>
-      </span>
-      <div class="rb-progress" aria-hidden="true">
-        <span class="rb-progress__bar" data-rb-progress></span>
-      </div>
-      <div class="rb-nav">
-        <button class="rb-nav__btn" data-rb-prev aria-label="Previous slide">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M19 12H5M5 12l6-6M5 12l6 6"/></svg>
-        </button>
-        <button class="rb-nav__btn" data-rb-next aria-label="Next slide">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M14 6l6 6M14 18l6-6"/></svg>
-        </button>
-      </div>
+      {%- endif -%}
     </div>
-  {%- endif -%}
+  </div>
 </section>
 
 <style>
@@ -2883,17 +2923,32 @@
     --rb-radius: 999px;
 
     position: relative;
-    overflow: hidden;
     background: var(--rb-bg);
     color: var(--rb-text);
-    min-height: var(--rb-min-height);
-    padding: var(--rb-spacing);
+    height: var(--rb-total-height);
     font-family: var(--font-body-family, 'Inter', system-ui, sans-serif);
+  }
+
+  #rb-{{ section.id }}.is-click-driven {
+    height: var(--rb-total-height);
+    overflow: hidden;
   }
 
   #rb-{{ section.id }} *,
   #rb-{{ section.id }} *::before,
   #rb-{{ section.id }} *::after { box-sizing: border-box; }
+
+  #rb-{{ section.id }} .rb-showcase__sticky {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow: hidden;
+    background: var(--rb-bg);
+  }
+  #rb-{{ section.id }}.is-click-driven .rb-showcase__sticky {
+    position: relative;
+    height: 100%;
+  }
 
   #rb-{{ section.id }} .rb-showcase__glow {
     position: absolute;
@@ -2901,13 +2956,23 @@
     background: radial-gradient(ellipse 60% 70% at 70% 50%, var(--rb-glow) 0%, transparent 60%);
     pointer-events: none;
     z-index: 0;
-    opacity: .9;
-    transition: opacity .6s ease;
+    opacity: .85;
+    transition: opacity 1.2s var(--rb-easing), transform 1.2s var(--rb-easing);
+    will-change: transform, opacity;
+  }
+
+  #rb-{{ section.id }} .rb-showcase__inner {
+    position: relative;
+    z-index: 1;
+    height: 100%;
+    padding: var(--rb-spacing);
+    display: flex;
+    flex-direction: column;
   }
 
   #rb-{{ section.id }} .rb-showcase__track {
     position: relative;
-    z-index: 1;
+    flex: 1;
     display: grid;
   }
 
@@ -2918,28 +2983,57 @@
     grid-template-columns: 1fr 1fr;
     gap: var(--rb-spacing);
     align-items: center;
-    min-height: calc(var(--rb-min-height) - var(--rb-spacing) * 2);
     opacity: 0;
-    visibility: hidden;
-    transform: translateY(20px);
-    transition: opacity .8s ease, transform .8s ease, visibility .8s;
     pointer-events: none;
+    will-change: opacity, transform;
+    transition: opacity var(--rb-transition-ms) var(--rb-easing);
   }
-  #rb-{{ section.id }} .rb-slide.is-active {
+  #rb-{{ section.id }}.is-click-driven .rb-slide {
+    transform: translateY(20px);
+    transition: opacity var(--rb-transition-ms) var(--rb-easing),
+                transform var(--rb-transition-ms) var(--rb-easing);
+  }
+  #rb-{{ section.id }}.is-click-driven .rb-slide.is-active {
     opacity: 1;
-    visibility: visible;
     transform: translateY(0);
     pointer-events: auto;
   }
+  #rb-{{ section.id }}.is-scroll-driven .rb-slide.is-active {
+    pointer-events: auto;
+  }
 
+  /* Content & visual columns */
   #rb-{{ section.id }} .rb-slide__content {
     display: flex;
     flex-direction: column;
     gap: 1.75rem;
     max-width: 540px;
     padding: 1rem 0;
+    will-change: transform;
+  }
+  #rb-{{ section.id }} .rb-slide__visual {
+    position: relative;
+    height: 100%;
+    min-height: 500px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    perspective: 1500px;
+    will-change: transform;
   }
 
+  /* ============ Reveal stagger (per-element entrance) ============ */
+  #rb-{{ section.id }} [data-rb-reveal] {
+    opacity: 0;
+    transform: translateY(28px);
+    transition: opacity .9s var(--rb-easing), transform .9s var(--rb-easing);
+  }
+  #rb-{{ section.id }} .rb-slide.is-entered [data-rb-reveal] {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* Badge */
   #rb-{{ section.id }} .rb-badge {
     display: inline-block;
     align-self: flex-start;
@@ -2954,6 +3048,7 @@
     border-radius: 4px;
   }
 
+  /* Title */
   #rb-{{ section.id }} .rb-title {
     margin: 0;
     font-family: var(--font-heading-family, 'Playfair Display', Georgia, serif);
@@ -2964,6 +3059,7 @@
     color: var(--rb-text);
   }
 
+  /* Description */
   #rb-{{ section.id }} .rb-description {
     margin: 0;
     font-size: clamp(.95rem, 1.1vw, 1.05rem);
@@ -2972,36 +3068,22 @@
     max-width: 480px;
   }
 
-  #rb-{{ section.id }} .rb-meta {
-    display: flex;
-    gap: 3rem;
-    margin: 0;
-  }
+  /* Meta */
+  #rb-{{ section.id }} .rb-meta { display: flex; gap: 3rem; margin: 0; }
   #rb-{{ section.id }} .rb-meta__item { display: flex; flex-direction: column; gap: .35rem; }
-  #rb-{{ section.id }} .rb-meta__label {
-    font-size: .8rem;
-    color: var(--rb-muted);
-    font-weight: 400;
-    margin: 0;
-  }
-  #rb-{{ section.id }} .rb-meta__value {
-    font-size: 1.05rem;
-    color: var(--rb-text);
-    margin: 0;
-  }
+  #rb-{{ section.id }} .rb-meta__label { font-size: .8rem; color: var(--rb-muted); margin: 0; }
+  #rb-{{ section.id }} .rb-meta__value { font-size: 1.05rem; color: var(--rb-text); margin: 0; }
 
+  /* Countdown */
   #rb-{{ section.id }} .rb-countdown { display: flex; flex-direction: column; gap: .65rem; }
-  #rb-{{ section.id }} .rb-countdown__label {
-    font-size: .8rem;
-    color: var(--rb-muted);
-  }
+  #rb-{{ section.id }} .rb-countdown__label { font-size: .8rem; color: var(--rb-muted); }
   #rb-{{ section.id }} .rb-countdown__timer {
     display: flex;
     align-items: flex-start;
     gap: .65rem;
     font-variant-numeric: tabular-nums;
   }
-  #rb-{{ section.id }} .rb-countdown__unit { display: flex; flex-direction: column; align-items: flex-start; gap: .25rem; }
+  #rb-{{ section.id }} .rb-countdown__unit { display: flex; flex-direction: column; gap: .25rem; }
   #rb-{{ section.id }} .rb-countdown__value {
     font-family: var(--font-heading-family, 'Playfair Display', Georgia, serif);
     font-size: clamp(2rem, 3.5vw, 3rem);
@@ -3021,9 +3103,9 @@
     font-size: clamp(2rem, 3.5vw, 3rem);
     color: var(--rb-accent-2);
     line-height: 1;
-    padding-top: .05em;
   }
 
+  /* Button — gold metal */
   #rb-{{ section.id }} .rb-button {
     display: inline-flex;
     align-items: center;
@@ -3039,24 +3121,19 @@
     text-decoration: none;
     border-radius: var(--rb-radius);
     background: linear-gradient(180deg, var(--rb-accent-1) 0%, var(--rb-accent-2) 50%, var(--rb-accent-1) 100%);
+    background-size: 100% 200%;
+    background-position: 0 0;
     box-shadow: 0 1px 0 rgba(255,255,255,.4) inset, 0 -1px 0 rgba(0,0,0,.2) inset, 0 8px 24px -8px color-mix(in srgb, var(--rb-accent-2) 50%, transparent);
-    transition: transform .3s ease, box-shadow .3s ease;
+    transition: transform .4s var(--rb-easing), box-shadow .4s var(--rb-easing), background-position .6s var(--rb-easing);
     cursor: pointer;
   }
   #rb-{{ section.id }} .rb-button:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 1px 0 rgba(255,255,255,.5) inset, 0 -1px 0 rgba(0,0,0,.2) inset, 0 12px 32px -8px color-mix(in srgb, var(--rb-accent-2) 60%, transparent);
+    transform: translateY(-2px);
+    background-position: 0 100%;
+    box-shadow: 0 1px 0 rgba(255,255,255,.5) inset, 0 -1px 0 rgba(0,0,0,.2) inset, 0 16px 40px -8px color-mix(in srgb, var(--rb-accent-2) 70%, transparent);
   }
 
-  #rb-{{ section.id }} .rb-slide__visual {
-    position: relative;
-    height: 100%;
-    min-height: 500px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    perspective: 1500px;
-  }
+  /* Visual / Image */
   #rb-{{ section.id }} .rb-slide__visual-inner {
     width: 100%;
     height: 100%;
@@ -3064,27 +3141,28 @@
     align-items: center;
     justify-content: center;
     transform-style: preserve-3d;
-    transition: transform .4s cubic-bezier(.2, .9, .3, 1);
+    transition: transform .5s cubic-bezier(.2, .9, .3, 1);
     will-change: transform;
   }
   #rb-{{ section.id }} .rb-slide__image {
     max-width: 100%;
-    max-height: 80vh;
+    max-height: 75vh;
     width: auto;
     height: auto;
     object-fit: contain;
     filter: drop-shadow(0 40px 60px rgba(0,0,0,.5));
-    transform: rotate(8deg);
+    transition: filter .5s var(--rb-easing);
   }
   #rb-{{ section.id }} .rb-slide__placeholder { width: 70%; opacity: .3; }
 
+  /* Controls */
   #rb-{{ section.id }} .rb-controls {
     position: relative;
     z-index: 2;
     display: flex;
     align-items: center;
     gap: 1.25rem;
-    margin-top: 2rem;
+    margin-top: 1rem;
   }
   #rb-{{ section.id }} .rb-counter {
     font-size: .85rem;
@@ -3103,7 +3181,7 @@
     height: 100%;
     width: 25%;
     background: var(--rb-text);
-    transition: width .6s cubic-bezier(.2, .9, .3, 1);
+    transition: width .6s var(--rb-easing);
   }
   #rb-{{ section.id }} .rb-nav { display: flex; gap: .25rem; margin-left: .5rem; }
   #rb-{{ section.id }} .rb-nav__btn {
@@ -3131,38 +3209,35 @@
 
   /* ============ MOBILE ============ */
   @media (max-width: 749px) {
-    #rb-{{ section.id }} {
-      padding: 1.25rem;
-    }
+    #rb-{{ section.id }} .rb-showcase__inner { padding: 1.25rem; }
     #rb-{{ section.id }} .rb-showcase__glow {
       background: radial-gradient(ellipse 80% 50% at 50% 25%, var(--rb-glow) 0%, transparent 60%);
     }
     #rb-{{ section.id }} .rb-slide {
       grid-template-columns: 1fr;
-      gap: 1.5rem;
-      min-height: 0;
+      gap: 1rem;
+      align-content: center;
     }
     #rb-{{ section.id }} .rb-slide__visual {
       order: -1;
       min-height: 0;
-      padding: 1rem 0;
+      max-height: 45vh;
     }
-    #rb-{{ section.id }} .rb-slide__image {
-      max-height: 50vh;
-      transform: rotate(0deg);
-    }
-    #rb-{{ section.id }} .rb-slide__content {
-      gap: 1.25rem;
-      padding: 0;
-    }
-    #rb-{{ section.id }} .rb-meta { gap: 2.5rem; }
+    #rb-{{ section.id }} .rb-slide__image { max-height: 45vh; }
+    #rb-{{ section.id }} .rb-slide__content { gap: 1.1rem; padding: 0; }
+    #rb-{{ section.id }} .rb-meta { gap: 2rem; }
     #rb-{{ section.id }} .rb-button { width: 100%; min-width: 0; }
+    #rb-{{ section.id }} .rb-title { font-size: clamp(1.85rem, 8vw, 2.5rem); }
   }
 
   @media (prefers-reduced-motion: reduce) {
     #rb-{{ section.id }} .rb-slide,
     #rb-{{ section.id }} .rb-slide__visual-inner,
-    #rb-{{ section.id }} .rb-progress__bar { transition: none !important; }
+    #rb-{{ section.id }} [data-rb-reveal],
+    #rb-{{ section.id }} .rb-progress__bar,
+    #rb-{{ section.id }} .rb-showcase__glow {
+      transition: none !important;
+    }
   }
 </style>
 
@@ -3171,52 +3246,228 @@
   const root = document.getElementById('rb-{{ section.id }}');
   if (!root) return;
 
-  const track = root.querySelector('[data-rb-track]');
-  const slides = Array.from(root.querySelectorAll('[data-rb-slide]'));
-  const prevBtn = root.querySelector('[data-rb-prev]');
-  const nextBtn = root.querySelector('[data-rb-next]');
-  const currentEl = root.querySelector('[data-rb-current]');
-  const totalEl = root.querySelector('[data-rb-total]');
-  const progressEl = root.querySelector('[data-rb-progress]');
-  const total = slides.length;
+  // ---------- Config from data attributes ----------
+  const cfg = {
+    scrollDriven:    root.dataset.rbScrollDriven === 'true',
+    style:           root.dataset.rbStyle || 'cinematic',
+    parallax:        parseFloat(root.dataset.rbParallaxIntensity) / 100,    // 0..1
+    rotation:        parseFloat(root.dataset.rbImageRotation) || 0,         // deg
+    imgScale:        parseFloat(root.dataset.rbImageScale) / 100,           // ratio
+    stagger:         parseInt(root.dataset.rbContentStagger, 10) || 80,     // ms
+    mouseTilt:       root.dataset.rbMouseTilt === 'true',
+    tiltIntensity:   parseFloat(root.dataset.rbTiltIntensity) / 100,        // 0..1
+    autoplayMs:      (parseFloat(root.dataset.rbAutoplay) || 0) * 1000,
+  };
+
+  const sticky    = root.querySelector('[data-rb-sticky]');
+  const slides    = Array.from(root.querySelectorAll('[data-rb-slide]'));
+  const total     = slides.length;
   if (total === 0) return;
 
-  let activeIndex = 0;
-  let countdownTimer = null;
-  let autoplayTimer = null;
-  const AUTOPLAY_MS = {{ section.settings.autoplay_seconds | times: 1000 | default: 0 }};
-  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const prevBtn   = root.querySelector('[data-rb-prev]');
+  const nextBtn   = root.querySelector('[data-rb-next]');
+  const currentEl = root.querySelector('[data-rb-current]');
+  const progressEl= root.querySelector('[data-rb-progress]');
+  const glow      = root.querySelector('[data-rb-glow]');
 
-  // ---------- Slide change ----------
-  function goTo(index) {
-    activeIndex = ((index % total) + total) % total;
-    slides.forEach((s, i) => s.classList.toggle('is-active', i === activeIndex));
-    if (currentEl) currentEl.textContent = activeIndex + 1;
-    if (progressEl) progressEl.style.width = ((activeIndex + 1) / total * 100) + '%';
+  let activeIndex   = 0;
+  let countdownTimer= null;
+  let autoplayTimer = null;
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const isMobile = () => window.matchMedia('(max-width: 749px)').matches;
+
+  // Apply per-element reveal delays based on stagger setting
+  slides.forEach(slide => {
+    slide.querySelectorAll('[data-rb-reveal]').forEach(el => {
+      const idx = parseInt(el.dataset.rbReveal, 10) || 0;
+      el.style.transitionDelay = (idx * cfg.stagger) + 'ms';
+    });
+  });
+
+  // ---------- Mark slide as entered → triggers reveal stagger ----------
+  function markEntered(idx) {
+    slides.forEach((s, i) => {
+      if (i === idx) s.classList.add('is-entered');
+    });
+  }
+
+  // ---------- Set active slide ----------
+  function setActive(idx) {
+    activeIndex = idx;
+    slides.forEach((s, i) => s.classList.toggle('is-active', i === idx));
+    if (currentEl) currentEl.textContent = idx + 1;
+    if (progressEl) progressEl.style.width = ((idx + 1) / total * 100) + '%';
+    markEntered(idx);
     startCountdown();
   }
-  function next() { goTo(activeIndex + 1); }
-  function prev() { goTo(activeIndex - 1); }
 
-  prevBtn && prevBtn.addEventListener('click', () => { prev(); resetAutoplay(); });
-  nextBtn && nextBtn.addEventListener('click', () => { next(); resetAutoplay(); });
+  // ============================================================
+  // SCROLL-DRIVEN MODE — slides cross-fade with parallax
+  // ============================================================
+  function initScrollDriven() {
+    let ticking = false;
+    let lastIdx = -1;
 
-  // Keyboard
-  root.addEventListener('keydown', (e) => {
-    if (e.key === 'ArrowLeft') { prev(); resetAutoplay(); }
-    if (e.key === 'ArrowRight') { next(); resetAutoplay(); }
-  });
-  root.tabIndex = 0;
+    function applyTransforms(slideFloat) {
+      const rotation  = cfg.rotation;
+      const baseScale = cfg.imgScale;
+      const vh = window.innerHeight;
 
-  // Touch swipe
-  let touchStartX = 0;
-  root.addEventListener('touchstart', (e) => { touchStartX = e.touches[0].clientX; }, { passive: true });
-  root.addEventListener('touchend', (e) => {
-    const diff = e.changedTouches[0].clientX - touchStartX;
-    if (Math.abs(diff) > 50) { diff > 0 ? prev() : next(); resetAutoplay(); }
-  }, { passive: true });
+      slides.forEach((slide, i) => {
+        const distance = i - slideFloat;       // -∞..+∞, 0 = perfectly active
+        const absDist  = Math.abs(distance);
 
-  // ---------- Countdown ----------
+        // Hide far-away slides for perf
+        if (absDist > 1.2) {
+          slide.style.opacity = '0';
+          slide.style.visibility = 'hidden';
+          return;
+        }
+        slide.style.visibility = 'visible';
+
+        const content = slide.querySelector('[data-rb-content]');
+        const visual  = slide.querySelector('[data-rb-visual]');
+        const inner   = slide.querySelector('[data-rb-tilt]');
+
+        // Cross-fade opacity (smoothstep)
+        const opacity = Math.max(0, 1 - absDist);
+        const eased = opacity * opacity * (3 - 2 * opacity);
+        slide.style.opacity = eased.toString();
+
+        // Per-style transforms
+        let contentY = 0, visualY = 0, slideX = 0, scale = 1, rot = rotation;
+
+        switch (cfg.style) {
+          case 'fade':
+            visualY  = distance * vh * 0.05 * cfg.parallax;
+            contentY = distance * vh * 0.08 * cfg.parallax;
+            break;
+          case 'slide-up':
+            contentY = distance * vh * 0.6;
+            visualY  = distance * vh * (0.4 - cfg.parallax * 0.2);
+            break;
+          case 'slide-side':
+            slideX  = distance * (isMobile() ? 60 : 120);
+            visualY = distance * vh * 0.15 * cfg.parallax;
+            break;
+          case 'scale':
+            scale    = 1 - absDist * 0.15;
+            visualY  = distance * vh * 0.2 * cfg.parallax;
+            contentY = distance * vh * 0.3;
+            break;
+          case 'cinematic':
+          default:
+            contentY = distance * vh * 0.5;
+            visualY  = distance * vh * (0.3 - cfg.parallax * 0.15);
+            scale    = 1 - absDist * 0.05;
+            rot      = rotation + distance * 4 * cfg.parallax;
+            break;
+        }
+
+        if (content) {
+          content.style.transform = `translate3d(${slideX}px, ${contentY}px, 0)`;
+        }
+        if (visual) {
+          visual.style.transform = `translate3d(${slideX * 0.5}px, ${visualY}px, 0)`;
+        }
+        if (inner) {
+          inner.style.setProperty('--rb-img-rot', rot + 'deg');
+          inner.style.setProperty('--rb-img-scale', (baseScale * scale).toString());
+          if (!cfg.mouseTilt || isMobile()) {
+            inner.style.transform = `rotate(${rot}deg) scale(${baseScale * scale})`;
+          }
+        }
+      });
+
+      // Glow follows active slide
+      if (glow) {
+        const glowShift = (slideFloat / Math.max(1, total - 1) - 0.5) * 30;
+        glow.style.transform = `translate3d(${glowShift}%, 0, 0)`;
+      }
+    }
+
+    function onScroll() {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(() => {
+        const rect = root.getBoundingClientRect();
+        const scrollable = root.offsetHeight - window.innerHeight;
+        const scrolled = -rect.top;
+        const progress = Math.max(0, Math.min(1, scrolled / scrollable));
+
+        const slideFloat = progress * Math.max(1, total - 1);
+        const newIdx = Math.round(slideFloat);
+
+        if (newIdx !== lastIdx) {
+          setActive(newIdx);
+          lastIdx = newIdx;
+        }
+
+        if (!reducedMotion) {
+          applyTransforms(slideFloat);
+        }
+        ticking = false;
+      });
+    }
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll);
+    onScroll();
+
+    // Prev/next buttons scroll the page
+    function scrollToSlide(idx) {
+      idx = Math.max(0, Math.min(total - 1, idx));
+      const scrollable = root.offsetHeight - window.innerHeight;
+      const targetProgress = idx / Math.max(1, total - 1);
+      const targetScroll = root.offsetTop + scrollable * targetProgress;
+      window.scrollTo({ top: targetScroll, behavior: 'smooth' });
+    }
+    if (prevBtn) prevBtn.addEventListener('click', () => scrollToSlide(activeIndex - 1));
+    if (nextBtn) nextBtn.addEventListener('click', () => scrollToSlide(activeIndex + 1));
+  }
+
+  // ============================================================
+  // CLICK-DRIVEN MODE — manual prev/next + swipe
+  // ============================================================
+  function initClickDriven() {
+    function goTo(idx) {
+      const newIdx = ((idx % total) + total) % total;
+      setActive(newIdx);
+    }
+    function next() { goTo(activeIndex + 1); }
+    function prev() { goTo(activeIndex - 1); }
+
+    if (prevBtn) prevBtn.addEventListener('click', () => { prev(); resetAutoplay(); });
+    if (nextBtn) nextBtn.addEventListener('click', () => { next(); resetAutoplay(); });
+
+    root.tabIndex = 0;
+    root.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowLeft')  { prev(); resetAutoplay(); }
+      if (e.key === 'ArrowRight') { next(); resetAutoplay(); }
+    });
+
+    let touchStartX = 0;
+    root.addEventListener('touchstart', (e) => { touchStartX = e.touches[0].clientX; }, { passive: true });
+    root.addEventListener('touchend', (e) => {
+      const diff = e.changedTouches[0].clientX - touchStartX;
+      if (Math.abs(diff) > 50) { diff > 0 ? prev() : next(); resetAutoplay(); }
+    }, { passive: true });
+
+    function startAutoplay() {
+      if (cfg.autoplayMs > 0 && total > 1) autoplayTimer = setInterval(next, cfg.autoplayMs);
+    }
+    function resetAutoplay() {
+      if (autoplayTimer) clearInterval(autoplayTimer);
+      startAutoplay();
+    }
+    root.addEventListener('mouseenter', () => autoplayTimer && clearInterval(autoplayTimer));
+    root.addEventListener('mouseleave', startAutoplay);
+    startAutoplay();
+  }
+
+  // ============================================================
+  // COUNTDOWN
+  // ============================================================
   function startCountdown() {
     if (countdownTimer) clearInterval(countdownTimer);
     const slide = slides[activeIndex];
@@ -3248,79 +3499,81 @@
     countdownTimer = setInterval(tick, 1000);
   }
 
-  // ---------- Autoplay ----------
-  function startAutoplay() {
-    if (AUTOPLAY_MS > 0 && total > 1) {
-      autoplayTimer = setInterval(next, AUTOPLAY_MS);
-    }
-  }
-  function resetAutoplay() {
-    if (autoplayTimer) clearInterval(autoplayTimer);
-    startAutoplay();
-  }
-  root.addEventListener('mouseenter', () => autoplayTimer && clearInterval(autoplayTimer));
-  root.addEventListener('mouseleave', startAutoplay);
-
-  // ---------- Parallax (mouse tilt + scroll) ----------
-  if (!reducedMotion) {
+  // ============================================================
+  // MOUSE TILT
+  // ============================================================
+  if (cfg.mouseTilt && !reducedMotion) {
     const tilters = root.querySelectorAll('[data-rb-tilt]');
-    const isDesktop = window.matchMedia('(min-width: 750px)').matches;
+    const intensity = 8 * cfg.tiltIntensity;
+    let rafId = null;
 
-    if (isDesktop) {
-      root.addEventListener('mousemove', (e) => {
-        const rect = root.getBoundingClientRect();
+    sticky.addEventListener('mousemove', (e) => {
+      if (isMobile()) return;
+      if (rafId) cancelAnimationFrame(rafId);
+      rafId = requestAnimationFrame(() => {
+        const rect = sticky.getBoundingClientRect();
         const x = (e.clientX - rect.left) / rect.width - 0.5;
         const y = (e.clientY - rect.top) / rect.height - 0.5;
         tilters.forEach(t => {
-          t.style.transform = `rotateY(${x * 6}deg) rotateX(${-y * 6}deg) translateZ(0)`;
+          const baseRot = parseFloat(getComputedStyle(t).getPropertyValue('--rb-img-rot')) || cfg.rotation;
+          const baseScale = parseFloat(getComputedStyle(t).getPropertyValue('--rb-img-scale')) || cfg.imgScale;
+          t.style.transform =
+            `rotateY(${x * intensity}deg) rotateX(${-y * intensity}deg) ` +
+            `rotate(${baseRot}deg) scale(${baseScale})`;
         });
       });
-      root.addEventListener('mouseleave', () => {
-        tilters.forEach(t => { t.style.transform = ''; });
+    });
+    sticky.addEventListener('mouseleave', () => {
+      tilters.forEach(t => {
+        const baseRot = parseFloat(getComputedStyle(t).getPropertyValue('--rb-img-rot')) || cfg.rotation;
+        const baseScale = parseFloat(getComputedStyle(t).getPropertyValue('--rb-img-scale')) || cfg.imgScale;
+        t.style.transform = `rotate(${baseRot}deg) scale(${baseScale})`;
       });
-    }
-
-    // Scroll parallax
-    const parallaxEls = root.querySelectorAll('[data-rb-parallax]');
-    let ticking = false;
-    function onScroll() {
-      if (ticking) return;
-      ticking = true;
-      requestAnimationFrame(() => {
-        const rect = root.getBoundingClientRect();
-        const vh = window.innerHeight;
-        const progress = (vh - rect.top) / (vh + rect.height);
-        const offset = (progress - 0.5) * 60;
-        parallaxEls.forEach(el => {
-          el.style.transform = `translate3d(0, ${offset}px, 0)`;
-        });
-        ticking = false;
-      });
-    }
-    window.addEventListener('scroll', onScroll, { passive: true });
-    onScroll();
+    });
   }
 
-  // Init
-  goTo(0);
-  startAutoplay();
+  // ============================================================
+  // INIT
+  // ============================================================
+  setActive(0);
+  if (cfg.scrollDriven) initScrollDriven();
+  else initClickDriven();
 })();
 </script>
 
 {% schema %}
 {
-  "name": "testing slider",
+  "name": "Rare Book Showcase",
   "tag": "section",
   "class": "section-rare-book",
   "settings": [
     {
       "type": "header",
-      "content": "Layout"
+      "content": "Scroll Behavior"
+    },
+    {
+      "type": "checkbox",
+      "id": "scroll_driven",
+      "label": "Enable scroll-driven slides",
+      "info": "When ON, slides change as the user scrolls (section pins). When OFF, uses click/swipe.",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "scroll_length_per_slide",
+      "label": "Scroll length per slide",
+      "info": "Only applies in scroll-driven mode. Higher = slower transitions.",
+      "min": 80,
+      "max": 200,
+      "step": 10,
+      "default": 120,
+      "unit": "vh"
     },
     {
       "type": "range",
       "id": "min_height",
-      "label": "Section min height (vh)",
+      "label": "Section height (click mode)",
+      "info": "Only applies in click-driven mode.",
       "min": 60,
       "max": 100,
       "step": 5,
@@ -3330,7 +3583,7 @@
     {
       "type": "range",
       "id": "autoplay_seconds",
-      "label": "Autoplay (0 = off)",
+      "label": "Autoplay (click mode only)",
       "min": 0,
       "max": 15,
       "step": 1,
@@ -3338,8 +3591,121 @@
       "unit": "s"
     },
     {
+      "type": "checkbox",
+      "id": "show_controls",
+      "label": "Show navigation controls",
+      "default": true
+    },
+    {
       "type": "header",
-      "content": "Colors"
+      "content": "Slide Animation"
+    },
+    {
+      "type": "select",
+      "id": "transition_style",
+      "label": "Transition style",
+      "options": [
+        { "value": "cinematic",  "label": "Cinematic (parallax + scale + rotate)" },
+        { "value": "slide-up",   "label": "Slide up (vertical parallax)" },
+        { "value": "slide-side", "label": "Slide side (horizontal)" },
+        { "value": "scale",      "label": "Scale (zoom)" },
+        { "value": "fade",       "label": "Fade only" }
+      ],
+      "default": "cinematic"
+    },
+    {
+      "type": "range",
+      "id": "transition_duration",
+      "label": "Transition duration (click mode)",
+      "min": 200,
+      "max": 1500,
+      "step": 50,
+      "default": 800,
+      "unit": "ms"
+    },
+    {
+      "type": "select",
+      "id": "easing",
+      "label": "Easing curve",
+      "options": [
+        { "value": "cubic-bezier(0.22, 1, 0.36, 1)",   "label": "Smooth (out-expo)" },
+        { "value": "cubic-bezier(0.65, 0, 0.35, 1)",   "label": "Balanced (in-out)" },
+        { "value": "cubic-bezier(0.34, 1.56, 0.64, 1)","label": "Springy (back-out)" },
+        { "value": "ease-out",                          "label": "Ease out" },
+        { "value": "linear",                            "label": "Linear" }
+      ],
+      "default": "cubic-bezier(0.22, 1, 0.36, 1)"
+    },
+    {
+      "type": "range",
+      "id": "parallax_intensity",
+      "label": "Parallax intensity",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "default": 50,
+      "unit": "%"
+    },
+    {
+      "type": "range",
+      "id": "content_stagger",
+      "label": "Content stagger delay",
+      "info": "Delay between text elements appearing.",
+      "min": 0,
+      "max": 200,
+      "step": 10,
+      "default": 80,
+      "unit": "ms"
+    },
+    {
+      "type": "header",
+      "content": "Image Animation"
+    },
+    {
+      "type": "range",
+      "id": "image_rotation",
+      "label": "Book rotation",
+      "min": -20,
+      "max": 20,
+      "step": 1,
+      "default": 8,
+      "unit": "°"
+    },
+    {
+      "type": "range",
+      "id": "image_scale",
+      "label": "Book scale",
+      "min": 70,
+      "max": 130,
+      "step": 5,
+      "default": 100,
+      "unit": "%"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_mouse_tilt",
+      "label": "Enable 3D mouse tilt",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "mouse_tilt_intensity",
+      "label": "Tilt intensity",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "default": 60,
+      "unit": "%"
+    },
+    {
+      "type": "header",
+      "content": "Background"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_glow",
+      "label": "Enable glow effect",
+      "default": true
     },
     {
       "type": "color",
@@ -3352,6 +3718,10 @@
       "id": "glow_color",
       "label": "Glow color",
       "default": "#5A4E10"
+    },
+    {
+      "type": "header",
+      "content": "Typography Colors"
     },
     {
       "type": "color",
@@ -3407,71 +3777,28 @@
           "label": "Description",
           "default": "Welcome to Rare Biblio, the premier destination for bibliophiles and book lovers who appreciate."
         },
-        {
-          "type": "header",
-          "content": "Metadata"
-        },
-        {
-          "type": "text",
-          "id": "year_label",
-          "label": "Year label",
-          "default": "Year"
-        },
-        {
-          "type": "text",
-          "id": "year",
-          "label": "Year value",
-          "default": "1962, First Print"
-        },
-        {
-          "type": "text",
-          "id": "binding_label",
-          "label": "Binding label",
-          "default": "Binding"
-        },
-        {
-          "type": "text",
-          "id": "binding",
-          "label": "Binding value",
-          "default": "Quarter Leather"
-        },
-        {
-          "type": "header",
-          "content": "Countdown"
-        },
-        {
-          "type": "text",
-          "id": "countdown_label",
-          "label": "Countdown label",
-          "default": "Reveals In"
-        },
+        { "type": "header", "content": "Metadata" },
+        { "type": "text", "id": "year_label",   "label": "Year label",    "default": "Year" },
+        { "type": "text", "id": "year",         "label": "Year value",    "default": "1962, First Print" },
+        { "type": "text", "id": "binding_label","label": "Binding label", "default": "Binding" },
+        { "type": "text", "id": "binding",      "label": "Binding value", "default": "Quarter Leather" },
+        { "type": "header", "content": "Countdown" },
+        { "type": "text", "id": "countdown_label", "label": "Countdown label", "default": "Reveals In" },
         {
           "type": "text",
           "id": "end_date",
           "label": "End date/time",
           "info": "Format: YYYY-MM-DDTHH:MM:SS (e.g. 2026-05-01T12:00:00). Leave blank to hide."
         },
-        {
-          "type": "header",
-          "content": "Button"
-        },
-        {
-          "type": "text",
-          "id": "button_text",
-          "label": "Button text",
-          "default": "Notify Me"
-        },
-        {
-          "type": "url",
-          "id": "button_link",
-          "label": "Button link"
-        }
+        { "type": "header", "content": "Button" },
+        { "type": "text", "id": "button_text", "label": "Button text", "default": "Notify Me" },
+        { "type": "url",  "id": "button_link", "label": "Button link" }
       ]
     }
   ],
   "presets": [
     {
-      "name": "testing slider",
+      "name": "Rare Book Showcase",
       "blocks": [
         { "type": "slide" },
         { "type": "slide" },
@@ -3482,4 +3809,3 @@
   ]
 }
 {% endschema %}
-

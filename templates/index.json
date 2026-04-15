@@ -119,9 +119,7 @@
       "type": "rare-biblio-scroll",
       "name": "Rare Biblio Scroll",
       "settings": {
-        "heading_lead": "About Rare Biblio",
-        "heading_accent": "",
-        "heading": "",
+        "heading": "About Rare Biblio",
         "show_title_divider": true,
         "subtitle": "",
         "body_text": "<p>Welcome to Rare Biblio, the premier destination for bibliophiles and book lovers who appreciate the art of bookmaking. As a rare books store, we specialize in handcrafted leather-bound books, personalization & customization services, and restoration of valuable old books, antiquarian books, and manuscripts.</p>",

@@ -459,7 +459,7 @@
         width: calc(100% - 12px);
       }
     }
-
+{% comment %} 
     @media screen and (max-width: 768px) {
       #{{ sid }}.bshelf {
         padding-top: var(--section-pad-top-768);
@@ -489,7 +489,43 @@
       #{{ sid }} .bshelf__title {
         font-size: 13px;
       }
-    }
+    } {% endcomment %}
+
+    @media screen and (max-width: 768px) {
+  #{{ sid }}.bshelf {
+    padding-top: var(--section-pad-top-768);
+    padding-bottom: var(--section-pad-bottom-768);
+  }
+
+  #{{ sid }} .bshelf__grid {
+    gap: var(--row-gap-768);
+  }
+
+  #{{ sid }} .bshelf__books-row {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: var(--books-gap-768);
+    margin-bottom: calc(var(--books-bottom-768) * -1);
+  }
+
+  #{{ sid }} .bshelf__book {
+    width: var(--book-width-768);
+    transform: translateY(var(--book-offset-y-768)) rotate(var(--book-rotate));
+  }
+
+  #{{ sid }} .bshelf__book:hover,
+  #{{ sid }} .bshelf__book:focus-within {
+    transform: translateY(calc(var(--book-offset-y-768) - var(--book-hover-lift))) rotate(var(--book-rotate));
+  }
+
+  #{{ sid }} .bshelf__cta {
+    display: none !important;
+  }
+
+  #{{ sid }} .bshelf__title {
+    font-size: 13px;
+  }
+}
+
 
     @media screen and (max-width: 425px) {
       #{{ sid }}.bshelf {

@@ -1916,260 +1916,365 @@
   }
 </style>
 
-<script>
-(function() {
-  const root = document.getElementById('{{ sid }}');
-  if (!root) return;
+{% comment %} <script>
+  (function() {
+    const root = document.getElementById('{{ sid }}');
+    if (!root) return;
 
-  const cfg = {
-    scrollDriven: root.dataset.ppbsScrollDriven === 'true',
-    style: root.dataset.ppbsStyle || 'cinematic',
-    parallax: parseFloat(root.dataset.ppbsParallax) / 100,
-    stagger: parseInt(root.dataset.ppbsStagger, 10) || 80,
-    mouseTilt: root.dataset.ppbsMouseTilt === 'true',
-    tiltStrength: parseFloat(root.dataset.ppbsTiltStrength) / 100,
-    autoplayMs: (parseFloat(root.dataset.ppbsAutoplay) || 0) * 1000
-  };
+    const cfg = {
+      scrollDriven: root.dataset.ppbsScrollDriven === 'true',
+      style: root.dataset.ppbsStyle || 'cinematic',
+      parallax: parseFloat(root.dataset.ppbsParallax) / 100,
+      stagger: parseInt(root.dataset.ppbsStagger, 10) || 80,
+      mouseTilt: root.dataset.ppbsMouseTilt === 'true',
+      tiltStrength: parseFloat(root.dataset.ppbsTiltStrength) / 100,
+      autoplayMs: (parseFloat(root.dataset.ppbsAutoplay) || 0) * 1000
+    };
 
-  const sticky = root.querySelector('[data-ppbs-sticky]');
-  const slides = Array.from(root.querySelectorAll('[data-ppbs-slide]'));
-  const total = slides.length;
-  if (total === 0) return;
+    const sticky = root.querySelector('[data-ppbs-sticky]');
+    const slides = Array.from(root.querySelectorAll('[data-ppbs-slide]'));
+    const total = slides.length;
+    if (total === 0) return;
 
-  const prevBtn = root.querySelector('[data-ppbs-prev]');
-  const nextBtn = root.querySelector('[data-ppbs-next]');
-  const currentEl = root.querySelector('[data-ppbs-current]');
-  const progressEl = root.querySelector('[data-ppbs-progress]');
-  const beams = root.querySelector('.ppbs__bg-beams');
-  const halo = root.querySelector('.ppbs__bg-halo');
+    const prevBtn = root.querySelector('[data-ppbs-prev]');
+    const nextBtn = root.querySelector('[data-ppbs-next]');
+    const currentEl = root.querySelector('[data-ppbs-current]');
+    const progressEl = root.querySelector('[data-ppbs-progress]');
+    const beams = root.querySelector('.ppbs__bg-beams');
+    const halo = root.querySelector('.ppbs__bg-halo');
 
-  let activeIndex = 0;
-  let countdownTimer = null;
-  let autoplayTimer = null;
-  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const isMobile = () => window.matchMedia('(max-width: 767px)').matches;
+    let activeIndex = 0;
+    let countdownTimer = null;
+    let autoplayTimer = null;
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const isMobile = () => window.matchMedia('(max-width: 767px)').matches;
 
-  slides.forEach(slide => {
-    slide.querySelectorAll('[data-ppbs-reveal]').forEach(el => {
-      const idx = parseInt(el.dataset.ppbsReveal, 10) || 0;
-      el.style.transitionDelay = (idx * cfg.stagger) + 'ms';
-    });
-  });
-
-  function setActive(idx) {
-    activeIndex = idx;
-    slides.forEach((s, i) => s.classList.toggle('is-active', i === idx));
-    if (currentEl) currentEl.textContent = idx + 1;
-    if (progressEl) progressEl.style.width = ((idx + 1) / total * 100) + '%';
-    startCountdown();
-  }
-
-  function initScrollDriven() {
-    let ticking = false;
-    let lastIdx = -1;
-
-    function applyTransforms(slideFloat) {
-      const vh = window.innerHeight;
-
-      slides.forEach((slide, i) => {
-        const distance = i - slideFloat;
-        const absDist = Math.abs(distance);
-
-        const content = slide.querySelector('[data-ppbs-content]');
-        const media = slide.querySelector('[data-ppbs-media]');
-        const inner = slide.querySelector('[data-ppbs-tilt]');
-        if (!content || !media || !inner) return;
-
-        if (absDist > 1) {
-          content.style.setProperty('--content-y', '0px');
-          media.style.setProperty('--media-y', '0px');
-          inner.style.setProperty('--slide-y', '0px');
-          inner.style.setProperty('--slide-scale', '1');
-          return;
-        }
-
-        let contentY = 0, mediaY = 0, slideY = 0, scale = 1;
-
-        switch (cfg.style) {
-          case 'fade':
-            contentY = distance * vh * 0.05 * cfg.parallax;
-            mediaY = distance * vh * 0.03 * cfg.parallax;
-            break;
-          case 'slide-up':
-            contentY = distance * vh * 0.55;
-            mediaY = distance * vh * (0.35 - cfg.parallax * 0.15);
-            break;
-          case 'scale':
-            scale = 1 - absDist * 0.1 * cfg.parallax;
-            contentY = distance * vh * 0.3;
-            mediaY = distance * vh * 0.15 * cfg.parallax;
-            break;
-          case 'cinematic':
-          default:
-            contentY = distance * vh * 0.45;
-            mediaY = distance * vh * (0.25 - cfg.parallax * 0.1);
-            slideY = -absDist * 20 * cfg.parallax;
-            scale = 1 - absDist * 0.04;
-            break;
-        }
-
-        content.style.setProperty('--content-y', contentY + 'px');
-        media.style.setProperty('--media-y', mediaY + 'px');
-        inner.style.setProperty('--slide-y', slideY + 'px');
-        inner.style.setProperty('--slide-scale', scale.toString());
+    slides.forEach(slide => {
+      slide.querySelectorAll('[data-ppbs-reveal]').forEach(el => {
+        const idx = parseInt(el.dataset.ppbsReveal, 10) || 0;
+        el.style.transitionDelay = (idx * cfg.stagger) + 'ms';
       });
+    });
 
-      const drift = (slideFloat / Math.max(1, total - 1) - 0.5) * 60;
-      if (beams) beams.style.transform = `translateX(${drift}px)`;
-      if (halo) halo.style.transform = `translate(calc(-50% + ${drift * 0.6}px), 0)`;
+    function setActive(idx) {
+      activeIndex = idx;
+      slides.forEach((s, i) => s.classList.toggle('is-active', i === idx));
+      if (currentEl) currentEl.textContent = idx + 1;
+      if (progressEl) progressEl.style.width = ((idx + 1) / total * 100) + '%';
+      startCountdown();
     }
 
-    function onScroll() {
-      if (ticking) return;
-      ticking = true;
+    function initScrollDriven() {
+      let ticking = false;
+      let lastIdx = -1;
 
-      requestAnimationFrame(() => {
-        const rect = root.getBoundingClientRect();
+      function applyTransforms(slideFloat) {
+        const vh = window.innerHeight;
+
+        slides.forEach((slide, i) => {
+          const distance = i - slideFloat;
+          const absDist = Math.abs(distance);
+
+          const content = slide.querySelector('[data-ppbs-content]');
+          const media = slide.querySelector('[data-ppbs-media]');
+          const inner = slide.querySelector('[data-ppbs-tilt]');
+          if (!content || !media || !inner) return;
+
+          if (absDist > 1) {
+            content.style.setProperty('--content-y', '0px');
+            media.style.setProperty('--media-y', '0px');
+            inner.style.setProperty('--slide-y', '0px');
+            inner.style.setProperty('--slide-scale', '1');
+            return;
+          }
+
+          let contentY = 0, mediaY = 0, slideY = 0, scale = 1;
+
+          switch (cfg.style) {
+            case 'fade':
+              contentY = distance * vh * 0.05 * cfg.parallax;
+              mediaY = distance * vh * 0.03 * cfg.parallax;
+              break;
+            case 'slide-up':
+              contentY = distance * vh * 0.55;
+              mediaY = distance * vh * (0.35 - cfg.parallax * 0.15);
+              break;
+            case 'scale':
+              scale = 1 - absDist * 0.1 * cfg.parallax;
+              contentY = distance * vh * 0.3;
+              mediaY = distance * vh * 0.15 * cfg.parallax;
+              break;
+            case 'cinematic':
+            default:
+              contentY = distance * vh * 0.45;
+              mediaY = distance * vh * (0.25 - cfg.parallax * 0.1);
+              slideY = -absDist * 20 * cfg.parallax;
+              scale = 1 - absDist * 0.04;
+              break;
+          }
+
+          content.style.setProperty('--content-y', contentY + 'px');
+          media.style.setProperty('--media-y', mediaY + 'px');
+          inner.style.setProperty('--slide-y', slideY + 'px');
+          inner.style.setProperty('--slide-scale', scale.toString());
+        });
+
+        const drift = (slideFloat / Math.max(1, total - 1) - 0.5) * 60;
+        if (beams) beams.style.transform = `translateX(${drift}px)`;
+        if (halo) halo.style.transform = `translate(calc(-50% + ${drift * 0.6}px), 0)`;
+      }
+
+      function onScroll() {
+        if (ticking) return;
+        ticking = true;
+
+        requestAnimationFrame(() => {
+          const rect = root.getBoundingClientRect();
+          const scrollable = root.offsetHeight - window.innerHeight;
+          const scrolled = -rect.top;
+          const progress = Math.max(0, Math.min(1, scrolled / scrollable));
+
+          const slideFloat = progress * Math.max(1, total - 1);
+          const newIdx = Math.round(slideFloat);
+
+          if (newIdx !== lastIdx) {
+            setActive(newIdx);
+            lastIdx = newIdx;
+          }
+
+          if (!reducedMotion) applyTransforms(slideFloat);
+          ticking = false;
+        });
+      }
+
+      window.addEventListener('scroll', onScroll, { passive: true });
+      window.addEventListener('resize', onScroll);
+      onScroll();
+
+      function scrollToSlide(idx) {
+        idx = Math.max(0, Math.min(total - 1, idx));
         const scrollable = root.offsetHeight - window.innerHeight;
-        const scrolled = -rect.top;
-        const progress = Math.max(0, Math.min(1, scrolled / scrollable));
+        const targetProgress = idx / Math.max(1, total - 1);
+        const targetScroll = root.offsetTop + scrollable * targetProgress;
+        window.scrollTo({ top: targetScroll, behavior: 'smooth' });
+      }
 
-        const slideFloat = progress * Math.max(1, total - 1);
-        const newIdx = Math.round(slideFloat);
+      if (prevBtn) prevBtn.addEventListener('click', () => scrollToSlide(activeIndex - 1));
+      if (nextBtn) nextBtn.addEventListener('click', () => scrollToSlide(activeIndex + 1));
+    }
 
-        if (newIdx !== lastIdx) {
-          setActive(newIdx);
-          lastIdx = newIdx;
-        }
+    function initClickDriven() {
+      function goTo(idx) { setActive(((idx % total) + total) % total); }
+      function next() { goTo(activeIndex + 1); }
+      function prev() { goTo(activeIndex - 1); }
 
-        if (!reducedMotion) applyTransforms(slideFloat);
-        ticking = false;
+      if (prevBtn) prevBtn.addEventListener('click', () => { prev(); resetAutoplay(); });
+      if (nextBtn) nextBtn.addEventListener('click', () => { next(); resetAutoplay(); });
+
+      root.tabIndex = 0;
+      root.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowLeft') { prev(); resetAutoplay(); }
+        if (e.key === 'ArrowRight') { next(); resetAutoplay(); }
       });
-    }
 
-    window.addEventListener('scroll', onScroll, { passive: true });
-    window.addEventListener('resize', onScroll);
-    onScroll();
+      let touchStartX = 0;
+      root.addEventListener('touchstart', (e) => { touchStartX = e.touches[0].clientX; }, { passive: true });
+      root.addEventListener('touchend', (e) => {
+        const diff = e.changedTouches[0].clientX - touchStartX;
+        if (Math.abs(diff) > 50) { diff > 0 ? prev() : next(); resetAutoplay(); }
+      }, { passive: true });
 
-    function scrollToSlide(idx) {
-      idx = Math.max(0, Math.min(total - 1, idx));
-      const scrollable = root.offsetHeight - window.innerHeight;
-      const targetProgress = idx / Math.max(1, total - 1);
-      const targetScroll = root.offsetTop + scrollable * targetProgress;
-      window.scrollTo({ top: targetScroll, behavior: 'smooth' });
-    }
+      function startAutoplay() {
+        if (cfg.autoplayMs > 0 && total > 1) autoplayTimer = setInterval(next, cfg.autoplayMs);
+      }
 
-    if (prevBtn) prevBtn.addEventListener('click', () => scrollToSlide(activeIndex - 1));
-    if (nextBtn) nextBtn.addEventListener('click', () => scrollToSlide(activeIndex + 1));
-  }
+      function resetAutoplay() {
+        if (autoplayTimer) clearInterval(autoplayTimer);
+        startAutoplay();
+      }
 
-  function initClickDriven() {
-    function goTo(idx) { setActive(((idx % total) + total) % total); }
-    function next() { goTo(activeIndex + 1); }
-    function prev() { goTo(activeIndex - 1); }
-
-    if (prevBtn) prevBtn.addEventListener('click', () => { prev(); resetAutoplay(); });
-    if (nextBtn) nextBtn.addEventListener('click', () => { next(); resetAutoplay(); });
-
-    root.tabIndex = 0;
-    root.addEventListener('keydown', (e) => {
-      if (e.key === 'ArrowLeft') { prev(); resetAutoplay(); }
-      if (e.key === 'ArrowRight') { next(); resetAutoplay(); }
-    });
-
-    let touchStartX = 0;
-    root.addEventListener('touchstart', (e) => { touchStartX = e.touches[0].clientX; }, { passive: true });
-    root.addEventListener('touchend', (e) => {
-      const diff = e.changedTouches[0].clientX - touchStartX;
-      if (Math.abs(diff) > 50) { diff > 0 ? prev() : next(); resetAutoplay(); }
-    }, { passive: true });
-
-    function startAutoplay() {
-      if (cfg.autoplayMs > 0 && total > 1) autoplayTimer = setInterval(next, cfg.autoplayMs);
-    }
-
-    function resetAutoplay() {
-      if (autoplayTimer) clearInterval(autoplayTimer);
+      root.addEventListener('mouseenter', () => autoplayTimer && clearInterval(autoplayTimer));
+      root.addEventListener('mouseleave', startAutoplay);
       startAutoplay();
     }
 
-    root.addEventListener('mouseenter', () => autoplayTimer && clearInterval(autoplayTimer));
-    root.addEventListener('mouseleave', startAutoplay);
-    startAutoplay();
-  }
+    function startCountdown() {
+      if (countdownTimer) clearInterval(countdownTimer);
+      const slide = slides[activeIndex];
+      const endRaw = slide.getAttribute('data-ppbs-end');
+      if (!endRaw) return;
 
-  function startCountdown() {
-    if (countdownTimer) clearInterval(countdownTimer);
-    const slide = slides[activeIndex];
-    const endRaw = slide.getAttribute('data-ppbs-end');
-    if (!endRaw) return;
+      const end = new Date(endRaw).getTime();
+      if (isNaN(end)) return;
 
-    const end = new Date(endRaw).getTime();
-    if (isNaN(end)) return;
+      const hEl = slide.querySelector('[data-ppbs-hours]');
+      const mEl = slide.querySelector('[data-ppbs-minutes]');
+      const sEl = slide.querySelector('[data-ppbs-seconds]');
+      const wrap = slide.querySelector('.ppbs__timer');
+      if (!hEl || !mEl || !sEl) return;
 
-    const hEl = slide.querySelector('[data-ppbs-hours]');
-    const mEl = slide.querySelector('[data-ppbs-minutes]');
-    const sEl = slide.querySelector('[data-ppbs-seconds]');
-    const wrap = slide.querySelector('.ppbs__timer');
-    if (!hEl || !mEl || !sEl) return;
+      function tick() {
+        const diff = end - Date.now();
 
-    function tick() {
-      const diff = end - Date.now();
+        if (diff <= 0) {
+          hEl.textContent = mEl.textContent = sEl.textContent = '00';
+          if (wrap) wrap.classList.add('is-expired');
+          clearInterval(countdownTimer);
+          return;
+        }
 
-      if (diff <= 0) {
-        hEl.textContent = mEl.textContent = sEl.textContent = '00';
-        if (wrap) wrap.classList.add('is-expired');
-        clearInterval(countdownTimer);
-        return;
+        const totalHours = Math.floor(diff / 3600000);
+        const minutes = Math.floor((diff % 3600000) / 60000);
+        const seconds = Math.floor((diff % 60000) / 1000);
+
+        hEl.textContent = String(totalHours).padStart(2, '0');
+        mEl.textContent = String(minutes).padStart(2, '0');
+        sEl.textContent = String(seconds).padStart(2, '0');
       }
 
-      const totalHours = Math.floor(diff / 3600000);
-      const minutes = Math.floor((diff % 3600000) / 60000);
-      const seconds = Math.floor((diff % 60000) / 1000);
-
-      hEl.textContent = String(totalHours).padStart(2, '0');
-      mEl.textContent = String(minutes).padStart(2, '0');
-      sEl.textContent = String(seconds).padStart(2, '0');
+      tick();
+      countdownTimer = setInterval(tick, 1000);
     }
 
-    tick();
-    countdownTimer = setInterval(tick, 1000);
-  }
+    if (cfg.mouseTilt && !reducedMotion) {
+      const intensity = 8 * cfg.tiltStrength;
+      let rafId = null;
 
-  if (cfg.mouseTilt && !reducedMotion) {
-    const intensity = 8 * cfg.tiltStrength;
-    let rafId = null;
+      sticky.addEventListener('mousemove', (e) => {
+        if (isMobile()) return;
+        if (rafId) cancelAnimationFrame(rafId);
 
-    sticky.addEventListener('mousemove', (e) => {
-      if (isMobile()) return;
-      if (rafId) cancelAnimationFrame(rafId);
+        rafId = requestAnimationFrame(() => {
+          const rect = sticky.getBoundingClientRect();
+          const x = (e.clientX - rect.left) / rect.width - 0.5;
+          const y = (e.clientY - rect.top) / rect.height - 0.5;
+          const activeInner = slides[activeIndex] && slides[activeIndex].querySelector('[data-ppbs-tilt]');
+          if (!activeInner) return;
 
-      rafId = requestAnimationFrame(() => {
-        const rect = sticky.getBoundingClientRect();
-        const x = (e.clientX - rect.left) / rect.width - 0.5;
-        const y = (e.clientY - rect.top) / rect.height - 0.5;
-        const activeInner = slides[activeIndex] && slides[activeIndex].querySelector('[data-ppbs-tilt]');
-        if (!activeInner) return;
+          const baseRot = parseFloat(getComputedStyle(activeInner).getPropertyValue('--slide-tilt-desktop')) || 0;
+          const slideY = parseFloat(getComputedStyle(activeInner).getPropertyValue('--slide-y')) || 0;
+          const slideScale = parseFloat(getComputedStyle(activeInner).getPropertyValue('--slide-scale')) || 1;
+          const baseScale = parseFloat(getComputedStyle(activeInner).getPropertyValue('--slide-base-scale')) || 1;
 
-        const baseRot = parseFloat(getComputedStyle(activeInner).getPropertyValue('--slide-tilt-desktop')) || 0;
-        const slideY = parseFloat(getComputedStyle(activeInner).getPropertyValue('--slide-y')) || 0;
-        const slideScale = parseFloat(getComputedStyle(activeInner).getPropertyValue('--slide-scale')) || 1;
-        const baseScale = parseFloat(getComputedStyle(activeInner).getPropertyValue('--slide-base-scale')) || 1;
-
-        activeInner.style.transform =
-          `translateY(${slideY}px) scale(${slideScale * baseScale}) rotateY(${x * intensity}deg) rotateX(${-y * intensity}deg) rotate(${baseRot}deg)`;
+          activeInner.style.transform =
+            `translateY(${slideY}px) scale(${slideScale * baseScale}) rotateY(${x * intensity}deg) rotateX(${-y * intensity}deg) rotate(${baseRot}deg)`;
+        });
       });
+
+      sticky.addEventListener('mouseleave', () => {
+        const activeInner = slides[activeIndex] && slides[activeIndex].querySelector('[data-ppbs-tilt]');
+        if (activeInner) activeInner.style.transform = '';
+      });
+    }
+
+    setActive(0);
+    if (cfg.scrollDriven) initScrollDriven();
+    else initClickDriven();
+  })();
+</script> {% endcomment %}
+
+<script>
+(function () {
+  const SECTION_ID = '{{ section_id }}';
+
+  function init() {
+    const section = document.getElementById(SECTION_ID);
+    if (!section || typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') return;
+
+    gsap.registerPlugin(ScrollTrigger);
+
+    ScrollTrigger.getAll().forEach((trigger) => {
+      if (trigger.trigger && trigger.trigger.closest && trigger.trigger.closest('#' + SECTION_ID)) {
+        trigger.kill();
+      }
     });
 
-    sticky.addEventListener('mouseleave', () => {
-      const activeInner = slides[activeIndex] && slides[activeIndex].querySelector('[data-ppbs-tilt]');
-      if (activeInner) activeInner.style.transform = '';
+    const slides = section.querySelectorAll('[data-rbps-slide]');
+
+    slides.forEach((slide) => {
+      const mediaWrap = slide.querySelector('[data-rbps-media-wrap]');
+      const image = slide.querySelector('.rbps__image');
+      const content = slide.querySelector('[data-rbps-content]');
+      const heading = slide.querySelector('[data-rbps-heading]');
+      const text = slide.querySelector('[data-rbps-text]');
+      const button = slide.querySelector('[data-rbps-button]');
+
+      if (!mediaWrap || !content) return;
+
+      /* Reset everything first */
+      gsap.set(mediaWrap, { clearProps: 'all' });
+      if (image) gsap.set(image, { y: 0, scale: 1.08, opacity: 1 });
+      gsap.set(content, { y: 0, opacity: 1 });
+      if (heading) gsap.set(heading, { y: 0, opacity: 1 });
+      if (text) gsap.set(text, { y: 0, opacity: 1 });
+      if (button) gsap.set(button, { y: 0, opacity: 1 });
+
+      /* IMAGE ONLY PARALLAX */
+      if (image) {
+        gsap.fromTo(image,
+          {
+            y: 80,
+            scale: 1.14
+          },
+          {
+            y: -80,
+            scale: 1.04,
+            ease: 'none',
+            scrollTrigger: {
+              trigger: slide,
+              start: 'top bottom',
+              end: 'bottom top',
+              scrub: 1,
+              invalidateOnRefresh: true
+            }
+          }
+        );
+      }
+
+      /* TEXT SIDE REVEAL ONLY */
+      const revealItems = [heading, text, button].filter(Boolean);
+
+      if (revealItems.length) {
+        gsap.set(revealItems, {
+          y: 36,
+          opacity: 0
+        });
+
+        gsap.to(revealItems, {
+          y: 0,
+          opacity: 1,
+          duration: 0.9,
+          ease: 'power2.out',
+          stagger: 0.12,
+          scrollTrigger: {
+            trigger: content,
+            start: 'top 78%',
+            end: 'top 52%',
+            toggleActions: 'play none none reverse',
+            invalidateOnRefresh: true
+          }
+        });
+      }
     });
+
+    ScrollTrigger.refresh();
   }
 
-  setActive(0);
-  if (cfg.scrollDriven) initScrollDriven();
-  else initClickDriven();
+  document.addEventListener('shopify:section:load', init);
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+
+  let resizeTimer;
+  window.addEventListener('resize', function () {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(function () {
+      ScrollTrigger.refresh();
+    }, 150);
+  });
 })();
 </script>
 

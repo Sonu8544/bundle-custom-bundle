@@ -3202,6 +3202,7 @@
  {% endcomment %}
 
 
+
 {% liquid
   assign section_id = 'rb-parallax-slider-' | append: section.id
 %}
@@ -3215,7 +3216,6 @@
   style="
     --rbps-bg-start: {{ section.settings.bg_start }};
     --rbps-bg-end: {{ section.settings.bg_end }};
-    --rbps-border-color: {{ section.settings.border_color }};
     --rbps-heading-color: {{ section.settings.heading_color }};
     --rbps-text-color: {{ section.settings.text_color }};
     --rbps-overlay-opacity: {{ section.settings.image_overlay_opacity | divided_by: 100.0 }};
@@ -3223,8 +3223,6 @@
     --rbps-heading-size-mobile: {{ section.settings.heading_size_mobile }}px;
     --rbps-text-size-desktop: {{ section.settings.text_size_desktop }}px;
     --rbps-text-size-mobile: {{ section.settings.text_size_mobile }}px;
-    --rbps-slide-min-height-desktop: {{ section.settings.slide_height_desktop }}px;
-    --rbps-slide-min-height-mobile: {{ section.settings.slide_height_mobile }}px;
     --rbps-image-size-desktop: {{ section.settings.image_size_desktop }}px;
     --rbps-image-size-mobile: {{ section.settings.image_size_mobile }}px;
     --rbps-image-radius: {{ section.settings.image_radius }}px;
@@ -3259,51 +3257,51 @@
         style="z-index: {{ forloop.index }};"
         {{ block.shopify_attributes }}
       >
-        <div class="rbps__slide-bg"></div>
+        <div class="rbps__panel">
+          <div class="rbps__slide-bg"></div>
 
-        <div class="rbps__inner">
-          <div class="rbps__slide-grid">
-            <div class="rbps__media-wrap" data-rbps-media-wrap>
-              <div class="rbps__media" data-rbps-media>
-                {% if block.settings.image != blank %}
-                  {{
-                    block.settings.image
-                    | image_url: width: 1800
-                    | image_tag:
-                      loading: rbps_img_loading,
-                      widths: '400, 600, 800, 1000, 1200, 1400, 1600, 1800',
-                      sizes: '(max-width: 749px) 88vw, 560px',
-                      class: 'rbps__image',
-                      alt: block.settings.heading | escape
-                  }}
-                {% else %}
-                  {{ 'image' | placeholder_svg_tag: 'rbps__image rbps__image--placeholder' }}
-                {% endif %}
-                <div class="rbps__image-overlay"></div>
+          <div class="rbps__inner">
+            <div class="rbps__slide-grid">
+              <div class="rbps__media-wrap" data-rbps-media-wrap>
+                <div class="rbps__media" data-rbps-media>
+                  {% if block.settings.image != blank %}
+                    {{
+                      block.settings.image
+                      | image_url: width: 1800
+                      | image_tag:
+                        loading: rbps_img_loading,
+                        widths: '400, 600, 800, 1000, 1200, 1400, 1600, 1800',
+                        sizes: '(max-width: 749px) 88vw, 560px',
+                        class: 'rbps__image',
+                        alt: block.settings.heading | escape
+                    }}
+                  {% else %}
+                    {{ 'image' | placeholder_svg_tag: 'rbps__image rbps__image--placeholder' }}
+                  {% endif %}
+                  <div class="rbps__image-overlay"></div>
+                </div>
               </div>
-            </div>
 
-            <div class="rbps__content-wrap{% if show_content_grad %} rbps__content-wrap--grad{% endif %}">
-              <div class="rbps__content" data-rbps-content>
-                {% if block.settings.heading != blank %}
-                  <h2 class="rbps__heading" data-rbps-heading>
-                    {{ block.settings.heading }}
-                  </h2>
-                {% endif %}
+              <div class="rbps__content-wrap{% if show_content_grad %} rbps__content-wrap--grad{% endif %}">
+                <div class="rbps__content" data-rbps-content>
+                  {% if block.settings.heading != blank %}
+                    <h2 class="rbps__heading" data-rbps-heading>{{ block.settings.heading }}</h2>
+                  {% endif %}
 
-                {% if block.settings.text != blank %}
-                  <div class="rbps__text rte" data-rbps-text>
-                    {{ block.settings.text }}
-                  </div>
-                {% endif %}
+                  {% if block.settings.text != blank %}
+                    <div class="rbps__text rte" data-rbps-text>
+                      {{ block.settings.text }}
+                    </div>
+                  {% endif %}
 
-                {% if block.settings.button_label != blank and block.settings.button_link != blank %}
-                  <div class="rbps__button-wrap" data-rbps-button>
-                    <a href="{{ block.settings.button_link }}" class="rbps__button">
-                      {{ block.settings.button_label }}
-                    </a>
-                  </div>
-                {% endif %}
+                  {% if block.settings.button_label != blank and block.settings.button_link != blank %}
+                    <div class="rbps__button-wrap" data-rbps-button>
+                      <a href="{{ block.settings.button_link }}" class="rbps__button">
+                        {{ block.settings.button_label }}
+                      </a>
+                    </div>
+                  {% endif %}
+                </div>
               </div>
             </div>
           </div>
@@ -3317,9 +3315,7 @@
   #{{ section_id }} {
     position: relative;
     overflow: visible;
-    background:
-      radial-gradient(77.47% 561.61% at 127.29% 73.12%, rgba(39, 29, 14, 0) 0%, #050504 100%),
-      linear-gradient(180deg, var(--rbps-bg-start) 0%, var(--rbps-bg-end) 100%);
+    background: #050504;
     padding-top: var(--rbps-padding-top);
     padding-bottom: var(--rbps-padding-bottom);
   }
@@ -3332,8 +3328,14 @@
     position: sticky;
     top: 0;
     min-height: 100vh;
-    display: flex;
-    align-items: center;
+    overflow: hidden;
+  }
+
+  #{{ section_id }} .rbps__panel {
+    position: relative;
+    min-height: 100vh;
+    background: #050504;
+    isolation: isolate;
     overflow: hidden;
   }
 
@@ -3349,24 +3351,23 @@
   }
 
   #{{ section_id }} .rbps__inner {
-    width: min(100%, var(--rbps-section-max-width));
-    margin: 0 auto;
     position: relative;
     z-index: 1;
+    width: min(100%, var(--rbps-section-max-width));
     min-height: 100vh;
+    margin: 0 auto;
     display: flex;
     align-items: center;
   }
 
   #{{ section_id }} .rbps__slide-grid {
-    position: relative;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    align-items: center;
-    gap: var(--rbps-gap-desktop);
-    padding: 56px 32px;
     width: 100%;
     min-height: 100vh;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: var(--rbps-gap-desktop);
+    align-items: center;
+    padding: 56px 32px;
   }
 
   #{{ section_id }} .rbps__slide--image-left .rbps__media-wrap { order: 1; }
@@ -3376,11 +3377,12 @@
   #{{ section_id }} .rbps__slide--image-right .rbps__content-wrap { order: 1; }
 
   #{{ section_id }} .rbps__media-wrap {
+    position: relative;
     display: flex;
     align-items: center;
     justify-content: center;
     min-height: 100%;
-    will-change: transform, opacity;
+    will-change: transform;
   }
 
   #{{ section_id }} .rbps__media {
@@ -3392,8 +3394,7 @@
     overflow: hidden;
     background: #0a0907;
     box-shadow: 0 16px 50px rgba(0, 0, 0, 0.35);
-    will-change: transform, opacity;
-    transform: translate3d(0, 0, 0);
+    will-change: transform;
   }
 
   #{{ section_id }} .rbps__image {
@@ -3404,15 +3405,15 @@
     display: block;
     object-fit: cover;
     object-position: center center;
-    will-change: transform;
     transform: translate3d(0, 0, 0) scale(1.08);
+    will-change: transform;
   }
 
   #{{ section_id }} .rbps__image-overlay {
     position: absolute;
     inset: 0;
-    pointer-events: none;
     z-index: 1;
+    pointer-events: none;
     border-radius: inherit;
     background: radial-gradient(
       52.48% 50% at 50% 50%,
@@ -3427,6 +3428,7 @@
     display: flex;
     align-items: center;
     min-height: 100%;
+    overflow: hidden;
   }
 
   #{{ section_id }} .rbps__slide--image-left .rbps__content-wrap {
@@ -3468,9 +3470,8 @@
     position: relative;
     z-index: 1;
     max-width: var(--rbps-content-width);
-    will-change: transform, opacity;
     transform: translate3d(0, 0, 0);
-    opacity: 0.96;
+    will-change: transform;
   }
 
   #{{ section_id }} .rbps__heading {
@@ -3523,6 +3524,7 @@
 
   @media screen and (max-width: 749px) {
     #{{ section_id }} .rbps__slide,
+    #{{ section_id }} .rbps__panel,
     #{{ section_id }} .rbps__inner,
     #{{ section_id }} .rbps__slide-grid {
       min-height: 100svh;
@@ -3586,21 +3588,17 @@
 
     slides.forEach((slide) => {
       const mediaWrap = slide.querySelector('[data-rbps-media-wrap]');
-      const media = slide.querySelector('[data-rbps-media]');
       const image = slide.querySelector('.rbps__image');
       const content = slide.querySelector('[data-rbps-content]');
       const heading = slide.querySelector('[data-rbps-heading]');
       const text = slide.querySelector('[data-rbps-text]');
       const button = slide.querySelector('[data-rbps-button]');
 
-      if (!mediaWrap || !media || !content) return;
+      if (!mediaWrap || !content) return;
 
-      gsap.set(mediaWrap, { y: 110, opacity: 0.9 });
-      gsap.set(content, { y: 70, opacity: 0.86 });
-      if (heading) gsap.set(heading, { y: 0, opacity: 1 });
-      if (text) gsap.set(text, { y: 0, opacity: 1 });
-      if (button) gsap.set(button, { y: 0, opacity: 1 });
-      if (image) gsap.set(image, { y: 100, scale: 1.14 });
+      gsap.set(mediaWrap, { y: 100 });
+      gsap.set(content, { y: 60 });
+      if (image) gsap.set(image, { y: 90, scale: 1.14 });
 
       const tl = gsap.timeline({
         scrollTrigger: {
@@ -3613,31 +3611,29 @@
       });
 
       tl.to(mediaWrap, {
-        y: -130,
-        opacity: 1,
+        y: -120,
         ease: 'none'
       }, 0);
 
       if (image) {
         tl.to(image, {
-          y: -170,
+          y: -160,
           scale: 1.03,
           ease: 'none'
         }, 0);
       }
 
       tl.to(content, {
-        y: -65,
-        opacity: 1,
+        y: -55,
         ease: 'none'
       }, 0);
 
       if (heading) {
         tl.fromTo(heading, {
-          y: 24,
+          y: 18,
           opacity: 0.82
         }, {
-          y: -10,
+          y: -8,
           opacity: 1,
           ease: 'none'
         }, 0);
@@ -3645,10 +3641,10 @@
 
       if (text) {
         tl.fromTo(text, {
-          y: 20,
-          opacity: 0.75
+          y: 16,
+          opacity: 0.76
         }, {
-          y: -8,
+          y: -6,
           opacity: 1,
           ease: 'none'
         }, 0.02);
@@ -3656,10 +3652,10 @@
 
       if (button) {
         tl.fromTo(button, {
-          y: 18,
-          opacity: 0.75
+          y: 14,
+          opacity: 0.76
         }, {
-          y: -6,
+          y: -4,
           opacity: 1,
           ease: 'none'
         }, 0.04);
@@ -3882,12 +3878,6 @@
       "id": "bg_end",
       "label": "Background end",
       "default": "#050504"
-    },
-    {
-      "type": "color",
-      "id": "border_color",
-      "label": "Border color",
-      "default": "#3A6EA5"
     },
     {
       "type": "color",

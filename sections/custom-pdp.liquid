@@ -2286,8 +2286,17 @@
     }));
   }
 
-  async function handleAddToCart(button) {
+  {% comment %} async function handleAddToCart(button) {
+    if (!button || isAdding || button.disabled) return; {% endcomment %}
+
+      async function handleAddToCart(button) {
     if (!button || isAdding || button.disabled) return;
+
+    if (queueEnabled && !queueGranted) {
+      queueSetStatus('Join virtual queue first to unlock purchase.');
+      return;
+    }
+    
 
     var variantId = button.getAttribute('data-variant-id');
     if (!variantId) return;

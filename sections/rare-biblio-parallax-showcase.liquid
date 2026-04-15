@@ -3545,7 +3545,7 @@
     #{{ section_id }} .rbps__slide-grid {
       grid-template-columns: 1fr;
       gap: var(--rbps-gap-mobile);
-      padding: 32px 18px;
+      {% comment %} padding: 32px 18px; {% endcomment %}
     }
 
     #{{ section_id }} .rbps__slide--image-left .rbps__content-wrap,
@@ -3580,119 +3580,203 @@
   }
 </style>
 
-<script>
-(function () {
-  const SECTION_ID = '{{ section_id }}';
+{% comment %} <script>
+  (function () {
+    const SECTION_ID = '{{ section_id }}';
 
-  function init() {
-    const section = document.getElementById(SECTION_ID);
-    if (!section || typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') return;
+    function init() {
+      const section = document.getElementById(SECTION_ID);
+      if (!section || typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') return;
 
-    gsap.registerPlugin(ScrollTrigger);
+      gsap.registerPlugin(ScrollTrigger);
 
-    ScrollTrigger.getAll().forEach((trigger) => {
-      if (trigger.trigger && trigger.trigger.closest && trigger.trigger.closest('#' + SECTION_ID)) {
-        trigger.kill();
-      }
-    });
-
-    const slides = section.querySelectorAll('[data-rbps-slide]');
-
-    slides.forEach((slide) => {
-      const mediaWrap = slide.querySelector('[data-rbps-media-wrap]');
-      const image = slide.querySelector('.rbps__image');
-      const content = slide.querySelector('[data-rbps-content]');
-      const heading = slide.querySelector('[data-rbps-heading]');
-      const text = slide.querySelector('[data-rbps-text]');
-      const button = slide.querySelector('[data-rbps-button]');
-
-      if (!mediaWrap || !content) return;
-
-      gsap.set(mediaWrap, { y: 100 });
-      gsap.set(content, { y: 60 });
-      if (image) gsap.set(image, { y: 90, scale: 1.14 });
-
-      const tl = gsap.timeline({
-        scrollTrigger: {
-          trigger: slide,
-          start: 'top bottom',
-          end: 'bottom top',
-          scrub: 1,
-          invalidateOnRefresh: true
+      ScrollTrigger.getAll().forEach((trigger) => {
+        if (trigger.trigger && trigger.trigger.closest && trigger.trigger.closest('#' + SECTION_ID)) {
+          trigger.kill();
         }
       });
 
-      tl.to(mediaWrap, {
-        y: -120,
-        ease: 'none'
-      }, 0);
+      const slides = section.querySelectorAll('[data-rbps-slide]');
 
-      if (image) {
-        tl.to(image, {
-          y: -160,
-          scale: 1.03,
+      slides.forEach((slide) => {
+        const mediaWrap = slide.querySelector('[data-rbps-media-wrap]');
+        const image = slide.querySelector('.rbps__image');
+        const content = slide.querySelector('[data-rbps-content]');
+        const heading = slide.querySelector('[data-rbps-heading]');
+        const text = slide.querySelector('[data-rbps-text]');
+        const button = slide.querySelector('[data-rbps-button]');
+
+        if (!mediaWrap || !content) return;
+
+        gsap.set(mediaWrap, { y: 100 });
+        gsap.set(content, { y: 60 });
+        if (image) gsap.set(image, { y: 90, scale: 1.14 });
+
+        const tl = gsap.timeline({
+          scrollTrigger: {
+            trigger: slide,
+            start: 'top bottom',
+            end: 'bottom top',
+            scrub: 1,
+            invalidateOnRefresh: true
+          }
+        });
+
+        tl.to(mediaWrap, {
+          y: -120,
           ease: 'none'
         }, 0);
-      }
 
-      tl.to(content, {
-        y: -55,
-        ease: 'none'
-      }, 0);
+        if (image) {
+          tl.to(image, {
+            y: -160,
+            scale: 1.03,
+            ease: 'none'
+          }, 0);
+        }
 
-      if (heading) {
-        tl.fromTo(heading, {
-          y: 18,
-          opacity: 0.82
-        }, {
-          y: -8,
-          opacity: 1,
+        tl.to(content, {
+          y: -55,
           ease: 'none'
         }, 0);
-      }
 
-      if (text) {
-        tl.fromTo(text, {
-          y: 16,
-          opacity: 0.76
-        }, {
-          y: -6,
-          opacity: 1,
-          ease: 'none'
-        }, 0.02);
-      }
+        if (heading) {
+          tl.fromTo(heading, {
+            y: 18,
+            opacity: 0.82
+          }, {
+            y: -8,
+            opacity: 1,
+            ease: 'none'
+          }, 0);
+        }
 
-      if (button) {
-        tl.fromTo(button, {
-          y: 14,
-          opacity: 0.76
-        }, {
-          y: -4,
-          opacity: 1,
-          ease: 'none'
-        }, 0.04);
-      }
-    });
+        if (text) {
+          tl.fromTo(text, {
+            y: 16,
+            opacity: 0.76
+          }, {
+            y: -6,
+            opacity: 1,
+            ease: 'none'
+          }, 0.02);
+        }
 
-    ScrollTrigger.refresh();
-  }
+        if (button) {
+          tl.fromTo(button, {
+            y: 14,
+            opacity: 0.76
+          }, {
+            y: -4,
+            opacity: 1,
+            ease: 'none'
+          }, 0.04);
+        }
+      });
 
-  document.addEventListener('shopify:section:load', init);
-
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', init);
-  } else {
-    init();
-  }
-
-  let resizeTimer;
-  window.addEventListener('resize', function () {
-    clearTimeout(resizeTimer);
-    resizeTimer = setTimeout(function () {
       ScrollTrigger.refresh();
-    }, 150);
-  });
-})();
+    }
+
+    document.addEventListener('shopify:section:load', init);
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', init);
+    } else {
+      init();
+    }
+
+    let resizeTimer;
+    window.addEventListener('resize', function () {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(function () {
+        ScrollTrigger.refresh();
+      }, 150);
+    });
+  })();
+</script> {% endcomment %}
+
+
+<script>
+function fitTextToAvailableHeight() {
+  resetTextScaling();
+
+  var viewportH = window.innerHeight || document.documentElement.clientHeight;
+  var roller = getRollerHeights();
+
+  /* slightly more reserved space so bottom roller does not get clipped */
+  var safetyGap = isMobile() ? 34 : 64;
+
+  var availablePaperHeight = Math.max(
+    180,
+    viewportH - roller.top - roller.bottom - safetyGap
+  );
+
+  var baseBody = isMobile() ? 15 : 18;
+  var baseTitle = isMobile() ? 32 : 65;
+  var baseSub = isMobile() ? 10 : 11;
+  var baseQuote = isMobile() ? 14 : 17;
+  var baseStamp = isMobile() ? 10 : 12;
+
+  txt.style.fontSize = baseBody + 'px';
+
+  var h2  = txt.querySelector('h2');
+  var sub = txt.querySelector('.ps-sub');
+  var qt  = txt.querySelector('.ps-quote');
+  var st  = txt.querySelector('.ps-stamp');
+
+  if (h2)  h2.style.fontSize = baseTitle + 'px';
+  if (sub) sub.style.fontSize = baseSub + 'px';
+  if (qt)  qt.style.fontSize = baseQuote + 'px';
+  if (st)  st.style.fontSize = baseStamp + 'px';
+
+  var contentHeight = Math.ceil(txt.scrollHeight);
+
+  if (contentHeight > availablePaperHeight) {
+    var minScale = isMobile() ? 0.78 : 0.72;
+    var scale = Math.max(availablePaperHeight / contentHeight, minScale);
+
+    txt.style.fontSize = (baseBody * scale) + 'px';
+    if (h2)  h2.style.fontSize = (baseTitle * scale) + 'px';
+    if (sub) sub.style.fontSize = (baseSub * scale) + 'px';
+    if (qt)  qt.style.fontSize = (baseQuote * scale) + 'px';
+    if (st)  st.style.fontSize = (baseStamp * scale) + 'px';
+  }
+}
+
+function getMetrics() {
+  var closedHeight = getClosedHeight();
+  var extraScroll = getExtraScroll();
+  var roller = getRollerHeights();
+  var contentHeight = Math.ceil(txt.scrollHeight);
+
+  /*
+    extra reveal below the text so the bottom roller is always visible
+    even on tablet / larger screens / 1440+ widths
+  */
+  var bottomReveal = Math.max(
+    isMobile() ? 44 : 70,
+    Math.round(roller.bottom * (isMobile() ? 0.42 : 0.5))
+  );
+
+  var openHeight = Math.max(
+    closedHeight,
+    contentHeight + bottomReveal
+  );
+
+  var totalScrollDistance = Math.max(
+    openHeight - closedHeight + extraScroll,
+    window.innerHeight * 0.72
+  );
+
+  var shellHeight = Math.ceil(window.innerHeight + totalScrollDistance);
+
+  return {
+    closedHeight: closedHeight,
+    openHeight: openHeight,
+    totalScrollDistance: totalScrollDistance,
+    shellHeight: shellHeight
+  };
+}
 </script>
 
 {% schema %}

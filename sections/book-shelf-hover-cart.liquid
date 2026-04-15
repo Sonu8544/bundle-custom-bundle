@@ -527,7 +527,7 @@
 }
 
 
-    @media screen and (max-width: 425px) {
+    {% comment %} @media screen and (max-width: 425px) {
       #{{ sid }}.bshelf {
         padding-top: var(--section-pad-top-425);
         padding-bottom: var(--section-pad-bottom-425);
@@ -566,6 +566,44 @@
         font-size: 12px;
       }
     }
+ {% endcomment %}
+
+
+ @media screen and (max-width: 425px) {
+  #{{ sid }}.bshelf {
+    padding-top: var(--section-pad-top-425);
+    padding-bottom: var(--section-pad-bottom-425);
+  }
+
+  #{{ sid }} .bshelf__grid {
+    gap: var(--row-gap-425);
+  }
+
+  #{{ sid }} .bshelf__books-row {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: var(--books-gap-425);
+    margin-bottom: calc(var(--books-bottom-425) * -1);
+  }
+
+  #{{ sid }} .bshelf__book {
+    width: var(--book-width-425);
+    transform: translateY(var(--book-offset-y-425)) rotate(var(--book-rotate));
+  }
+
+  #{{ sid }} .bshelf__book:hover,
+  #{{ sid }} .bshelf__book:focus-within {
+    transform: translateY(calc(var(--book-offset-y-425) - var(--book-hover-lift))) rotate(var(--book-rotate));
+  }
+
+  #{{ sid }} .bshelf__cta {
+    display: none !important;
+  }
+
+  #{{ sid }} .bshelf__title {
+    font-size: 12px;
+  }
+}
+
 
     @media screen and (max-width: 375px) {
       #{{ sid }}.bshelf {

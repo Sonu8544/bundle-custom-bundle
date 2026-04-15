@@ -1801,6 +1801,18 @@ transform: matrix(-1, 0, 0, 1, 0, 0);
   -webkit-font-smoothing: antialiased;
 }
 
+#{{ sid }}::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 100px;
+  pointer-events: none;
+  z-index: 6;
+  background: linear-gradient(180deg, rgba(5, 5, 4, 0) 0%, #050504 100%);
+}
+
 /*
   TRACK HEIGHT  —  scroll-driven slide transitions
 */

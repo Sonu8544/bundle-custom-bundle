@@ -904,7 +904,7 @@ border-radius: 122.085px;
       }
     }
 
-    @media screen and (max-width: 767px) {
+    {% comment %} @media screen and (max-width: 767px) {
       #{{ sid }} .ebcp__hero {
         min-height: var(--hero-min-height-mobile);
         padding: {{ section.settings.top_padding_mobile }}px 0 28px;
@@ -1078,8 +1078,137 @@ border-radius: 122.085px;
       #{{ sid }} .ebcp__primary-btn {
         width: 100%;
       }
-    }
+    } {% endcomment %}
 
+
+    @media screen and (max-width: 767px) {
+  #{{ sid }} .ebcp__hero {
+    min-height: var(--hero-min-height-mobile);
+    padding: {{ section.settings.top_padding_mobile }}px 0 28px;
+  }
+
+  #{{ sid }} .ebcp__heading {
+    font-size: var(--heading-size-mobile);
+  }
+
+  #{{ sid }} .ebcp__subheading {
+    margin-top: 14px;
+    max-width: 240px;
+    font-size: var(--subheading-size-mobile);
+    line-height: 1.35;
+  }
+
+  #{{ sid }} .ebcp__toolbar {
+    gap: 10px;
+  }
+
+  #{{ sid }} .ebcp__search-wrap {
+    width: min(100%, var(--search-width-mobile));
+    min-height: 48px;
+    padding-left: 16px;
+  }
+
+  #{{ sid }} .ebcp__search {
+    font-size: 14px;
+  }
+
+  #{{ sid }} .ebcp__filter-btn {
+    width: 48px;
+    height: 48px;
+    flex: 0 0 48px;
+  }
+
+  #{{ sid }} .ebcp__grid {
+    gap: var(--row-gap-mobile);
+  }
+
+  #{{ sid }} .ebcp__shelf-row {
+    position: relative;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  #{{ sid }} .ebcp__books-row {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: 10px;
+    row-gap: 0;
+    width: 100%;
+    max-width: 320px;
+    margin-left: auto;
+    margin-right: auto;
+    padding-top: 0;
+    margin-bottom: -6px;
+    justify-content: center;
+    justify-items: center;
+    align-items: end;
+    position: relative;
+    z-index: 2;
+  }
+
+  #{{ sid }} .ebcp__item,
+  #{{ sid }} .ebcp__row,
+  #{{ sid }} .ebcp__book-wrap {
+    width: 100%;
+    min-width: 0;
+    display: flex;
+    justify-content: center;
+    align-items: end;
+  }
+
+  #{{ sid }} .ebcp__book {
+    width: 100%;
+    max-width: 96px;
+    height: auto;
+    aspect-ratio: 158 / 200;
+    max-height: none;
+    position: relative;
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    will-change: transform;
+  }
+
+  #{{ sid }} .ebcp__book-link {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  #{{ sid }} .ebcp__book-image,
+  #{{ sid }} .ebcp__placeholder {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: contain;
+    transform: translateZ(0);
+    backface-visibility: hidden;
+  }
+
+  #{{ sid }} .ebcp__shelf {
+    width: 100%;
+    max-width: 320px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+  }
+
+  #{{ sid }} .ebcp__shelf-image {
+    width: 100%;
+    height: auto;
+    display: block;
+    object-fit: contain;
+  }
+
+  #{{ sid }} .ebcp__meta {
+    margin-top: 10px;
+    text-align: center;
+  }
+
+  #{{ sid }} .ebcp__desktop-only {
+    display: none !important;
+  }
+}
     .ebcp__desktop-only {
   display: block;
 }

@@ -2100,6 +2100,46 @@
         </div>
       {%- endif -%}
 
+
+      {% if queue_applies %}
+  <div
+    class="launch-queue-box"
+    id="launchQueue-{{ section.id }}"
+    data-launch-queue
+    data-product-id="{{ product.id }}"
+    data-variant-id="{{ current_variant.id }}"
+    data-qty="{{ available_qty }}"
+    data-delay="{{ section.settings.queue_delay_seconds }}"
+    data-section-id="{{ section.id }}"
+  >
+    <div class="launch-queue-box__inner">
+      {% if available_qty > 0 %}
+        <p class="launch-queue-box__eyebrow">{{ section.settings.queue_eyebrow }}</p>
+        <h3 class="launch-queue-box__title">{{ section.settings.queue_title }}</h3>
+        <div class="launch-queue-box__text">{{ section.settings.queue_text }}</div>
+
+        {% if section.settings.show_inventory_text %}
+          <p class="launch-queue-box__stock">
+            {{ available_qty }} unit{% if available_qty != 1 %}s{% endif %} currently available
+          </p>
+        {% endif %}
+
+        {% if section.settings.queue_delay_seconds > 0 %}
+          <div class="launch-queue-box__timer-wrap">
+            <div class="launch-queue-box__timer" data-queue-timer>{{ section.settings.queue_delay_seconds }}</div>
+            <div class="launch-queue-box__timer-label">seconds remaining</div>
+          </div>
+        {% endif %}
+      {% else %}
+        <p class="launch-queue-box__eyebrow">{{ section.settings.soldout_eyebrow }}</p>
+        <h3 class="launch-queue-box__title">{{ section.settings.soldout_title }}</h3>
+        <div class="launch-queue-box__text">{{ section.settings.soldout_text }}</div>
+      {% endif %}
+    </div>
+  </div>
+{% endif %}
+
+
       <div class="product-actions">
         <div class="quantity-control">
           <button class="qty-btn qty-btn--minus" aria-label="Decrease quantity" type="button">
@@ -2181,6 +2221,94 @@
 <link rel="preload" href="https://cdn.shopify.com/s/files/1/0589/1719/1777/files/Bethany_Elingston.otf" as="font" type="font/otf" crossorigin>
 
 <style>
+
+  .launch-queue-box {
+  margin: 0 0 18px;
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 16px;
+  padding: 18px;
+  background: {{ section.settings.queue_bg }};
+  color: {{ section.settings.queue_text_color }};
+}
+
+.launch-queue-box__eyebrow {
+  margin: 0 0 8px;
+  font-size: 12px;
+  line-height: 1.2;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  opacity: 0.7;
+}
+
+.launch-queue-box__title {
+  margin: 0 0 8px;
+  font-size: 24px;
+  line-height: 1.15;
+}
+
+.launch-queue-box__text {
+  margin: 0 0 10px;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.launch-queue-box__text p {
+  margin: 0;
+}
+
+.launch-queue-box__stock {
+  margin: 0 0 12px;
+  font-size: 13px;
+  opacity: 0.85;
+}
+
+.launch-queue-box__timer-wrap {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+}
+
+.launch-queue-box__timer {
+  font-size: 30px;
+  line-height: 1;
+  font-weight: 700;
+}
+
+.launch-queue-box__timer-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  opacity: 0.65;
+}
+
+.launch-buy-hidden #addToCart-{{ section.id }},
+.launch-buy-hidden .shopify-payment-button {
+  pointer-events: none !important;
+  opacity: 0.45 !important;
+}
+
+.launch-buy-soldout #addToCart-{{ section.id }},
+.launch-buy-soldout .shopify-payment-button {
+  pointer-events: none !important;
+  opacity: 0.35 !important;
+}
+
+@media screen and (max-width: 749px) {
+  .launch-queue-box {
+    padding: 16px;
+    border-radius: 14px;
+  }
+
+  .launch-queue-box__title {
+    font-size: 20px;
+  }
+
+  .launch-queue-box__timer {
+    font-size: 26px;
+  }
+}
+
 @font-face {
   font-family: 'Bethany Elingston';
   src: url('https://cdn.shopify.com/s/files/1/0589/1719/1777/files/Bethany_Elingston.otf') format('opentype');

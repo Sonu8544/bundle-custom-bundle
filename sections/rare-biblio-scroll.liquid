@@ -1002,6 +1002,12 @@
 {% endcomment %}
 
 
+
+
+
+
+
+{% comment %} 
 {% comment %}
   Parchment Scroll Section — Interactive scroll with 3D rollers
   Smooth scroll pass-through: only captures when actively opening/closing.
@@ -1658,5 +1664,774 @@
     { "type": "image_picker", "id": "img_bot", "label": "Bottom roller image" }
   ],
   "presets": [{ "name": "Parchment Scroll", "category": "Custom" }]
+}
+{% endschema %} {% endcomment %}
+
+
+
+
+{% comment %}
+  Parchment Scroll Section — Sticky centered open/close scroll
+  Updated to:
+  - keep scroll centered first
+  - remove large empty closed-state space
+  - open according to actual text height
+  - release naturally to next section after fully open
+  - preserve reverse closing on upward scroll
+{% endcomment %}
+
+{%- liquid
+  assign sid = section.id
+  assign heading = section.settings.heading
+  assign heading_lead = section.settings.heading_lead
+  assign heading_accent = section.settings.heading_accent
+  assign subtitle = section.settings.subtitle | strip
+  if subtitle == '-'
+    assign subtitle = ''
+  endif
+  assign body_text = section.settings.body_text
+  assign quote_text = section.settings.quote_text | strip
+  if quote_text == '-'
+    assign quote_text = ''
+  endif
+  assign footer_text = section.settings.footer_text | strip
+  if footer_text == '-'
+    assign footer_text = ''
+  endif
+  assign bg_color = section.settings.bg_color
+  assign max_scroll_width = section.settings.max_scroll_width
+  assign show_title_divider = section.settings.show_title_divider
+
+  if section.settings.img_top != blank
+    assign img_top = section.settings.img_top | image_url: width: 1400
+  else
+    assign img_top = 'scroll-top.png' | asset_url
+  endif
+
+  if section.settings.img_mid != blank
+    assign img_mid = section.settings.img_mid | image_url: width: 1400
+  else
+    assign img_mid = 'scroll-mid.png' | asset_url
+  endif
+
+  if section.settings.img_bot != blank
+    assign img_bot = section.settings.img_bot | image_url: width: 1400
+  else
+    assign img_bot = 'scroll-bot.png' | asset_url
+  endif
+-%}
+
+{{ 'https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Cormorant+Garamond:wght@400;500;600;700&display=swap' | stylesheet_tag }}
+
+<style>
+  #scroll-{{ sid }} {
+    --ps-bg: {{ bg_color }};
+    --ps-text: {{ section.settings.text_color }};
+    --ps-head: {{ section.settings.heading_color }};
+    --ps-accent: {{ section.settings.accent_color }};
+    --ps-maxw: {{ max_scroll_width }}px;
+
+    --ps-closed-h-d: 44px;
+    --ps-closed-h-m: 34px;
+
+    --ps-side-pad-d: 17%;
+    --ps-side-pad-m: 18%;
+
+    --ps-scroll-extra-d: 260px;
+    --ps-scroll-extra-m: 220px;
+
+    --ps-title-d: 62px;
+    --ps-title-m: 36px;
+
+    --ps-sub-d: 11px;
+    --ps-sub-m: 10px;
+
+    --ps-body-d: 18px;
+    --ps-body-m: 15px;
+
+    --ps-body-line-d: 1.55;
+    --ps-body-line-m: 1.55;
+
+    --ps-progress: 0;
+    --ps-open-h: 0px;
+    --ps-shell-h: 160svh;
+
+    position: relative;
+    width: 100%;
+    background: var(--ps-bg);
+    overflow: clip;
+    -webkit-user-select: none;
+    user-select: none;
+    font-family: 'Cormorant Garamond', 'Georgia', serif;
+  }
+
+  #scroll-{{ sid }}::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at 50% 42%, rgba(30,22,10,0.14) 0%, transparent 62%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  #scroll-{{ sid }} .ps-shell {
+    position: relative;
+    min-height: var(--ps-shell-h);
+  }
+
+  #scroll-{{ sid }} .ps-sticky {
+    position: sticky;
+    top: 0;
+    height: 100svh;
+    display: grid;
+    place-items: center;
+    overflow: clip;
+  }
+
+  #scroll-{{ sid }} .ps-scene {
+    position: relative;
+    width: min(77%, var(--ps-maxw));
+    perspective: 1100px;
+    perspective-origin: 50% 50%;
+    z-index: 2;
+  }
+
+  #scroll-{{ sid }} .ps-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transform-style: preserve-3d;
+  }
+
+  #scroll-{{ sid }} .ps-roller {
+    width: 100%;
+    position: relative;
+    z-index: 10;
+    transform-style: preserve-3d;
+    will-change: transform, filter;
+    transition: filter 0.18s linear;
+  }
+
+  #scroll-{{ sid }} .ps-roller img {
+    width: 100%;
+    height: auto;
+    display: block;
+    pointer-events: none;
+    -webkit-user-drag: none;
+  }
+
+  #scroll-{{ sid }} .ps-top-r {
+    margin-bottom: -8px;
+    transform-origin: center center;
+    transform: translateZ(0) rotateX(calc(var(--ps-progress) * -12deg));
+  }
+
+  #scroll-{{ sid }} .ps-bot-r {
+    margin-top: -8px;
+    transform-origin: center center;
+    transform: translateZ(0) rotateX(calc(var(--ps-progress) * 12deg));
+  }
+
+  #scroll-{{ sid }} .ps-paper {
+    width: 100%;
+    height: var(--ps-open-h);
+    min-height: 0;
+    overflow: hidden;
+    position: relative;
+    z-index: 1;
+    will-change: height;
+  }
+
+  #scroll-{{ sid }} .ps-paper-inner {
+    width: 100%;
+    min-height: 100%;
+    background-image: url('{{ img_mid }}');
+    background-size: 100% auto;
+    background-repeat: repeat-y;
+    background-position: top center;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+  }
+
+  #scroll-{{ sid }} .ps-txt {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    max-width: 100%;
+    padding:
+      clamp(22px, 3vw, 30px)
+      var(--ps-side-pad-d)
+      clamp(24px, 3vw, 34px);
+    text-align: center;
+    color: var(--ps-text);
+    opacity: clamp(0, calc((var(--ps-progress) - 0.08) * 2.2), 1);
+    will-change: opacity;
+    box-sizing: border-box;
+  }
+
+  #scroll-{{ sid }} .ps-title {
+    font-family: 'Cormorant Garamond', 'Georgia', serif;
+    font-weight: 600;
+    margin: 0;
+    line-height: 1.04;
+    letter-spacing: 0;
+    text-wrap: balance;
+    color: var(--ps-head);
+    font-size: var(--ps-title-d);
+  }
+
+  #scroll-{{ sid }} .ps-title--plain {
+    color: var(--ps-head);
+  }
+
+  #scroll-{{ sid }} .ps-title__lead {
+    color: var(--ps-head);
+  }
+
+  #scroll-{{ sid }} .ps-title__accent {
+    color: var(--ps-accent);
+    margin-left: 0.1em;
+  }
+
+  #scroll-{{ sid }} .ps-ornament {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.55em;
+    margin: 18px auto 26px;
+    width: 100%;
+    max-width: min(320px, 82%);
+  }
+
+  #scroll-{{ sid }} .ps-ornament__line {
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(167,126,10,0.8), transparent);
+  }
+
+  #scroll-{{ sid }} .ps-ornament__flourish {
+    flex: 0 0 auto;
+    width: 12px;
+    height: 12px;
+    border: 1px solid rgba(167,126,10,0.75);
+    transform: rotate(45deg);
+    border-radius: 1px;
+  }
+
+  #scroll-{{ sid }} .ps-sub {
+    font-family: 'Cinzel', serif;
+    font-weight: 400;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ps-head);
+    opacity: 0.72;
+    margin: 0 0 14px;
+    line-height: 1.35;
+    font-size: var(--ps-sub-d);
+  }
+
+  #scroll-{{ sid }} .ps-body {
+    font-family: "Satoshi", var(--font-body-family, system-ui), -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-weight: 400;
+    line-height: var(--ps-body-line-d);
+    margin: 0;
+    text-align: center;
+    color: var(--ps-text);
+    font-size: var(--ps-body-d);
+  }
+
+  #scroll-{{ sid }} .ps-body p {
+    margin: 0 0 0.7em;
+    font-family: "Satoshi", var(--font-body-family, system-ui), sans-serif;
+    font-weight: 400;
+    font-size: inherit;
+    line-height: inherit;
+    color: inherit;
+  }
+
+  #scroll-{{ sid }} .ps-body p:last-child {
+    margin-bottom: 0;
+  }
+
+  #scroll-{{ sid }} .ps-quote {
+    font-style: italic;
+    opacity: 0.74;
+    margin: 0.8em 0 0;
+    line-height: 1.5;
+    font-family: "Satoshi", var(--font-body-family, system-ui), sans-serif;
+    font-size: calc(var(--ps-body-d) * 0.94);
+  }
+
+  #scroll-{{ sid }} .ps-sep {
+    border: none;
+    border-top: 1px solid rgba(90,50,20,0.2);
+    margin: 16px auto 10px;
+    width: 42%;
+  }
+
+  #scroll-{{ sid }} .ps-stamp {
+    font-family: 'Cinzel', serif;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    opacity: 0.8;
+    padding-top: 0.15em;
+    font-size: 12px;
+  }
+
+  #scroll-{{ sid }} .ps-hint {
+    position: absolute;
+    bottom: 22px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: var(--ps-accent);
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    font-size: 0.55rem;
+    font-family: 'Cinzel', serif;
+    font-weight: 700;
+    z-index: 20;
+    background: rgba(10,8,4,0.82);
+    padding: 8px 22px;
+    border-radius: 22px;
+    border: 1px solid rgba(212,175,55,0.12);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    pointer-events: none;
+    transition: opacity 0.35s ease;
+    white-space: nowrap;
+    opacity: calc(1 - min(var(--ps-progress) * 5, 1));
+  }
+
+  #scroll-{{ sid }} .ps-pbar {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 3px;
+    height: 90px;
+    background: rgba(212,175,55,0.08);
+    border-radius: 3px;
+    z-index: 20;
+    overflow: hidden;
+    opacity: clamp(0, calc((var(--ps-progress) - 0.02) * 4), 0.8);
+    transition: opacity 0.25s ease;
+  }
+
+  #scroll-{{ sid }} .ps-pbar-fill {
+    width: 100%;
+    height: calc(var(--ps-progress) * 100%);
+    background: var(--ps-accent);
+    opacity: 0.52;
+    border-radius: 3px;
+  }
+
+  @media (max-width: 989px) {
+    #scroll-{{ sid }} {
+      --ps-title-d: var(--ps-title-m);
+      --ps-sub-d: var(--ps-sub-m);
+      --ps-body-d: var(--ps-body-m);
+      --ps-body-line-d: var(--ps-body-line-m);
+      --ps-side-pad-d: var(--ps-side-pad-m);
+      --ps-scroll-extra-d: var(--ps-scroll-extra-m);
+    }
+
+    #scroll-{{ sid }} .ps-scene {
+      width: min(92%, var(--ps-maxw));
+    }
+
+    #scroll-{{ sid }} .ps-txt {
+      padding-top: 18px;
+      padding-bottom: 20px;
+    }
+  }
+
+  @media (max-width: 749px) {
+    #scroll-{{ sid }} .ps-scene {
+      width: 100%;
+      max-width: none;
+      padding-left: env(safe-area-inset-left, 0px);
+      padding-right: env(safe-area-inset-right, 0px);
+      box-sizing: border-box;
+    }
+
+    #scroll-{{ sid }} .ps-wrap {
+      width: 100%;
+      max-width: 100%;
+    }
+
+    #scroll-{{ sid }} .ps-paper,
+    #scroll-{{ sid }} .ps-paper-inner {
+      overflow-x: hidden;
+      box-sizing: border-box;
+    }
+
+    #scroll-{{ sid }} .ps-txt {
+      width: 100%;
+      min-width: 0;
+      max-width: 100%;
+      box-sizing: border-box;
+      padding-top: 14px;
+      padding-bottom: 16px;
+      padding-left: max(18%, 18px, env(safe-area-inset-left, 0px));
+      padding-right: max(18%, 18px, env(safe-area-inset-right, 0px));
+      overflow-wrap: anywhere;
+      word-break: break-word;
+    }
+
+    #scroll-{{ sid }} .ps-title,
+    #scroll-{{ sid }} .ps-body,
+    #scroll-{{ sid }} .ps-body *,
+    #scroll-{{ sid }} .ps-sub,
+    #scroll-{{ sid }} .ps-quote,
+    #scroll-{{ sid }} .ps-stamp {
+      max-width: 100%;
+      overflow-wrap: anywhere;
+      word-break: break-word;
+    }
+
+    #scroll-{{ sid }} .ps-title {
+      font-size: var(--ps-title-m);
+      line-height: 1.1;
+    }
+
+    #scroll-{{ sid }} .ps-ornament {
+      margin: 14px auto 18px;
+      max-width: min(260px, 68%);
+    }
+
+    #scroll-{{ sid }} .ps-body {
+      font-size: var(--ps-body-m);
+      line-height: var(--ps-body-line-m);
+    }
+
+    #scroll-{{ sid }} .ps-sub {
+      font-size: var(--ps-sub-m);
+    }
+  }
+
+  @media (max-width: 480px) {
+    #scroll-{{ sid }} .ps-txt {
+      padding-left: max(19%, 16px, env(safe-area-inset-left, 0px));
+      padding-right: max(19%, 16px, env(safe-area-inset-right, 0px));
+    }
+  }
+
+  @media (max-width: 389px) {
+    #scroll-{{ sid }} .ps-txt {
+      padding-left: max(20%, 14px, env(safe-area-inset-left, 0px));
+      padding-right: max(20%, 14px, env(safe-area-inset-right, 0px));
+    }
+  }
+</style>
+
+<div id="scroll-{{ sid }}" class="main-section-wrapper--">
+  <div class="ps-shell" data-ps-shell>
+    <div class="ps-sticky">
+      <div class="ps-hint" data-ps-hint>Scroll</div>
+      <div class="ps-pbar" data-ps-pbar><div class="ps-pbar-fill"></div></div>
+
+      <div class="ps-scene" data-ps-scene>
+        <div class="ps-wrap" data-ps-wrap>
+          <div class="ps-roller ps-top-r" data-ps-top>
+            <img src="{{ img_top }}" alt="" draggable="false" loading="lazy">
+          </div>
+
+          <div class="ps-paper" data-ps-paper>
+            <div class="ps-paper-inner" data-ps-pin>
+              <div class="ps-txt" data-ps-txt>
+                {% if heading_lead != blank or heading_accent != blank %}
+                  <h2 class="ps-title">
+                    {% if heading_lead != blank %}<span class="ps-title__lead">{{ heading_lead }}</span>{% endif %}
+                    {% if heading_accent != blank %}<span class="ps-title__accent">{{ heading_accent }}</span>{% endif %}
+                  </h2>
+                {% elsif heading != blank %}
+                  <h2 class="ps-title ps-title--plain">{{ heading }}</h2>
+                {% endif %}
+
+                {% if show_title_divider %}
+                  {% if heading_lead != blank or heading_accent != blank or heading != blank %}
+                    <div class="ps-ornament" aria-hidden="true">
+                      <span class="ps-ornament__line"></span>
+                      <span class="ps-ornament__flourish"></span>
+                      <span class="ps-ornament__line"></span>
+                    </div>
+                  {% endif %}
+                {% endif %}
+
+                {% if subtitle != blank %}<p class="ps-sub">{{ subtitle }}</p>{% endif %}
+                {% if body_text != blank %}<div class="ps-body rte">{{ body_text }}</div>{% endif %}
+                {% if quote_text != blank %}<p class="ps-quote">&ldquo;{{ quote_text }}&rdquo;</p>{% endif %}
+                {% if footer_text != blank %}
+                  <hr class="ps-sep">
+                  <p class="ps-stamp">{{ footer_text }}</p>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+
+          <div class="ps-roller ps-bot-r" data-ps-bot>
+            <img src="{{ img_bot }}" alt="" draggable="false" loading="lazy">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function() {
+  var root  = document.getElementById('scroll-{{ sid }}');
+  if (!root) return;
+
+  var shell = root.querySelector('[data-ps-shell]');
+  var scene = root.querySelector('[data-ps-scene]');
+  var wrap  = root.querySelector('[data-ps-wrap]');
+  var paper = root.querySelector('[data-ps-paper]');
+  var pIn   = root.querySelector('[data-ps-pin]');
+  var txt   = root.querySelector('[data-ps-txt]');
+  var hint  = root.querySelector('[data-ps-hint]');
+  var topR  = root.querySelector('[data-ps-top]');
+  var botR  = root.querySelector('[data-ps-bot]');
+
+  if (!shell || !scene || !wrap || !paper || !pIn || !txt || !topR || !botR) return;
+
+  var progress = 0;
+  var ticking = false;
+  var resizeTimer = null;
+
+  function clamp(value, min, max) {
+    return Math.max(min, Math.min(max, value));
+  }
+
+  function isMobile() {
+    return window.innerWidth <= 749;
+  }
+
+  function getClosedHeight() {
+    var styles = getComputedStyle(root);
+    return parseFloat(styles.getPropertyValue(isMobile() ? '--ps-closed-h-m' : '--ps-closed-h-d')) || 40;
+  }
+
+  function getExtraScroll() {
+    var styles = getComputedStyle(root);
+    return parseFloat(styles.getPropertyValue(isMobile() ? '--ps-scroll-extra-m' : '--ps-scroll-extra-d')) || 240;
+  }
+
+  function getRollerHeights() {
+    var topImg = topR.querySelector('img');
+    var botImg = botR.querySelector('img');
+
+    return {
+      top: topImg ? topImg.getBoundingClientRect().height : 0,
+      bottom: botImg ? botImg.getBoundingClientRect().height : 0
+    };
+  }
+
+  function resetTextScaling() {
+    txt.style.fontSize = '';
+    var h2  = txt.querySelector('h2');
+    var sub = txt.querySelector('.ps-sub');
+    var qt  = txt.querySelector('.ps-quote');
+    var st  = txt.querySelector('.ps-stamp');
+
+    if (h2)  h2.style.fontSize = '';
+    if (sub) sub.style.fontSize = '';
+    if (qt)  qt.style.fontSize = '';
+    if (st)  st.style.fontSize = '';
+  }
+
+  function fitTextToAvailableHeight() {
+    resetTextScaling();
+
+    var viewportH = window.innerHeight || document.documentElement.clientHeight;
+    var roller = getRollerHeights();
+    var safetyGap = isMobile() ? 26 : 34;
+    var availablePaperHeight = Math.max(
+      180,
+      viewportH - roller.top - roller.bottom - safetyGap
+    );
+
+    var baseBody = isMobile() ? 15 : 18;
+    var baseTitle = isMobile() ? 36 : 62;
+    var baseSub = isMobile() ? 10 : 11;
+    var baseQuote = isMobile() ? 14 : 17;
+    var baseStamp = isMobile() ? 10 : 12;
+
+    txt.style.fontSize = baseBody + 'px';
+
+    var h2  = txt.querySelector('h2');
+    var sub = txt.querySelector('.ps-sub');
+    var qt  = txt.querySelector('.ps-quote');
+    var st  = txt.querySelector('.ps-stamp');
+
+    if (h2)  h2.style.fontSize = baseTitle + 'px';
+    if (sub) sub.style.fontSize = baseSub + 'px';
+    if (qt)  qt.style.fontSize = baseQuote + 'px';
+    if (st)  st.style.fontSize = baseStamp + 'px';
+
+    var contentHeight = Math.ceil(txt.scrollHeight);
+
+    if (contentHeight > availablePaperHeight) {
+      var minScale = isMobile() ? 0.78 : 0.72;
+      var scale = Math.max(availablePaperHeight / contentHeight, minScale);
+
+      txt.style.fontSize = (baseBody * scale) + 'px';
+      if (h2)  h2.style.fontSize = (baseTitle * scale) + 'px';
+      if (sub) sub.style.fontSize = (baseSub * scale) + 'px';
+      if (qt)  qt.style.fontSize = (baseQuote * scale) + 'px';
+      if (st)  st.style.fontSize = (baseStamp * scale) + 'px';
+    }
+  }
+
+  function getMetrics() {
+    var closedHeight = getClosedHeight();
+    var extraScroll = getExtraScroll();
+    var contentHeight = Math.ceil(txt.scrollHeight);
+    var openHeight = Math.max(closedHeight, contentHeight);
+
+    var totalScrollDistance = Math.max(
+      openHeight - closedHeight + extraScroll,
+      window.innerHeight * 0.72
+    );
+
+    var shellHeight = Math.ceil(window.innerHeight + totalScrollDistance);
+
+    return {
+      closedHeight: closedHeight,
+      openHeight: openHeight,
+      totalScrollDistance: totalScrollDistance,
+      shellHeight: shellHeight
+    };
+  }
+
+  function setShellHeight(metrics) {
+    root.style.setProperty('--ps-shell-h', metrics.shellHeight + 'px');
+  }
+
+  function setProgress(value) {
+    progress = clamp(value, 0, 1);
+    root.style.setProperty('--ps-progress', progress.toFixed(4));
+  }
+
+  function render() {
+    var metrics = getMetrics();
+    var currentHeight = metrics.closedHeight + ((metrics.openHeight - metrics.closedHeight) * progress);
+
+    root.style.setProperty('--ps-open-h', currentHeight.toFixed(2) + 'px');
+    pIn.style.minHeight = currentHeight.toFixed(2) + 'px';
+
+    var deg = progress * 12;
+    var lift = progress * 5;
+
+    topR.style.transform = 'translateZ(' + lift + 'px) rotateX(' + (-deg) + 'deg)';
+    botR.style.transform = 'translateZ(' + lift + 'px) rotateX(' + (deg) + 'deg)';
+
+    var topImg = topR.querySelector('img');
+    var botImg = botR.querySelector('img');
+    var brightness = 1 + (progress * 0.08);
+
+    if (topImg) topImg.style.filter = 'brightness(' + brightness + ')';
+    if (botImg) botImg.style.filter = 'brightness(' + brightness + ')';
+    if (hint) hint.style.opacity = progress > 0.06 ? '0' : '1';
+  }
+
+  function updateFromScroll() {
+    ticking = false;
+
+    var metrics = getMetrics();
+    setShellHeight(metrics);
+
+    var rect = shell.getBoundingClientRect();
+    var traveled = clamp(-rect.top, 0, metrics.totalScrollDistance);
+    var nextProgress = metrics.totalScrollDistance > 0 ? traveled / metrics.totalScrollDistance : 0;
+
+    setProgress(nextProgress);
+    render();
+  }
+
+  function requestTick() {
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(updateFromScroll);
+  }
+
+  function refresh() {
+    fitTextToAvailableHeight();
+    var metrics = getMetrics();
+    setShellHeight(metrics);
+    requestTick();
+  }
+
+  window.addEventListener('scroll', requestTick, { passive: true });
+
+  window.addEventListener('resize', function() {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(refresh, 80);
+  });
+
+  document.addEventListener('shopify:section:load', refresh);
+  document.addEventListener('shopify:section:reorder', refresh);
+  document.addEventListener('shopify:block:select', refresh);
+  document.addEventListener('shopify:block:deselect', refresh);
+
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(function() {
+      refresh();
+      setTimeout(refresh, 120);
+    }).catch(function() {
+      refresh();
+    });
+  } else {
+    refresh();
+  }
+
+  window.addEventListener('load', function() {
+    refresh();
+    setTimeout(refresh, 120);
+    setTimeout(refresh, 300);
+    setTimeout(refresh, 700);
+  });
+
+  refresh();
+})();
+</script>
+
+{% schema %}
+{
+  "name": "Parchment Scroll",
+  "tag": "section",
+  "class": "parchment-scroll-section main-section-wrapper--",
+  "limit": 1,
+  "settings": [
+    { "type": "header", "content": "Scroll Content" },
+    { "type": "paragraph", "content": "Title: first part in dark type, second part in gold. Leave both blank to use the single heading line below." },
+    { "type": "text", "id": "heading_lead", "label": "Heading (first part)", "default": "About Rare" },
+    { "type": "text", "id": "heading_accent", "label": "Heading (gold part)", "default": "Biblio" },
+    { "type": "text", "id": "heading", "label": "Heading (single line fallback)", "default": "About Rare Biblio", "info": "Used only if both split title fields above are empty." },
+    { "type": "checkbox", "id": "show_title_divider", "label": "Show gold divider under title", "default": true },
+    { "type": "text", "id": "subtitle", "label": "Subtitle", "default": "-", "info": "Optional. Replace with your subtitle, or leave as a single hyphen (-) to hide." },
+    { "type": "richtext", "id": "body_text", "label": "Body text", "default": "<p>Welcome to Rare Biblio, the premier destination for bibliophiles and book lovers who appreciate the art of bookmaking. As a rare books store, we specialize in handcrafted leather-bound books, personalization &amp; customization services, and restoration of valuable old books, antiquarian books, and manuscripts.</p>" },
+    { "type": "text", "id": "quote_text", "label": "Quote", "default": "-", "info": "Optional. Leave as a single hyphen (-) to hide." },
+    { "type": "text", "id": "footer_text", "label": "Footer stamp", "default": "-", "info": "Optional. Leave as a single hyphen (-) to hide." },
+
+    { "type": "header", "content": "Layout" },
+    { "type": "range", "id": "max_scroll_width", "label": "Max scroll width", "min": 400, "max": 1000, "step": 20, "default": 680, "unit": "px" },
+
+    { "type": "header", "content": "Colors" },
+    { "type": "color", "id": "bg_color", "label": "Background color", "default": "#0a0804" },
+    { "type": "color", "id": "text_color", "label": "Body text color", "default": "#17130f" },
+    { "type": "color", "id": "heading_color", "label": "Heading (first part) color", "default": "#121212" },
+    { "type": "color", "id": "accent_color", "label": "Gold accent (title, divider, hints)", "default": "#a87e0a" },
+
+    { "type": "header", "content": "Scroll Images" },
+    { "type": "paragraph", "content": "Upload custom scroll images, or leave empty to use default assets (scroll-top.png, scroll-mid.png, scroll-bot.png)." },
+    { "type": "image_picker", "id": "img_top", "label": "Top roller image" },
+    { "type": "image_picker", "id": "img_mid", "label": "Middle paper tile" },
+    { "type": "image_picker", "id": "img_bot", "label": "Bottom roller image" }
+  ],
+  "presets": [
+    { "name": "Parchment Scroll", "category": "Custom" }
+  ]
 }
 {% endschema %}

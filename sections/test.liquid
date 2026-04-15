@@ -1916,7 +1916,7 @@
   }
 </style>
 
-{% comment %} <script>
+<script>
   (function() {
     const root = document.getElementById('{{ sid }}');
     if (!root) return;
@@ -2171,111 +2171,6 @@
     if (cfg.scrollDriven) initScrollDriven();
     else initClickDriven();
   })();
-</script> {% endcomment %}
-
-<script>
-(function () {
-  const SECTION_ID = '{{ section_id }}';
-
-  function init() {
-    const section = document.getElementById(SECTION_ID);
-    if (!section || typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') return;
-
-    gsap.registerPlugin(ScrollTrigger);
-
-    ScrollTrigger.getAll().forEach((trigger) => {
-      if (trigger.trigger && trigger.trigger.closest && trigger.trigger.closest('#' + SECTION_ID)) {
-        trigger.kill();
-      }
-    });
-
-    const slides = section.querySelectorAll('[data-rbps-slide]');
-
-    slides.forEach((slide) => {
-      const mediaWrap = slide.querySelector('[data-rbps-media-wrap]');
-      const image = slide.querySelector('.rbps__image');
-      const content = slide.querySelector('[data-rbps-content]');
-      const heading = slide.querySelector('[data-rbps-heading]');
-      const text = slide.querySelector('[data-rbps-text]');
-      const button = slide.querySelector('[data-rbps-button]');
-
-      if (!mediaWrap || !content) return;
-
-      /* Reset everything first */
-      gsap.set(mediaWrap, { clearProps: 'all' });
-      if (image) gsap.set(image, { y: 0, scale: 1.08, opacity: 1 });
-      gsap.set(content, { y: 0, opacity: 1 });
-      if (heading) gsap.set(heading, { y: 0, opacity: 1 });
-      if (text) gsap.set(text, { y: 0, opacity: 1 });
-      if (button) gsap.set(button, { y: 0, opacity: 1 });
-
-      /* IMAGE ONLY PARALLAX */
-      if (image) {
-        gsap.fromTo(image,
-          {
-            y: 80,
-            scale: 1.14
-          },
-          {
-            y: -80,
-            scale: 1.04,
-            ease: 'none',
-            scrollTrigger: {
-              trigger: slide,
-              start: 'top bottom',
-              end: 'bottom top',
-              scrub: 1,
-              invalidateOnRefresh: true
-            }
-          }
-        );
-      }
-
-      /* TEXT SIDE REVEAL ONLY */
-      const revealItems = [heading, text, button].filter(Boolean);
-
-      if (revealItems.length) {
-        gsap.set(revealItems, {
-          y: 36,
-          opacity: 0
-        });
-
-        gsap.to(revealItems, {
-          y: 0,
-          opacity: 1,
-          duration: 0.9,
-          ease: 'power2.out',
-          stagger: 0.12,
-          scrollTrigger: {
-            trigger: content,
-            start: 'top 78%',
-            end: 'top 52%',
-            toggleActions: 'play none none reverse',
-            invalidateOnRefresh: true
-          }
-        });
-      }
-    });
-
-    ScrollTrigger.refresh();
-  }
-
-  document.addEventListener('shopify:section:load', init);
-
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', init);
-  } else {
-    init();
-  }
-
-  let resizeTimer;
-  window.addEventListener('resize', function () {
-    clearTimeout(resizeTimer);
-    resizeTimer = setTimeout(function () {
-      ScrollTrigger.refresh();
-    }, 150);
-  });
-})();
 </script>
 
 {% schema %}

@@ -5757,7 +5757,7 @@
   var queueWrap = section.querySelector('#firebase-launch-queue-' + sectionId);
   var overlay = queueWrap;
   var closeAccessBtn = queueWrap ? queueWrap.querySelector('[data-flq-close]') : null;
-  
+
   var queueEnabled = !!queueWrap;
   var queueGranted = !queueEnabled;
   var queueRefreshingLimit = false;
@@ -5882,19 +5882,31 @@
     }
   }
 
-  function queueUnlockBuy() {
-    queueGranted = true;
-    queueSetLoading(false);
-    queueHideOverlay();
-    queueSetProgress(null);
-    queueSetPosition('—');
-    if (cartBtn) {
-      cartBtn.disabled = false;
-      cartBtn.classList.remove('flq-buy-locked');
-      cartBtn.classList.add('flq-buy-granted');
-      cartBtn.removeAttribute('data-flq-locked');
-    }
+
+  function queueLockBuy() {
+  queueGranted = false;
+  queueShowOverlay();
+
+  if (closeAccessBtn) {
+    closeAccessBtn.hidden = true;
   }
+
+  if (cartBtn) {
+    cartBtn.disabled = true;
+    cartBtn.classList.add('flq-buy-locked');
+    cartBtn.classList.remove('flq-buy-granted');
+    cartBtn.setAttribute('data-flq-locked', 'true');
+  }
+}
+
+if (closeAccessBtn) {
+  closeAccessBtn.addEventListener('click', function() {
+    if (queueGranted) {
+      queueHideOverlay();
+    }
+  });
+}
+
 
   function queueFormatRemaining(ms) {
     var totalSeconds = Math.max(0, Math.floor(ms / 1000));

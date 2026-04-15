@@ -530,7 +530,7 @@
       ],
       "name": "testing slider",
       "settings": {
-        "scroll_driven": false,
+        "scroll_driven": true,
         "show_controls": true,
         "autoplay_seconds": 0,
         "height_desktop": 100,

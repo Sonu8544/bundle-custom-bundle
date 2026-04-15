@@ -104,7 +104,7 @@
           "settings": {
             "product": "abc-books",
             "button_text": "ADD TO CART",
-            "book_width_desktop": 200,
+            "book_width_desktop": 260,
             "book_width_1024": 144,
             "book_width_768": 140,
             "book_width_425": 110,
@@ -129,7 +129,7 @@
           "settings": {
             "product": "abc-books",
             "button_text": "ADD TO CART",
-            "book_width_desktop": 200,
+            "book_width_desktop": 260,
             "book_width_1024": 144,
             "book_width_768": 140,
             "book_width_425": 110,
@@ -154,7 +154,7 @@
           "settings": {
             "product": "abc-books",
             "button_text": "ADD TO CART",
-            "book_width_desktop": 200,
+            "book_width_desktop": 260,
             "book_width_1024": 144,
             "book_width_768": 140,
             "book_width_425": 110,

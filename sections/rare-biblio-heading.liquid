@@ -80,11 +80,10 @@
     margin: 0;
     max-width: var(--rbh-title-max-width);
     width: 100%;
-    font-family: 'Playfair Display', 'Bethany Elingston', var(--font-heading-family), Georgia, serif !important;
-    font-style: normal !important;
-    font-weight: 600 !important;
-    font-size: var(--rbh-title-size) !important;
-    line-height: 1.12 !important;
+    font-family: 'Playfair Display', 'Bethany Elingston', var(--font-heading-family), Georgia, serif;
+    font-style: normal;
+    font-weight: 600;
+    font-size: var(--rbh-title-size);
     text-align: center;
     letter-spacing: 1px;
     text-wrap: balance;
@@ -98,21 +97,6 @@
     -webkit-text-fill-color: transparent;
     background-clip: text;
     color: transparent;
-  }
-
-  #{{ section_id }} .rbh-section__title *,
-  #{{ section_id }} .rbh-section__title strong,
-  #{{ section_id }} .rbh-section__title em,
-  #{{ section_id }} .rbh-section__title span,
-  #{{ section_id }} .rbh-section__title a,
-  #{{ section_id }} .rbh-section__title br {
-    font-family: inherit !important;
-    font-size: inherit !important;
-    line-height: inherit !important;
-    font-weight: inherit !important;
-    font-style: inherit !important;
-    letter-spacing: inherit !important;
-    color: inherit !important;
   }
 
   #{{ section_id }} .rbh-section__description {
@@ -186,7 +170,7 @@
     }
   }
 
-  {% comment %} @media screen and (max-width: 767px) {
+  @media screen and (max-width: 767px) {
     #{{ section_id }} {
       --rbh-padding-top: {{ section.settings.padding_top_mobile }}px;
       --rbh-padding-bottom: {{ section.settings.padding_bottom_mobile }}px;
@@ -216,52 +200,6 @@
     #{{ section_id }} .rbh-section__description p {
       font-size: 18px;
       line-height: 1.3;
-      font-family: "Satoshi", var(--font-body-family), -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-      font-weight: 400;
-      font-style: normal;
-    }
-
-    #{{ section_id }} .rbh-section__wrap {
-      padding-left: 16px;
-      padding-right: 16px;
-    }
-
-    #{{ section_id }} .rbh-section__content,
-    #{{ section_id }} .rbh-section__title {
-      max-width: 100%;
-    }
-
-    #{{ section_id }} .rbh-section__description {
-      max-width: var(--rbh-desc-max-width);
-    }
-  } {% endcomment %}
-
-  @media screen and (max-width: 767px) {
-    #{{ section_id }} {
-      --rbh-padding-top: {{ section.settings.padding_top_mobile }}px;
-      --rbh-padding-bottom: {{ section.settings.padding_bottom_mobile }}px;
-      --rbh-title-size: {{ section.settings.title_size_mobile }}px;
-      --rbh-text-size: {{ section.settings.text_size_mobile }}px;
-      --rbh-text-line-height: {{ section.settings.text_line_height_mobile }}px;
-      --rbh-inner-gap: {{ section.settings.inner_gap_mobile }}px;
-    }
-
-    #{{ section_id }} .rbh-section__title {
-      font-size: var(--rbh-title-size);
-      letter-spacing: 1px;
-    }
-
-    #{{ section_id }} .rbh-section__description {
-      font-size: var(--rbh-text-size);
-      line-height: var(--rbh-text-line-height);
-    }
-
-    #{{ section_id }} .rbh-section__description p,
-    #{{ section_id }} .rbh-section__description li,
-    #{{ section_id }} .rbh-section__description a,
-    #{{ section_id }} .rbh-section__description span {
-      font-size: var(--rbh-text-size);
-      line-height: var(--rbh-text-line-height);
       font-family: "Satoshi", var(--font-body-family), -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
       font-weight: 400;
       font-style: normal;

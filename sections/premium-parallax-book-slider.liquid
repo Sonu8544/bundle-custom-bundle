@@ -2219,7 +2219,9 @@ transform: matrix(-1, 0, 0, 1, 0, 0);
     top: var(--ppbs-media-top-mob);
     left: auto;
     right: auto;
-    width: min(100%, var(--ppbs-media-w-mob));
+    {% comment %} width: min(100%, var(--ppbs-media-w-mob)); {% endcomment %}
+    width: 100%;
+
     max-width: none;
     max-height: none;
     aspect-ratio: var(--ppbs-media-ar, 653 / 823);

@@ -605,7 +605,7 @@
 }
 
 
-    @media screen and (max-width: 375px) {
+    {% comment %} @media screen and (max-width: 375px) {
       #{{ sid }}.bshelf {
         padding-top: var(--section-pad-top-375);
         padding-bottom: var(--section-pad-bottom-375);
@@ -642,7 +642,42 @@
       #{{ sid }} .bshelf__title {
         font-size: 11px;
       }
-    }
+    } {% endcomment %}
+
+    @media screen and (max-width: 375px) {
+  #{{ sid }}.bshelf {
+    padding-top: var(--section-pad-top-375);
+    padding-bottom: var(--section-pad-bottom-375);
+  }
+
+  #{{ sid }} .bshelf__grid {
+    gap: var(--row-gap-375);
+  }
+
+  #{{ sid }} .bshelf__books-row {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: var(--books-gap-375);
+    margin-bottom: calc(var(--books-bottom-375) * -1);
+  }
+
+  #{{ sid }} .bshelf__book {
+    width: var(--book-width-375);
+    transform: translateY(var(--book-offset-y-375)) rotate(var(--book-rotate));
+  }
+
+  #{{ sid }} .bshelf__book:hover,
+  #{{ sid }} .bshelf__book:focus-within {
+    transform: translateY(calc(var(--book-offset-y-375) - var(--book-hover-lift))) rotate(var(--book-rotate));
+  }
+
+  #{{ sid }} .bshelf__cta {
+    display: none !important;
+  }
+
+  #{{ sid }} .bshelf__title {
+    font-size: 11px;
+  }
+}
   </style>
 {% comment %} 
   <script>

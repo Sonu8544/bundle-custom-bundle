@@ -451,6 +451,9 @@
           "type": "slide",
           "settings": {
             "image": "shopify://shop_images/b00af6fdf620a1be3010ebf744724ae98aa85b08_1.png",
+            "tilt_desktop": 0,
+            "tilt_tablet": 0,
+            "tilt_mobile": 0,
             "badge": "Exclusive",
             "title": "Voyage au centre de la terre",
             "description": "Welcome to Rare Biblio, the premier destination for bibliophiles and book lovers who appreciate.",
@@ -459,7 +462,7 @@
             "binding_label": "Binding",
             "binding": "Quarter Leather",
             "countdown_label": "Reveals In",
-            "end_date": "",
+            "end_date": "2026-05--01T12:00:00",
             "button_text": "Notify Me",
             "button_link": ""
           }
@@ -468,6 +471,9 @@
           "type": "slide",
           "settings": {
             "image": "shopify://shop_images/b00af6fdf620a1be3010ebf744724ae98aa85b08_1.png",
+            "tilt_desktop": 0,
+            "tilt_tablet": 6,
+            "tilt_mobile": 0,
             "badge": "Exclusive",
             "title": "Voyage au centre de la terre",
             "description": "Welcome to Rare Biblio, the premier destination for bibliophiles and book lovers who appreciate.",
@@ -476,7 +482,7 @@
             "binding_label": "Binding",
             "binding": "Quarter Leather",
             "countdown_label": "Reveals In",
-            "end_date": "",
+            "end_date": "2026-05--01T12:00:00",
             "button_text": "Notify Me",
             "button_link": ""
           }
@@ -485,6 +491,9 @@
           "type": "slide",
           "settings": {
             "image": "shopify://shop_images/b00af6fdf620a1be3010ebf744724ae98aa85b08_1.png",
+            "tilt_desktop": 0,
+            "tilt_tablet": 0,
+            "tilt_mobile": 0,
             "badge": "Exclusive",
             "title": "Voyage au centre de la terre",
             "description": "Welcome to Rare Biblio, the premier destination for bibliophiles and book lovers who appreciate.",
@@ -493,7 +502,7 @@
             "binding_label": "Binding",
             "binding": "Quarter Leather",
             "countdown_label": "Reveals In",
-            "end_date": "",
+            "end_date": "2026-05--01T12:00:00",
             "button_text": "Notify Me",
             "button_link": ""
           }
@@ -506,14 +515,42 @@
       ],
       "name": "testing slider",
       "settings": {
-        "min_height": 90,
+        "scroll_driven": true,
+        "show_controls": true,
         "autoplay_seconds": 0,
-        "bg_color": "#0A0A05",
-        "glow_color": "#5A4E10",
-        "text_color": "#FFFFFF",
-        "muted_color": "#A8A89C",
-        "accent_color_1": "#E8D08A",
-        "accent_color_2": "#A88A3F"
+        "height_desktop": 100,
+        "height_tablet": 100,
+        "height_mobile": 100,
+        "transition_style": "cinematic",
+        "parallax_intensity": 50,
+        "content_stagger": 80,
+        "enable_mouse_tilt": true,
+        "mouse_tilt_intensity": 60,
+        "shadow_strength": 1,
+        "media_x_desk": 52,
+        "media_w_desk": 42,
+        "media_top_desk": 5,
+        "media_x_tab": 50,
+        "media_w_tab": 48,
+        "media_top_tab": 8,
+        "media_w_mob": 68,
+        "media_top_mob": 0,
+        "bg_color": "#0a0a05",
+        "radial_start": "#4d3c04",
+        "radial_end": "#0a0807",
+        "radial_x": 72,
+        "radial_y": 59,
+        "linear_start": "#060504",
+        "linear_mid": "#14110c",
+        "linear_angle": 168,
+        "show_vignette": true,
+        "show_noise": true,
+        "show_beams": true,
+        "show_halo": true,
+        "glow_opacity": 0.7,
+        "text_color": "#ffffff",
+        "accent_color": "#bb911f",
+        "content_max_width": 580
       }
     }
   },

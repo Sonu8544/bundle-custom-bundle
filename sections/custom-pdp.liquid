@@ -5756,6 +5756,8 @@
 
   var queueWrap = section.querySelector('#firebase-launch-queue-' + sectionId);
   var overlay = queueWrap;
+  var closeAccessBtn = queueWrap ? queueWrap.querySelector('[data-flq-close]') : null;
+  
   var queueEnabled = !!queueWrap;
   var queueGranted = !queueEnabled;
   var queueRefreshingLimit = false;

@@ -1521,7 +1521,8 @@
     height: 100%;
     max-width: 1440px;
     margin: 0 auto;
-    padding: 0 clamp(18px, 2.8vw, 40px);
+    {% comment %} padding: 0 clamp(18px, 2.8vw, 40px); {% endcomment %}
+    padding: 0 0 0 40px;
   }
 
   #{{ sid }} .ppbs__slides { position: relative; height: 100%; }

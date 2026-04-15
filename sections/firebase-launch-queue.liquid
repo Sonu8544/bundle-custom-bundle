@@ -11,7 +11,6 @@
   assign current_variant = product.selected_or_first_available_variant
 %}
 
-
 {% if queue_applies %}
 <section id="firebase-launch-queue-{{ section.id }}" class="flq">
   <div class="flq__card" data-flq-root>
@@ -146,17 +145,12 @@
     color: rgba(255,255,255,.72);
   }
 
-  .flq--locked #addToCart-{{ section.id }},
-  .flq--locked [data-add-to-cart],
-  .flq--locked .product-form__submit,
-  .flq--locked .shopify-payment-button {
+  .flq-buy-locked {
     pointer-events: none !important;
     opacity: .4 !important;
   }
 
-  .flq--granted #addToCart-{{ section.id }},
-  .flq--granted [data-add-to-cart],
-  .flq--granted .product-form__submit {
+  .flq-buy-granted {
     pointer-events: auto !important;
     opacity: 1 !important;
   }
@@ -207,13 +201,6 @@
   var timerWrap = wrap.querySelector('[data-flq-timer]');
   var countdownEl = wrap.querySelector('[data-flq-countdown]');
 
-  var sectionRoot =
-    document.getElementById('exclusive-book-product-{{ section.id }}') ||
-    wrap.closest('section') ||
-    document.body;
-
-  sectionRoot.classList.add('flq--locked');
-
   var firebaseConfig = {
     apiKey: "AIzaSyAXqNmSizbKKSb8lYYHA59g0tFM5sQyi_c",
     authDomain: "rare-biblio-493418.firebaseapp.com",
@@ -234,6 +221,7 @@
   }
 
   var db = firebase.firestore();
+  var countdownInterval = null;
 
   function getSessionId() {
     var key = 'flq_session_id_' + productId;
@@ -244,10 +232,21 @@
     return id;
   }
 
-  var sessionId = getSessionId();
-  var launchRef = db.collection('launches').doc(productId);
-  var sessionRef = launchRef.collection('sessions').doc(sessionId);
-  var countdownInterval = null;
+  function getBuyButtons() {
+    var selectors = [
+      '#addToCart',
+      '[name="add"]',
+      '.product-form__submit',
+      'button[type="submit"][name="add"]',
+      '.cta-btn',
+      '[data-add-to-cart]'
+    ];
+    return Array.prototype.slice.call(document.querySelectorAll(selectors.join(',')));
+  }
+
+  function getDynamicCheckoutButtons() {
+    return Array.prototype.slice.call(document.querySelectorAll('.shopify-payment-button, .shopify-payment-button button'));
+  }
 
   function setMessage(text) {
     if (messageEl) messageEl.textContent = text;
@@ -258,13 +257,30 @@
   }
 
   function lockBuy() {
-    sectionRoot.classList.remove('flq--granted');
-    sectionRoot.classList.add('flq--locked');
+    getBuyButtons().forEach(function(btn) {
+      btn.disabled = true;
+      btn.classList.add('flq-buy-locked');
+      btn.setAttribute('data-flq-locked', 'true');
+    });
+
+    getDynamicCheckoutButtons().forEach(function(btn) {
+      btn.classList.add('flq-buy-locked');
+      btn.style.pointerEvents = 'none';
+    });
   }
 
   function unlockBuy() {
-    sectionRoot.classList.remove('flq--locked');
-    sectionRoot.classList.add('flq--granted');
+    getBuyButtons().forEach(function(btn) {
+      btn.disabled = false;
+      btn.classList.remove('flq-buy-locked');
+      btn.classList.add('flq-buy-granted');
+      btn.removeAttribute('data-flq-locked');
+    });
+
+    getDynamicCheckoutButtons().forEach(function(btn) {
+      btn.classList.remove('flq-buy-locked');
+      btn.style.pointerEvents = '';
+    });
   }
 
   function formatRemaining(ms) {
@@ -294,13 +310,22 @@
     countdownInterval = setInterval(tick, 1000);
   }
 
+  var sessionId = getSessionId();
+  var launchRef = db.collection('launches').doc(productId);
+  var sessionRef = launchRef.collection('sessions').doc(sessionId);
+
   async function ensureLaunchDoc() {
-    await launchRef.set({
-      productId: productId,
-      limit: launchLimit,
-      grantedCount: 0,
-      createdAt: firebase.firestore.FieldValue.serverTimestamp()
-    }, { merge: true });
+    var snap = await launchRef.get();
+
+    if (!snap.exists) {
+      await launchRef.set({
+        productId: productId,
+        limit: launchLimit,
+        grantedCount: 0,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
+    }
   }
 
   async function joinQueue() {
@@ -320,8 +345,7 @@
 
         if (sessionSnap.exists) {
           var existing = sessionSnap.data() || {};
-          if (existing.status === 'granted') return;
-          if (existing.status === 'waiting') return;
+          if (existing.status === 'granted' || existing.status === 'waiting') return;
         }
 
         var now = Date.now();
@@ -337,11 +361,10 @@
             expiresAtMillis: expiresAt
           }, { merge: true });
 
-          tx.set(launchRef, {
+          tx.update(launchRef, {
             grantedCount: grantedCount + 1,
-            limit: limit,
             updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-          }, { merge: true });
+          });
         } else {
           tx.set(sessionRef, {
             sessionId: sessionId,
@@ -406,8 +429,8 @@
     if (liveEl) liveEl.textContent = String(snapshot.size || 0);
   });
 
-  launchRef.onSnapshot(function(doc) {
-    var data = doc.exists ? doc.data() : {};
+  launchRef.onSnapshot(function(docSnap) {
+    var data = docSnap.exists ? docSnap.data() : {};
     if (grantedEl) grantedEl.textContent = String(data.grantedCount || 0);
 
     if ((data.grantedCount || 0) >= (data.limit || launchLimit)) {
@@ -415,10 +438,10 @@
     }
   });
 
-  sessionRef.onSnapshot(function(doc) {
-    if (!doc.exists) return;
+  sessionRef.onSnapshot(function(docSnap) {
+    if (!docSnap.exists) return;
 
-    var data = doc.data() || {};
+    var data = docSnap.data() || {};
     if (data.status === 'granted') {
       unlockBuy();
       setMessage('Access granted. Complete checkout before your timer ends.');
@@ -434,6 +457,17 @@
 
   if (joinBtn) joinBtn.addEventListener('click', joinQueue);
   if (refreshBtn) refreshBtn.addEventListener('click', refreshStatus);
+
+  document.addEventListener('click', function(e) {
+    var target = e.target.closest('#addToCart, [name="add"], .product-form__submit, .cta-btn, [data-add-to-cart]');
+    if (!target) return;
+
+    if (target.hasAttribute('data-flq-locked')) {
+      e.preventDefault();
+      e.stopPropagation();
+      setStatus('Join queue first to unlock purchase.');
+    }
+  }, true);
 
   refreshStatus();
 })();

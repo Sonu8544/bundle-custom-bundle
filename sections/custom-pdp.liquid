@@ -216,6 +216,45 @@
         <span class="signed-copies-badge__text">{{ section.settings.signed_copies_text | default: 'Only 250 Signed Copies' }}</span>
       </div>
 
+{% comment %} extra {% endcomment %}
+      {% if queue_applies %}
+  <div id="firebase-launch-queue-{{ section.id }}" class="flq">
+    <div class="flq__card" data-flq-root>
+      <div class="flq__badge">PRODUCT LAUNCH</div>
+      <h2 class="flq__title">Virtual Queue</h2>
+      <p class="flq__text" data-flq-message>Checking launch access…</p>
+
+      <div class="flq__meta">
+        <div class="flq__meta-item">
+          <span class="flq__meta-label">Live in queue</span>
+          <strong data-flq-live>0</strong>
+        </div>
+        <div class="flq__meta-item">
+          <span class="flq__meta-label">Granted</span>
+          <strong data-flq-granted>0</strong>
+        </div>
+        <div class="flq__meta-item">
+          <span class="flq__meta-label">Limit</span>
+          <strong data-flq-limit>{{ launch_limit }}</strong>
+        </div>
+      </div>
+
+      <div class="flq__timer" data-flq-timer hidden>
+        Your access expires in <strong data-flq-countdown>05:00</strong>
+      </div>
+
+      <div class="flq__actions">
+        <button type="button" class="flq__btn" data-flq-join>Join virtual queue</button>
+        <button type="button" class="flq__btn flq__btn--secondary" data-flq-refresh>Refresh status</button>
+      </div>
+
+      <div class="flq__status" data-flq-status></div>
+    </div>
+  </div>
+{% endif %}
+
+{% comment %} extra {% endcomment %}
+
       <div class="product-price">
         {%- if product != blank -%}
           {%- assign selected_variant = product.selected_or_first_available_variant -%}

@@ -2239,7 +2239,7 @@
     );
 
     var baseBody = isMobile() ? 15 : 18;
-    var baseTitle = isMobile() ? 36 : 62;
+    var baseTitle = isMobile() ? 36 : 70;
     var baseSub = isMobile() ? 10 : 11;
     var baseQuote = isMobile() ? 14 : 17;
     var baseStamp = isMobile() ? 10 : 12;
@@ -2391,10 +2391,8 @@
   "limit": 1,
   "settings": [
     { "type": "header", "content": "Scroll Content" },
-    { "type": "paragraph", "content": "Title: first part in dark type, second part in gold. Leave both blank to use the single heading line below." },
-    { "type": "text", "id": "heading_lead", "label": "Heading (first part)", "default": "About Rare" },
-    { "type": "text", "id": "heading_accent", "label": "Heading (gold part)", "default": "Biblio" },
-    { "type": "text", "id": "heading", "label": "Heading (single line fallback)", "default": "About Rare Biblio", "info": "Used only if both split title fields above are empty." },
+    { "type": "paragraph", "content": "Single heading with gradient styling." },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "About Rare Biblio" },
     { "type": "checkbox", "id": "show_title_divider", "label": "Show gold divider under title", "default": true },
     { "type": "text", "id": "subtitle", "label": "Subtitle", "default": "-", "info": "Optional. Replace with your subtitle, or leave as a single hyphen (-) to hide." },
     { "type": "richtext", "id": "body_text", "label": "Body text", "default": "<p>Welcome to Rare Biblio, the premier destination for bibliophiles and book lovers who appreciate the art of bookmaking. As a rare books store, we specialize in handcrafted leather-bound books, personalization &amp; customization services, and restoration of valuable old books, antiquarian books, and manuscripts.</p>" },

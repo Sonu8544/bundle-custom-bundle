@@ -1397,6 +1397,285 @@
 
   var cartBtn = section.querySelector('#addToCart-' + sectionId);
 
+    var queueWrap = section.querySelector('#firebase-launch-queue-' + sectionId);
+  var queueEnabled = !!queueWrap;
+  var queueGranted = !queueEnabled;
+  var countdownInterval = null;
+
+  var messageEl = queueWrap ? queueWrap.querySelector('[data-flq-message]') : null;
+  var liveEl = queueWrap ? queueWrap.querySelector('[data-flq-live]') : null;
+  var grantedEl = queueWrap ? queueWrap.querySelector('[data-flq-granted]') : null;
+  var limitEl = queueWrap ? queueWrap.querySelector('[data-flq-limit]') : null;
+  var statusEl = queueWrap ? queueWrap.querySelector('[data-flq-status]') : null;
+  var joinBtn = queueWrap ? queueWrap.querySelector('[data-flq-join]') : null;
+  var refreshBtn = queueWrap ? queueWrap.querySelector('[data-flq-refresh]') : null;
+  var timerWrap = queueWrap ? queueWrap.querySelector('[data-flq-timer]') : null;
+  var countdownEl = queueWrap ? queueWrap.querySelector('[data-flq-countdown]') : null;
+
+  var accessMinutes = {{ launch_window_minutes | json }};
+  var launchLimit = {{ launch_limit | json }};
+  var productIdForQueue = "{{ product.id }}";
+  var firebaseDb = null;
+  var sessionId = null;
+  var launchRef = null;
+  var sessionRef = null;
+
+    function queueSetMessage(text) {
+    if (messageEl) messageEl.textContent = text;
+  }
+
+  function queueSetStatus(text) {
+    if (statusEl) statusEl.textContent = text || '';
+  }
+
+  function queueLockBuy() {
+    queueGranted = false;
+    if (cartBtn) {
+      cartBtn.disabled = true;
+      cartBtn.classList.add('flq-buy-locked');
+      cartBtn.classList.remove('flq-buy-granted');
+      cartBtn.setAttribute('data-flq-locked', 'true');
+    }
+  }
+
+  function queueUnlockBuy() {
+    queueGranted = true;
+    if (cartBtn) {
+      cartBtn.disabled = false;
+      cartBtn.classList.remove('flq-buy-locked');
+      cartBtn.classList.add('flq-buy-granted');
+      cartBtn.removeAttribute('data-flq-locked');
+    }
+  }
+
+  function queueFormatRemaining(ms) {
+    var totalSeconds = Math.max(0, Math.floor(ms / 1000));
+    var minutes = Math.floor(totalSeconds / 60);
+    var seconds = totalSeconds % 60;
+    return String(minutes).padStart(2, '0') + ':' + String(seconds).padStart(2, '0');
+  }
+
+  function queueStartCountdown(expiresAtMillis) {
+    if (countdownInterval) clearInterval(countdownInterval);
+    if (timerWrap) timerWrap.hidden = false;
+
+    function tick() {
+      var diff = expiresAtMillis - Date.now();
+      if (countdownEl) countdownEl.textContent = queueFormatRemaining(diff);
+
+      if (diff <= 0) {
+        clearInterval(countdownInterval);
+        if (timerWrap) timerWrap.hidden = true;
+        queueLockBuy();
+        queueSetMessage('Your access window expired. Refresh to check availability again.');
+      }
+    }
+
+    tick();
+    countdownInterval = setInterval(tick, 1000);
+  }
+
+  function queueGetSessionId() {
+    var key = 'flq_session_id_' + productIdForQueue;
+    var existing = localStorage.getItem(key);
+    if (existing) return existing;
+
+    var id = 'sess_' + Math.random().toString(36).slice(2) + Date.now();
+    localStorage.setItem(key, id);
+    return id;
+  }
+
+  async function queueInitFirebase() {
+    if (!queueEnabled) return;
+
+    var firebaseConfig = {
+      apiKey: "AIzaSyAXqNmSizbKKSb8lYYHA59g0tFM5sQyi_c",
+      authDomain: "rare-biblio-493418.firebaseapp.com",
+      projectId: "rare-biblio-493418",
+      storageBucket: "rare-biblio-493418.firebasestorage.app",
+      messagingSenderId: "386450854671",
+      appId: "1:386450854671:web:9d646e4603bbb9c1a4247a",
+      measurementId: "G-KN0453ME9Y"
+    };
+
+    if (!window.firebase || !firebase.apps) {
+      queueSetStatus('Firebase SDK failed to load.');
+      return;
+    }
+
+    if (!firebase.apps.length) {
+      firebase.initializeApp(firebaseConfig);
+    }
+
+    firebaseDb = firebase.firestore();
+    sessionId = queueGetSessionId();
+    launchRef = firebaseDb.collection('launches').doc(productIdForQueue);
+    sessionRef = launchRef.collection('sessions').doc(sessionId);
+  }
+
+  async function queueEnsureLaunchDoc() {
+    var variant = findVariantByOptions();
+    var dynamicLimit = variant && typeof variant.inventory_quantity !== 'undefined'
+      ? Math.max(0, Number(variant.inventory_quantity || 0))
+      : launchLimit;
+
+    var snap = await launchRef.get();
+
+    if (!snap.exists) {
+      await launchRef.set({
+        productId: productIdForQueue,
+        limit: dynamicLimit,
+        grantedCount: 0,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
+    } else {
+      await launchRef.set({
+        limit: dynamicLimit,
+        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+      }, { merge: true });
+    }
+
+    if (limitEl) limitEl.textContent = String(dynamicLimit);
+  }
+
+  async function queueJoin() {
+    if (!queueEnabled || !firebaseDb || !joinBtn) return;
+
+    joinBtn.disabled = true;
+    queueSetStatus('Joining virtual queue...');
+
+    try {
+      await queueEnsureLaunchDoc();
+
+      await firebaseDb.runTransaction(async function(tx) {
+        var launchSnap = await tx.get(launchRef);
+        var sessionSnap = await tx.get(sessionRef);
+
+        var data = launchSnap.exists ? launchSnap.data() : {};
+        var grantedCount = Number(data.grantedCount || 0);
+        var limit = Number(data.limit || launchLimit);
+
+        if (sessionSnap.exists) {
+          var existing = sessionSnap.data() || {};
+          if (existing.status === 'granted' || existing.status === 'waiting') return;
+        }
+
+        var now = Date.now();
+        var expiresAt = now + (accessMinutes * 60 * 1000);
+
+        if (grantedCount < limit) {
+          tx.set(sessionRef, {
+            sessionId: sessionId,
+            productId: productIdForQueue,
+            variantId: cartBtn ? cartBtn.getAttribute('data-variant-id') : null,
+            status: 'granted',
+            joinedAt: firebase.firestore.FieldValue.serverTimestamp(),
+            expiresAtMillis: expiresAt
+          }, { merge: true });
+
+          tx.update(launchRef, {
+            grantedCount: grantedCount + 1,
+            updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+          });
+        } else {
+          tx.set(sessionRef, {
+            sessionId: sessionId,
+            productId: productIdForQueue,
+            variantId: cartBtn ? cartBtn.getAttribute('data-variant-id') : null,
+            status: 'waiting',
+            joinedAt: firebase.firestore.FieldValue.serverTimestamp()
+          }, { merge: true });
+        }
+      });
+
+      queueSetStatus('Queue updated.');
+    } catch (e) {
+      console.error(e);
+      queueSetStatus('Could not join queue.');
+    } finally {
+      joinBtn.disabled = false;
+    }
+  }
+
+  async function queueRefreshStatus() {
+    if (!queueEnabled || !firebaseDb) return;
+
+    try {
+      var launchSnap = await launchRef.get();
+      var sessionSnap = await sessionRef.get();
+
+      if (launchSnap.exists) {
+        var launchData = launchSnap.data() || {};
+        if (grantedEl) grantedEl.textContent = String(launchData.grantedCount || 0);
+        if (limitEl) limitEl.textContent = String(launchData.limit || launchLimit);
+      }
+
+      if (sessionSnap.exists) {
+        var sessionData = sessionSnap.data() || {};
+
+        if (sessionData.status === 'granted') {
+          queueUnlockBuy();
+          queueSetMessage('Access granted. Complete checkout before your timer ends.');
+          queueStartCountdown(Number(sessionData.expiresAtMillis || 0));
+          queueSetStatus('You have purchase access.');
+          return;
+        }
+
+        if (sessionData.status === 'waiting') {
+          queueLockBuy();
+          if (timerWrap) timerWrap.hidden = true;
+          queueSetMessage('You are in queue. Waiting for availability.');
+          queueSetStatus('Waiting for availability.');
+          return;
+        }
+      }
+
+      queueLockBuy();
+      if (timerWrap) timerWrap.hidden = true;
+      queueSetMessage('Join the queue to check launch access.');
+      queueSetStatus('');
+    } catch (e) {
+      console.error(e);
+      queueSetStatus('Could not refresh queue status.');
+    }
+  }
+
+  function queueBindRealtime() {
+    if (!queueEnabled || !launchRef || !sessionRef) return;
+
+    launchRef.collection('sessions').onSnapshot(function(snapshot) {
+      if (liveEl) liveEl.textContent = String(snapshot.size || 0);
+    });
+
+    launchRef.onSnapshot(function(docSnap) {
+      var data = docSnap.exists ? docSnap.data() : {};
+      if (grantedEl) grantedEl.textContent = String(data.grantedCount || 0);
+      if (limitEl) limitEl.textContent = String(data.limit || launchLimit);
+
+      if ((data.grantedCount || 0) >= (data.limit || launchLimit)) {
+        queueSetStatus('Launch allocation is currently full.');
+      }
+    });
+
+    sessionRef.onSnapshot(function(docSnap) {
+      if (!docSnap.exists) return;
+
+      var data = docSnap.data() || {};
+      if (data.status === 'granted') {
+        queueUnlockBuy();
+        queueSetMessage('Access granted. Complete checkout before your timer ends.');
+        queueStartCountdown(Number(data.expiresAtMillis || 0));
+        queueSetStatus('You have purchase access.');
+      } else if (data.status === 'waiting') {
+        queueLockBuy();
+        queueSetMessage('You are in queue. Waiting for availability.');
+        queueSetStatus('Queue joined successfully.');
+        if (timerWrap) timerWrap.hidden = true;
+      }
+    });
+  }
+
   
   var sectionId = '{{ section.id }}';
   var section = document.getElementById('exclusive-book-product-' + sectionId);

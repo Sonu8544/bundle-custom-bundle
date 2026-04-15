@@ -4232,3 +4232,68 @@
 }
 {% endschema %}
 
+<script>
+(function() {
+  var section = document.getElementById('exclusive-book-product-{{ section.id }}');
+  if (!section) return;
+
+  var queue = section.querySelector('[data-launch-queue]');
+  if (!queue) return;
+
+  var qty = parseInt(queue.getAttribute('data-qty') || '0', 10);
+  var delay = parseInt(queue.getAttribute('data-delay') || '0', 10);
+  var timerEl = queue.querySelector('[data-queue-timer]');
+  var cartBtn = section.querySelector('#addToCart-{{ section.id }}');
+  var paymentBtnWrap = section.querySelector('.shopify-payment-button');
+
+  function lockBuy() {
+    section.classList.add('launch-buy-hidden');
+    if (cartBtn) cartBtn.disabled = true;
+    if (paymentBtnWrap) paymentBtnWrap.style.pointerEvents = 'none';
+  }
+
+  function unlockBuy() {
+    section.classList.remove('launch-buy-hidden');
+    if (cartBtn) cartBtn.disabled = false;
+    if (paymentBtnWrap) paymentBtnWrap.style.pointerEvents = '';
+  }
+
+  function soldOutMode() {
+    section.classList.remove('launch-buy-hidden');
+    section.classList.add('launch-buy-soldout');
+    if (cartBtn) {
+      cartBtn.disabled = true;
+      cartBtn.textContent = '{{ section.settings.soldout_button_text | escape }}';
+    }
+    if (paymentBtnWrap) paymentBtnWrap.style.display = 'none';
+  }
+
+  if (qty <= 0) {
+    soldOutMode();
+    return;
+  }
+
+  if (delay <= 0) {
+    unlockBuy();
+    return;
+  }
+
+  lockBuy();
+
+  var remaining = delay;
+  if (timerEl) timerEl.textContent = remaining;
+
+  var interval = setInterval(function() {
+    remaining -= 1;
+
+    if (timerEl) {
+      timerEl.textContent = remaining > 0 ? remaining : 0;
+    }
+
+    if (remaining <= 0) {
+      clearInterval(interval);
+      unlockBuy();
+    }
+  }, 1000);
+})();
+</script>

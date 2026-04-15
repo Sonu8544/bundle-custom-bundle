@@ -2133,13 +2133,8 @@
           <div class="ps-paper" data-ps-paper>
             <div class="ps-paper-inner" data-ps-pin>
               <div class="ps-txt" data-ps-txt>
-                {% if heading_lead != blank or heading_accent != blank %}
-                  <h2 class="ps-title">
-                    {% if heading_lead != blank %}<span class="ps-title__lead">{{ heading_lead }}</span>{% endif %}
-                    {% if heading_accent != blank %}<span class="ps-title__accent">{{ heading_accent }}</span>{% endif %}
-                  </h2>
-                {% elsif heading != blank %}
-                  <h2 class="ps-title ps-title--plain">{{ heading }}</h2>
+                {% if heading != blank %}
+                  <h2 class="ps-title">{{ heading }}</h2>
                 {% endif %}
 
                 {% if show_title_divider %}

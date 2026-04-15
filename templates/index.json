@@ -267,7 +267,7 @@
       ],
       "name": "Premium Parallax Slider",
       "settings": {
-        "section_height_desktop": 900,
+        "section_height_desktop": 1060,
         "section_height_tablet": 820,
         "section_height_mobile": 760,
         "content_max_width": 620,

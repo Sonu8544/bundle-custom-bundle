@@ -451,6 +451,7 @@
           "type": "slide",
           "settings": {
             "image": "shopify://shop_images/b00af6fdf620a1be3010ebf744724ae98aa85b08_1.png",
+            "image_scale": 100,
             "tilt_desktop": 0,
             "tilt_tablet": 0,
             "tilt_mobile": 0,
@@ -461,8 +462,12 @@
             "year": "1962, First Print",
             "binding_label": "Binding",
             "binding": "Quarter Leather",
+            "show_countdown": true,
             "countdown_label": "Reveals In",
             "end_date": "2026-05--01T12:00:00",
+            "placeholder_hours": "12",
+            "placeholder_minutes": "25",
+            "placeholder_seconds": "45",
             "button_text": "Notify Me",
             "button_link": ""
           }
@@ -471,6 +476,7 @@
           "type": "slide",
           "settings": {
             "image": "shopify://shop_images/b00af6fdf620a1be3010ebf744724ae98aa85b08_1.png",
+            "image_scale": 100,
             "tilt_desktop": 0,
             "tilt_tablet": 6,
             "tilt_mobile": 0,
@@ -481,8 +487,12 @@
             "year": "1962, First Print",
             "binding_label": "Binding",
             "binding": "Quarter Leather",
+            "show_countdown": true,
             "countdown_label": "Reveals In",
             "end_date": "2026-05--01T12:00:00",
+            "placeholder_hours": "12",
+            "placeholder_minutes": "25",
+            "placeholder_seconds": "45",
             "button_text": "Notify Me",
             "button_link": ""
           }
@@ -491,6 +501,7 @@
           "type": "slide",
           "settings": {
             "image": "shopify://shop_images/b00af6fdf620a1be3010ebf744724ae98aa85b08_1.png",
+            "image_scale": 100,
             "tilt_desktop": 0,
             "tilt_tablet": 0,
             "tilt_mobile": 0,
@@ -501,8 +512,12 @@
             "year": "1962, First Print",
             "binding_label": "Binding",
             "binding": "Quarter Leather",
+            "show_countdown": true,
             "countdown_label": "Reveals In",
             "end_date": "2026-05--01T12:00:00",
+            "placeholder_hours": "12",
+            "placeholder_minutes": "25",
+            "placeholder_seconds": "45",
             "button_text": "Notify Me",
             "button_link": ""
           }
@@ -520,7 +535,7 @@
         "autoplay_seconds": 0,
         "height_desktop": 100,
         "height_tablet": 100,
-        "height_mobile": 100,
+        "height_mobile": 110,
         "transition_style": "cinematic",
         "parallax_intensity": 50,
         "content_stagger": 80,

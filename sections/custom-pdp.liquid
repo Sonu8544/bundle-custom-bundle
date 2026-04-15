@@ -1835,6 +1835,26 @@
   ]
 }
 {% endschema %} {% endcomment %}
+{%- liquid
+  assign current_product_id = product.id
+  assign launch_product = section.settings.launch_product
+  assign launch_enabled = section.settings.enable_launch_queue
+  assign queue_applies = false
+
+  if launch_enabled and launch_product != blank and launch_product.id == current_product_id
+    assign queue_applies = true
+  endif
+
+  assign current_variant = product.selected_or_first_available_variant
+  assign available_qty = 0
+
+  if current_variant.inventory_management == 'shopify'
+    assign available_qty = current_variant.inventory_quantity | default: 0
+  elsif current_variant.available
+    assign available_qty = 9999
+  endif
+-%}
+
 
 {%- liquid
   assign pdp_bg = section.settings.background_color | default: '#0D0D0B'

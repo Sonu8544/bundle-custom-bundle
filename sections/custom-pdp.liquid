@@ -6173,7 +6173,7 @@
       if (limitEl) limitEl.textContent = String(data.limit || launchLimit);
       if ((data.grantedCount || 0) >= (data.limit || launchLimit) && !queueGranted) queueSetStatus('Launch allocation is currently full.');
     });
-    sessionRef.onSnapshot(function(docSnap) {
+    {% comment %} sessionRef.onSnapshot(function(docSnap) {
       if (!docSnap.exists) return;
       var data = docSnap.data() || {};
       if (data.status === 'granted') {
@@ -6181,7 +6181,28 @@
       } else if (data.status === 'waiting') {
         queueLockBuy(); queueSetMessage('You are in queue. Waiting for availability.'); queueSetPosition(data.position || '—'); queueSetProgress(null); queueSetStatus('Queue joined successfully.'); if (timerWrap) timerWrap.hidden = true;
       }
-    });
+    }); {% endcomment %}
+
+    sessionRef.onSnapshot(function(docSnap) {
+  if (!docSnap.exists) return;
+
+  var data = docSnap.data() || {};
+
+  if (data.status === 'granted') {
+    queueUnlockBuy();
+    queueSetMessage('Access granted. Complete checkout before your timer ends.');
+    queueStartCountdown(Number(data.expiresAtMillis || 0));
+    queueSetStatus('You have purchase access.');
+  } else if (data.status === 'waiting') {
+    queueLockBuy();
+    queueSetMessage('You are in queue. Waiting for availability.');
+    queueSetStatus('Queue joined successfully.');
+    if (timerWrap) timerWrap.hidden = true;
+  } else {
+    queueLockBuy();
+  }
+});
+
   }
 
   async function handleAddToCart(button) {

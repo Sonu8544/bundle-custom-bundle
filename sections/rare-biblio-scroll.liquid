@@ -2241,10 +2241,7 @@
 
     var viewportH = window.innerHeight || document.documentElement.clientHeight;
     var roller = getRollerHeights();
-
-    /* slightly more reserved space so bottom roller does not get clipped */
-    var safetyGap = isMobile() ? 34 : 64;
-
+    var safetyGap = isMobile() ? 26 : 34;
     var availablePaperHeight = Math.max(
       180,
       viewportH - roller.top - roller.bottom - safetyGap
@@ -2285,22 +2282,8 @@
   function getMetrics() {
     var closedHeight = getClosedHeight();
     var extraScroll = getExtraScroll();
-    var roller = getRollerHeights();
     var contentHeight = Math.ceil(txt.scrollHeight);
-
-    /*
-      extra reveal below the text so the bottom roller is always visible
-      even on tablet / larger screens / 1440+ widths
-    */
-    var bottomReveal = Math.max(
-      isMobile() ? 44 : 70,
-      Math.round(roller.bottom * (isMobile() ? 0.42 : 0.5))
-    );
-
-    var openHeight = Math.max(
-      closedHeight,
-      contentHeight + bottomReveal
-    );
+    var openHeight = Math.max(closedHeight, contentHeight);
 
     var totalScrollDistance = Math.max(
       openHeight - closedHeight + extraScroll,

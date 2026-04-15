@@ -109,6 +109,13 @@
         "product_author": "JK Rowling",
         "signed_copies_text": "Only 250 Signed Copies",
         "product_price": "USD 129.00",
+        "gallery_max_width_desktop": 700,
+        "gallery_max_width_tablet": 560,
+        "gallery_max_width_mobile": 340,
+        "gallery_aspect_ratio_desktop": 75,
+        "gallery_aspect_ratio_tablet": 75,
+        "gallery_aspect_ratio_mobile": 78,
+        "lightbox_max_zoom": 3,
         "cta_label": "PRE ORDER NOW",
         "cta_link": ""
       }
@@ -352,6 +359,11 @@
         "vignette_opacity": 100,
         "content_fade_on_play": 0
       }
+    },
+    "firebase_launch_queue_EwiaTp": {
+      "type": "firebase-launch-queue",
+      "name": "Firebase launch queue",
+      "settings": {}
     }
   },
   "order": [
@@ -360,6 +372,7 @@
     "custom_pdp_97bbtP",
     "luxury_features_cards_xqYNPX",
     "pdp_about_the_book_L4j6PP",
-    "how_we_build_video_VVptjE"
+    "how_we_build_video_VVptjE",
+    "firebase_launch_queue_EwiaTp"
   ]
 }

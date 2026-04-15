@@ -6012,6 +6012,17 @@
     }
     return null;
   }
+
+  function showOverlay() {
+  if (overlay) overlay.classList.add('is-active');
+  document.body.style.overflow = 'hidden';
+}
+
+function hideOverlay() {
+  if (overlay) overlay.classList.remove('is-active');
+  document.body.style.overflow = '';
+}
+
   function updateDisplayedPrice(variant) {
     if (!priceEl || !variant) return;
     var qty = getQty(); var unitPrice = Number(variant.price || 0); var comparePrice = Number(variant.compare_at_price || 0);
@@ -6251,6 +6262,7 @@
     });
   }
 })();
+
 </script>
 
 {% schema %}

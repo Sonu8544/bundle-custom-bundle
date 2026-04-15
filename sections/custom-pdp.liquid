@@ -5714,154 +5714,183 @@
 
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
-
+{% comment %} 
 <script>
-(function() {
-  var sectionId = '{{ section.id }}';
-  var section = document.getElementById('exclusive-book-product-' + sectionId);
-  if (!section) return;
+  (function() {
+    var sectionId = '{{ section.id }}';
+    var section = document.getElementById('exclusive-book-product-' + sectionId);
+    if (!section) return;
 
-  var root = (window.Shopify && window.Shopify.routes && window.Shopify.routes.root)
-    ? window.Shopify.routes.root
-    : '/';
+    var root = (window.Shopify && window.Shopify.routes && window.Shopify.routes.root)
+      ? window.Shopify.routes.root
+      : '/';
 
-  var productExists = {% if product != blank %}true{% else %}false{% endif %};
-  var variants = productExists ? {{ product.variants | json }} : [];
-  var initialVariantId = productExists ? {{ product.selected_or_first_available_variant.id | json }} : null;
-  var buttonDefaultText = {{ section.settings.cta_label | default: 'PRE ORDER NOW' | json }};
+    var productExists = {% if product != blank %}true{% else %}false{% endif %};
+    var variants = productExists ? {{ product.variants | json }} : [];
+    var initialVariantId = productExists ? {{ product.selected_or_first_available_variant.id | json }} : null;
+    var buttonDefaultText = {{ section.settings.cta_label | default: 'PRE ORDER NOW' | json }};
 
-  var slides = Array.prototype.slice.call(section.querySelectorAll('.gallery-slide'));
-  var thumbs = Array.prototype.slice.call(section.querySelectorAll('.thumb'));
-  var dots = Array.prototype.slice.call(section.querySelectorAll('.gallery-dot'));
-  var prevBtn = section.querySelector('.gallery-nav--prev');
-  var nextBtn = section.querySelector('.gallery-nav--next');
+    var slides = Array.prototype.slice.call(section.querySelectorAll('.gallery-slide'));
+    var thumbs = Array.prototype.slice.call(section.querySelectorAll('.thumb'));
+    var dots = Array.prototype.slice.call(section.querySelectorAll('.gallery-dot'));
+    var prevBtn = section.querySelector('.gallery-nav--prev');
+    var nextBtn = section.querySelector('.gallery-nav--next');
 
-  var lightbox = document.getElementById('lightbox-' + sectionId);
-  var lightboxImg = document.getElementById('lightboxImg-' + sectionId);
-  var lightboxCounter = document.getElementById('lightboxCounter-' + sectionId);
-  var zoomBtn = section.querySelector('.gallery-zoom-btn');
-  var closeBtn = section.querySelector('.lightbox-close');
-  var lightboxPrev = lightbox ? lightbox.querySelector('.lightbox-nav--prev') : null;
-  var lightboxNext = lightbox ? lightbox.querySelector('.lightbox-nav--next') : null;
-  var lightboxWrap = lightbox ? lightbox.querySelector('.lightbox-img-wrap') : null;
+    var lightbox = document.getElementById('lightbox-' + sectionId);
+    var lightboxImg = document.getElementById('lightboxImg-' + sectionId);
+    var lightboxCounter = document.getElementById('lightboxCounter-' + sectionId);
+    var zoomBtn = section.querySelector('.gallery-zoom-btn');
+    var closeBtn = section.querySelector('.lightbox-close');
+    var lightboxPrev = lightbox ? lightbox.querySelector('.lightbox-nav--prev') : null;
+    var lightboxNext = lightbox ? lightbox.querySelector('.lightbox-nav--next') : null;
+    var lightboxWrap = lightbox ? lightbox.querySelector('.lightbox-img-wrap') : null;
 
-  var qtyInput = section.querySelector('.qty-input');
-  var minusBtn = section.querySelector('.qty-btn--minus');
-  var plusBtn = section.querySelector('.qty-btn--plus');
-  var priceEl = section.querySelector('.price-amount');
-  var compareEl = section.querySelector('.price-compare');
-  var cartBtn = section.querySelector('#addToCart-' + sectionId);
-  var variantBtns = Array.prototype.slice.call(section.querySelectorAll('.variant-value-btn'));
-  var productForm = section.querySelector('form[action*="/cart/add"]');
+    var qtyInput = section.querySelector('.qty-input');
+    var minusBtn = section.querySelector('.qty-btn--minus');
+    var plusBtn = section.querySelector('.qty-btn--plus');
+    var priceEl = section.querySelector('.price-amount');
+    var compareEl = section.querySelector('.price-compare');
+    var cartBtn = section.querySelector('#addToCart-' + sectionId);
+    var variantBtns = Array.prototype.slice.call(section.querySelectorAll('.variant-value-btn'));
+    var productForm = section.querySelector('form[action*="/cart/add"]');
 
-  var queueWrap = section.querySelector('#firebase-launch-queue-' + sectionId);
-  var overlay = queueWrap;
-  var closeAccessBtn = queueWrap ? queueWrap.querySelector('[data-flq-close]') : null;
+    var queueWrap = section.querySelector('#firebase-launch-queue-' + sectionId);
+    var overlay = queueWrap;
+    var closeAccessBtn = queueWrap ? queueWrap.querySelector('[data-flq-close]') : null;
 
-  var queueEnabled = !!queueWrap;
-  var queueGranted = !queueEnabled;
-  var queueRefreshingLimit = false;
-  var queueCountdownInterval = null;
+    var queueEnabled = !!queueWrap;
+    var queueGranted = !queueEnabled;
+    var queueRefreshingLimit = false;
+    var queueCountdownInterval = null;
 
-  var messageEl = queueWrap ? queueWrap.querySelector('[data-flq-message]') : null;
-  var liveEl = queueWrap ? queueWrap.querySelector('[data-flq-live]') : null;
-  var grantedEl = queueWrap ? queueWrap.querySelector('[data-flq-granted]') : null;
-  var limitEl = queueWrap ? queueWrap.querySelector('[data-flq-limit]') : null;
-  var positionEl = queueWrap ? queueWrap.querySelector('[data-flq-position]') : null;
-  var progressWrap = queueWrap ? queueWrap.querySelector('[data-flq-progress-wrap]') : null;
-  var progressBar = queueWrap ? queueWrap.querySelector('[data-flq-progress-bar]') : null;
-  var statusEl = queueWrap ? queueWrap.querySelector('[data-flq-status]') : null;
-  var loadingEl = queueWrap ? queueWrap.querySelector('[data-flq-loading]') : null;
-  var loadingTextEl = queueWrap ? queueWrap.querySelector('[data-flq-loading-text]') : null;
-  var joinBtn = queueWrap ? queueWrap.querySelector('[data-flq-join]') : null;
-  var refreshBtn = queueWrap ? queueWrap.querySelector('[data-flq-refresh]') : null;
-  var timerWrap = queueWrap ? queueWrap.querySelector('[data-flq-timer]') : null;
-  var countdownEl = queueWrap ? queueWrap.querySelector('[data-flq-countdown]') : null;
+    var messageEl = queueWrap ? queueWrap.querySelector('[data-flq-message]') : null;
+    var liveEl = queueWrap ? queueWrap.querySelector('[data-flq-live]') : null;
+    var grantedEl = queueWrap ? queueWrap.querySelector('[data-flq-granted]') : null;
+    var limitEl = queueWrap ? queueWrap.querySelector('[data-flq-limit]') : null;
+    var positionEl = queueWrap ? queueWrap.querySelector('[data-flq-position]') : null;
+    var progressWrap = queueWrap ? queueWrap.querySelector('[data-flq-progress-wrap]') : null;
+    var progressBar = queueWrap ? queueWrap.querySelector('[data-flq-progress-bar]') : null;
+    var statusEl = queueWrap ? queueWrap.querySelector('[data-flq-status]') : null;
+    var loadingEl = queueWrap ? queueWrap.querySelector('[data-flq-loading]') : null;
+    var loadingTextEl = queueWrap ? queueWrap.querySelector('[data-flq-loading-text]') : null;
+    var joinBtn = queueWrap ? queueWrap.querySelector('[data-flq-join]') : null;
+    var refreshBtn = queueWrap ? queueWrap.querySelector('[data-flq-refresh]') : null;
+    var timerWrap = queueWrap ? queueWrap.querySelector('[data-flq-timer]') : null;
+    var countdownEl = queueWrap ? queueWrap.querySelector('[data-flq-countdown]') : null;
 
-  var accessMinutes = {{ launch_window_minutes | json }};
-  var launchLimit = {{ launch_limit | json }};
-  var productIdForQueue = "{{ product.id }}";
-  var firebaseDb = null;
-  var sessionId = null;
-  var launchRef = null;
-  var sessionRef = null;
+    var accessMinutes = {{ launch_window_minutes | json }};
+    var launchLimit = {{ launch_limit | json }};
+    var productIdForQueue = "{{ product.id }}";
+    var firebaseDb = null;
+    var sessionId = null;
+    var launchRef = null;
+    var sessionRef = null;
 
-  var currentSlide = 0;
-  var isAdding = false;
+    var currentSlide = 0;
+    var isAdding = false;
 
-  var zoomScale = 1;
-  var zoomX = 0;
-  var zoomY = 0;
-  var isDragging = false;
-  var dragStartX = 0;
-  var dragStartY = 0;
-  var startZoomX = 0;
-  var startZoomY = 0;
-  var lastTapTime = 0;
-  var maxZoom = parseFloat(getComputedStyle(section).getPropertyValue('--lightbox-max-zoom')) || 3;
+    var zoomScale = 1;
+    var zoomX = 0;
+    var zoomY = 0;
+    var isDragging = false;
+    var dragStartX = 0;
+    var dragStartY = 0;
+    var startZoomX = 0;
+    var startZoomY = 0;
+    var lastTapTime = 0;
+    var maxZoom = parseFloat(getComputedStyle(section).getPropertyValue('--lightbox-max-zoom')) || 3;
 
-  function queueSetMessage(text) { if (messageEl) messageEl.textContent = text; }
-  function queueSetStatus(text) { if (statusEl) statusEl.textContent = text || ''; }
-  function queueSetLoading(isLoading, text) {
-    if (loadingEl) loadingEl.hidden = !isLoading;
-    if (loadingTextEl && text) loadingTextEl.textContent = text;
-    if (joinBtn) joinBtn.disabled = !!isLoading;
-    if (refreshBtn) refreshBtn.disabled = !!isLoading;
-  }
-
-  function queueShowOverlay() {
-    if (overlay) {
-      overlay.classList.add('is-active');
-      overlay.setAttribute('aria-hidden', 'false');
+    function queueSetMessage(text) { if (messageEl) messageEl.textContent = text; }
+    function queueSetStatus(text) { if (statusEl) statusEl.textContent = text || ''; }
+    function queueSetLoading(isLoading, text) {
+      if (loadingEl) loadingEl.hidden = !isLoading;
+      if (loadingTextEl && text) loadingTextEl.textContent = text;
+      if (joinBtn) joinBtn.disabled = !!isLoading;
+      if (refreshBtn) refreshBtn.disabled = !!isLoading;
     }
-    document.body.style.overflow = 'hidden';
-  }
 
-  function queueHideOverlay() {
-    if (overlay) {
-      overlay.classList.remove('is-active');
-      overlay.setAttribute('aria-hidden', 'true');
+    function queueShowOverlay() {
+      if (overlay) {
+        overlay.classList.add('is-active');
+        overlay.setAttribute('aria-hidden', 'false');
+      }
+      document.body.style.overflow = 'hidden';
     }
-    document.body.style.overflow = '';
-  }
 
-  function queueSetPosition(value) {
-    if (positionEl) positionEl.textContent = value != null && value !== '' ? String(value) : '—';
-  }
-
-  function queueSetProgress(progress) {
-    if (!progressWrap || !progressBar) return;
-    if (progress == null) {
-      progressWrap.hidden = true;
-      progressBar.style.transform = 'scaleX(1)';
-      return;
+    function queueHideOverlay() {
+      if (overlay) {
+        overlay.classList.remove('is-active');
+        overlay.setAttribute('aria-hidden', 'true');
+      }
+      document.body.style.overflow = '';
     }
-    progressWrap.hidden = false;
-    var safe = Math.max(0, Math.min(100, Number(progress || 0)));
-    progressBar.style.transform = 'scaleX(' + (safe / 100) + ')';
-  }
 
-  function getQueueManagedVariant() {
-    return findVariantByOptions() || (variants && variants.length ? (variants.find(function(v){ return Number(v.id) === Number(initialVariantId); }) || variants[0]) : null);
-  }
+    function queueSetPosition(value) {
+      if (positionEl) positionEl.textContent = value != null && value !== '' ? String(value) : '—';
+    }
 
-  function getAvailableInventoryForQueue(variant) {
-    if (!variant) return launchLimit;
-    if (variant.inventory_policy === 'continue') return Math.max(0, Number(variant.inventory_quantity || 0));
-    if (variant.inventory_management) return Math.max(0, Number(variant.inventory_quantity || 0));
-    return launchLimit;
-  }
+    function queueSetProgress(progress) {
+      if (!progressWrap || !progressBar) return;
+      if (progress == null) {
+        progressWrap.hidden = true;
+        progressBar.style.transform = 'scaleX(1)';
+        return;
+      }
+      progressWrap.hidden = false;
+      var safe = Math.max(0, Math.min(100, Number(progress || 0)));
+      progressBar.style.transform = 'scaleX(' + (safe / 100) + ')';
+    }
 
-  function queueShowSoldOutState(variant) {
+    function getQueueManagedVariant() {
+      return findVariantByOptions() || (variants && variants.length ? (variants.find(function(v){ return Number(v.id) === Number(initialVariantId); }) || variants[0]) : null);
+    }
+
+    function getAvailableInventoryForQueue(variant) {
+      if (!variant) return launchLimit;
+      if (variant.inventory_policy === 'continue') return Math.max(0, Number(variant.inventory_quantity || 0));
+      if (variant.inventory_management) return Math.max(0, Number(variant.inventory_quantity || 0));
+      return launchLimit;
+    }
+
+    function queueShowSoldOutState(variant) {
+      queueGranted = false;
+      queueShowOverlay();
+      queueSetMessage('This launch is currently sold out for the selected edition.');
+      queueSetStatus('Queue full / sold out');
+      queueSetPosition('—');
+      queueSetLoading(false);
+      queueSetProgress(null);
+      if (timerWrap) timerWrap.hidden = true;
+      if (limitEl) limitEl.textContent = String(getAvailableInventoryForQueue(variant));
+      if (cartBtn) {
+        cartBtn.disabled = true;
+        cartBtn.classList.add('flq-buy-locked');
+        cartBtn.classList.remove('flq-buy-granted');
+        cartBtn.setAttribute('data-flq-locked', 'true');
+      }
+    }
+
+    function queueLockBuy() {
+      queueGranted = false;
+      queueSetLoading(false);
+      queueShowOverlay();
+      if (cartBtn) {
+        cartBtn.disabled = true;
+        cartBtn.classList.add('flq-buy-locked');
+        cartBtn.classList.remove('flq-buy-granted');
+        cartBtn.setAttribute('data-flq-locked', 'true');
+      }
+    }
+
+
+    function queueLockBuy() {
     queueGranted = false;
     queueShowOverlay();
-    queueSetMessage('This launch is currently sold out for the selected edition.');
-    queueSetStatus('Queue full / sold out');
-    queueSetPosition('—');
-    queueSetLoading(false);
-    queueSetProgress(null);
-    if (timerWrap) timerWrap.hidden = true;
-    if (limitEl) limitEl.textContent = String(getAvailableInventoryForQueue(variant));
+
+    if (closeAccessBtn) {
+      closeAccessBtn.hidden = true;
+    }
+
     if (cartBtn) {
       cartBtn.disabled = true;
       cartBtn.classList.add('flq-buy-locked');
@@ -5869,43 +5898,14 @@
       cartBtn.setAttribute('data-flq-locked', 'true');
     }
   }
-
-  function queueLockBuy() {
-    queueGranted = false;
-    queueSetLoading(false);
-    queueShowOverlay();
-    if (cartBtn) {
-      cartBtn.disabled = true;
-      cartBtn.classList.add('flq-buy-locked');
-      cartBtn.classList.remove('flq-buy-granted');
-      cartBtn.setAttribute('data-flq-locked', 'true');
-    }
-  }
-
-
-  function queueLockBuy() {
-  queueGranted = false;
-  queueShowOverlay();
 
   if (closeAccessBtn) {
-    closeAccessBtn.hidden = true;
+    closeAccessBtn.addEventListener('click', function() {
+      if (queueGranted) {
+        queueHideOverlay();
+      }
+    });
   }
-
-  if (cartBtn) {
-    cartBtn.disabled = true;
-    cartBtn.classList.add('flq-buy-locked');
-    cartBtn.classList.remove('flq-buy-granted');
-    cartBtn.setAttribute('data-flq-locked', 'true');
-  }
-}
-
-if (closeAccessBtn) {
-  closeAccessBtn.addEventListener('click', function() {
-    if (queueGranted) {
-      queueHideOverlay();
-    }
-  });
-}
 
 
   function queueFormatRemaining(ms) {
@@ -6284,7 +6284,9 @@ if (closeAccessBtn) {
     });
   }
 })();
-</script>
+</script> {% endcomment %}
+
+
 
 {% schema %}
 {

@@ -2137,14 +2137,12 @@
                   <h2 class="ps-title">{{ heading }}</h2>
                 {% endif %}
 
-                {% if show_title_divider %}
-                  {% if heading_lead != blank or heading_accent != blank or heading != blank %}
-                    <div class="ps-ornament" aria-hidden="true">
-                      <span class="ps-ornament__line"></span>
-                      <span class="ps-ornament__flourish"></span>
-                      <span class="ps-ornament__line"></span>
-                    </div>
-                  {% endif %}
+                {% if show_title_divider and heading != blank %}
+                  <div class="ps-ornament" aria-hidden="true">
+                    <span class="ps-ornament__line"></span>
+                    <span class="ps-ornament__flourish"></span>
+                    <span class="ps-ornament__line"></span>
+                  </div>
                 {% endif %}
 
                 {% if subtitle != blank %}<p class="ps-sub">{{ subtitle }}</p>{% endif %}

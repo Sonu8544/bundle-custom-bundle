@@ -1564,7 +1564,8 @@
 
   #{{ sid }} .ppbs__media {
     position: absolute;
-    left: var(--ppbs-media-x-desk);
+    {% comment %} left: var(--ppbs-media-x-desk); {% endcomment %}
+     right: 0;
     top: var(--ppbs-media-top-desk);
     width: var(--ppbs-media-w-desk);
     max-width: 780px;

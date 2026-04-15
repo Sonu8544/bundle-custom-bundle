@@ -184,7 +184,7 @@
             "image": "shopify://shop_images/b00af6fdf620a1be3010ebf744724ae98aa85b08_645bad11-923c-4db8-a45e-21f2c9364565.png",
             "image_scale": 100,
             "image_vertical_shift": 0,
-            "image_tilt_desktop": -30,
+            "image_tilt_desktop": 0,
             "image_tilt_tablet": 10,
             "image_tilt_mobile": 0,
             "eyebrow": "EXCLUSIVE",

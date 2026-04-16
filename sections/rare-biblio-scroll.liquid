@@ -2335,36 +2335,37 @@
       };
     } {% endcomment %}
 
+    function getBottomReveal() {
+      var styles = getComputedStyle(root);
+      return parseFloat(
+        styles.getPropertyValue(isMobile() ? '--ps-bottom-reveal-m' : '--ps-bottom-reveal-d')
+      ) || 80;
+    }
 
-  function getBottomReveal() {
-    var styles = getComputedStyle(root);
-    return parseFloat(
-      styles.getPropertyValue(isMobile() ? '--ps-bottom-reveal-m' : '--ps-bottom-reveal-d')
-    ) || 80;
-  }
+    function getMetrics() {
+      var closedHeight = getClosedHeight();
+      var extraScroll = getExtraScroll();
+      var bottomReveal = getBottomReveal();
+      var contentHeight = Math.ceil(txt.scrollHeight);
 
-  function getMetrics() {
-    var closedHeight = getClosedHeight();
-    var extraScroll = getExtraScroll();
-    var bottomReveal = getBottomReveal();
+      /* keep paper only as tall as actual content */
+      var openHeight = Math.max(closedHeight, contentHeight);
 
-    var contentHeight = Math.ceil(txt.scrollHeight);
-    var openHeight = Math.max(closedHeight, contentHeight + bottomReveal);
+      /* add extra release room in scroll, not inside paper body */
+      var totalScrollDistance = Math.max(
+        (openHeight - closedHeight) + extraScroll + bottomReveal,
+        window.innerHeight * 0.82
+      );
 
-    var totalScrollDistance = Math.max(
-      openHeight - closedHeight + extraScroll,
-      window.innerHeight * 0.82
-    );
+      var shellHeight = Math.ceil(window.innerHeight + totalScrollDistance);
 
-    var shellHeight = Math.ceil(window.innerHeight + totalScrollDistance + bottomReveal);
-
-    return {
-      closedHeight: closedHeight,
-      openHeight: openHeight,
-      totalScrollDistance: totalScrollDistance,
-      shellHeight: shellHeight
-    };
-  }
+      return {
+        closedHeight: closedHeight,
+        openHeight: openHeight,
+        totalScrollDistance: totalScrollDistance,
+        shellHeight: shellHeight
+      };
+    }
 
 
   function setShellHeight(metrics) {

@@ -200,10 +200,10 @@
             "button_link": ""
           }
         },
-        "slide_dgtt7f": {
+        "slide_JF8rJm": {
           "type": "slide",
           "settings": {
-            "image": "shopify://shop_images/1111036676688_FG_a_4_6f8d7edf-935c-40e3-9adb-efdbf44af1a4.png",
+            "image": "shopify://shop_images/tilted_book_-_cropped.png",
             "image_mobile": "shopify://shop_images/b00af6fdf620a1be3010ebf744724ae98aa85b08_1_da67ab2e-bfab-4ac9-98c4-19051dbeee9a.png",
             "image_scale": 100,
             "tilt_desktop": 0,
@@ -226,10 +226,10 @@
             "button_link": ""
           }
         },
-        "slide_UERDLd": {
+        "slide_GYxijn": {
           "type": "slide",
           "settings": {
-            "image": "shopify://shop_images/1111036676688_FG_a_4_6f8d7edf-935c-40e3-9adb-efdbf44af1a4.png",
+            "image": "shopify://shop_images/tilted_book_-_cropped.png",
             "image_mobile": "shopify://shop_images/b00af6fdf620a1be3010ebf744724ae98aa85b08_1_da67ab2e-bfab-4ac9-98c4-19051dbeee9a.png",
             "image_scale": 100,
             "tilt_desktop": 0,
@@ -242,7 +242,7 @@
             "year": "1962, First Print",
             "binding_label": "Binding",
             "binding": "Quarter Leather",
-            "show_countdown": false,
+            "show_countdown": true,
             "countdown_label": "Reveals In",
             "end_date": "2026-05--01T12:00:00",
             "placeholder_hours": "12",
@@ -255,8 +255,8 @@
       },
       "block_order": [
         "slide_qBiKkC",
-        "slide_dgtt7f",
-        "slide_UERDLd"
+        "slide_JF8rJm",
+        "slide_GYxijn"
       ],
       "name": "testing slider",
       "settings": {
@@ -477,17 +477,6 @@
             "button_link": ""
           }
         },
-        "slide_nFaXRC": {
-          "type": "slide",
-          "settings": {
-            "enable_content_gradient": true,
-            "image": "shopify://shop_images/0e3b361c0b28b517cca2ec25f47eb851cc7ab5ce.png",
-            "heading": "Hand Binding",
-            "text": "<p>Welcome to Rare Biblio, the premier destination for bibliophiles and book lovers who appreciate timeless craftsmanship.</p>",
-            "button_label": "",
-            "button_link": ""
-          }
-        },
         "slide_AdHVWg": {
           "type": "slide",
           "settings": {
@@ -513,7 +502,6 @@
       },
       "block_order": [
         "slide_YtkL6t",
-        "slide_nFaXRC",
         "slide_AdHVWg",
         "slide_Rztf7r"
       ],

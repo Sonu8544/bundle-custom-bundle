@@ -2305,33 +2305,64 @@
       if (st)  st.style.fontSize = (baseStamp * scale) + 'px';
     }
   }
+  {% comment %} 
+    function getMetrics() {
+      var closedHeight = getClosedHeight();
+      var extraScroll = getExtraScroll();
+      var roller = getRollerHeights();
+      var contentHeight = Math.ceil(txt.scrollHeight);
+
+      /*
+        extra reveal below the text so the bottom roller is always visible
+        even on tablet / larger screens / 1440+ widths
+      */
+      var bottomReveal = Math.max(
+        isMobile() ? 56 : 90,
+        Math.round(roller.bottom * (isMobile() ? 0.5 : 0.62))
+      );
+
+      var openHeight = Math.max(
+        closedHeight,
+        contentHeight + bottomReveal
+      );
+
+      var totalScrollDistance = Math.max(
+        openHeight - closedHeight + extraScroll,
+        window.innerHeight * 0.72
+      );
+
+      var shellHeight = Math.ceil(window.innerHeight + totalScrollDistance);
+
+      return {
+        closedHeight: closedHeight,
+        openHeight: openHeight,
+        totalScrollDistance: totalScrollDistance,
+        shellHeight: shellHeight
+      };
+    } {% endcomment %}
+
+
+  function getBottomReveal() {
+    var styles = getComputedStyle(root);
+    return parseFloat(
+      styles.getPropertyValue(isMobile() ? '--ps-bottom-reveal-m' : '--ps-bottom-reveal-d')
+    ) || 80;
+  }
 
   function getMetrics() {
     var closedHeight = getClosedHeight();
     var extraScroll = getExtraScroll();
-    var roller = getRollerHeights();
+    var bottomReveal = getBottomReveal();
+
     var contentHeight = Math.ceil(txt.scrollHeight);
-
-    /*
-      extra reveal below the text so the bottom roller is always visible
-      even on tablet / larger screens / 1440+ widths
-    */
-    var bottomReveal = Math.max(
-      isMobile() ? 56 : 90,
-      Math.round(roller.bottom * (isMobile() ? 0.5 : 0.62))
-    );
-
-    var openHeight = Math.max(
-      closedHeight,
-      contentHeight + bottomReveal
-    );
+    var openHeight = Math.max(closedHeight, contentHeight + bottomReveal);
 
     var totalScrollDistance = Math.max(
       openHeight - closedHeight + extraScroll,
-      window.innerHeight * 0.72
+      window.innerHeight * 0.82
     );
 
-    var shellHeight = Math.ceil(window.innerHeight + totalScrollDistance);
+    var shellHeight = Math.ceil(window.innerHeight + totalScrollDistance + bottomReveal);
 
     return {
       closedHeight: closedHeight,

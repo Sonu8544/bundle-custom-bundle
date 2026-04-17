@@ -211,7 +211,7 @@
       "name": "Exclusive books collection",
       "settings": {
         "fallback_collection": "frontpage",
-        "hero_bg": "shopify://shop_images/ChatGPT_Image_Apr_15_2026_12_19_05_AM.png",
+        "hero_bg": "shopify://shop_images/Listing_Page.png",
         "hero_bg_mobile": "shopify://shop_images/Option_5.png",
         "shelf_image": "shopify://shop_images/e949d73a7b001da9a9c51536b1349931024ac76d.png",
         "filter_icon": "shopify://shop_images/filter-vertical.png",

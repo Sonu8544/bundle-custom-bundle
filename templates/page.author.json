@@ -239,8 +239,8 @@
       "name": "How we build video",
       "settings": {
         "heading": "How we build",
-        "desktop_video": "shopify://files/videos/file_example_MP4_1920_18MG.mp4",
-        "mobile_video": "shopify://files/videos/file_example_MP4_1920_18MG.mp4",
+        "desktop_youtube_embed": "https://www.youtube.com/embed/1WO-LRdVb5I?si=Z7_nIH102Ms2hcJx",
+        "mobile_youtube_embed": "https://www.youtube.com/embed/1WO-LRdVb5I?si=Z7_nIH102Ms2hcJx",
         "desktop_poster": "shopify://shop_images/Rectangle_55623.png",
         "mobile_poster": "shopify://shop_images/Rectangle_55623.png",
         "enable_click_to_play": true,

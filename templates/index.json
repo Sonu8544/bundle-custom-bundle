@@ -146,7 +146,7 @@
         "title_gradient_start": "#e8dcc8",
         "title_gradient_end": "#b8941e",
         "text_color": "#e8e4dd",
-        "last_word_opacity": 45,
+        "last_word_opacity": 100,
         "content_max_width": 1020,
         "title_max_width": 720,
         "description_max_width": 1020,

@@ -559,6 +559,43 @@
         "vignette_opacity": 100,
         "content_fade_on_play": 0
       }
+    },
+    "17769452941bc92013": {
+      "type": "apps",
+      "blocks": {
+        "slider_revolution_slider_product_K73TqN": {
+          "type": "shopify://apps/slider-revolution/blocks/slider_product/d2c2325b-ecb9-42b8-a0b0-ca2ffb6e3203",
+          "settings": {
+            "video_slider_id": "artistic-parallax-slider",
+            "collection": "",
+            "products_to_show": 10,
+            "show_stock_only": false,
+            "limit_excerpt": "125",
+            "meta_field": "",
+            "hide_on_desktop": false,
+            "hide_on_tablet": false,
+            "hide_on_mobile": false,
+            "rev_section_heading": "",
+            "rev_section_sub_heading": "",
+            "rev_section_heading_size": 30,
+            "rev_section_sub_heading_size": 15,
+            "rev_section_heading_align": "center",
+            "rev_section_heading_color": "",
+            "rev_section_sub_heading_color": "",
+            "rev_section_bg_color": "",
+            "rev_slider_sec_pad_top": 0,
+            "rev_slider_sec_pad_bot": 0,
+            "rev_slider_sec_mar_top": 0,
+            "rev_slider_sec_mar_bot": 0
+          }
+        }
+      },
+      "block_order": [
+        "slider_revolution_slider_product_K73TqN"
+      ],
+      "settings": {
+        "include_margins": true
+      }
     }
   },
   "order": [
@@ -570,6 +607,7 @@
     "premium_parallax_book_slider_A7wTcq",
     "behind_the_book_CkGUTT",
     "rare_biblio_parallax_showcase_njT6NY",
-    "how_we_build_video_VVptjE"
+    "how_we_build_video_VVptjE",
+    "17769452941bc92013"
   ]
 }

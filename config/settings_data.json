@@ -151,7 +151,19 @@
         }
       }
     },
-    "content_for_index": []
+    "content_for_index": [],
+    "blocks": {
+      "16936711665464183970": {
+        "type": "shopify://apps/slider-revolution/blocks/app-embed/d2c2325b-ecb9-42b8-a0b0-ca2ffb6e3203",
+        "disabled": false,
+        "settings": {
+          "enabled_templates_switcher": false,
+          "enabled_templates": "",
+          "enable_fontawesome": true,
+          "enable_stroke": true
+        }
+      }
+    }
   },
   "presets": {
     "Default": {

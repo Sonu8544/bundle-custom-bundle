@@ -117,6 +117,7 @@
     },
     "rare_biblio_scroll_zwaez3": {
       "type": "rare-biblio-scroll",
+      "disabled": true,
       "name": "Rare Biblio Scroll",
       "settings": {
         "heading": "About Rare Biblio",
@@ -137,6 +138,7 @@
     },
     "rare_biblio_heading_H4fFNk": {
       "type": "rare-biblio-heading",
+      "disabled": true,
       "name": "Rare Biblio Heading",
       "settings": {
         "full_width": false,
@@ -462,6 +464,7 @@
     },
     "behind_the_book_CkGUTT": {
       "type": "behind-the-book",
+      "disabled": true,
       "name": "Behind The Book",
       "settings": {
         "full_width": true,
@@ -538,6 +541,7 @@
         "slide_AdHVWg",
         "slide_Rztf7r"
       ],
+      "disabled": true,
       "name": "Rare biblio parallax slider",
       "settings": {
         "section_max_width": 1600,

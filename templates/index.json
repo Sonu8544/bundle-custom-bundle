@@ -310,6 +310,28 @@
     "17769452941bc92013": {
       "type": "apps",
       "blocks": {
+        "slider_revolution_slider_maintenance_yybxtK": {
+          "type": "shopify://apps/slider-revolution/blocks/slider_maintenance/d2c2325b-ecb9-42b8-a0b0-ca2ffb6e3203",
+          "settings": {
+            "slider_id": "coffee-flavours",
+            "end_time": "2026-06-12 12:34",
+            "hide_on_desktop": false,
+            "hide_on_tablet": false,
+            "hide_on_mobile": false,
+            "rev_section_heading": "",
+            "rev_section_sub_heading": "",
+            "rev_section_heading_size": 30,
+            "rev_section_sub_heading_size": 15,
+            "rev_section_heading_align": "center",
+            "rev_section_heading_color": "",
+            "rev_section_sub_heading_color": "",
+            "rev_section_bg_color": "",
+            "rev_slider_sec_pad_top": 0,
+            "rev_slider_sec_pad_bot": 0,
+            "rev_slider_sec_mar_top": 0,
+            "rev_slider_sec_mar_bot": 0
+          }
+        },
         "slider_revolution_slider_general_qAn8dy": {
           "type": "shopify://apps/slider-revolution/blocks/slider_general/d2c2325b-ecb9-42b8-a0b0-ca2ffb6e3203",
           "settings": {
@@ -333,6 +355,7 @@
         }
       },
       "block_order": [
+        "slider_revolution_slider_maintenance_yybxtK",
         "slider_revolution_slider_general_qAn8dy"
       ],
       "settings": {

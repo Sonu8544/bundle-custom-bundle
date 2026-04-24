@@ -38,6 +38,7 @@
       "block_order": [
         "slide_tXjRdT"
       ],
+      "disabled": true,
       "name": "Custom Hero Banner",
       "settings": {
         "height_desktop": 920,
@@ -568,6 +569,7 @@
     },
     "how_we_build_video_VVptjE": {
       "type": "how-we-build-video",
+      "disabled": true,
       "name": "How we build video",
       "settings": {
         "heading": "How we build",

@@ -1,0 +1,95 @@
+@font-face {
+  font-family: 'Bethany Elingston';
+  src: url('https://cdn.shopify.com/s/files/1/0589/1719/1777/files/Bethany_Elingston.otf') format('opentype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Satoshi */
+@font-face {
+  font-family: 'Satoshi';
+  src: url('https://cdn.shopify.com/s/files/1/0589/1719/1777/files/Satoshi-Light.otf?v=1775472388') format('opentype');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Satoshi';
+  src: url('https://cdn.shopify.com/s/files/1/0589/1719/1777/files/Satoshi-LightItalic.otf?v=1775472389') format('opentype');
+  font-weight: 300;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Satoshi';
+  src: url('https://cdn.shopify.com/s/files/1/0589/1719/1777/files/Satoshi-Regular.otf?v=1775472388') format('opentype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Satoshi';
+  src: url('https://cdn.shopify.com/s/files/1/0589/1719/1777/files/Satoshi-Italic.otf?v=1775472388') format('opentype');
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Satoshi';
+  src: url('https://cdn.shopify.com/s/files/1/0589/1719/1777/files/Satoshi-MediumItalic.otf?v=1775472388') format('opentype');
+  font-weight: 500;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Satoshi';
+  src: url('https://cdn.shopify.com/s/files/1/0589/1719/1777/files/Satoshi-Bold.otf?v=1775472388') format('opentype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Satoshi';
+  src: url('https://cdn.shopify.com/s/files/1/0589/1719/1777/files/Satoshi-BoldItalic.otf?v=1775472388') format('opentype');
+  font-weight: 700;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Satoshi';
+  src: url('https://cdn.shopify.com/s/files/1/0589/1719/1777/files/Satoshi-Black.otf?v=1775472388') format('opentype');
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Satoshi';
+  src: url('https://cdn.shopify.com/s/files/1/0589/1719/1777/files/Satoshi-BlackItalic.otf?v=1775472388') format('opentype');
+  font-weight: 900;
+  font-style: italic;
+  font-display: swap;
+}
+
+/* Optional global font usage */
+body {
+  font-family: 'Satoshi', sans-serif;
+}
+
+/* Use this class wherever Bethany font is needed */
+.font-bethany {
+  font-family: 'Bethany Elingston', cursive;
+}
+
+/* Use this class wherever Satoshi font is needed */
+.font-satoshi {
+  font-family: 'Satoshi', sans-serif;
+}

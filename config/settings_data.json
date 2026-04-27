@@ -308,5 +308,10 @@
         }
       }
     }
+  },
+  "platform_customizations": {
+    "custom_css": [
+      ".slider-6-slide-22-layer-12 {font-family: \"Satoshi\" !important;}"
+    ]
   }
 }
